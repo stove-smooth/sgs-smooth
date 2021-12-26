@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ## spring
-.yml
+*.yml
