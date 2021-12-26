@@ -44,8 +44,8 @@ public class Account {
                 .roleType(RoleType.ROLE_USER)
                 .build();
     }
-
-
-
+    public void changeRole(RoleType roleType) {
+        this.roleType = roleType;
+    }
 
 }
