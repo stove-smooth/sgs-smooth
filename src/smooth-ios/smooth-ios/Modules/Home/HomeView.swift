@@ -12,6 +12,7 @@ class HomeView: BaseView {
     
     let titleLabel = UILabel().then {
         $0.text = "Home View"
+        $0.textColor = .black
     }
     
     let logOutButton = UIButton().then {

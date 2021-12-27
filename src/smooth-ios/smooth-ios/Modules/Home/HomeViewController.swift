@@ -8,7 +8,19 @@
 import UIKit
 import RxSwift
 
+protocol HomeViewControllerDelegate: AnyObject {
+    func didTapMenuButton()
+}
+
 class HomeViewController: BaseViewController {
+    
+    enum MenuState {
+        case opened
+        case closed
+    }
+    
+    private var menuState: MenuState = .closed
+    
     private let homeView = HomeView()
     private let viewModel = HomeViewModel(
         userDefaults: UserDefaultsUtil()
@@ -16,17 +28,40 @@ class HomeViewController: BaseViewController {
     
     weak var coordinator: MainCoordinator?
     
+    private let menuViewController = MenuViewController()
+    private let containerViewController = ContainerViewController()
+    lazy var serverViewController = ServerViewController()
+    
+    var navigationViewController: UINavigationController?
+    
+    
     static func instance() -> HomeViewController {
         return HomeViewController(nibName: nil, bundle: nil)
     }
     
-    override func loadView() {
-        self.view = self.homeView
-    }
+    //    override func loadView() {
+    //        self.view = self.homeView
+    //    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationController?.isNavigationBarHidden = true
+        addChildVCs()
+    }
+    
+    private func addChildVCs() {
+        // Menu VC
+        menuViewController.delegate = self
+        addChild(menuViewController)
+        view.addSubview(menuViewController.view)
+        menuViewController.didMove(toParent: self)
+        
+        // Container VC
+        containerViewController.delegate = self
+        let navVC = UINavigationController(rootViewController: containerViewController)
+        addChild(navVC)
+        view.addSubview(navVC.view)
+        navVC.didMove(toParent: self)
+        self.navigationViewController = navVC
     }
     
     override func bindViewModel() {
@@ -46,3 +81,69 @@ class HomeViewController: BaseViewController {
     }
 }
 
+
+extension HomeViewController: ContainerViewControllerDelegate {
+    func didTapMenuButton() {
+        toggleMenu(completion: nil)
+    }
+    
+    func toggleMenu(completion: (() -> Void)?) {
+        switch menuState {
+        case .opened:
+            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseOut){
+                
+                self.navigationViewController?.view.frame.origin.x = self.containerViewController.view.frame.size
+                    .width-50
+            } completion: { [weak self] done in
+                if done {
+                    self?.menuState = .closed
+                }
+            }
+            
+        case .closed:
+            UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseOut){
+                
+                self.navigationViewController?.view.frame.origin.x = 0
+            } completion: { [weak self] done in
+                if done {
+                    self?.menuState = .opened
+                    DispatchQueue.main.async {
+                        completion?()
+                    }
+                }
+            }
+            
+        }
+    }
+}
+
+extension HomeViewController: MenuViewControllerDelegate {
+    func didSelect(menuItem: MenuViewController.MenuOptions) {
+        toggleMenu(completion: nil)
+        
+        switch menuItem {
+        case .home:
+            self.resetToHome()
+        case .settings:
+            self.addServer()
+        }
+    }
+    
+    func addServer() {
+        let vc = ServerViewController()
+        
+        containerViewController.addChild(vc)
+        containerViewController.view.addSubview(vc.view)
+        
+        vc.view.frame = view.frame
+        vc.didMove(toParent: containerViewController)
+        containerViewController.title = vc.title
+    }
+    
+    func resetToHome() {
+        serverViewController.view.removeFromSuperview()
+        serverViewController.didMove(toParent: nil)
+        
+        containerViewController.title = "Home"
+    }
+}

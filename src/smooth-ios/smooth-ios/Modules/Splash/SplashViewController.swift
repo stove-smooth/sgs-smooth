@@ -28,6 +28,7 @@ class SplashViewConroller: BaseViewController {
          print("viewDidLoad 🎉")
          })
          */
+        self.navigationController?.isNavigationBarHidden = true
         self.viewModel.input.viewDidLoad.onNext(())
     }
     
