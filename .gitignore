@@ -38,3 +38,40 @@ out/
 
 ## spring
 *.yml
+
+## ios
+
+## User settings
+src/smooth-ios/xcuserdata/
+
+## compatibility with Xcode 8 and earlier (ignoring not required starting Xcode 9)
+*.xcscmblueprint
+*.xccheckout
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+
+## Obj-C/Swift specific
+*.hmap
+
+## App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## Swift Package Manager
+src/smooth-ios/Packages/
+Package.pins
+Package.resolved
+
+## CocoaPods
+src/smooth-ios/Pods/
+*.lock
+
+
+## OSX Temp
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
