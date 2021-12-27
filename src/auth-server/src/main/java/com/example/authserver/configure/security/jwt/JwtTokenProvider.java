@@ -65,11 +65,11 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String token){
         UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUsername(token));
-        return  new UsernamePasswordAuthenticationToken(userDetails,"",userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails,"",userDetails.getAuthorities());
     }
 
     public String resolveToken(HttpServletRequest req){
-        return req.getHeader("X-ACCESS-TOKEN");
+        return req.getHeader("AUTHORIZATION");
     }
 
     public boolean validateToken(String jwtToken, HttpServletRequest req) {

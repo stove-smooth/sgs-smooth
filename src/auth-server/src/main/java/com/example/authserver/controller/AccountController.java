@@ -73,7 +73,7 @@ public class AccountController {
     }
 
     @PostMapping("/refresh")
-    public DataResponse<SignInResponse> refreshToken(@RequestHeader("X-AUTH-TOKEN") String token,
+    public DataResponse<SignInResponse> refreshToken(@RequestHeader("AUTHORIZATION") String token,
                                                      @RequestHeader("REFRESH-TOKEN") String refreshToken) {
         return responseService.getDataResponse(accountService.checkRefreshToken(token,refreshToken));
     }
