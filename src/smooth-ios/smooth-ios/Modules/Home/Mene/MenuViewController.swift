@@ -19,34 +19,72 @@ class MenuViewController: BaseViewController, UITableViewDelegate, UITableViewDa
         case chat = "chat"
         case addServer = "add_server"
     }
-
+    
     private let tableView: UITableView = {
         let table = UITableView()
         table.backgroundColor = nil
         table.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        table.separatorStyle = .none
         return table
+    }()
+    
+    lazy var stackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [ServerListView, ServerContentView])
+        stackView.alignment = .fill
+        stackView.distribution = .equalSpacing
+        stackView.axis = .horizontal
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    var ServerListView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(red: 33/255.0, green: 33/255.0, blue: 33/255.0, alpha: 1)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    var ServerContentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .purple
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(tableView)
+
         tableView.delegate = self
         tableView.dataSource = self
+
+        setupLayout()
+    }
+    
+    func setupLayout() {
+        // Stack View
+        view.addSubview(stackView)
         
-        view.backgroundColor = UIColor(red: 33/255.0, green: 33/255.0, blue: 33/255.0, alpha: 1)
+        ServerListView.addSubview(tableView)
+        
+        stackView.snp.makeConstraints { make in
+            make.top.left.right.bottom.equalToSuperview()
+        }
+        
+        ServerListView.snp.makeConstraints { make in
+            make.width.equalTo(100.0)
+        }
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         tableView.frame = CGRect(x: 0, y: view.safeAreaInsets.top, width: view.bounds.size.width, height: view.bounds.size.height)
     }
-
+    
     // table
-
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return MenuOptions.allCases.count
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = MenuOptions.allCases[indexPath.row].rawValue
@@ -55,10 +93,10 @@ class MenuViewController: BaseViewController, UITableViewDelegate, UITableViewDa
         cell.contentView.backgroundColor = UIColor(red: 33/255.0, green: 33/255.0, blue: 33/255.0, alpha: 1)
         return cell
     }
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-
+        
         let item = MenuOptions.allCases[indexPath.row]
         delegate?.didSelect(menuItem: item)
     }
