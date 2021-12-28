@@ -124,13 +124,14 @@ extension HomeViewController: MenuViewControllerDelegate {
         switch menuItem {
         case .home:
             self.resetToHome()
-        case .settings:
+        default:
+            // MARK menuItem(룸 서버) 정보 전달
             self.addServer()
         }
     }
     
     func addServer() {
-        let vc = ServerViewController()
+        let vc = serverViewController
         
         containerViewController.addChild(vc)
         containerViewController.view.addSubview(vc.view)
@@ -141,9 +142,14 @@ extension HomeViewController: MenuViewControllerDelegate {
     }
     
     func resetToHome() {
+        // child 삭제
+        serverViewController.willMove(toParent: nil)
+        serverViewController.removeFromParent()
         serverViewController.view.removeFromSuperview()
-        serverViewController.didMove(toParent: nil)
         
-        containerViewController.title = "Home"
+        containerViewController.view.frame = view.frame
+        containerViewController.didMove(toParent: nil)
+        
+        containerViewController.title = "Container ViewController"
     }
 }

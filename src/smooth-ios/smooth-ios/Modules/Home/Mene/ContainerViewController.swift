@@ -18,6 +18,7 @@ class ContainerViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .red
+        title = "Container ViewController"
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "list.dash"),

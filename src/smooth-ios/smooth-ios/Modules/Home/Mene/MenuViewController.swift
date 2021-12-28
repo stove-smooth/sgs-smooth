@@ -16,7 +16,8 @@ class MenuViewController: BaseViewController, UITableViewDelegate, UITableViewDa
     
     enum MenuOptions: String, CaseIterable {
         case home = "Home"
-        case settings = "Settings"
+        case chat = "chat"
+        case addServer = "add_server"
     }
 
     private let tableView: UITableView = {

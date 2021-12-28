@@ -34,6 +34,7 @@
 		C1D47F0E2779D66300DBA3CA /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F0D2779D66300DBA3CA /* MenuViewController.swift */; };
 		C1D47F112779D6FD00DBA3CA /* ContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F102779D6FD00DBA3CA /* ContainerViewController.swift */; };
 		C1D47F13277A0BCE00DBA3CA /* ServerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F12277A0BCE00DBA3CA /* ServerViewController.swift */; };
+		C1D47F15277ACD2800DBA3CA /* RoomServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F14277ACD2800DBA3CA /* RoomServer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,6 +69,7 @@
 		C1D47F0D2779D66300DBA3CA /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
 		C1D47F102779D6FD00DBA3CA /* ContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerViewController.swift; sourceTree = "<group>"; };
 		C1D47F12277A0BCE00DBA3CA /* ServerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerViewController.swift; sourceTree = "<group>"; };
+		C1D47F14277ACD2800DBA3CA /* RoomServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomServer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -189,6 +191,7 @@
 				C1D47EFA27795E1000DBA3CA /* SignIn.swift */,
 				C1D47EFE27795E3400DBA3CA /* Signup.swift */,
 				C1D47EFC27795E2300DBA3CA /* UserInfo.swift */,
+				C1D47F14277ACD2800DBA3CA /* RoomServer.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -349,6 +352,7 @@
 				C1D47EF527795D7E00DBA3CA /* UserDefaultsUtil.swift in Sources */,
 				C1D47F13277A0BCE00DBA3CA /* ServerViewController.swift in Sources */,
 				C1D47EDA277959BA00DBA3CA /* MainCoordinator.swift in Sources */,
+				C1D47F15277ACD2800DBA3CA /* RoomServer.swift in Sources */,
 				C1D47EDF27795A9200DBA3CA /* SplashView.swift in Sources */,
 				C1D47EFF27795E3400DBA3CA /* Signup.swift in Sources */,
 				C1D47EFD27795E2400DBA3CA /* UserInfo.swift in Sources */,
