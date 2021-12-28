@@ -3,14 +3,12 @@
     <div class="characterBackground">
       <div class="wrapper-react">
         <div>
-          <form class="authbox authboxmobile themdark">
+          <div class="authbox authboxmobile themdark">
             <div class="center-wrapper">
-              <div class="mainLoginContainer">
+              <form @submit.prevent="submitForm" class="auth-container">
                 <div class="header">
                   <h3 class="title-welcome">돌아오신 걸 환영해요!</h3>
-                  <div class="description-welcome">
-                    다시 만나다니 너무 반가워요!
-                  </div>
+                  <div class="description">다시 만나다니 너무 반가워요!</div>
                 </div>
                 <div class="content">
                   <h5 class="label-id">이메일 또는 전화번호</h5>
@@ -18,11 +16,12 @@
                     <input
                       class="input-default"
                       type="text"
-                      name="email"
+                      name="id"
                       placeholder
                       aria-label="이메일 또는 전화번호"
                       autocomplete="off"
                       maxlength="999"
+                      v-model="id"
                     />
                   </div>
                 </div>
@@ -32,30 +31,33 @@
                     <input
                       class="input-default"
                       type="text"
-                      name="email"
+                      name="pwd"
                       placeholder
-                      aria-label="이메일 또는 전화번호"
+                      aria-label="비밀번호"
                       autocomplete="off"
                       maxlength="999"
                       spellcheck="false"
+                      v-model="pwd"
                     />
                   </div>
                 </div>
                 <button class="find-pwd">
-                  <div class="look contents">비밀번호를 잊으셨나요?</div>
+                  <div class="highlight-text contents">
+                    비밀번호를 잊으셨나요?
+                  </div>
                 </button>
-                <button class="button-submit">
+                <button class="large-button" type="submit">
                   <div class="contents">로그인</div>
                 </button>
                 <div class="need-account-button">
                   <span class="need-account"> 계정이 필요한가요? </span>
                   <button class="small-register-link">
-                    <div class="look contents">가입하기</div>
+                    <div class="highlight-text contents">가입하기</div>
                   </button>
                 </div>
-              </div>
+              </form>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
@@ -63,7 +65,19 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      id: "",
+      pwd: "",
+    };
+  },
+  methods: {
+    async submitForm() {
+      console.log("submit");
+    },
+  },
+};
 </script>
 
 <style>
@@ -79,6 +93,7 @@ export default {};
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  background-image: url("../assets/welcome-img.png");
 }
 .wrapper-react {
   width: 100%;
@@ -164,7 +179,7 @@ export default {};
   text-align: center;
 }
 
-.mainLoginContainer {
+.auth-container {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -200,14 +215,15 @@ export default {};
   margin-bottom: 8px;
   color: #fff;
 }
-.description-welcome {
+.description {
   font-size: 16px;
   line-height: 20px;
+  font-weight: 600;
 }
 .content {
   width: 100%;
   text-align: left;
-  margin-top: 20px;
+  margin-top: 6px;
 }
 
 .label-id {
@@ -247,7 +263,6 @@ export default {};
 }
 
 .find-pwd {
-  margin-bottom: 20px;
   margin-top: 4px;
   line-height: 16px;
   background-color: #36393f;
@@ -258,14 +273,14 @@ export default {};
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  font-weight: 600;
 }
-.look {
+.highlight-text {
   color: #00aff4;
-  font-weight: 500;
   font-size: 14px;
 }
 
-.button-submit {
+.large-button {
   color: #fff;
   font-size: 16px;
   line-height: 24px;
@@ -281,15 +296,17 @@ export default {};
   align-items: center;
   background: none;
   border: none;
-  border-radius: -25px;
+  border-radius: 5px;
   font-size: 14px;
   font-weight: 500;
   line-height: 16px;
   padding: 2px 16px;
   background-color: #5865f2;
+  margin-top: 20px;
 }
 .need-account-button {
   margin-top: 4px;
+  font-weight: 500;
 }
 .need-account {
   font-size: 14px;

@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import LoginPage from '../pages/LoginPage.vue';
-import SignupPage from '../pages/SignupPage.vue';
+import RegisterPage from '../pages/RegisterPage.vue';
 import MyPage from '../pages/Mypage.vue';
 import NotFoundPage from '../pages/NotFoundPage.vue';
 Vue.use(VueRouter)
@@ -19,9 +19,9 @@ export const router = new VueRouter({
       component: LoginPage,
     },
     {
-      path: '/signup',
-      name: 'signupPage',
-      component: SignupPage,
+      path: '/register',
+      name: 'registerPage',
+      component: RegisterPage,
     },
     {
       path: '/channels/@me',
