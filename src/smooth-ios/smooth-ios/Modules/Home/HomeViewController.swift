@@ -6,42 +6,30 @@
 //
 
 import UIKit
-import RxSwift
 
 protocol HomeViewControllerDelegate: AnyObject {
     func didTapMenuButton()
 }
 
+enum MenuState {
+    case opened
+    case closed
+}
+
 class HomeViewController: BaseViewController {
     
-    enum MenuState {
-        case opened
-        case closed
-    }
-    
-    private var menuState: MenuState = .closed
-    
-    private let homeView = HomeView()
-    private let viewModel = HomeViewModel(
-        userDefaults: UserDefaultsUtil()
-    )
-    
     weak var coordinator: MainCoordinator?
+    var navigationViewController: UINavigationController?
     
     private let menuViewController = MenuViewController()
     private let containerViewController = ContainerViewController()
     lazy var serverViewController = ServerViewController()
     
-    var navigationViewController: UINavigationController?
-    
+    private var menuState: MenuState = .closed
     
     static func instance() -> HomeViewController {
         return HomeViewController(nibName: nil, bundle: nil)
     }
-    
-    //    override func loadView() {
-    //        self.view = self.homeView
-    //    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,22 +50,6 @@ class HomeViewController: BaseViewController {
         view.addSubview(navVC.view)
         navVC.didMove(toParent: self)
         self.navigationViewController = navVC
-    }
-    
-    override func bindViewModel() {
-        self.homeView.logOutButton.rx.tap
-            .bind(to: self.viewModel.input.tapLogOutButton)
-            .disposed(by: disposeBag)
-        
-        self.viewModel.output.goToSignin
-            .debug()
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: self.goToSignIn)
-            .disposed(by: disposeBag)
-    }
-    
-    func goToSignIn() {
-        self.coordinator?.goToSigIn()
     }
 }
 
