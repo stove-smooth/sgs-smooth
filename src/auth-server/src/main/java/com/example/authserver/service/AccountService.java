@@ -121,19 +121,4 @@ public class AccountService extends BaseTimeEntity {
 
         return res;
     }
-
-    @Transactional
-    public void requestFriend(FriendRequest friendRequest,CustomUserDetails customUserDetails) {
-        Account requestAccount = accountRepository.findByNameAndCode(friendRequest.getName(), friendRequest.getCode())
-                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
-
-        Account account = customUserDetails.getAccount();
-
-        Friend friend = Friend.builder()
-                .receiver(requestAccount)
-                .sender(account)
-                .friendState(FriendState.WAIT).build();
-
-        friendRepository.save(friend);
-    }
 }

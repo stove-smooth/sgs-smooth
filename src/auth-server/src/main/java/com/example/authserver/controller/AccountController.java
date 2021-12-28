@@ -75,15 +75,4 @@ public class AccountController {
         return responseService.getDataResponse(accountService.checkRefreshToken(token,refreshToken));
     }
 
-    @PostMapping("/friend")
-    public CommonResponse requestFriend(@RequestBody @Valid FriendRequest friendRequest, Errors errors,
-                                        @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        if (errors.hasErrors()) ValidationExceptionProvider.throwValidError(errors);
-        accountService.requestFriend(friendRequest,customUserDetails);
-
-        return responseService.getSuccessResponse();
-    }
-
-
-
 }
