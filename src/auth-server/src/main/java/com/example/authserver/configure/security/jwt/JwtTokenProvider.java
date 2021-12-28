@@ -31,11 +31,6 @@ public class JwtTokenProvider {
     // 2주
     private long refreshTime = 14 * 24 * 60 * 60 * 1000L;
 
-    @PostConstruct
-    protected void init() {
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
-    }
-
     public String createToken(String username, RoleType role) {
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("role",role);

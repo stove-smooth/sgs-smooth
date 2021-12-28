@@ -32,8 +32,12 @@ public class AccountAutoDto {
     @Pattern(regexp = "^[가-힣a-zA-Z0-9_-]{3,20}$")
     private String name;
 
+    private String code;
+
+
     public AccountAutoDto(Account account) {
         this.email = account.getEmail();
         this.name = account.getName();
+        this.code = account.getCode();
     }
 }

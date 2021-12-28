@@ -7,10 +7,7 @@ import com.example.authserver.configure.response.DataResponse;
 import com.example.authserver.configure.response.ResponseService;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
 import com.example.authserver.domain.RoleType;
-import com.example.authserver.dto.AccountAutoDto;
-import com.example.authserver.dto.MailResponse;
-import com.example.authserver.dto.SignInRequest;
-import com.example.authserver.dto.SignInResponse;
+import com.example.authserver.dto.*;
 import com.example.authserver.service.AccountService;
 import com.example.authserver.util.ValidationExceptionProvider;
 import lombok.RequiredArgsConstructor;
@@ -77,5 +74,16 @@ public class AccountController {
                                                      @RequestHeader("REFRESH-TOKEN") String refreshToken) {
         return responseService.getDataResponse(accountService.checkRefreshToken(token,refreshToken));
     }
+
+    @PostMapping("/friend")
+    public CommonResponse requestFriend(@RequestBody @Valid FriendRequest friendRequest, Errors errors,
+                                        @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        if (errors.hasErrors()) ValidationExceptionProvider.throwValidError(errors);
+        accountService.requestFriend(friendRequest,customUserDetails);
+
+        return responseService.getSuccessResponse();
+    }
+
+
 
 }

@@ -4,17 +4,14 @@ import com.example.authserver.configure.exception.CustomException;
 import com.example.authserver.configure.exception.CustomExceptionStatus;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
 import com.example.authserver.configure.security.jwt.JwtTokenProvider;
-import com.example.authserver.domain.Account;
-import com.example.authserver.domain.BaseTimeEntity;
-import com.example.authserver.domain.RoleType;
-import com.example.authserver.dto.AccountAutoDto;
-import com.example.authserver.dto.MailResponse;
-import com.example.authserver.dto.SignInRequest;
-import com.example.authserver.dto.SignInResponse;
+import com.example.authserver.domain.*;
+import com.example.authserver.dto.*;
 import com.example.authserver.repository.AccountRepository;
+import com.example.authserver.repository.FriendRepository;
 import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +29,7 @@ public class AccountService extends BaseTimeEntity {
     private long refreshTime = 14 * 24 * 60 * 60 * 1000L;
 
     private final AccountRepository accountRepository;
+    private final FriendRepository friendRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final EmailService emailService;
@@ -122,5 +120,20 @@ public class AccountService extends BaseTimeEntity {
                 .build();
 
         return res;
+    }
+
+    @Transactional
+    public void requestFriend(FriendRequest friendRequest,CustomUserDetails customUserDetails) {
+        Account requestAccount = accountRepository.findByNameAndCode(friendRequest.getName(), friendRequest.getCode())
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
+
+        Account account = customUserDetails.getAccount();
+
+        Friend friend = Friend.builder()
+                .receiver(requestAccount)
+                .sender(account)
+                .friendState(FriendState.WAIT).build();
+
+        friendRepository.save(friend);
     }
 }
