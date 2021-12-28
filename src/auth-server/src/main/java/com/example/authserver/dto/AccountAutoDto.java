@@ -23,11 +23,12 @@ public class AccountAutoDto {
     private String email;
 
     @NotBlank
+    @Length(min=8, max = 15)
     @JsonProperty(access = Access.WRITE_ONLY)
     private String password;
 
     @NotBlank
-    @Length(min=3, max = 20)
+    @Length(min=2, max = 15)
     @Pattern(regexp = "^[가-힣a-zA-Z0-9_-]{3,20}$")
     private String name;
 
