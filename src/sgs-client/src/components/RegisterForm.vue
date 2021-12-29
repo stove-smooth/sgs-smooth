@@ -5,7 +5,7 @@
         <div>
           <div class="authbox authboxmobile themdark">
             <div class="center-wrapper">
-              <form @submit.prevent="submitForm" class="auth-container">
+              <form @submit.prevent="submitForm" class="auth-container layer">
                 <div class="header">
                   <h3 class="title-welcome">계정 만들기</h3>
                 </div>

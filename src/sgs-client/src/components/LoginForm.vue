@@ -5,7 +5,7 @@
         <div>
           <div class="authbox authboxmobile themdark">
             <div class="center-wrapper">
-              <form @submit.prevent="submitForm" class="auth-container">
+              <form @submit.prevent="submitForm" class="auth-container layer">
                 <div class="header">
                   <h3 class="title-welcome">돌아오신 걸 환영해요!</h3>
                   <div class="description">다시 만나다니 너무 반가워요!</div>
@@ -179,7 +179,7 @@ export default {
   text-align: center;
 }
 
-.auth-container {
+.layer {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -188,7 +188,13 @@ export default {
   -ms-flex-direction: column;
   flex-direction: column;
   -webkit-box-flex: 1;
-  -ms-flex-positive: 1;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
+}
+.auth-container {
   flex-grow: 1;
   -webkit-box-align: start;
   -ms-flex-align: start;

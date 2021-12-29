@@ -1,9 +1,17 @@
 <template>
-  <div>mypage</div>
+  <div class="wrapper">
+    <div class="layer">
+      <navigation-bar></navigation-bar>
+    </div>
+  </div>
 </template>
 
 <script>
-export default {};
+import NavigationBar from "../components/NavigationBar.vue";
+
+export default {
+  components: { NavigationBar },
+};
 </script>
 
 <style>
