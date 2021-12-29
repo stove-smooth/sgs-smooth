@@ -28,9 +28,11 @@
 		C1D47EFB27795E1000DBA3CA /* SignIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EFA27795E1000DBA3CA /* SignIn.swift */; };
 		C1D47EFD27795E2400DBA3CA /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EFC27795E2300DBA3CA /* UserInfo.swift */; };
 		C1D47EFF27795E3400DBA3CA /* Signup.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EFE27795E3400DBA3CA /* Signup.swift */; };
-		C1D47F0227795ECB00DBA3CA /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F0127795ECB00DBA3CA /* HomeView.swift */; };
 		C1D47F0427795ED100DBA3CA /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F0327795ED100DBA3CA /* HomeViewController.swift */; };
-		C1D47F0627795EFC00DBA3CA /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F0527795EFC00DBA3CA /* HomeViewModel.swift */; };
+		C1D47F0E2779D66300DBA3CA /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F0D2779D66300DBA3CA /* MenuViewController.swift */; };
+		C1D47F112779D6FD00DBA3CA /* ContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F102779D6FD00DBA3CA /* ContainerViewController.swift */; };
+		C1D47F13277A0BCE00DBA3CA /* ServerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F12277A0BCE00DBA3CA /* ServerViewController.swift */; };
+		C1D47F15277ACD2800DBA3CA /* RoomServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F14277ACD2800DBA3CA /* RoomServer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,9 +61,11 @@
 		C1D47EFA27795E1000DBA3CA /* SignIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignIn.swift; sourceTree = "<group>"; };
 		C1D47EFC27795E2300DBA3CA /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		C1D47EFE27795E3400DBA3CA /* Signup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Signup.swift; sourceTree = "<group>"; };
-		C1D47F0127795ECB00DBA3CA /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		C1D47F0327795ED100DBA3CA /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
-		C1D47F0527795EFC00DBA3CA /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		C1D47F0D2779D66300DBA3CA /* MenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
+		C1D47F102779D6FD00DBA3CA /* ContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerViewController.swift; sourceTree = "<group>"; };
+		C1D47F12277A0BCE00DBA3CA /* ServerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerViewController.swift; sourceTree = "<group>"; };
+		C1D47F14277ACD2800DBA3CA /* RoomServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomServer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -183,6 +187,7 @@
 				C1D47EFA27795E1000DBA3CA /* SignIn.swift */,
 				C1D47EFE27795E3400DBA3CA /* Signup.swift */,
 				C1D47EFC27795E2300DBA3CA /* UserInfo.swift */,
+				C1D47F14277ACD2800DBA3CA /* RoomServer.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -190,11 +195,20 @@
 		C1D47F0727795F1600DBA3CA /* Home */ = {
 			isa = PBXGroup;
 			children = (
-				C1D47F0127795ECB00DBA3CA /* HomeView.swift */,
-				C1D47F0527795EFC00DBA3CA /* HomeViewModel.swift */,
 				C1D47F0327795ED100DBA3CA /* HomeViewController.swift */,
+				C1D47F0F2779D66700DBA3CA /* Mene */,
 			);
 			path = Home;
+			sourceTree = "<group>";
+		};
+		C1D47F0F2779D66700DBA3CA /* Mene */ = {
+			isa = PBXGroup;
+			children = (
+				C1D47F0D2779D66300DBA3CA /* MenuViewController.swift */,
+				C1D47F102779D6FD00DBA3CA /* ContainerViewController.swift */,
+				C1D47F12277A0BCE00DBA3CA /* ServerViewController.swift */,
+			);
+			path = Mene;
 			sourceTree = "<group>";
 		};
 		CABC661DFF2E909E8846E9B8 /* Pods */ = {
@@ -330,7 +344,9 @@
 				C1D47EE527795C9600DBA3CA /* SignInViewController.swift in Sources */,
 				C1D47ED8277959AA00DBA3CA /* Coordinator.swift in Sources */,
 				C1D47EF527795D7E00DBA3CA /* UserDefaultsUtil.swift in Sources */,
+				C1D47F13277A0BCE00DBA3CA /* ServerViewController.swift in Sources */,
 				C1D47EDA277959BA00DBA3CA /* MainCoordinator.swift in Sources */,
+				C1D47F15277ACD2800DBA3CA /* RoomServer.swift in Sources */,
 				C1D47EDF27795A9200DBA3CA /* SplashView.swift in Sources */,
 				C1D47EFF27795E3400DBA3CA /* Signup.swift in Sources */,
 				C1D47EFD27795E2400DBA3CA /* UserInfo.swift in Sources */,
@@ -341,13 +357,13 @@
 				C1D47EE927795CCB00DBA3CA /* SignInViewModel.swift in Sources */,
 				C1D47EC32779570000DBA3CA /* AppDelegate.swift in Sources */,
 				C1D47EF827795DB800DBA3CA /* UserService.swift in Sources */,
+				C1D47F112779D6FD00DBA3CA /* ContainerViewController.swift in Sources */,
 				C1D47EE727795CAD00DBA3CA /* SignInView.swift in Sources */,
 				C1D47EEE27795D1300DBA3CA /* BaseView.swift in Sources */,
-				C1D47F0627795EFC00DBA3CA /* HomeViewModel.swift in Sources */,
 				C1D47EDD27795A6A00DBA3CA /* SplashViewController.swift in Sources */,
 				C1D47EFB27795E1000DBA3CA /* SignIn.swift in Sources */,
-				C1D47F0227795ECB00DBA3CA /* HomeView.swift in Sources */,
 				C1D47F0427795ED100DBA3CA /* HomeViewController.swift in Sources */,
+				C1D47F0E2779D66300DBA3CA /* MenuViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
