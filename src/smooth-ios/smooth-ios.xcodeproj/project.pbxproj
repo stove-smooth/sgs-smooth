@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		16974B8E8AAAD6495885C814 /* Pods_smooth_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 10B68653C9BB9620E13EFA3B /* Pods_smooth_ios.framework */; };
+		27B19D48277BEA44008D85DE /* Color+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B19D47277BEA44008D85DE /* Color+extension.swift */; };
 		C1D47EC32779570000DBA3CA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EC22779570000DBA3CA /* AppDelegate.swift */; };
 		C1D47ECC2779570200DBA3CA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C1D47ECB2779570200DBA3CA /* Assets.xcassets */; };
 		C1D47ECF2779570200DBA3CA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C1D47ECD2779570200DBA3CA /* LaunchScreen.storyboard */; };
@@ -38,6 +39,7 @@
 /* Begin PBXFileReference section */
 		0DAB8EE42815405404EB2637 /* Pods-smooth-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-smooth-ios.debug.xcconfig"; path = "Target Support Files/Pods-smooth-ios/Pods-smooth-ios.debug.xcconfig"; sourceTree = "<group>"; };
 		10B68653C9BB9620E13EFA3B /* Pods_smooth_ios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_smooth_ios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		27B19D47277BEA44008D85DE /* Color+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+extension.swift"; sourceTree = "<group>"; };
 		5ACB9CED16C539661B31CE3A /* Pods-smooth-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-smooth-ios.release.xcconfig"; path = "Target Support Files/Pods-smooth-ios/Pods-smooth-ios.release.xcconfig"; sourceTree = "<group>"; };
 		C1D47EBF2779570000DBA3CA /* smooth-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "smooth-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C1D47EC22779570000DBA3CA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -80,6 +82,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		27B19D49277BEA49008D85DE /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				C1D47EF227795D6100DBA3CA /* Utils.swift */,
+				C1D47EF427795D7E00DBA3CA /* UserDefaultsUtil.swift */,
+				27B19D47277BEA44008D85DE /* Color+extension.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		C1D47EB62779570000DBA3CA = {
 			isa = PBXGroup;
 			children = (
@@ -107,8 +119,7 @@
 				C1D47EDB277959C700DBA3CA /* Coordinator */,
 				C1D47EF127795D3C00DBA3CA /* Base */,
 				C1D47ED62779597900DBA3CA /* Commons */,
-				C1D47EF227795D6100DBA3CA /* Utils.swift */,
-				C1D47EF427795D7E00DBA3CA /* UserDefaultsUtil.swift */,
+				27B19D49277BEA49008D85DE /* Utils */,
 			);
 			path = "smooth-ios";
 			sourceTree = "<group>";
@@ -342,6 +353,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C1D47EE527795C9600DBA3CA /* SignInViewController.swift in Sources */,
+				27B19D48277BEA44008D85DE /* Color+extension.swift in Sources */,
 				C1D47ED8277959AA00DBA3CA /* Coordinator.swift in Sources */,
 				C1D47EF527795D7E00DBA3CA /* UserDefaultsUtil.swift in Sources */,
 				C1D47F13277A0BCE00DBA3CA /* ServerViewController.swift in Sources */,

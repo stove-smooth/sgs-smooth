@@ -41,7 +41,7 @@ out/
 ## ios
 
 ## User settings
-src/smooth-ios/xcuserdata/
+xcuserdata/
 
 ## compatibility with Xcode 8 and earlier (ignoring not required starting Xcode 9)
 *.xcscmblueprint
@@ -49,6 +49,7 @@ src/smooth-ios/xcuserdata/
 *.xcodeproj/*
 !*.xcodeproj/project.pbxproj
 !*.xcodeproj/xcshareddata/
+*.xcuserstate
 
 ## Obj-C/Swift specific
 *.hmap
@@ -74,3 +75,6 @@ src/smooth-ios/Pods/
 .LSOverride
 ._*
 
+src/smooth-ios/smooth-ios.xcodeproj/project.pbxproj
+*.pbxproj
+src/smooth-ios/smooth-ios.xcodeproj/project.pbxproj
