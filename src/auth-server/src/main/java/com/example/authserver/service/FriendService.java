@@ -5,10 +5,10 @@ import com.example.authserver.configure.exception.CustomExceptionStatus;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
 import com.example.authserver.domain.Account;
 import com.example.authserver.domain.Friend;
-import com.example.authserver.domain.FriendState;
-import com.example.authserver.dto.FriendRequest;
-import com.example.authserver.dto.FriendResponse;
-import com.example.authserver.dto.WaitingResponse;
+import com.example.authserver.domain.tyoe.FriendState;
+import com.example.authserver.dto.request.FriendRequest;
+import com.example.authserver.dto.response.FriendResponse;
+import com.example.authserver.dto.response.WaitingResponse;
 import com.example.authserver.repository.AccountRepository;
 import com.example.authserver.repository.FriendRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +41,9 @@ public class FriendService {
         friendRepository.save(friend);
     }
 
-    public WaitingResponse getFriendRequest(CustomUserDetails customUserDetails) {
-        Account account = customUserDetails.getAccount();
+    @Transactional
+    public WaitingResponse getFriendRequest(Long id) {
+        Account account = accountRepository.findById(id).orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
         List<Friend> requestList = account.getRequestList();
 
@@ -60,5 +61,12 @@ public class FriendService {
 
         return waitingResponse;
 
+    }
+
+    @Transactional
+    public void refuseFriend(Long id) {
+        Friend friend = friendRepository.findById(id)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.FRIEND_NOT_FOUND));
+        friendRepository.delete(friend);
     }
 }

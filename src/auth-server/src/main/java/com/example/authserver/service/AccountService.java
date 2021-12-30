@@ -5,13 +5,15 @@ import com.example.authserver.configure.exception.CustomExceptionStatus;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
 import com.example.authserver.configure.security.jwt.JwtTokenProvider;
 import com.example.authserver.domain.*;
+import com.example.authserver.domain.tyoe.RoleType;
 import com.example.authserver.dto.*;
+import com.example.authserver.dto.request.SignInRequest;
+import com.example.authserver.dto.response.MailResponse;
+import com.example.authserver.dto.response.SignInResponse;
 import com.example.authserver.repository.AccountRepository;
-import com.example.authserver.repository.FriendRepository;
 import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import static com.example.authserver.domain.Status.*;
+import static com.example.authserver.domain.tyoe.Status.*;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -29,7 +31,6 @@ public class AccountService extends BaseTimeEntity {
     private long refreshTime = 14 * 24 * 60 * 60 * 1000L;
 
     private final AccountRepository accountRepository;
-    private final FriendRepository friendRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final EmailService emailService;
@@ -66,6 +67,7 @@ public class AccountService extends BaseTimeEntity {
         return res;
     }
 
+    @Transactional
     public AccountAutoDto getAuthAccount(CustomUserDetails customUserDetails) {
         Account account = customUserDetails.getAccount();
 

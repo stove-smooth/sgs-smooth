@@ -1,5 +1,7 @@
 package com.example.authserver.domain;
 
+import com.example.authserver.domain.tyoe.RoleType;
+import com.example.authserver.domain.tyoe.Status;
 import com.example.authserver.dto.AccountAutoDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +26,7 @@ public class Account {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, length = 64)
+    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false, length = 15)

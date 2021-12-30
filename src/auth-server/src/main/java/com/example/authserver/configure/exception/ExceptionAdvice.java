@@ -17,7 +17,7 @@ public class ExceptionAdvice {
     private final ResponseService responseService;
 
     @ExceptionHandler(CustomException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected CommonResponse customException(CustomException customException) {
         CustomExceptionStatus status = customException.getCustomExceptionStatus();
         return responseService.getExceptionResponse(status);
