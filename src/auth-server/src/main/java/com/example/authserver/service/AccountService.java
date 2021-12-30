@@ -60,8 +60,10 @@ public class AccountService extends BaseTimeEntity {
 
 
         SignInResponse res = SignInResponse.builder()
+                .name(account.getName())
                 .email(account.getEmail())
-                .jwt(jwtTokenProvider.createToken(account.getEmail(),account.getRoleType()))
+                .accessToken(jwtTokenProvider.createToken(account.getEmail(),account.getRoleType()))
+                .refreshToken(refreshToken)
                 .build();
 
         return res;
@@ -118,7 +120,7 @@ public class AccountService extends BaseTimeEntity {
         Account account = accountRepository.findByEmailAndStatus(email, VALID).orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
         SignInResponse res = SignInResponse.builder()
-                .jwt(jwtTokenProvider.createToken(account.getEmail(),account.getRoleType()))
+                .refreshToken(jwtTokenProvider.createToken(account.getEmail(),account.getRoleType()))
                 .build();
 
         return res;

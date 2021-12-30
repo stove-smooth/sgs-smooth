@@ -11,7 +11,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SignInResponse {
 
+    private String name;
+
     private String email;
 
-    private String jwt;
+    private String accessToken;
+
+    private String refreshToken;
 }
