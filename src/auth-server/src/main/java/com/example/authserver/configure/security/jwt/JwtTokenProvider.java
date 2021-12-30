@@ -1,7 +1,7 @@
 package com.example.authserver.configure.security.jwt;
 
 import com.example.authserver.configure.exception.CustomExceptionStatus;
-import com.example.authserver.domain.RoleType;
+import com.example.authserver.domain.tyoe.RoleType;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,9 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Base64;
 import java.util.Date;
 
 @RequiredArgsConstructor
