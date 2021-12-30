@@ -1,7 +1,7 @@
 package com.example.authserver.service;
 
-import com.example.authserver.configure.exception.CustomException;
-import com.example.authserver.configure.exception.CustomExceptionStatus;
+import com.example.authserver.exception.CustomException;
+import com.example.authserver.exception.CustomExceptionStatus;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
 import com.example.authserver.configure.security.jwt.JwtTokenProvider;
 import com.example.authserver.domain.*;
@@ -60,9 +60,11 @@ public class AccountService extends BaseTimeEntity {
 
 
         SignInResponse res = SignInResponse.builder()
+                .id(account.getId())
                 .name(account.getName())
+                .code(account.getCode())
                 .email(account.getEmail())
-                .accessToken(jwtTokenProvider.createToken(account.getEmail(),account.getRoleType()))
+                .accessToken(jwtTokenProvider.createToken(account.getEmail(),account.getRoleType(),account.getId()))
                 .refreshToken(refreshToken)
                 .build();
 
@@ -120,7 +122,7 @@ public class AccountService extends BaseTimeEntity {
         Account account = accountRepository.findByEmailAndStatus(email, VALID).orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
         SignInResponse res = SignInResponse.builder()
-                .refreshToken(jwtTokenProvider.createToken(account.getEmail(),account.getRoleType()))
+                .refreshToken(jwtTokenProvider.createToken(account.getEmail(),account.getRoleType(),account.getId()))
                 .build();
 
         return res;

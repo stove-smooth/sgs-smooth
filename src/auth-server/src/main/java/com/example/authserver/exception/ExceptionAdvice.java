@@ -1,7 +1,7 @@
-package com.example.authserver.configure.exception;
+package com.example.authserver.exception;
 
-import com.example.authserver.configure.response.CommonResponse;
-import com.example.authserver.configure.response.ResponseService;
+import com.example.authserver.dto.response.CommonResponse;
+import com.example.authserver.service.ResponseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

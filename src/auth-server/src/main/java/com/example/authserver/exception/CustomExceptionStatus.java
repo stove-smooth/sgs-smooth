@@ -1,4 +1,4 @@
-package com.example.authserver.configure.exception;
+package com.example.authserver.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

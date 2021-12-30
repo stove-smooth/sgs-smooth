@@ -11,7 +11,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SignInResponse {
 
+    private Long id;
+
     private String name;
+
+    private String code;
 
     private String email;
 

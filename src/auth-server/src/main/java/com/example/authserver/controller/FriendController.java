@@ -1,8 +1,8 @@
 package com.example.authserver.controller;
 
-import com.example.authserver.configure.response.CommonResponse;
-import com.example.authserver.configure.response.DataResponse;
-import com.example.authserver.configure.response.ResponseService;
+import com.example.authserver.dto.response.CommonResponse;
+import com.example.authserver.dto.response.DataResponse;
+import com.example.authserver.service.ResponseService;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
 import com.example.authserver.dto.request.FriendRequest;
 import com.example.authserver.dto.response.WaitingResponse;

@@ -1,4 +1,4 @@
-package com.example.authserver.configure.exception;
+package com.example.authserver.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
