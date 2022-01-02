@@ -6,11 +6,11 @@ import com.example.authserver.configure.response.CommonResponse;
 import com.example.authserver.configure.response.DataResponse;
 import com.example.authserver.configure.response.ResponseService;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
-import com.example.authserver.domain.RoleType;
-import com.example.authserver.dto.AccountAutoDto;
-import com.example.authserver.dto.MailResponse;
-import com.example.authserver.dto.SignInRequest;
-import com.example.authserver.dto.SignInResponse;
+import com.example.authserver.domain.tyoe.RoleType;
+import com.example.authserver.dto.*;
+import com.example.authserver.dto.request.SignInRequest;
+import com.example.authserver.dto.response.MailResponse;
+import com.example.authserver.dto.response.SignInResponse;
 import com.example.authserver.service.AccountService;
 import com.example.authserver.util.ValidationExceptionProvider;
 import lombok.RequiredArgsConstructor;
@@ -73,7 +73,7 @@ public class AccountController {
     }
 
     @PostMapping("/refresh")
-    public DataResponse<SignInResponse> refreshToken(@RequestHeader("X-AUTH-TOKEN") String token,
+    public DataResponse<SignInResponse> refreshToken(@RequestHeader("AUTHORIZATION") String token,
                                                      @RequestHeader("REFRESH-TOKEN") String refreshToken) {
         return responseService.getDataResponse(accountService.checkRefreshToken(token,refreshToken));
     }

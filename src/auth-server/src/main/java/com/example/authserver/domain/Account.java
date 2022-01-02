@@ -1,5 +1,7 @@
 package com.example.authserver.domain;
 
+import com.example.authserver.domain.tyoe.RoleType;
+import com.example.authserver.domain.tyoe.Status;
 import com.example.authserver.dto.AccountAutoDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -16,6 +20,7 @@ import javax.persistence.*;
 public class Account {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "account_id")
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -24,8 +29,11 @@ public class Account {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 15)
     private String name;
+
+    @Column(nullable = false, length = 4)
+    private String code;
 
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
@@ -35,11 +43,25 @@ public class Account {
 
     private String profileImage;
 
+    @OneToMany(mappedBy = "receiver",cascade = CascadeType.ALL)
+    private List<Friend> friendList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sender",cascade = CascadeType.ALL)
+    private List<Friend> requestList = new ArrayList<>();
+
+
     public static Account createAccount(AccountAutoDto dto) {
+        StringBuilder randomCode = new StringBuilder();
+        for (int i =1; i<=4;i++) {
+            int n = (int) (Math.random() * 10);
+            randomCode.append(n);
+        }
+
         return Account.builder()
                 .email(dto.getEmail())
                 .password(dto.getPassword())
                 .name(dto.getName())
+                .code(String.valueOf(randomCode))
                 .status(Status.VALID)
                 .roleType(RoleType.ROLE_USER)
                 .build();
