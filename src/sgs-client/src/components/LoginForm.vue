@@ -106,14 +106,9 @@ export default {
           email: this.id,
           password: this.pwd,
         };
-        const result = await this.$store.dispatch("LOGIN", userData);
-        if (result != 0) {
-          this.$router.push("/channels/@me");
-        } else {
-          this.logMessage = "이메일 혹은 비밀번호를 다시 확인해주세요.";
-        }
+        await this.$store.dispatch("LOGIN", userData);
+        this.$router.push("/channels/@me");
       } catch (err) {
-        console.log(err, "로그인에 실패하셨습니다.");
         this.logMessage = "로그인에 실패하셨습니다.";
       }
     },
@@ -228,15 +223,15 @@ export default {
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
+  overflow: hidden;
   -webkit-box-flex: 1;
   -ms-flex: 1 1 auto;
   flex: 1 1 auto;
-  overflow: hidden;
-  min-width: 0;
-  min-height: 0;
+  flex-grow: 1;
 }
 .auth-container {
-  flex-grow: 1;
+  min-width: 0;
+  min-height: 0;
   -webkit-box-align: start;
   -ms-flex-align: start;
   align-items: flex-start;
