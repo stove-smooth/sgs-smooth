@@ -1,50 +1,48 @@
 <template>
-  <div>
-    <nav class="nav-wrapper" aria-label="서버 사이드바.">
-      <ul role="tree" tabindex="0" data-list-id="guildnav" class="tree">
-        <div class="scoll-base">
-          <div class="tutorial-container">
-            <div class="listItem">
-              <div class="selected-wrapper" v-show="true">
-                <span class="selected-item"></span>
-              </div>
-              <div class="listItem-wrapper">
-                <div class="circleIcon-button">
-                  <svg class="discord-logo"></svg>
-                </div>
-              </div>
-            </div>
-          </div>
+  <nav class="nav-wrapper" aria-label="서버 사이드바.">
+    <ul role="tree" tabindex="0" data-list-id="guildnav" class="tree">
+      <div class="scroller scroll-base">
+        <div class="tutorial-container">
           <div class="listItem">
-            <div class="guild-seperator"></div>
-          </div>
-          <div aria-label="서버">
-            <!--서버 개수만큼 만들기.-->
-            <div class="listItem">
-              <div class="selected-wrapper" v-show="false">
-                <span class="selected-item"></span>
-              </div>
-              <div class="listItem-wrapper">
-                <div class="server"></div>
+            <div class="selected-wrapper" v-show="true">
+              <span class="selected-item"></span>
+            </div>
+            <div class="listItem-wrapper">
+              <div class="circleIcon-button">
+                <svg class="discord-logo"></svg>
               </div>
             </div>
-          </div>
-          <div class="tutorial-container">
-            <div class="listItem">
-              <div claass="listItem-wrapper">
-                <div class="circleIcon-button">
-                  <svg class="plus-icon"></svg>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="listItem">
-            <div class="guild-seperator"></div>
           </div>
         </div>
-      </ul>
-    </nav>
-  </div>
+        <div class="listItem">
+          <div class="guild-seperator"></div>
+        </div>
+        <div aria-label="서버">
+          <!--서버 개수만큼 만들기.-->
+          <div class="listItem">
+            <div class="selected-wrapper" v-show="false">
+              <span class="selected-item"></span>
+            </div>
+            <div class="listItem-wrapper">
+              <div class="server"></div>
+            </div>
+          </div>
+        </div>
+        <div class="tutorial-container">
+          <div class="listItem">
+            <div claass="listItem-wrapper">
+              <div class="circleIcon-button">
+                <svg class="plus-icon"></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="listItem">
+          <div class="guild-seperator"></div>
+        </div>
+      </div>
+    </ul>
+  </nav>
 </template>
 
 <script>
@@ -70,13 +68,15 @@ export default {};
   padding: 0;
 }
 
-.scoll-base {
+.scroller {
   /*   overflow: hidden scroll; */
   padding-right: 0px;
   /*user-select: none;*/
   padding: 0px 0px;
   background-color: #202225;
   /* contain: layout size;*/
+}
+.scroll-base {
   position: relative;
   box-sizing: border-box;
   min-height: 0;
@@ -172,8 +172,9 @@ export default {};
   display: flex;
   width: 16px;
   height: 16px;
-  background-image: url("../assets/plus.svg");
+  background-image: url("../assets/channel-plus.svg");
 }
+
 ol,
 ul {
   list-style: none;

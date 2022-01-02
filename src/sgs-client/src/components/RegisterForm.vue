@@ -312,9 +312,6 @@ export default {
   overflow: scroll;
   white-space: pre;
   font-size: 18px;
-  font-family: Whitney, "Apple SD Gothic Neo", NanumBarunGothic, "맑은 고딕",
-    "Malgun Gothic", Gulim, 굴림, Dotum, 돋움, "Helvetica Neue", Helvetica,
-    Arial, sans-serif;
   font-weight: 400;
   font-style: normal;
   letter-spacing: normal;

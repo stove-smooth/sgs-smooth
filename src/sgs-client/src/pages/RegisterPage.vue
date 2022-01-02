@@ -8,8 +8,12 @@
 import RegisterForm from "../components/RegisterForm.vue";
 export default {
   components: { RegisterForm },
+  created() {
+    if (this.$store.getters.isLogin) {
+      this.$router.push("/channels/@me");
+    }
+  },
 };
 </script>
 
-<style>
-</style>
+<style></style>
