@@ -18,9 +18,7 @@
               />
               <template aria-label="status-invisible">
                 <div class="status-ring">
-                  <div class="invisible-fill">
-                    <div class="invisible-fill2"></div>
-                  </div>
+                  <div class="status-offline"></div>
                 </div>
               </template>
             </div>
