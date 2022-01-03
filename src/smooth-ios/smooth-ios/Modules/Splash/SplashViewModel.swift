@@ -12,7 +12,7 @@ class SplashViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     let userDefaults: UserDefaultsUtil
-    let userService: UserServiceProtocol
+    let userRepository: UserRepository
     
     struct Input {
         let viewDidLoad = PublishSubject<Void>()
@@ -25,11 +25,9 @@ class SplashViewModel: BaseViewModel {
     }
     
     init(
-        userDefaults: UserDefaultsUtil,
-        userService: UserServiceProtocol
+        userDefaults: UserDefaultsUtil
     ) {
         self.userDefaults = userDefaults
-        self.userService = userService
         super.init()
         
     }

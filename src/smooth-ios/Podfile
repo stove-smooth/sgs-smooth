@@ -4,9 +4,14 @@
 target 'smooth-ios' do
   use_frameworks!
   pod 'SnapKit'
+  pod 'Then'
+  
   pod 'RxSwift'
   pod 'RxCocoa'
+  
   pod 'Moya'
   pod 'Moya/RxSwift'
-  pod 'Then'
+  pod 'MoyaSugar'
+  
+
 end
