@@ -8,6 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		16974B8E8AAAD6495885C814 /* Pods_smooth_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 10B68653C9BB9620E13EFA3B /* Pods_smooth_ios.framework */; };
+		277CD083277D705700948125 /* APIEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277CD082277D705700948125 /* APIEndpoint.swift */; };
+		277CD085277D714200948125 /* AuthorizationPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277CD084277D714200948125 /* AuthorizationPlugin.swift */; };
+		277CD087277D917A00948125 /* SmoothAPIRequestParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277CD086277D917A00948125 /* SmoothAPIRequestParameters.swift */; };
+		277CD089277D920E00948125 /* SignInResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277CD088277D920E00948125 /* SignInResponse.swift */; };
+		277CD09D277D97FA00948125 /* CoderConfigProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277CD09C277D97FA00948125 /* CoderConfigProtocol.swift */; };
+		277CD09F277D984A00948125 /* SecuredEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277CD09E277D984A00948125 /* SecuredEndpoint.swift */; };
+		277CD0A2277D993600948125 /* SmoothBackendAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277CD0A1277D993600948125 /* SmoothBackendAPI.swift */; };
+		277CD0A4277D9A4D00948125 /* SmoothBackendAPIEndpointProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277CD0A3277D9A4D00948125 /* SmoothBackendAPIEndpointProtocol.swift */; };
+		277CD0A6277D9ADB00948125 /* SmoothBackendAPIExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277CD0A5277D9ADB00948125 /* SmoothBackendAPIExtension.swift */; };
 		27B19D48277BEA44008D85DE /* Color+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B19D47277BEA44008D85DE /* Color+extension.swift */; };
 		C1D47EC32779570000DBA3CA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EC22779570000DBA3CA /* AppDelegate.swift */; };
 		C1D47ECC2779570200DBA3CA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C1D47ECB2779570200DBA3CA /* Assets.xcassets */; };
@@ -39,6 +48,15 @@
 /* Begin PBXFileReference section */
 		0DAB8EE42815405404EB2637 /* Pods-smooth-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-smooth-ios.debug.xcconfig"; path = "Target Support Files/Pods-smooth-ios/Pods-smooth-ios.debug.xcconfig"; sourceTree = "<group>"; };
 		10B68653C9BB9620E13EFA3B /* Pods_smooth_ios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_smooth_ios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		277CD082277D705700948125 /* APIEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIEndpoint.swift; sourceTree = "<group>"; };
+		277CD084277D714200948125 /* AuthorizationPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationPlugin.swift; sourceTree = "<group>"; };
+		277CD086277D917A00948125 /* SmoothAPIRequestParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmoothAPIRequestParameters.swift; sourceTree = "<group>"; };
+		277CD088277D920E00948125 /* SignInResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInResponse.swift; sourceTree = "<group>"; };
+		277CD09C277D97FA00948125 /* CoderConfigProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoderConfigProtocol.swift; sourceTree = "<group>"; };
+		277CD09E277D984A00948125 /* SecuredEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecuredEndpoint.swift; sourceTree = "<group>"; };
+		277CD0A1277D993600948125 /* SmoothBackendAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmoothBackendAPI.swift; sourceTree = "<group>"; };
+		277CD0A3277D9A4D00948125 /* SmoothBackendAPIEndpointProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmoothBackendAPIEndpointProtocol.swift; sourceTree = "<group>"; };
+		277CD0A5277D9ADB00948125 /* SmoothBackendAPIExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmoothBackendAPIExtension.swift; sourceTree = "<group>"; };
 		27B19D47277BEA44008D85DE /* Color+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+extension.swift"; sourceTree = "<group>"; };
 		5ACB9CED16C539661B31CE3A /* Pods-smooth-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-smooth-ios.release.xcconfig"; path = "Target Support Files/Pods-smooth-ios/Pods-smooth-ios.release.xcconfig"; sourceTree = "<group>"; };
 		C1D47EBF2779570000DBA3CA /* smooth-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "smooth-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -82,12 +100,36 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		277CD09B277D976100948125 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				277CD0A0277D992100948125 /* BackendAPI */,
+				277CD082277D705700948125 /* APIEndpoint.swift */,
+				277CD084277D714200948125 /* AuthorizationPlugin.swift */,
+				277CD09C277D97FA00948125 /* CoderConfigProtocol.swift */,
+				277CD09E277D984A00948125 /* SecuredEndpoint.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		277CD0A0277D992100948125 /* BackendAPI */ = {
+			isa = PBXGroup;
+			children = (
+				277CD0A1277D993600948125 /* SmoothBackendAPI.swift */,
+				277CD0A3277D9A4D00948125 /* SmoothBackendAPIEndpointProtocol.swift */,
+				277CD0A5277D9ADB00948125 /* SmoothBackendAPIExtension.swift */,
+			);
+			path = BackendAPI;
+			sourceTree = "<group>";
+		};
 		27B19D49277BEA49008D85DE /* Utils */ = {
 			isa = PBXGroup;
 			children = (
 				C1D47EF227795D6100DBA3CA /* Utils.swift */,
 				C1D47EF427795D7E00DBA3CA /* UserDefaultsUtil.swift */,
 				27B19D47277BEA44008D85DE /* Color+extension.swift */,
+				277CD086277D917A00948125 /* SmoothAPIRequestParameters.swift */,
+				277CD088277D920E00948125 /* SignInResponse.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -119,6 +161,7 @@
 				C1D47EDB277959C700DBA3CA /* Coordinator */,
 				C1D47EF127795D3C00DBA3CA /* Base */,
 				C1D47ED62779597900DBA3CA /* Commons */,
+				277CD09B277D976100948125 /* Network */,
 				27B19D49277BEA49008D85DE /* Utils */,
 			);
 			path = "smooth-ios";
@@ -357,22 +400,31 @@
 				C1D47ED8277959AA00DBA3CA /* Coordinator.swift in Sources */,
 				C1D47EF527795D7E00DBA3CA /* UserDefaultsUtil.swift in Sources */,
 				C1D47F13277A0BCE00DBA3CA /* ServerViewController.swift in Sources */,
+				277CD0A6277D9ADB00948125 /* SmoothBackendAPIExtension.swift in Sources */,
 				C1D47EDA277959BA00DBA3CA /* MainCoordinator.swift in Sources */,
 				C1D47F15277ACD2800DBA3CA /* RoomServer.swift in Sources */,
 				C1D47EDF27795A9200DBA3CA /* SplashView.swift in Sources */,
 				C1D47EFF27795E3400DBA3CA /* Signup.swift in Sources */,
 				C1D47EFD27795E2400DBA3CA /* UserInfo.swift in Sources */,
+				277CD089277D920E00948125 /* SignInResponse.swift in Sources */,
 				C1D47EE127795AA800DBA3CA /* SplashViewModel.swift in Sources */,
+				277CD0A2277D993600948125 /* SmoothBackendAPI.swift in Sources */,
+				277CD09D277D97FA00948125 /* CoderConfigProtocol.swift in Sources */,
 				C1D47EF327795D6100DBA3CA /* Utils.swift in Sources */,
 				C1D47EF027795D1E00DBA3CA /* BaseViewModel.swift in Sources */,
 				C1D47EEC27795D0900DBA3CA /* BaseViewController.swift in Sources */,
+				277CD083277D705700948125 /* APIEndpoint.swift in Sources */,
 				C1D47EE927795CCB00DBA3CA /* SignInViewModel.swift in Sources */,
+				277CD085277D714200948125 /* AuthorizationPlugin.swift in Sources */,
+				277CD0A4277D9A4D00948125 /* SmoothBackendAPIEndpointProtocol.swift in Sources */,
 				C1D47EC32779570000DBA3CA /* AppDelegate.swift in Sources */,
 				C1D47EF827795DB800DBA3CA /* UserService.swift in Sources */,
 				C1D47F112779D6FD00DBA3CA /* ContainerViewController.swift in Sources */,
 				C1D47EE727795CAD00DBA3CA /* SignInView.swift in Sources */,
+				277CD087277D917A00948125 /* SmoothAPIRequestParameters.swift in Sources */,
 				C1D47EEE27795D1300DBA3CA /* BaseView.swift in Sources */,
 				C1D47EDD27795A6A00DBA3CA /* SplashViewController.swift in Sources */,
+				277CD09F277D984A00948125 /* SecuredEndpoint.swift in Sources */,
 				C1D47EFB27795E1000DBA3CA /* SignIn.swift in Sources */,
 				C1D47F0427795ED100DBA3CA /* HomeViewController.swift in Sources */,
 				C1D47F0E2779D66300DBA3CA /* MenuViewController.swift in Sources */,

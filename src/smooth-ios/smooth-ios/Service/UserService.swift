@@ -9,13 +9,13 @@ import Alamofire
 import RxSwift
 
 protocol UserServiceProtocol{
-    func signIn(request: SignInRequest) -> Observable<SignInResponse>
-    func signup(request: SignupRequest) -> Observable<SignInResponse>
+    func signIn(request: SignInRequest) -> Observable<SigninResponse>
+    func signup(request: SignupRequest) -> Observable<SigninResponse>
     func fetchUserInfo() -> Observable<User>
 }
 
 struct UserSerivce: UserServiceProtocol {
-    func signup(request: SignupRequest) -> Observable<SignInResponse> {
+    func signup(request: SignupRequest) -> Observable<SigninResponse> {
         return Observable.create { obs in
             let url = HTTPUtils.url + "/users/signup"
       
@@ -29,7 +29,7 @@ struct UserSerivce: UserServiceProtocol {
                 switch response.result {
                 case .success(let value):
                     
-                    let json = JsonUtils.toJson(of: SignInResponse.self, object: value)
+                    let json = JsonUtils.toJson(of: SigninResponse.self, object: value)
                     
                     obs.onNext(json!)
                     obs.onCompleted()
@@ -42,7 +42,7 @@ struct UserSerivce: UserServiceProtocol {
         }
     }
     
-    func signIn(request: SignInRequest) -> Observable<SignInResponse> {
+    func signIn(request: SignInRequest) -> Observable<SigninResponse> {
         return Observable.create { obs -> Disposable in
             let url = HTTPUtils.url + "/users/login"
             
@@ -56,7 +56,7 @@ struct UserSerivce: UserServiceProtocol {
                 switch response.result {
                 case .success(let value):
                     
-                    guard let json = JsonUtils.toJson(of: SignInResponse.self, object: value) else {
+                    guard let json = JsonUtils.toJson(of: SigninResponse.self, object: value) else {
                         return
                     }
                     

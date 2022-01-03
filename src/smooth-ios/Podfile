@@ -6,6 +6,7 @@ target 'smooth-ios' do
   pod 'SnapKit'
   pod 'RxSwift'
   pod 'RxCocoa'
-  pod 'Alamofire'
+  pod 'Moya'
+  pod 'Moya/RxSwift'
   pod 'Then'
 end
