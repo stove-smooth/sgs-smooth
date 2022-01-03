@@ -4,6 +4,7 @@ import LoginPage from "../pages/LoginPage.vue";
 import RegisterPage from "../pages/RegisterPage.vue";
 import MyPage from "../pages/Mypage.vue";
 import NotFoundPage from "../pages/NotFoundPage.vue";
+import UserSettingPage from "../pages/UserSettingPage.vue";
 import store from "../store/index";
 Vue.use(VueRouter);
 
@@ -34,6 +35,12 @@ export const router = new VueRouter({
       path: "/channels/@me",
       name: "MyPage",
       component: MyPage,
+      meta: { auth: true },
+    },
+    {
+      path: "/settings",
+      name: "UserSettingPage",
+      component: UserSettingPage,
       meta: { auth: true },
     },
     {

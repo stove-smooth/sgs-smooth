@@ -40,7 +40,7 @@
         <div class="mydevice-controller">
           <button
             class="device-controll-button"
-            aria-label="음소거"
+            aria-label="마이크"
             role="switch"
             type="button"
           >
@@ -50,7 +50,7 @@
         <div class="mydevice-controller">
           <button
             class="device-controll-button"
-            aria-label="음소거"
+            aria-label="헤드셋"
             role="switch"
             type="button"
           >
@@ -60,9 +60,10 @@
         <div class="mydevice-controller">
           <button
             class="device-controll-button"
-            aria-label="음소거"
+            aria-label="사용자 설정"
             role="switch"
             type="button"
+            @click="openSettings"
           >
             <svg class="settings"></svg>
           </button>
@@ -73,7 +74,13 @@
 </template>
 
 <script>
-export default {};
+export default {
+  methods: {
+    openSettings() {
+      this.$router.push("/settings");
+    },
+  },
+};
 </script>
 
 <style>
