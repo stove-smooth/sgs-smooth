@@ -31,7 +31,6 @@
 		C1D47EF027795D1E00DBA3CA /* BaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EEF27795D1E00DBA3CA /* BaseViewModel.swift */; };
 		C1D47EF327795D6100DBA3CA /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EF227795D6100DBA3CA /* Utils.swift */; };
 		C1D47EF527795D7E00DBA3CA /* UserDefaultsUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EF427795D7E00DBA3CA /* UserDefaultsUtil.swift */; };
-		C1D47EF827795DB800DBA3CA /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EF727795DB800DBA3CA /* UserService.swift */; };
 		C1D47EFB27795E1000DBA3CA /* SignIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EFA27795E1000DBA3CA /* SignIn.swift */; };
 		C1D47EFD27795E2400DBA3CA /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EFC27795E2300DBA3CA /* UserInfo.swift */; };
 		C1D47EFF27795E3400DBA3CA /* Signup.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EFE27795E3400DBA3CA /* Signup.swift */; };
@@ -40,6 +39,7 @@
 		C1D47F112779D6FD00DBA3CA /* ContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F102779D6FD00DBA3CA /* ContainerViewController.swift */; };
 		C1D47F13277A0BCE00DBA3CA /* ServerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F12277A0BCE00DBA3CA /* ServerViewController.swift */; };
 		C1D47F15277ACD2800DBA3CA /* RoomServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F14277ACD2800DBA3CA /* RoomServer.swift */; };
+		C1D47F2427833DB800DBA3CA /* BaseResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F2327833DB800DBA3CA /* BaseResponse.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,7 +71,6 @@
 		C1D47EEF27795D1E00DBA3CA /* BaseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewModel.swift; sourceTree = "<group>"; };
 		C1D47EF227795D6100DBA3CA /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		C1D47EF427795D7E00DBA3CA /* UserDefaultsUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsUtil.swift; sourceTree = "<group>"; };
-		C1D47EF727795DB800DBA3CA /* UserService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
 		C1D47EFA27795E1000DBA3CA /* SignIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignIn.swift; sourceTree = "<group>"; };
 		C1D47EFC27795E2300DBA3CA /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		C1D47EFE27795E3400DBA3CA /* Signup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Signup.swift; sourceTree = "<group>"; };
@@ -80,6 +79,7 @@
 		C1D47F102779D6FD00DBA3CA /* ContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerViewController.swift; sourceTree = "<group>"; };
 		C1D47F12277A0BCE00DBA3CA /* ServerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerViewController.swift; sourceTree = "<group>"; };
 		C1D47F14277ACD2800DBA3CA /* RoomServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomServer.swift; sourceTree = "<group>"; };
+		C1D47F2327833DB800DBA3CA /* BaseResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseResponse.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -145,13 +145,12 @@
 			isa = PBXGroup;
 			children = (
 				C1D47EE327795AB900DBA3CA /* Modules */,
-				C1D47EF927795DDD00DBA3CA /* Service */,
+				272189082782EB8700ABEF60 /* Repository */,
 				C1D47F0027795E3F00DBA3CA /* Model */,
 				C1D47EDB277959C700DBA3CA /* Coordinator */,
 				C1D47EF127795D3C00DBA3CA /* Base */,
 				C1D47ED62779597900DBA3CA /* Commons */,
 				27B19D49277BEA49008D85DE /* Utils */,
-				272189082782EB8700ABEF60 /* Repository */,
 			);
 			path = "smooth-ios";
 			sourceTree = "<group>";
@@ -218,14 +217,6 @@
 			path = Base;
 			sourceTree = "<group>";
 		};
-		C1D47EF927795DDD00DBA3CA /* Service */ = {
-			isa = PBXGroup;
-			children = (
-				C1D47EF727795DB800DBA3CA /* UserService.swift */,
-			);
-			path = Service;
-			sourceTree = "<group>";
-		};
 		C1D47F0027795E3F00DBA3CA /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -233,6 +224,7 @@
 				C1D47EFE27795E3400DBA3CA /* Signup.swift */,
 				C1D47EFC27795E2300DBA3CA /* UserInfo.swift */,
 				C1D47F14277ACD2800DBA3CA /* RoomServer.swift */,
+				C1D47F2327833DB800DBA3CA /* BaseResponse.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -404,8 +396,8 @@
 				C1D47EEC27795D0900DBA3CA /* BaseViewController.swift in Sources */,
 				C1D47EE927795CCB00DBA3CA /* SignInViewModel.swift in Sources */,
 				C1D47EC32779570000DBA3CA /* AppDelegate.swift in Sources */,
-				C1D47EF827795DB800DBA3CA /* UserService.swift in Sources */,
 				272189012782E99500ABEF60 /* BaseRepository.swift in Sources */,
+				C1D47F2427833DB800DBA3CA /* BaseResponse.swift in Sources */,
 				C1D47F112779D6FD00DBA3CA /* ContainerViewController.swift in Sources */,
 				C1D47EE727795CAD00DBA3CA /* SignInView.swift in Sources */,
 				277CD087277D917A00948125 /* SmoothAPIRequestParameters.swift in Sources */,
