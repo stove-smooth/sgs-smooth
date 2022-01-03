@@ -1,5 +1,6 @@
 package com.example.authserver.domain;
 
+import com.example.authserver.domain.tyoe.FriendState;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

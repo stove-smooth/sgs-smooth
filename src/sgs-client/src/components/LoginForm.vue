@@ -5,7 +5,7 @@
         <div>
           <div class="authbox authboxmobile themdark">
             <div class="center-wrapper">
-              <form @submit.prevent="submitForm" class="auth-container">
+              <form @submit.prevent="submitForm" class="auth-container layer">
                 <div class="header">
                   <h3 class="title-welcome">돌아오신 걸 환영해요!</h3>
                   <div class="description">다시 만나다니 너무 반가워요!</div>
@@ -25,12 +25,15 @@
                     />
                   </div>
                 </div>
+                <p class="warning" v-show="!isIdValid && id">
+                  이메일 주소에 @를 포함해주세요.
+                </p>
                 <div class="content">
                   <h5 class="label-id">비밀번호</h5>
                   <div class="input-wrapper">
                     <input
                       class="input-default"
-                      type="text"
+                      type="password"
                       name="pwd"
                       placeholder
                       aria-label="비밀번호"
@@ -41,18 +44,28 @@
                     />
                   </div>
                 </div>
+                <p class="warning" v-show="pwd && !ispwdValid">
+                  8자 이상 15자 이하 비밀번호를 입력해주세요.
+                </p>
                 <button class="find-pwd">
                   <div class="highlight-text contents">
                     비밀번호를 잊으셨나요?
                   </div>
                 </button>
-                <button class="large-button" type="submit">
+                <button
+                  class="large-button"
+                  type="submit"
+                  :disabled="!ispwdValid || !isIdValid"
+                >
                   <div class="contents">로그인</div>
                 </button>
+                <p>{{ logMessage }}</p>
                 <div class="need-account-button">
                   <span class="need-account"> 계정이 필요한가요? </span>
                   <button class="small-register-link">
-                    <div class="highlight-text contents">가입하기</div>
+                    <router-link to="/register" class="highlight-text contents"
+                      >가입하기</router-link
+                    >
                   </button>
                 </div>
               </form>
@@ -65,16 +78,39 @@
 </template>
 
 <script>
+import { validateEmail } from "../utils/validation.js";
 export default {
   data() {
     return {
       id: "",
       pwd: "",
+      logMessage: "",
     };
+  },
+  computed: {
+    ispwdValid() {
+      if (this.pwd.length >= 8 && this.pwd.length <= 15) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    isIdValid() {
+      return validateEmail(this.id);
+    },
   },
   methods: {
     async submitForm() {
-      console.log("submit");
+      try {
+        const userData = {
+          email: this.id,
+          password: this.pwd,
+        };
+        await this.$store.dispatch("LOGIN", userData);
+        this.$router.push("/channels/@me");
+      } catch (err) {
+        this.logMessage = "로그인에 실패하셨습니다.";
+      }
     },
   },
 };
@@ -179,7 +215,7 @@ export default {
   text-align: center;
 }
 
-.auth-container {
+.layer {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -187,9 +223,15 @@ export default {
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
+  overflow: hidden;
   -webkit-box-flex: 1;
-  -ms-flex-positive: 1;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
   flex-grow: 1;
+}
+.auth-container {
+  min-width: 0;
+  min-height: 0;
   -webkit-box-align: start;
   -ms-flex-align: start;
   align-items: flex-start;
@@ -303,7 +345,13 @@ export default {
   padding: 2px 16px;
   background-color: #5865f2;
   margin-top: 20px;
+  cursor: pointer;
 }
+.large-button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
 .need-account-button {
   margin-top: 4px;
   font-weight: 500;

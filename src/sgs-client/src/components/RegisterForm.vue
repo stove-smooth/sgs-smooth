@@ -5,7 +5,7 @@
         <div>
           <div class="authbox authboxmobile themdark">
             <div class="center-wrapper">
-              <form @submit.prevent="submitForm" class="auth-container">
+              <form @submit.prevent="submitForm" class="auth-container layer">
                 <div class="header">
                   <h3 class="title-welcome">계정 만들기</h3>
                 </div>
@@ -24,6 +24,9 @@
                     />
                   </div>
                 </div>
+                <p class="warning" v-show="!isIdValid && id">
+                  이메일 주소에 @를 포함해주세요.
+                </p>
                 <div class="content">
                   <h5 class="label-id">사용자명</h5>
                   <div class="input-wrapper">
@@ -39,12 +42,15 @@
                     />
                   </div>
                 </div>
+                <p class="warning" v-show="!isnameValid && username">
+                  사용자명은 2글자 이상 20자 이상으로 해주세요.
+                </p>
                 <div class="content">
                   <h5 class="label-id">비밀번호</h5>
                   <div class="input-wrapper">
                     <input
                       class="input-default"
-                      type="text"
+                      type="password"
                       name="pwd"
                       placeholder
                       aria-label="비밀번호"
@@ -55,6 +61,9 @@
                     />
                   </div>
                 </div>
+                <p class="warning" v-show="pwd && !ispwdValid">
+                  8자 이상 15자 이하 비밀번호를 입력해주세요.
+                </p>
                 <div class="content">
                   <h5 class="label-id">생년월일</h5>
                   <div class="input-container">
@@ -162,14 +171,22 @@
                     </div>
                   </div>
                 </div>
-                <button class="large-button" type="submit">
+                <button
+                  :disabled="!isnameValid || !ispwdValid || !isIdValid"
+                  class="large-button"
+                  type="submit"
+                >
                   <div class="contents">계속하기</div>
                 </button>
                 <div class="need-account-button">
                   <button class="small-register-link">
-                    <div class="highlight-text contents">
+                    <router-link
+                      to="/login"
+                      div
+                      class="highlight-text contents"
+                    >
                       이미 계정이 있으신가요?
-                    </div>
+                    </router-link>
                   </button>
                 </div>
               </form>
@@ -182,6 +199,8 @@
 </template>
 
 <script>
+import { registerUser } from "../api/index.js";
+import { validateEmail, validateName } from "../utils/validation.js";
 export default {
   data() {
     return {
@@ -194,6 +213,19 @@ export default {
     };
   },
   computed: {
+    isnameValid() {
+      return validateName(this.username);
+    },
+    ispwdValid() {
+      if (this.pwd.length >= 8 && this.pwd.length <= 15) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    isIdValid() {
+      return validateEmail(this.id);
+    },
     yearList() {
       var list = [];
       for (let i = 1920; i <= 2020; i++) list.push(i);
@@ -213,11 +245,18 @@ export default {
   methods: {
     async submitForm() {
       console.log("submit");
+      const userData = {
+        email: this.id,
+        password: this.pwd,
+        name: this.username,
+      };
+      await registerUser(userData);
+      this.$router.push("/channels/@me");
     },
   },
 };
 </script>
-<style scoped>
+<style>
 .input-container {
   width: 100%;
   display: flex;
@@ -273,9 +312,6 @@ export default {
   overflow: scroll;
   white-space: pre;
   font-size: 18px;
-  font-family: Whitney, "Apple SD Gothic Neo", NanumBarunGothic, "맑은 고딕",
-    "Malgun Gothic", Gulim, 굴림, Dotum, 돋움, "Helvetica Neue", Helvetica,
-    Arial, sans-serif;
   font-weight: 400;
   font-style: normal;
   letter-spacing: normal;
@@ -300,5 +336,9 @@ option {
   cursor: pointer;
   opacity: 1;
 }
+.warning {
+  color: #ff4057;
+  margin: 0;
+  font-size: 9px;
+}
 </style>
-

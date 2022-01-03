@@ -1,4 +1,4 @@
-package com.example.authserver.dto;
+package com.example.authserver.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,9 +12,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class WaitingResponse {
+public class FriendResponse {
 
-    List<FriendResponse> toMe = new ArrayList<>();
+    private Long id;
 
-    List<FriendResponse> toFriend = new ArrayList<>();
+    private String name;
+
 }
