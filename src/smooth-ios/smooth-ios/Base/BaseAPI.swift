@@ -15,5 +15,7 @@ extension BaseAPI {
     var method: Moya.Method { .get }
     var sampleData: Data { Data() }
     var task: Task { .requestPlain }
-    var headers: [String : String]? { nil }
+    var headers: [String : String]? {
+        return ["Content-Type": "application/json"]
+    }
 }
