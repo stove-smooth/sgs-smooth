@@ -44,6 +44,21 @@ export default new Vuex.Store({
     setRefreshToken(state, refreshToken) {
       state.refreshtoken = refreshToken;
     },
+    clearEmail(state) {
+      state.email = "";
+    },
+    clearNickname(state) {
+      state.nickname = "";
+    },
+    clearCode(state) {
+      state.code = "";
+    },
+    clearAccessToken(state) {
+      state.accesstoken = "";
+    },
+    clearRefreshToken(state) {
+      state.refreshtoken = "";
+    },
   },
   actions: {
     async LOGIN({ commit }, userData) {

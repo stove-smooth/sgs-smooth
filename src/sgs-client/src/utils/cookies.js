@@ -63,9 +63,10 @@ function getUserCodeToCookie() {
   );
 } */
 
-/* function deleteCookie(value) {
+function deleteCookie(value) {
+  console.log(value, "logout");
   document.cookie = `${value}=; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
-} */
+}
 
 export {
   saveAccessAuthToCookie,
@@ -78,4 +79,5 @@ export {
   getUserEmailToCookie,
   getUserNickNameToCookie,
   getUserCodeToCookie,
+  deleteCookie,
 };

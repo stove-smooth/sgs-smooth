@@ -4,6 +4,7 @@ import LoginPage from "../pages/LoginPage.vue";
 import RegisterPage from "../pages/RegisterPage.vue";
 import MyPage from "../pages/Mypage.vue";
 import NotFoundPage from "../pages/NotFoundPage.vue";
+import UserSettingPage from "../pages/UserSettingPage.vue";
 import store from "../store/index";
 Vue.use(VueRouter);
 
@@ -37,6 +38,12 @@ export const router = new VueRouter({
       meta: { auth: true },
     },
     {
+      path: "/settings",
+      name: "UserSettingPage",
+      component: UserSettingPage,
+      meta: { auth: true },
+    },
+    {
       path: "*",
       component: NotFoundPage,
     },
@@ -44,6 +51,7 @@ export const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  console.log("로그인했는가", store.getters.isLogin);
   if (to.meta.auth && !store.getters.isLogin) {
     alert("인증이 필요합니다.");
     next("/login");
