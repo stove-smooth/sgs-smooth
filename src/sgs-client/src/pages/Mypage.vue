@@ -5,17 +5,22 @@
         <friends-side-bar></friends-side-bar>
         <user-section></user-section>
       </div>
+      <div class="friends-state-container">
+        <friends-state-menu-bar></friends-state-menu-bar>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import FriendsSideBar from "../components/FriendsSideBar.vue";
+import FriendsStateMenuBar from "../components/FriendsStateMenuBar.vue";
 import UserSection from "../components/UserSection.vue";
 export default {
   components: {
     FriendsSideBar,
     UserSection,
+    FriendsStateMenuBar,
   },
 };
 </script>
@@ -68,5 +73,16 @@ export default {
   border-color: #00000000;
   background-color: #00000000;
   border: 2px solid #00000000;
+}
+
+.friends-state-container {
+  background-color: #36393f;
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  /*  -ms-flex-direction: column; */
+  flex-direction: column;
 }
 </style>

@@ -51,6 +51,7 @@ export const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  console.log("로그인했는가", store.getters.isLogin);
   if (to.meta.auth && !store.getters.isLogin) {
     alert("인증이 필요합니다.");
     next("/login");

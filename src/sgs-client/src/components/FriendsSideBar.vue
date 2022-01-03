@@ -17,10 +17,10 @@
             </div>
           </div>
         </div>
-        <h2 class="private-channels-header-container">
+        <h2 class="private-channels-header-container small-title-text">
           <span class="private-channels-header-text">다이렉트 메시지</span>
           <div class="invite-private-channels-button" aria-label="DM생성">
-            <svg class="invite-icon"></svg>
+            <svg class="invite-private-channels-icon"></svg>
           </div>
         </h2>
         <DMListForm></DMListForm>
@@ -164,7 +164,7 @@ export default {
   display: flex;
   -webkit-box-pack: start;
 
-  justify-content: flex-start;
+  justify-content: space-between;
   -webkit-box-align: center;
 
   align-items: center;
@@ -181,12 +181,12 @@ export default {
   overflow: hidden;
 }
 .private-channels-header-container {
-  /* display: -webkit-box;
-    display: -ms-flexbox; */
   display: flex;
   padding: 18px 8px 4px 18px;
   height: 40px;
-  /*   -webkit-box-sizing: border-box; */
+}
+
+.small-title-text {
   box-sizing: border-box;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -201,6 +201,7 @@ export default {
   flex: 1 1 auto;
   color: #8e9297;
 }
+
 .private-channels-header-text {
   -webkit-box-flex: 1;
   /* -ms-flex: 1; */
@@ -225,7 +226,7 @@ export default {
   margin: 0 8px;
   cursor: pointer;
 }
-.invite-icon {
+.invite-private-channels-icon {
   -webkit-box-flex: 0;
   /* -ms-flex: 0; */
   flex: 0;
@@ -272,6 +273,9 @@ export default {
 }
 /**프로필 상태 */
 .status-ring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 12px;
   height: 12px;
   /* Ring */
@@ -283,28 +287,25 @@ export default {
   background: #2f3136;
   transform: rotate(90deg);
 }
-.invisible-fill {
-  /* Fill */
-  position: absolute;
-  left: 16.67%;
-  right: 16.67%;
-  top: 16.67%;
-  bottom: 16.67%;
-  /* Dark Mode/ */
-  background: #747f8d;
-  border-radius: 5.2px;
+
+.status-offline {
+  background-image: url("../assets/status-offline.svg");
+  width: 10px;
+  height: 10px;
 }
-.invisible-fill2 {
-  /* Fill 2 */
-  position: absolute;
-  left: 20.83%;
-  right: 20.83%;
-  top: 20.83%;
-  bottom: 20.83%;
-
-  /* Dark Mode/Gray 1 */
-
-  background: #2f3136;
-  border-radius: 3px;
+.status-online {
+  background-image: url("../assets/status-online.svg");
+  width: 10px;
+  height: 10px;
+}
+.status-dnd {
+  background-image: url("../assets/status-dnd.svg");
+  width: 10px;
+  height: 10px;
+}
+.status-away {
+  background-image: url("../assets/status-away.svg");
+  width: 10x;
+  height: 10px;
 }
 </style>
