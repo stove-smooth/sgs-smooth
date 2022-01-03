@@ -20,19 +20,12 @@ struct SignInRequest: Encodable {
     
 }
 
-struct SigninResponse: Decodable {
+struct SignInResponse: Decodable {
+    let id: Int
+    let name: String
+    let code: String
+    let email: String
+    
     let accessToken: String
     let refreshToken: String
-
-    enum CodingKeys: String, CodingKey {
-        case accessToken = "access_token"
-        case refreshToken = "refresh_token"
-    }
-}
-
-extension SmoothBackend.Responses {
-    struct SignInRespone: Codable {
-        let accessToken: String
-        let refreshToken: String
-    }
 }

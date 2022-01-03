@@ -12,7 +12,6 @@ class SplashViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     let userDefaults: UserDefaultsUtil
-    let userRepository: UserRepository
     
     struct Input {
         let viewDidLoad = PublishSubject<Void>()
@@ -35,20 +34,20 @@ class SplashViewModel: BaseViewModel {
     func hasToken() {
         let token = self.userDefaults.getUserToken()
         
-        if self.hasTokenFromLocal(token: token) {
-            // 토큰 있을 때 - 토큰 서버처리
-            self.userService.fetchUserInfo()
-                .subscribe(onNext: { User in
-                    self.output.goToMain.accept(())
-                }, onError: { Error in
-                    // TODO showErrorAlert
-                    print(Error)
-                })
-                .disposed(by: disposeBag)
-        } else {
-            // 토큰 없을 떄
+//        if self.hasTokenFromLocal(token: token) {
+//            // 토큰 있을 때 - 토큰 서버처리
+//            self.userService.fetchUserInfo()
+//                .subscribe(onNext: { User in
+//                    self.output.goToMain.accept(())
+//                }, onError: { Error in
+//                    // TODO showErrorAlert
+//                    print(Error)
+//                })
+//                .disposed(by: disposeBag)
+//        } else {
+//            // 토큰 없을 떄
             self.output.goToSignIn.accept(())
-        }
+//        }
     }
     
     func hasTokenFromLocal(token: String) -> Bool {
