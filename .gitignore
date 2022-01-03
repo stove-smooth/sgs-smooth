@@ -13,7 +13,6 @@ build/
 .settings
 .springBeans
 .sts4-cache
-bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
@@ -38,3 +37,44 @@ out/
 
 ## spring
 *.yml
+
+## ios
+
+## User settings
+xcuserdata/
+
+## compatibility with Xcode 8 and earlier (ignoring not required starting Xcode 9)
+*.xcscmblueprint
+*.xccheckout
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+*.xcuserstate
+
+## Obj-C/Swift specific
+*.hmap
+
+## App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## Swift Package Manager
+src/smooth-ios/Packages/
+Package.pins
+Package.resolved
+
+## CocoaPods
+src/smooth-ios/Pods/
+*.lock
+
+
+## OSX Temp
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+src/smooth-ios/smooth-ios.xcodeproj/project.pbxproj
+*.pbxproj
+src/smooth-ios/smooth-ios.xcodeproj/project.pbxproj

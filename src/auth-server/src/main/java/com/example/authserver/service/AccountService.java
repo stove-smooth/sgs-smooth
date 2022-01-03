@@ -4,13 +4,12 @@ import com.example.authserver.configure.exception.CustomException;
 import com.example.authserver.configure.exception.CustomExceptionStatus;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
 import com.example.authserver.configure.security.jwt.JwtTokenProvider;
-import com.example.authserver.domain.Account;
-import com.example.authserver.domain.BaseTimeEntity;
-import com.example.authserver.domain.RoleType;
-import com.example.authserver.dto.AccountAutoDto;
-import com.example.authserver.dto.MailResponse;
-import com.example.authserver.dto.SignInRequest;
-import com.example.authserver.dto.SignInResponse;
+import com.example.authserver.domain.*;
+import com.example.authserver.domain.tyoe.RoleType;
+import com.example.authserver.dto.*;
+import com.example.authserver.dto.request.SignInRequest;
+import com.example.authserver.dto.response.MailResponse;
+import com.example.authserver.dto.response.SignInResponse;
 import com.example.authserver.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
@@ -22,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import static com.example.authserver.domain.Status.*;
+import static com.example.authserver.domain.tyoe.Status.*;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -68,6 +67,7 @@ public class AccountService extends BaseTimeEntity {
         return res;
     }
 
+    @Transactional
     public AccountAutoDto getAuthAccount(CustomUserDetails customUserDetails) {
         Account account = customUserDetails.getAccount();
 
