@@ -43,7 +43,7 @@ public class AccountController {
         return responseService.getDataResponse(accountService.signIn(request));
     }
 
-    @GetMapping("/info")
+    @GetMapping("/auth/info")
     public DataResponse<AccountAutoDto> getAuthAccount(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return responseService.getDataResponse(accountService.getAuthAccount(customUserDetails));
     }
@@ -60,7 +60,7 @@ public class AccountController {
         return responseService.getSuccessResponse();
     }
 
-    @PatchMapping("/role")
+    @PatchMapping("/auth/role")
     public CommonResponse updateRole(@RequestParam(value = "email") String email,
                                      @RequestParam(value = "role") String role) {
         RoleType roleType;
@@ -80,9 +80,9 @@ public class AccountController {
         return responseService.getDataResponse(accountService.checkRefreshToken(token,refreshToken));
     }
 
-    @PostMapping("/find-id-list")
-    public Map<Long, AccountInfoResponse> findIdList(@RequestBody List<Long> requestAccountIds) {
-        return accountService.findIdList(requestAccountIds);
+    @PostMapping("/auth/find-id-list")
+    public DataResponse<Map<Long, AccountInfoResponse>> findIdList(@RequestBody List<Long> requestAccountIds) {
+        return responseService.getDataResponse(accountService.findIdList(requestAccountIds));
     }
 
 }
