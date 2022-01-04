@@ -18,6 +18,7 @@ extension UIColor {
     static let yellow = UIColor(hex: "0xf7de52")
     static let white = UIColor(hex: "0xffffff")
     static let streaming = UIColor(hex: "0x593695")
+    static let backgroundDartGrey = UIColor(hex: "0x2c2f33")
     
     static let greyple = UIColor(hex: "0x99aab5")
     static let online = UIColor(hex: "0x51b581")
