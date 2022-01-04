@@ -43,6 +43,7 @@ class SplashViewConroller: BaseViewController {
          print("viewDidLoad 🎉")
          }) */
         
+        // MARK: input
         self.viewModel.input.viewDidLoad
             .subscribe { _ in
                 self.viewModel.hasToken()
@@ -53,16 +54,21 @@ class SplashViewConroller: BaseViewController {
             .bind(to: self.viewModel.input.tapSignInButton)
             .disposed(by: disposeBag)
         
+        self.splashView.signUpButton.rx.tap
+            .bind(to: self.viewModel.input.tapSignUpButton)
+            .disposed(by: disposeBag)
+        
+        // MARK: output
         self.viewModel.output.goToSignIn
             .debug()
             .observe(on: MainScheduler.instance)
             .bind(onNext: self.goToSignIn)
             .disposed(by: disposeBag)
 
-        self.viewModel.output.goToMain
+        self.viewModel.output.goToSignUp
             .debug()
             .observe(on: MainScheduler.instance)
-            .bind(onNext: self.goToMain)
+            .bind(onNext: self.goToSignUp)
             .disposed(by: disposeBag)
     }
     
@@ -76,4 +82,7 @@ class SplashViewConroller: BaseViewController {
         self.coordinator?.goToSigIn()
     }
     
+    func goToSignUp() {
+        self.coordinator?.goToSignUp()
+    }
 }

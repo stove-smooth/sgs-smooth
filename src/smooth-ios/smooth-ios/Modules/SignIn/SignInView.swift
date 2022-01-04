@@ -12,11 +12,13 @@ class SignInView: BaseView {
     
     let titleLabel = UILabel().then {
         $0.text = "돌아오신 것을 환영해요!"
+        $0.textColor = .white
         $0.font = UIFont.systemFont(ofSize: 25, weight: .bold)
     }
     
     let titleDescriptionLabel = UILabel().then {
         $0.text = "다시 만나다니 너무 반가워요!"
+        $0.textColor = .white
         $0.font = UIFont.systemFont(ofSize: 15, weight: .ultraLight)
     }
     

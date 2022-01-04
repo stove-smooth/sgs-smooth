@@ -33,7 +33,7 @@ class SplashView: BaseView {
         $0.textAlignment = .center
         $0.font = UIFont.GintoNord(type: .Medium, size: 15)
         $0.numberOfLines = 0
-        $0.textColor = UIColor(hex: "0xB1B1B1")
+        $0.textColor = UIColor.textDescription
     }
     
     let signUpButton = UIButton().then {

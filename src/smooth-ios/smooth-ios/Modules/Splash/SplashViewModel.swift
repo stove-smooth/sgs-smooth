@@ -15,13 +15,13 @@ class SplashViewModel: BaseViewModel {
     
     struct Input {
         let viewDidLoad = PublishSubject<Void>()
-        // RxViewController
         let tapSignInButton = PublishSubject<Void>()
+        let tapSignUpButton = PublishSubject<Void>()
     }
     
     struct Output {
         let goToSignIn = PublishRelay<Void>()
-        let goToMain = PublishRelay<Void>()
+        let goToSignUp = PublishRelay<Void>()
     }
     
     init(
@@ -29,7 +29,6 @@ class SplashViewModel: BaseViewModel {
     ) {
         self.userDefaults = userDefaults
         super.init()
-        
     }
     
     func hasToken() {
@@ -60,6 +59,13 @@ class SplashViewModel: BaseViewModel {
             .asDriver(onErrorJustReturn: ())
             .drive(onNext: {
                 self.output.goToSignIn.accept(())
+            })
+            .disposed(by: disposeBag)
+        
+        self.input.tapSignUpButton
+            .asDriver(onErrorJustReturn: ())
+            .drive(onNext: {
+                self.output.goToSignUp.accept(())
             })
             .disposed(by: disposeBag)
     }

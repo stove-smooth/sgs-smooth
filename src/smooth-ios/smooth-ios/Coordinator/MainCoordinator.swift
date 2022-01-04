@@ -42,6 +42,13 @@ class MainCoordinator: NSObject, Coordinator {
         navigationController.pushViewController(vc, animated: true)
     }
     
+    func goToSignUp() {
+        let vc = SignUpViewController.instance()
+        vc.coordinator = self
+        navigationController.removeFromParent()
+        navigationController.pushViewController(vc, animated: true)
+    }
+    
     func childDidFinish(_ child: Coordinator?) {
         for (index, coordinator) in childCoordinators.enumerated() {
             if coordinator === child {

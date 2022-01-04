@@ -43,6 +43,11 @@
 		C1D47F31278433CF00DBA3CA /* ABCGintoNord-Black-Trial.otf in Resources */ = {isa = PBXBuildFile; fileRef = C1D47F30278433CF00DBA3CA /* ABCGintoNord-Black-Trial.otf */; };
 		C1D47F332784351800DBA3CA /* ABCGintoNord-Medium-Trial.otf in Resources */ = {isa = PBXBuildFile; fileRef = C1D47F322784351800DBA3CA /* ABCGintoNord-Medium-Trial.otf */; };
 		C1D47F352784488200DBA3CA /* CustomComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F342784488200DBA3CA /* CustomComponent.swift */; };
+		C1D47F382784749200DBA3CA /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F372784749200DBA3CA /* SignUpView.swift */; };
+		C1D47F3A2784749C00DBA3CA /* SignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F392784749C00DBA3CA /* SignUpViewModel.swift */; };
+		C1D47F3C278474AA00DBA3CA /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F3B278474AA00DBA3CA /* SignUpViewController.swift */; };
+		C1D47F3E278485F200DBA3CA /* SignUpInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F3D278485F200DBA3CA /* SignUpInfoView.swift */; };
+		C1D47F412784860D00DBA3CA /* SignUpInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F402784860D00DBA3CA /* SignUpInfoViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -86,6 +91,11 @@
 		C1D47F30278433CF00DBA3CA /* ABCGintoNord-Black-Trial.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ABCGintoNord-Black-Trial.otf"; sourceTree = "<group>"; };
 		C1D47F322784351800DBA3CA /* ABCGintoNord-Medium-Trial.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ABCGintoNord-Medium-Trial.otf"; sourceTree = "<group>"; };
 		C1D47F342784488200DBA3CA /* CustomComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomComponent.swift; sourceTree = "<group>"; };
+		C1D47F372784749200DBA3CA /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
+		C1D47F392784749C00DBA3CA /* SignUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewModel.swift; sourceTree = "<group>"; };
+		C1D47F3B278474AA00DBA3CA /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
+		C1D47F3D278485F200DBA3CA /* SignUpInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpInfoView.swift; sourceTree = "<group>"; };
+		C1D47F402784860D00DBA3CA /* SignUpInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpInfoViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,6 +208,7 @@
 			children = (
 				C1D47EE227795AB300DBA3CA /* Splash */,
 				C1D47EEA27795CE400DBA3CA /* SignIn */,
+				C1D47F362784747D00DBA3CA /* SignUp */,
 				C1D47F0727795F1600DBA3CA /* Home */,
 			);
 			path = Modules;
@@ -263,6 +274,26 @@
 				C1D47F322784351800DBA3CA /* ABCGintoNord-Medium-Trial.otf */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		C1D47F362784747D00DBA3CA /* SignUp */ = {
+			isa = PBXGroup;
+			children = (
+				C1D47F3B278474AA00DBA3CA /* SignUpViewController.swift */,
+				C1D47F392784749C00DBA3CA /* SignUpViewModel.swift */,
+				C1D47F372784749200DBA3CA /* SignUpView.swift */,
+				C1D47F3F278485F500DBA3CA /* SignUpInfo */,
+			);
+			path = SignUp;
+			sourceTree = "<group>";
+		};
+		C1D47F3F278485F500DBA3CA /* SignUpInfo */ = {
+			isa = PBXGroup;
+			children = (
+				C1D47F3D278485F200DBA3CA /* SignUpInfoView.swift */,
+				C1D47F402784860D00DBA3CA /* SignUpInfoViewController.swift */,
+			);
+			path = SignUpInfo;
 			sourceTree = "<group>";
 		};
 		CABC661DFF2E909E8846E9B8 /* Pods */ = {
@@ -405,7 +436,9 @@
 				C1D47EF527795D7E00DBA3CA /* UserDefaultsUtil.swift in Sources */,
 				C1D47F13277A0BCE00DBA3CA /* ServerViewController.swift in Sources */,
 				C1D47EDA277959BA00DBA3CA /* MainCoordinator.swift in Sources */,
+				C1D47F3E278485F200DBA3CA /* SignUpInfoView.swift in Sources */,
 				C1D47F15277ACD2800DBA3CA /* RoomServer.swift in Sources */,
+				C1D47F412784860D00DBA3CA /* SignUpInfoViewController.swift in Sources */,
 				C1D47EDF27795A9200DBA3CA /* SplashView.swift in Sources */,
 				C1D47EFF27795E3400DBA3CA /* Signup.swift in Sources */,
 				C1D47EFD27795E2400DBA3CA /* UserInfo.swift in Sources */,
@@ -419,14 +452,17 @@
 				272189012782E99500ABEF60 /* BaseRepository.swift in Sources */,
 				C1D47F2427833DB800DBA3CA /* BaseResponse.swift in Sources */,
 				C1D47F112779D6FD00DBA3CA /* ContainerViewController.swift in Sources */,
+				C1D47F3C278474AA00DBA3CA /* SignUpViewController.swift in Sources */,
 				C1D47EE727795CAD00DBA3CA /* SignInView.swift in Sources */,
 				C1D47F352784488200DBA3CA /* CustomComponent.swift in Sources */,
 				272189072782EB7500ABEF60 /* UserAPI.swift in Sources */,
 				C1D47EEE27795D1300DBA3CA /* BaseView.swift in Sources */,
 				C1D47EDD27795A6A00DBA3CA /* SplashViewController.swift in Sources */,
 				C1D47EFB27795E1000DBA3CA /* SignIn.swift in Sources */,
+				C1D47F382784749200DBA3CA /* SignUpView.swift in Sources */,
 				C1D47F0427795ED100DBA3CA /* HomeViewController.swift in Sources */,
 				C1D47F0E2779D66300DBA3CA /* MenuViewController.swift in Sources */,
+				C1D47F3A2784749C00DBA3CA /* SignUpViewModel.swift in Sources */,
 				272189032782E9F000ABEF60 /* BaseAPI.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
