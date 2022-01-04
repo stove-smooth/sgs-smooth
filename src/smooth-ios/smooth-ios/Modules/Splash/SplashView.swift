@@ -13,10 +13,10 @@ class SplashView: BaseView {
     let titleLabel = UILabel()
     
     override func setup() {
-        titleLabel.text = "Splash View"
-        titleLabel.textColor = .white
+        self.backgroundColor = .dark
         
-        self.addSubview(titleLabel)
+    
+        
     }
     
     override func bindConstraints() {

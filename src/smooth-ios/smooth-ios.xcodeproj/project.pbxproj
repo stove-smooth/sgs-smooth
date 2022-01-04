@@ -12,8 +12,6 @@
 		272189032782E9F000ABEF60 /* BaseAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272189022782E9F000ABEF60 /* BaseAPI.swift */; };
 		272189052782EA8000ABEF60 /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272189042782EA8000ABEF60 /* UserRepository.swift */; };
 		272189072782EB7500ABEF60 /* UserAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 272189062782EB7500ABEF60 /* UserAPI.swift */; };
-		277CD087277D917A00948125 /* SmoothAPIRequestParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277CD086277D917A00948125 /* SmoothAPIRequestParameters.swift */; };
-		277CD089277D920E00948125 /* SignInResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277CD088277D920E00948125 /* SignInResponse.swift */; };
 		27B19D48277BEA44008D85DE /* Color+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27B19D47277BEA44008D85DE /* Color+extension.swift */; };
 		C1D47EC32779570000DBA3CA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EC22779570000DBA3CA /* AppDelegate.swift */; };
 		C1D47ECC2779570200DBA3CA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C1D47ECB2779570200DBA3CA /* Assets.xcassets */; };
@@ -40,6 +38,7 @@
 		C1D47F13277A0BCE00DBA3CA /* ServerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F12277A0BCE00DBA3CA /* ServerViewController.swift */; };
 		C1D47F15277ACD2800DBA3CA /* RoomServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F14277ACD2800DBA3CA /* RoomServer.swift */; };
 		C1D47F2427833DB800DBA3CA /* BaseResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F2327833DB800DBA3CA /* BaseResponse.swift */; };
+		C1D47F262783CA0C00DBA3CA /* NetworkLoggerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F252783CA0C00DBA3CA /* NetworkLoggerPlugin.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,8 +48,6 @@
 		272189022782E9F000ABEF60 /* BaseAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseAPI.swift; sourceTree = "<group>"; };
 		272189042782EA8000ABEF60 /* UserRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRepository.swift; sourceTree = "<group>"; };
 		272189062782EB7500ABEF60 /* UserAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAPI.swift; sourceTree = "<group>"; };
-		277CD086277D917A00948125 /* SmoothAPIRequestParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmoothAPIRequestParameters.swift; sourceTree = "<group>"; };
-		277CD088277D920E00948125 /* SignInResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInResponse.swift; sourceTree = "<group>"; };
 		27B19D47277BEA44008D85DE /* Color+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+extension.swift"; sourceTree = "<group>"; };
 		5ACB9CED16C539661B31CE3A /* Pods-smooth-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-smooth-ios.release.xcconfig"; path = "Target Support Files/Pods-smooth-ios/Pods-smooth-ios.release.xcconfig"; sourceTree = "<group>"; };
 		C1D47EBF2779570000DBA3CA /* smooth-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "smooth-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -80,6 +77,7 @@
 		C1D47F12277A0BCE00DBA3CA /* ServerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerViewController.swift; sourceTree = "<group>"; };
 		C1D47F14277ACD2800DBA3CA /* RoomServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomServer.swift; sourceTree = "<group>"; };
 		C1D47F2327833DB800DBA3CA /* BaseResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseResponse.swift; sourceTree = "<group>"; };
+		C1D47F252783CA0C00DBA3CA /* NetworkLoggerPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkLoggerPlugin.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,8 +115,7 @@
 				C1D47EF227795D6100DBA3CA /* Utils.swift */,
 				C1D47EF427795D7E00DBA3CA /* UserDefaultsUtil.swift */,
 				27B19D47277BEA44008D85DE /* Color+extension.swift */,
-				277CD086277D917A00948125 /* SmoothAPIRequestParameters.swift */,
-				277CD088277D920E00948125 /* SignInResponse.swift */,
+				C1D47F252783CA0C00DBA3CA /* NetworkLoggerPlugin.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -379,6 +376,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C1D47EE527795C9600DBA3CA /* SignInViewController.swift in Sources */,
+				C1D47F262783CA0C00DBA3CA /* NetworkLoggerPlugin.swift in Sources */,
 				27B19D48277BEA44008D85DE /* Color+extension.swift in Sources */,
 				272189052782EA8000ABEF60 /* UserRepository.swift in Sources */,
 				C1D47ED8277959AA00DBA3CA /* Coordinator.swift in Sources */,
@@ -389,7 +387,6 @@
 				C1D47EDF27795A9200DBA3CA /* SplashView.swift in Sources */,
 				C1D47EFF27795E3400DBA3CA /* Signup.swift in Sources */,
 				C1D47EFD27795E2400DBA3CA /* UserInfo.swift in Sources */,
-				277CD089277D920E00948125 /* SignInResponse.swift in Sources */,
 				C1D47EE127795AA800DBA3CA /* SplashViewModel.swift in Sources */,
 				C1D47EF327795D6100DBA3CA /* Utils.swift in Sources */,
 				C1D47EF027795D1E00DBA3CA /* BaseViewModel.swift in Sources */,
@@ -400,7 +397,6 @@
 				C1D47F2427833DB800DBA3CA /* BaseResponse.swift in Sources */,
 				C1D47F112779D6FD00DBA3CA /* ContainerViewController.swift in Sources */,
 				C1D47EE727795CAD00DBA3CA /* SignInView.swift in Sources */,
-				277CD087277D917A00948125 /* SmoothAPIRequestParameters.swift in Sources */,
 				272189072782EB7500ABEF60 /* UserAPI.swift in Sources */,
 				C1D47EEE27795D1300DBA3CA /* BaseView.swift in Sources */,
 				C1D47EDD27795A6A00DBA3CA /* SplashViewController.swift in Sources */,

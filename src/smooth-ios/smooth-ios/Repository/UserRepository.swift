@@ -8,7 +8,9 @@
 import Foundation
 import Moya
 
-class UserRepository: BaseRepository<UserAPI> {
+class UserRepository: BaseRepository<UserTarget>, Networkable {
+    typealias Target = UserTarget
+    
     static let shared = UserRepository()
     
     private override init() { }

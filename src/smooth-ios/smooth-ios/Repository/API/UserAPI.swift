@@ -8,13 +8,13 @@
 import Foundation
 import Moya
 
-enum UserAPI {
+enum UserTarget {
     case signIn(param: SignInRequest)
     case signUp(param: SignUpRequest)
     case fetchUserInfo
 }
 
-extension UserAPI: BaseAPI {
+extension UserTarget: BaseAPI, AccessTokenAuthorizable {
     
     var path: String {
         switch self {
@@ -43,6 +43,15 @@ extension UserAPI: BaseAPI {
             return .requestCustomJSONEncodable(user, encoder: JSONEncoder())
         case .fetchUserInfo:
             return .requestPlain
+        }
+    }
+    
+    var authorizationType: AuthorizationType? {
+        switch  self {
+        case .signIn, .signUp:
+            return nil
+        case .fetchUserInfo:
+            return .custom("Authorization")
         }
     }
 }
