@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Then
 
 class SignInViewController: BaseViewController {
     private let authView = SignInView()
@@ -25,9 +26,15 @@ class SignInViewController: BaseViewController {
         super.view = self.authView
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.navigationBar.backgroundColor = UIColor.backgroundDartGrey
+        self.navigationController?.navigationBar.topItem?.title = "뒤로가기"
+        
+        self.navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationController?.isNavigationBarHidden = true
     }
     
     override func bindViewModel() {

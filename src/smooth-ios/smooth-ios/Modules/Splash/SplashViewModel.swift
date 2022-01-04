@@ -15,7 +15,8 @@ class SplashViewModel: BaseViewModel {
     
     struct Input {
         let viewDidLoad = PublishSubject<Void>()
-        // RxViewController,
+        // RxViewController
+        let tapSignInButton = PublishSubject<Void>()
     }
     
     struct Output {
@@ -46,7 +47,7 @@ class SplashViewModel: BaseViewModel {
 //                .disposed(by: disposeBag)
 //        } else {
 //            // 토큰 없을 떄
-            self.output.goToSignIn.accept(())
+//            self.output.goToSignIn.accept(())
 //        }
     }
     
@@ -54,4 +55,12 @@ class SplashViewModel: BaseViewModel {
         return !token.isEmpty
     }
     
+    override func bind() {
+        self.input.tapSignInButton
+            .asDriver(onErrorJustReturn: ())
+            .drive(onNext: {
+                self.output.goToSignIn.accept(())
+            })
+            .disposed(by: disposeBag)
+    }
 }

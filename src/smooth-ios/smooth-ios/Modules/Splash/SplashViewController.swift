@@ -31,6 +31,11 @@ class SplashViewConroller: BaseViewController {
         self.viewModel.input.viewDidLoad.onNext(())
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+    
+    
     override func bindViewModel() {
         /*
          self.rx.viewDidLoad
@@ -44,6 +49,10 @@ class SplashViewConroller: BaseViewController {
             }
             .disposed(by: disposeBag)
 
+        self.splashView.signInButton.rx.tap
+            .bind(to: self.viewModel.input.tapSignInButton)
+            .disposed(by: disposeBag)
+        
         self.viewModel.output.goToSignIn
             .debug()
             .observe(on: MainScheduler.instance)

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Then
 
 class MainCoordinator: NSObject, Coordinator {
     
@@ -14,6 +15,12 @@ class MainCoordinator: NSObject, Coordinator {
     
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
+        self.navigationController.navigationBar.tintColor = .white
+        
+        self.navigationController.navigationBar.barTintColor = UIColor.backgroundDartGrey
+        self.navigationController.navigationBar.shadowImage = UIImage()
+        self.navigationController.navigationBar.isTranslucent = false
+        
     }
     
     func start() {

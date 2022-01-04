@@ -39,6 +39,9 @@
 		C1D47F15277ACD2800DBA3CA /* RoomServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F14277ACD2800DBA3CA /* RoomServer.swift */; };
 		C1D47F2427833DB800DBA3CA /* BaseResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F2327833DB800DBA3CA /* BaseResponse.swift */; };
 		C1D47F262783CA0C00DBA3CA /* NetworkLoggerPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F252783CA0C00DBA3CA /* NetworkLoggerPlugin.swift */; };
+		C1D47F2F2784220800DBA3CA /* Font+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F2E2784220800DBA3CA /* Font+extension.swift */; };
+		C1D47F31278433CF00DBA3CA /* ABCGintoNord-Black-Trial.otf in Resources */ = {isa = PBXBuildFile; fileRef = C1D47F30278433CF00DBA3CA /* ABCGintoNord-Black-Trial.otf */; };
+		C1D47F332784351800DBA3CA /* ABCGintoNord-Medium-Trial.otf in Resources */ = {isa = PBXBuildFile; fileRef = C1D47F322784351800DBA3CA /* ABCGintoNord-Medium-Trial.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +81,9 @@
 		C1D47F14277ACD2800DBA3CA /* RoomServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomServer.swift; sourceTree = "<group>"; };
 		C1D47F2327833DB800DBA3CA /* BaseResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseResponse.swift; sourceTree = "<group>"; };
 		C1D47F252783CA0C00DBA3CA /* NetworkLoggerPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkLoggerPlugin.swift; sourceTree = "<group>"; };
+		C1D47F2E2784220800DBA3CA /* Font+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+extension.swift"; sourceTree = "<group>"; };
+		C1D47F30278433CF00DBA3CA /* ABCGintoNord-Black-Trial.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ABCGintoNord-Black-Trial.otf"; sourceTree = "<group>"; };
+		C1D47F322784351800DBA3CA /* ABCGintoNord-Medium-Trial.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ABCGintoNord-Medium-Trial.otf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +122,7 @@
 				C1D47EF427795D7E00DBA3CA /* UserDefaultsUtil.swift */,
 				27B19D47277BEA44008D85DE /* Color+extension.swift */,
 				C1D47F252783CA0C00DBA3CA /* NetworkLoggerPlugin.swift */,
+				C1D47F2E2784220800DBA3CA /* Font+extension.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -155,6 +162,7 @@
 		C1D47ED62779597900DBA3CA /* Commons */ = {
 			isa = PBXGroup;
 			children = (
+				C1D47F292784212800DBA3CA /* Fonts */,
 				C1D47EC22779570000DBA3CA /* AppDelegate.swift */,
 				C1D47ECB2779570200DBA3CA /* Assets.xcassets */,
 				C1D47ECD2779570200DBA3CA /* LaunchScreen.storyboard */,
@@ -245,6 +253,15 @@
 			path = Menu;
 			sourceTree = "<group>";
 		};
+		C1D47F292784212800DBA3CA /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				C1D47F30278433CF00DBA3CA /* ABCGintoNord-Black-Trial.otf */,
+				C1D47F322784351800DBA3CA /* ABCGintoNord-Medium-Trial.otf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 		CABC661DFF2E909E8846E9B8 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -321,6 +338,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C1D47F31278433CF00DBA3CA /* ABCGintoNord-Black-Trial.otf in Resources */,
+				C1D47F332784351800DBA3CA /* ABCGintoNord-Medium-Trial.otf in Resources */,
 				C1D47ECF2779570200DBA3CA /* LaunchScreen.storyboard in Resources */,
 				C1D47ECC2779570200DBA3CA /* Assets.xcassets in Resources */,
 			);
@@ -389,6 +408,7 @@
 				C1D47EFD27795E2400DBA3CA /* UserInfo.swift in Sources */,
 				C1D47EE127795AA800DBA3CA /* SplashViewModel.swift in Sources */,
 				C1D47EF327795D6100DBA3CA /* Utils.swift in Sources */,
+				C1D47F2F2784220800DBA3CA /* Font+extension.swift in Sources */,
 				C1D47EF027795D1E00DBA3CA /* BaseViewModel.swift in Sources */,
 				C1D47EEC27795D0900DBA3CA /* BaseViewController.swift in Sources */,
 				C1D47EE927795CCB00DBA3CA /* SignInViewModel.swift in Sources */,

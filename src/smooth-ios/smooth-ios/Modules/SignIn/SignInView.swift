@@ -39,7 +39,7 @@ class SignInView: BaseView {
     }
     
     override func setup() {
-        self.backgroundColor = .white
+        self.backgroundColor = UIColor.backgroundDartGrey
         
         [emailField, passwordField, loginButton].forEach {
             self.addSubview($0)
