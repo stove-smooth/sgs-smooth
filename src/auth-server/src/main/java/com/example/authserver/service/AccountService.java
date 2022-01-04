@@ -1,11 +1,11 @@
 package com.example.authserver.service;
 
-import com.example.authserver.configure.exception.CustomException;
-import com.example.authserver.configure.exception.CustomExceptionStatus;
+import com.example.authserver.exception.CustomException;
+import com.example.authserver.exception.CustomExceptionStatus;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
 import com.example.authserver.configure.security.jwt.JwtTokenProvider;
 import com.example.authserver.domain.*;
-import com.example.authserver.domain.tyoe.RoleType;
+import com.example.authserver.domain.type.RoleType;
 import com.example.authserver.dto.*;
 import com.example.authserver.dto.request.SignInRequest;
 import com.example.authserver.dto.response.MailResponse;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import static com.example.authserver.domain.tyoe.Status.*;
+import static com.example.authserver.domain.type.Status.*;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -60,8 +60,12 @@ public class AccountService extends BaseTimeEntity {
 
 
         SignInResponse res = SignInResponse.builder()
+                .id(account.getId())
+                .name(account.getName())
+                .code(account.getCode())
                 .email(account.getEmail())
-                .jwt(jwtTokenProvider.createToken(account.getEmail(),account.getRoleType()))
+                .accessToken(jwtTokenProvider.createToken(account.getEmail(),account.getRoleType(),account.getId()))
+                .refreshToken(refreshToken)
                 .build();
 
         return res;
@@ -118,7 +122,7 @@ public class AccountService extends BaseTimeEntity {
         Account account = accountRepository.findByEmailAndStatus(email, VALID).orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
         SignInResponse res = SignInResponse.builder()
-                .jwt(jwtTokenProvider.createToken(account.getEmail(),account.getRoleType()))
+                .refreshToken(jwtTokenProvider.createToken(account.getEmail(),account.getRoleType(),account.getId()))
                 .build();
 
         return res;

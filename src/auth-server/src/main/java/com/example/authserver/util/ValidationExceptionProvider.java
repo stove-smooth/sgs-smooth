@@ -1,7 +1,7 @@
 package com.example.authserver.util;
 
-import com.example.authserver.configure.exception.CustomException;
-import com.example.authserver.configure.exception.CustomExceptionStatus;
+import com.example.authserver.exception.CustomException;
+import com.example.authserver.exception.CustomExceptionStatus;
 import org.springframework.validation.Errors;
 
 public class ValidationExceptionProvider {

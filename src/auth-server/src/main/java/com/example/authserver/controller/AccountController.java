@@ -1,12 +1,12 @@
 package com.example.authserver.controller;
 
-import com.example.authserver.configure.exception.CustomException;
-import com.example.authserver.configure.exception.CustomExceptionStatus;
-import com.example.authserver.configure.response.CommonResponse;
-import com.example.authserver.configure.response.DataResponse;
-import com.example.authserver.configure.response.ResponseService;
+import com.example.authserver.exception.CustomException;
+import com.example.authserver.exception.CustomExceptionStatus;
+import com.example.authserver.dto.response.CommonResponse;
+import com.example.authserver.dto.response.DataResponse;
+import com.example.authserver.service.ResponseService;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
-import com.example.authserver.domain.tyoe.RoleType;
+import com.example.authserver.domain.type.RoleType;
 import com.example.authserver.dto.*;
 import com.example.authserver.dto.request.SignInRequest;
 import com.example.authserver.dto.response.MailResponse;
@@ -14,12 +14,14 @@ import com.example.authserver.dto.response.SignInResponse;
 import com.example.authserver.service.AccountService;
 import com.example.authserver.util.ValidationExceptionProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/auth-server")
@@ -42,7 +44,9 @@ public class AccountController {
     }
 
     @GetMapping("/info")
-    public DataResponse<AccountAutoDto> getAuthAccount(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public DataResponse<AccountAutoDto> getAuthAccount(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                                       @RequestHeader("id") String id) {
+        log.info(id);
         return responseService.getDataResponse(accountService.getAuthAccount(customUserDetails));
     }
 

@@ -1,6 +1,6 @@
 package com.example.authserver.configure.security.jwt;
 
-import com.example.authserver.configure.exception.CustomExceptionStatus;
+import com.example.authserver.exception.CustomExceptionStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;

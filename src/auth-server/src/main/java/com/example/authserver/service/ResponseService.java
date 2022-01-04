@@ -1,6 +1,8 @@
-package com.example.authserver.configure.response;
+package com.example.authserver.service;
 
-import com.example.authserver.configure.exception.CustomExceptionStatus;
+import com.example.authserver.dto.response.CommonResponse;
+import com.example.authserver.dto.response.DataResponse;
+import com.example.authserver.exception.CustomExceptionStatus;
 import org.springframework.stereotype.Service;
 
 @Service

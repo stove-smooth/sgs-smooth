@@ -1,11 +1,11 @@
 package com.example.authserver.service;
 
-import com.example.authserver.configure.exception.CustomException;
-import com.example.authserver.configure.exception.CustomExceptionStatus;
+import com.example.authserver.exception.CustomException;
+import com.example.authserver.exception.CustomExceptionStatus;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
 import com.example.authserver.domain.Account;
 import com.example.authserver.domain.Friend;
-import com.example.authserver.domain.tyoe.FriendState;
+import com.example.authserver.domain.type.FriendState;
 import com.example.authserver.dto.request.FriendRequest;
 import com.example.authserver.dto.response.FriendResponse;
 import com.example.authserver.dto.response.WaitingResponse;

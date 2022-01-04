@@ -1,6 +1,6 @@
 package com.example.authserver.configure.security;
 
-import com.example.authserver.configure.exception.CustomAuthenticationEntryPoint;
+import com.example.authserver.exception.CustomAuthenticationEntryPoint;
 import com.example.authserver.configure.security.jwt.JwtAuthenticationFilter;
 import com.example.authserver.configure.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;

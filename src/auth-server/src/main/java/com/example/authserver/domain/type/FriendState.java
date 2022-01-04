@@ -1,4 +1,4 @@
-package com.example.authserver.domain.tyoe;
+package com.example.authserver.domain.type;
 
 public enum FriendState {
     WAIT,

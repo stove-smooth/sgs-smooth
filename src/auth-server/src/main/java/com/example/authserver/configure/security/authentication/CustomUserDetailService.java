@@ -1,9 +1,9 @@
 package com.example.authserver.configure.security.authentication;
 
-import com.example.authserver.configure.exception.CustomException;
-import com.example.authserver.configure.exception.CustomExceptionStatus;
+import com.example.authserver.exception.CustomException;
+import com.example.authserver.exception.CustomExceptionStatus;
 import com.example.authserver.domain.Account;
-import com.example.authserver.domain.tyoe.Status;
+import com.example.authserver.domain.type.Status;
 import com.example.authserver.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
