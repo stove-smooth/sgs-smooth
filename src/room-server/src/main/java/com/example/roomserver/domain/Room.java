@@ -22,18 +22,27 @@ public class Room extends BaseTimeEntity {
     private Long hostId;
 
     @Column(length = 100)
-    private String name;
+    private String title;
 
     private String iconImage;
 
-    @OneToMany(mappedBy = "matching", cascade = CascadeType.ALL)
-    private List<UserRoomWrapper> accounts = new ArrayList<>();
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    private List<AccountRoom> accounts = new ArrayList<>();
 
     private Boolean isGroup;
 
     // 연관관계 메소드
-    
+
     // 생성 메소드
+    /**
+     * public static Room createRoom(
+     *             Long hostId,
+     *             Long... accountId
+     *     ) {
+     *         Room room = new Room();
+     *         return room;
+     *     }
+     */
 
     // 비즈니스 로직
 }
