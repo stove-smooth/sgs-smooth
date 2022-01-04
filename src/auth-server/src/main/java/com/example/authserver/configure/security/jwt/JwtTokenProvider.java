@@ -1,7 +1,7 @@
 package com.example.authserver.configure.security.jwt;
 
 import com.example.authserver.exception.CustomExceptionStatus;
-import com.example.authserver.domain.tyoe.RoleType;
+import com.example.authserver.domain.type.RoleType;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

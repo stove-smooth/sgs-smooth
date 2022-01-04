@@ -1,7 +1,7 @@
 package com.example.authserver.repository;
 
 import com.example.authserver.domain.Account;
-import com.example.authserver.domain.tyoe.Status;
+import com.example.authserver.domain.type.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

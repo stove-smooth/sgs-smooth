@@ -6,7 +6,7 @@ import com.example.authserver.dto.response.CommonResponse;
 import com.example.authserver.dto.response.DataResponse;
 import com.example.authserver.service.ResponseService;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
-import com.example.authserver.domain.tyoe.RoleType;
+import com.example.authserver.domain.type.RoleType;
 import com.example.authserver.dto.*;
 import com.example.authserver.dto.request.SignInRequest;
 import com.example.authserver.dto.response.MailResponse;

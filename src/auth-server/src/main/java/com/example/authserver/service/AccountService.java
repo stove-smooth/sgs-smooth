@@ -5,7 +5,7 @@ import com.example.authserver.exception.CustomExceptionStatus;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
 import com.example.authserver.configure.security.jwt.JwtTokenProvider;
 import com.example.authserver.domain.*;
-import com.example.authserver.domain.tyoe.RoleType;
+import com.example.authserver.domain.type.RoleType;
 import com.example.authserver.dto.*;
 import com.example.authserver.dto.request.SignInRequest;
 import com.example.authserver.dto.response.MailResponse;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import static com.example.authserver.domain.tyoe.Status.*;
+import static com.example.authserver.domain.type.Status.*;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor

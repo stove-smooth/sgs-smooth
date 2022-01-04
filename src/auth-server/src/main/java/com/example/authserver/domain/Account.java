@@ -1,7 +1,8 @@
 package com.example.authserver.domain;
 
-import com.example.authserver.domain.tyoe.RoleType;
-import com.example.authserver.domain.tyoe.Status;
+import com.example.authserver.domain.type.RoleType;
+import com.example.authserver.domain.type.State;
+import com.example.authserver.domain.type.Status;
 import com.example.authserver.dto.AccountAutoDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,6 +41,9 @@ public class Account {
 
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @Enumerated(EnumType.STRING)
+    private State state;
 
     private String profileImage;
 
