@@ -1,5 +1,6 @@
 package com.example.authserver.service;
 
+import com.example.authserver.dto.response.AccountInfoResponse;
 import com.example.authserver.exception.CustomException;
 import com.example.authserver.exception.CustomExceptionStatus;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
@@ -12,17 +13,24 @@ import com.example.authserver.dto.response.MailResponse;
 import com.example.authserver.dto.response.SignInResponse;
 import com.example.authserver.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.example.authserver.domain.type.Status.*;
 
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
@@ -83,13 +91,21 @@ public class AccountService extends BaseTimeEntity {
         if (email == null) {
             throw new CustomException(CustomExceptionStatus.POST_USERS_EMPTY_EMAIL);
         }
+        int leftLimit = 48; // numeral '0'
+        int rightLimit = 122; // letter 'z'
+        int targetStringLength = 6;
         Random random = new Random();
-        RandomString rs = new RandomString(6,random);
-        redisTemplate.opsForValue().set(rs.toString(),email, 60*30L, TimeUnit.SECONDS);
-        emailService.sendMail(email,"[ SGS-Smooth ] 회웝가입 인증이메일", "다음 인증코드를 입력해주세요: " + rs);
+
+        String generatedString = random.ints(leftLimit, rightLimit + 1)
+                .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+        redisTemplate.opsForValue().set(generatedString,email, 60*30L, TimeUnit.SECONDS);
+        emailService.sendMail(email,"[ SGS-Smooth ] 회웝가입 인증이메일", "다음 인증코드를 입력해주세요: " + generatedString);
 
         MailResponse res = MailResponse.builder()
-                .code(rs.toString()).build();
+                .code(generatedString).build();
 
         return res;
     }
@@ -126,5 +142,18 @@ public class AccountService extends BaseTimeEntity {
                 .build();
 
         return res;
+    }
+
+    public Map<Long,AccountInfoResponse> findIdList(List<Long> requestAccountIds) {
+        List<Account> accountList = accountRepository.findById(requestAccountIds);
+
+        List<AccountInfoResponse> collect = accountList.stream().map(
+                a -> new AccountInfoResponse(a.getId(), a.getName(), a.getProfileImage(), a.getState().getName())
+        ).collect(Collectors.toList());
+
+        Map<Long,AccountInfoResponse> map = collect.stream()
+                .collect(Collectors.toMap(AccountInfoResponse::getId, Function.identity()));
+
+        return map;
     }
 }

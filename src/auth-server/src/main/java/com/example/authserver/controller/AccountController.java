@@ -1,16 +1,14 @@
 package com.example.authserver.controller;
 
+import com.example.authserver.dto.request.TempRequest;
+import com.example.authserver.dto.response.*;
 import com.example.authserver.exception.CustomException;
 import com.example.authserver.exception.CustomExceptionStatus;
-import com.example.authserver.dto.response.CommonResponse;
-import com.example.authserver.dto.response.DataResponse;
 import com.example.authserver.service.ResponseService;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
 import com.example.authserver.domain.type.RoleType;
 import com.example.authserver.dto.*;
 import com.example.authserver.dto.request.SignInRequest;
-import com.example.authserver.dto.response.MailResponse;
-import com.example.authserver.dto.response.SignInResponse;
 import com.example.authserver.service.AccountService;
 import com.example.authserver.util.ValidationExceptionProvider;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +18,8 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -44,9 +44,7 @@ public class AccountController {
     }
 
     @GetMapping("/info")
-    public DataResponse<AccountAutoDto> getAuthAccount(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                                       @RequestHeader("id") String id) {
-        log.info(id);
+    public DataResponse<AccountAutoDto> getAuthAccount(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return responseService.getDataResponse(accountService.getAuthAccount(customUserDetails));
     }
 
@@ -80,6 +78,11 @@ public class AccountController {
     public DataResponse<SignInResponse> refreshToken(@RequestHeader("AUTHORIZATION") String token,
                                                      @RequestHeader("REFRESH-TOKEN") String refreshToken) {
         return responseService.getDataResponse(accountService.checkRefreshToken(token,refreshToken));
+    }
+
+    @PostMapping("/find-id-list")
+    public Map<Long, AccountInfoResponse> findIdList(@RequestBody List<Long> requestAccountIds) {
+        return accountService.findIdList(requestAccountIds);
     }
 
 }

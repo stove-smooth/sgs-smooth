@@ -67,6 +67,7 @@ public class Account {
                 .name(dto.getName())
                 .code(String.valueOf(randomCode))
                 .status(Status.VALID)
+                .state(State.online)
                 .roleType(RoleType.ROLE_USER)
                 .build();
     }

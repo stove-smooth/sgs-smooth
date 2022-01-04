@@ -37,7 +37,6 @@ public class FriendController {
         return responseService.getDataResponse(friendService.getFriendRequest(customUserDetails.getAccount().getId()));
     }
 
-    //todo : 친구요청 취소, 거절
     @DeleteMapping("/friend")
     public CommonResponse refuseFriend(@RequestParam(value = "id") Long id) {
         friendService.refuseFriend(id);
