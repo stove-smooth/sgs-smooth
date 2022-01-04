@@ -12,7 +12,6 @@ class SignInViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     
-    let userService: UserServiceProtocol
     let userDefaults: UserDefaultsUtil
     
     struct Input {
@@ -28,10 +27,8 @@ class SignInViewModel: BaseViewModel {
     
     
     init(
-        userDefaults: UserDefaultsUtil,
-        userService: UserServiceProtocol
+        userDefaults: UserDefaultsUtil
     ) {
-        self.userService = userService
         self.userDefaults = userDefaults
         super.init()
     }
@@ -61,12 +58,14 @@ class SignInViewModel: BaseViewModel {
     }
     
     private func signIn(request: SignInRequest) {
-        self.userService.signIn(request: request)
-            .bind(onNext: { response in
-                print(response)
-                UserDefaultsUtil.setUserToken(token: response.accessToken)
-                self.output.goToMain.accept(())
-            })
-            .disposed(by: disposeBag)
+        UserRepository.shared.signIn(request) { response,_ in
+            guard let response = response else {
+                return
+            }
+
+            
+            UserDefaultsUtil.setUserToken(token: response.accessToken)
+            self.output.goToMain.accept(())
+        }
     }
 }

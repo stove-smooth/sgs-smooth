@@ -12,8 +12,7 @@ import RxCocoa
 class SignInViewController: BaseViewController {
     private let authView = SignInView()
     private let viewModel = SignInViewModel(
-        userDefaults: UserDefaultsUtil(),
-        userService: UserSerivce()
+        userDefaults: UserDefaultsUtil()
     )
     
     weak var coordinator: MainCoordinator?
