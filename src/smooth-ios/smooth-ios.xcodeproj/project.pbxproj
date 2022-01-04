@@ -230,19 +230,19 @@
 			isa = PBXGroup;
 			children = (
 				C1D47F0327795ED100DBA3CA /* HomeViewController.swift */,
-				C1D47F0F2779D66700DBA3CA /* Mene */,
+				C1D47F0F2779D66700DBA3CA /* Menu */,
 			);
 			path = Home;
 			sourceTree = "<group>";
 		};
-		C1D47F0F2779D66700DBA3CA /* Mene */ = {
+		C1D47F0F2779D66700DBA3CA /* Menu */ = {
 			isa = PBXGroup;
 			children = (
 				C1D47F0D2779D66300DBA3CA /* MenuViewController.swift */,
 				C1D47F102779D6FD00DBA3CA /* ContainerViewController.swift */,
 				C1D47F12277A0BCE00DBA3CA /* ServerViewController.swift */,
 			);
-			path = Mene;
+			path = Menu;
 			sourceTree = "<group>";
 		};
 		CABC661DFF2E909E8846E9B8 /* Pods */ = {
