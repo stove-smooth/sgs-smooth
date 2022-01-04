@@ -39,11 +39,13 @@ class SplashView: BaseView {
     let signUpButton = UIButton().then {
         $0.setTitle("가입하기", for: .normal)
         $0.backgroundColor = UIColor.blurple
+        $0.layer.cornerRadius = 5
     }
     
     let signInButton = UIButton().then {
         $0.setTitle("로그인", for: .normal)
         $0.backgroundColor = UIColor.iconsDarkGrey
+        $0.layer.cornerRadius = 5
     }
     
     override func setup() {

@@ -42,6 +42,7 @@
 		C1D47F2F2784220800DBA3CA /* Font+extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F2E2784220800DBA3CA /* Font+extension.swift */; };
 		C1D47F31278433CF00DBA3CA /* ABCGintoNord-Black-Trial.otf in Resources */ = {isa = PBXBuildFile; fileRef = C1D47F30278433CF00DBA3CA /* ABCGintoNord-Black-Trial.otf */; };
 		C1D47F332784351800DBA3CA /* ABCGintoNord-Medium-Trial.otf in Resources */ = {isa = PBXBuildFile; fileRef = C1D47F322784351800DBA3CA /* ABCGintoNord-Medium-Trial.otf */; };
+		C1D47F352784488200DBA3CA /* CustomComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F342784488200DBA3CA /* CustomComponent.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -84,6 +85,7 @@
 		C1D47F2E2784220800DBA3CA /* Font+extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+extension.swift"; sourceTree = "<group>"; };
 		C1D47F30278433CF00DBA3CA /* ABCGintoNord-Black-Trial.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ABCGintoNord-Black-Trial.otf"; sourceTree = "<group>"; };
 		C1D47F322784351800DBA3CA /* ABCGintoNord-Medium-Trial.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ABCGintoNord-Medium-Trial.otf"; sourceTree = "<group>"; };
+		C1D47F342784488200DBA3CA /* CustomComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomComponent.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +125,7 @@
 				27B19D47277BEA44008D85DE /* Color+extension.swift */,
 				C1D47F252783CA0C00DBA3CA /* NetworkLoggerPlugin.swift */,
 				C1D47F2E2784220800DBA3CA /* Font+extension.swift */,
+				C1D47F342784488200DBA3CA /* CustomComponent.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -417,6 +420,7 @@
 				C1D47F2427833DB800DBA3CA /* BaseResponse.swift in Sources */,
 				C1D47F112779D6FD00DBA3CA /* ContainerViewController.swift in Sources */,
 				C1D47EE727795CAD00DBA3CA /* SignInView.swift in Sources */,
+				C1D47F352784488200DBA3CA /* CustomComponent.swift in Sources */,
 				272189072782EB7500ABEF60 /* UserAPI.swift in Sources */,
 				C1D47EEE27795D1300DBA3CA /* BaseView.swift in Sources */,
 				C1D47EDD27795A6A00DBA3CA /* SplashViewController.swift in Sources */,
