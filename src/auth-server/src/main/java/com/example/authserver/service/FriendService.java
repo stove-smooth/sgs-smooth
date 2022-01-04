@@ -45,19 +45,20 @@ public class FriendService {
     public WaitingResponse getFriendRequest(Long id) {
         Account account = accountRepository.findById(id).orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
+        List<Friend> responseList = account.getResponseList();
         List<Friend> requestList = account.getRequestList();
 
-        List<FriendResponse> toFriend = requestList.stream().map(
-                f -> new FriendResponse(f.getId(), f.getReceiver().getName())
-        ).collect(Collectors.toList());
-
-        List<FriendResponse> toMe = requestList.stream().map(
+        List<FriendResponse> receiveFromFriend = responseList.stream().map(
                 f -> new FriendResponse(f.getId(), f.getSender().getName())
         ).collect(Collectors.toList());
 
+        List<FriendResponse> sendToFriend = requestList.stream().map(
+                f -> new FriendResponse(f.getId(), f.getReceiver().getName())
+        ).collect(Collectors.toList());
+
         WaitingResponse waitingResponse = WaitingResponse.builder()
-                .toMe(toMe)
-                .toFriend(toFriend).build();
+                .receiveFromFriend(receiveFromFriend)
+                .sendToFriend(sendToFriend).build();
 
         return waitingResponse;
 
@@ -68,5 +69,12 @@ public class FriendService {
         Friend friend = friendRepository.findById(id)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.FRIEND_NOT_FOUND));
         friendRepository.delete(friend);
+    }
+
+    @Transactional
+    public void addToFriend(Long id) {
+        Friend friend = friendRepository.findById(id)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.FRIEND_NOT_FOUND));
+        friend.changeFriendState(FriendState.ACCEPT);
     }
 }

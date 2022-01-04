@@ -53,8 +53,8 @@ public class AccountController {
         return responseService.getDataResponse(accountService.sendEmail(email));
     }
 
-    @GetMapping("/check-email/{key}")
-    public CommonResponse checkEmail(@PathVariable String key) {
+    @GetMapping("/check-email")
+    public CommonResponse checkEmail(@RequestParam(value = "key") String key) {
         accountService.checkEmail(key);
 
         return responseService.getSuccessResponse();

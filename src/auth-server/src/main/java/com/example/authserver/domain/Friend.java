@@ -31,4 +31,8 @@ public class Friend {
 
     @Enumerated(EnumType.STRING)
     private FriendState friendState;
+
+    public void changeFriendState(FriendState friendState) {
+        this.friendState = friendState;
+    }
 }

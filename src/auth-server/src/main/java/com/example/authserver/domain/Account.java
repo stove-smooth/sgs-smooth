@@ -48,7 +48,7 @@ public class Account {
     private String profileImage;
 
     @OneToMany(mappedBy = "receiver",cascade = CascadeType.ALL)
-    private List<Friend> friendList = new ArrayList<>();
+    private List<Friend> responseList = new ArrayList<>();
 
     @OneToMany(mappedBy = "sender",cascade = CascadeType.ALL)
     private List<Friend> requestList = new ArrayList<>();

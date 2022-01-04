@@ -37,6 +37,13 @@ public class FriendController {
         return responseService.getDataResponse(friendService.getFriendRequest(customUserDetails.getAccount().getId()));
     }
 
+    @PatchMapping("/friend")
+    public CommonResponse addToFriend(@RequestParam(value="id") Long id) {
+        friendService.addToFriend(id);
+
+        return responseService.getSuccessResponse();
+    }
+
     @DeleteMapping("/friend")
     public CommonResponse refuseFriend(@RequestParam(value = "id") Long id) {
         friendService.refuseFriend(id);
