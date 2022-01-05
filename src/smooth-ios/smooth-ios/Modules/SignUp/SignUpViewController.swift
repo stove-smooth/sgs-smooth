@@ -43,5 +43,14 @@ class SignUpViewController: BaseViewController {
             .bind(to: self.viewModel.input.tapNextButton)
             .disposed(by: disposeBag)
         
+        self.viewModel.output.goToVerifyCode
+            .debug()
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: self.goToVerifyCode)
+            .disposed(by: disposeBag)
+    }
+    
+    private func goToVerifyCode() {
+        self.coordinator?.goToVerifyCode()
     }
 }

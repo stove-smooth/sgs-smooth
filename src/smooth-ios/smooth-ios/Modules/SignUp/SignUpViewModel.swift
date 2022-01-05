@@ -20,7 +20,7 @@ class SignUpViewModel: BaseViewModel {
     }
     
     struct Output {
-        let goToSignUpInfo = PublishRelay<Void>()
+        let goToVerifyCode = PublishRelay<Void>()
     }
     
     init(
@@ -40,12 +40,15 @@ class SignUpViewModel: BaseViewModel {
         self.input.tapNextButton
             .asDriver(onErrorJustReturn: ())
             .drive(onNext: {
-                self.output.goToSignUpInfo.accept(())
+                self.verifyCode(request: SendMailRequest(email: self.input.emailTextField.value))
             })
             .disposed(by: disposeBag)
     }
     
-    private func signUp(email: String) {
+    private func verifyCode(request: SendMailRequest) {
+        UserRepository.shared.sendMail(request) { _ in 
+            self.output.goToVerifyCode.accept(())
+        }
         
     }
 }

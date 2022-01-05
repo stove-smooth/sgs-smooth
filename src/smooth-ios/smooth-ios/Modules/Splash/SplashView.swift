@@ -80,17 +80,17 @@ class SplashView: BaseView {
         
         titleDescriptionLabel.snp.makeConstraints {
             $0.right.left.equalToSuperview().inset(30)
-            $0.top.equalTo(titleLabel.snp.bottom).offset(10)
+            $0.bottom.equalTo(signUpButton.snp.top).offset(-30)
         }
         
         signUpButton.snp.makeConstraints {
             $0.right.left.equalToSuperview().inset(30)
-            $0.top.equalTo(titleDescriptionLabel.snp.bottom).offset(30)
+            $0.bottom.equalTo(signInButton.snp.top).offset(-15)
         }
         
         signInButton.snp.makeConstraints {
             $0.right.left.equalToSuperview().inset(30)
-            $0.top.equalTo(signUpButton.snp.bottom).offset(10)
+            $0.bottom.equalTo(self.safeAreaLayoutGuide.snp.bottom).inset(30)
         }
     }
 }

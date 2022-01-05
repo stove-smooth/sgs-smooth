@@ -11,6 +11,7 @@ import Moya
 enum UserTarget {
     case signIn(param: SignInRequest)
     case signUp(param: SignUpRequest)
+    case sendMail(param: SendMailRequest)
     case fetchUserInfo
 }
 
@@ -22,6 +23,8 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
             return "/auth-server/sign-in"
         case .signUp:
             return "/auth-server/sign-up"
+        case .sendMail:
+            return "/auth-server/send-mail"
         case .fetchUserInfo:
             return "/auth-server/info"
         }
@@ -31,6 +34,7 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
         switch self {
         case .signIn: return .post
         case .signUp: return .post
+        case .sendMail: return .post
         case .fetchUserInfo: return .get
         }
     }
@@ -41,6 +45,8 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
             return .requestCustomJSONEncodable(user, encoder: JSONEncoder())
         case .signUp(let user):
             return .requestCustomJSONEncodable(user, encoder: JSONEncoder())
+        case .sendMail(let email):
+            return .requestParameters(parameters: ["email": email], encoding: URLEncoding.default)
         case .fetchUserInfo:
             return .requestPlain
         }
@@ -48,7 +54,7 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
     
     var authorizationType: AuthorizationType? {
         switch  self {
-        case .signIn, .signUp:
+        case .signIn, .signUp, .sendMail:
             return nil
         case .fetchUserInfo:
             return .custom("Authorization")

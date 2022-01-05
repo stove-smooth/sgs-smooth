@@ -23,3 +23,16 @@ struct SignUpResponse: Decodable {
     
 }
 
+struct SendMailRequest: Encodable {
+    let email: String
+    
+    var paramters: [String: Any] {
+        return [
+            "email": email,
+        ]
+    }
+}
+
+struct SendMailResponse: Decodable {
+    
+}

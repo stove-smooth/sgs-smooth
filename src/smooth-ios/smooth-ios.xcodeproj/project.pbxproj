@@ -48,6 +48,10 @@
 		C1D47F3C278474AA00DBA3CA /* SignUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F3B278474AA00DBA3CA /* SignUpViewController.swift */; };
 		C1D47F3E278485F200DBA3CA /* SignUpInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F3D278485F200DBA3CA /* SignUpInfoView.swift */; };
 		C1D47F412784860D00DBA3CA /* SignUpInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F402784860D00DBA3CA /* SignUpInfoViewController.swift */; };
+		C1D47F432785DA4900DBA3CA /* SignUpInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F422785DA4900DBA3CA /* SignUpInfoViewModel.swift */; };
+		C1D47F462785DCE200DBA3CA /* VerifyCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F452785DCE200DBA3CA /* VerifyCodeView.swift */; };
+		C1D47F482785DCEC00DBA3CA /* VerifyCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F472785DCEC00DBA3CA /* VerifyCodeViewController.swift */; };
+		C1D47F4A2785DCF700DBA3CA /* VerifyCodeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F492785DCF700DBA3CA /* VerifyCodeViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -96,6 +100,10 @@
 		C1D47F3B278474AA00DBA3CA /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		C1D47F3D278485F200DBA3CA /* SignUpInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpInfoView.swift; sourceTree = "<group>"; };
 		C1D47F402784860D00DBA3CA /* SignUpInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpInfoViewController.swift; sourceTree = "<group>"; };
+		C1D47F422785DA4900DBA3CA /* SignUpInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpInfoViewModel.swift; sourceTree = "<group>"; };
+		C1D47F452785DCE200DBA3CA /* VerifyCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyCodeView.swift; sourceTree = "<group>"; };
+		C1D47F472785DCEC00DBA3CA /* VerifyCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyCodeViewController.swift; sourceTree = "<group>"; };
+		C1D47F492785DCF700DBA3CA /* VerifyCodeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyCodeViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -282,6 +290,7 @@
 				C1D47F3B278474AA00DBA3CA /* SignUpViewController.swift */,
 				C1D47F392784749C00DBA3CA /* SignUpViewModel.swift */,
 				C1D47F372784749200DBA3CA /* SignUpView.swift */,
+				C1D47F442785DCB300DBA3CA /* VerifyCode */,
 				C1D47F3F278485F500DBA3CA /* SignUpInfo */,
 			);
 			path = SignUp;
@@ -292,8 +301,19 @@
 			children = (
 				C1D47F3D278485F200DBA3CA /* SignUpInfoView.swift */,
 				C1D47F402784860D00DBA3CA /* SignUpInfoViewController.swift */,
+				C1D47F422785DA4900DBA3CA /* SignUpInfoViewModel.swift */,
 			);
 			path = SignUpInfo;
+			sourceTree = "<group>";
+		};
+		C1D47F442785DCB300DBA3CA /* VerifyCode */ = {
+			isa = PBXGroup;
+			children = (
+				C1D47F452785DCE200DBA3CA /* VerifyCodeView.swift */,
+				C1D47F472785DCEC00DBA3CA /* VerifyCodeViewController.swift */,
+				C1D47F492785DCF700DBA3CA /* VerifyCodeViewModel.swift */,
+			);
+			name = VerifyCode;
 			sourceTree = "<group>";
 		};
 		CABC661DFF2E909E8846E9B8 /* Pods */ = {
@@ -430,6 +450,8 @@
 			files = (
 				C1D47EE527795C9600DBA3CA /* SignInViewController.swift in Sources */,
 				C1D47F262783CA0C00DBA3CA /* NetworkLoggerPlugin.swift in Sources */,
+				C1D47F432785DA4900DBA3CA /* SignUpInfoViewModel.swift in Sources */,
+				C1D47F482785DCEC00DBA3CA /* VerifyCodeViewController.swift in Sources */,
 				27B19D48277BEA44008D85DE /* Color+extension.swift in Sources */,
 				272189052782EA8000ABEF60 /* UserRepository.swift in Sources */,
 				C1D47ED8277959AA00DBA3CA /* Coordinator.swift in Sources */,
@@ -441,6 +463,7 @@
 				C1D47F412784860D00DBA3CA /* SignUpInfoViewController.swift in Sources */,
 				C1D47EDF27795A9200DBA3CA /* SplashView.swift in Sources */,
 				C1D47EFF27795E3400DBA3CA /* Signup.swift in Sources */,
+				C1D47F462785DCE200DBA3CA /* VerifyCodeView.swift in Sources */,
 				C1D47EFD27795E2400DBA3CA /* UserInfo.swift in Sources */,
 				C1D47EE127795AA800DBA3CA /* SplashViewModel.swift in Sources */,
 				C1D47EF327795D6100DBA3CA /* Utils.swift in Sources */,
@@ -450,6 +473,7 @@
 				C1D47EE927795CCB00DBA3CA /* SignInViewModel.swift in Sources */,
 				C1D47EC32779570000DBA3CA /* AppDelegate.swift in Sources */,
 				272189012782E99500ABEF60 /* BaseRepository.swift in Sources */,
+				C1D47F4A2785DCF700DBA3CA /* VerifyCodeViewModel.swift in Sources */,
 				C1D47F2427833DB800DBA3CA /* BaseResponse.swift in Sources */,
 				C1D47F112779D6FD00DBA3CA /* ContainerViewController.swift in Sources */,
 				C1D47F3C278474AA00DBA3CA /* SignUpViewController.swift in Sources */,
