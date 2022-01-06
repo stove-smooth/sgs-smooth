@@ -1,15 +1,15 @@
 package com.example.authserver.service;
 
+import com.example.authserver.domain.User;
 import com.example.authserver.exception.CustomException;
 import com.example.authserver.exception.CustomExceptionStatus;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
-import com.example.authserver.domain.Account;
 import com.example.authserver.domain.Friend;
 import com.example.authserver.domain.type.FriendState;
 import com.example.authserver.dto.request.FriendRequest;
 import com.example.authserver.dto.response.FriendResponse;
 import com.example.authserver.dto.response.WaitingResponse;
-import com.example.authserver.repository.AccountRepository;
+import com.example.authserver.repository.UserRepository;
 import com.example.authserver.repository.FriendRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,15 +23,15 @@ import java.util.stream.Collectors;
 @Service
 public class FriendService {
 
-    private final AccountRepository accountRepository;
+    private final UserRepository accountRepository;
     private final FriendRepository friendRepository;
 
     @Transactional
     public void requestFriend(FriendRequest friendRequest, CustomUserDetails customUserDetails) {
-        Account requestAccount = accountRepository.findByNameAndCode(friendRequest.getName(), friendRequest.getCode())
+        User requestAccount = accountRepository.findByNameAndCode(friendRequest.getName(), friendRequest.getCode())
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
-        Account account = customUserDetails.getAccount();
+        User account = customUserDetails.getAccount();
 
         Friend friend = Friend.builder()
                 .receiver(requestAccount)
@@ -43,7 +43,7 @@ public class FriendService {
 
     @Transactional
     public WaitingResponse getFriendRequest(Long id) {
-        Account account = accountRepository.findById(id).orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
+        User account = accountRepository.findById(id).orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
         List<Friend> responseList = account.getResponseList();
         List<Friend> requestList = account.getRequestList();

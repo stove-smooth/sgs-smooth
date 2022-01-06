@@ -1,10 +1,10 @@
 package com.example.authserver.configure.security.authentication;
 
+import com.example.authserver.domain.User;
 import com.example.authserver.exception.CustomException;
 import com.example.authserver.exception.CustomExceptionStatus;
-import com.example.authserver.domain.Account;
 import com.example.authserver.domain.type.Status;
-import com.example.authserver.repository.AccountRepository;
+import com.example.authserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,11 +17,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CustomUserDetailService implements UserDetailsService {
 
-    private final AccountRepository accountRepository;
+    private final UserRepository accountRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<Account> account = accountRepository.findByEmailAndStatus(email, Status.VALID);
+        Optional<User> account = accountRepository.findByEmailAndStatus(email, Status.VALID);
         if (!account.isPresent()) throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND);
         return new CustomUserDetails(account.get());
     }

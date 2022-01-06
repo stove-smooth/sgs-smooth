@@ -38,7 +38,6 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
             }
 
             String jwt = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
-            log.info(jwt);
             if (!isJwtValid(jwt)) {
                 log.info("실패");
                 return onError(exchange,"JWT token is not valid",HttpStatus.UNAUTHORIZED);
@@ -73,7 +72,6 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
     private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
-
         return response.setComplete();
 
     }

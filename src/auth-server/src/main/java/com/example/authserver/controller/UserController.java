@@ -1,6 +1,5 @@
 package com.example.authserver.controller;
 
-import com.example.authserver.dto.request.TempRequest;
 import com.example.authserver.dto.response.*;
 import com.example.authserver.exception.CustomException;
 import com.example.authserver.exception.CustomExceptionStatus;
@@ -9,7 +8,7 @@ import com.example.authserver.configure.security.authentication.CustomUserDetail
 import com.example.authserver.domain.type.RoleType;
 import com.example.authserver.dto.*;
 import com.example.authserver.dto.request.SignInRequest;
-import com.example.authserver.service.AccountService;
+import com.example.authserver.service.UserService;
 import com.example.authserver.util.ValidationExceptionProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +24,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/auth-server")
-public class AccountController {
+public class UserController {
 
-    private final AccountService accountService;
+    private final UserService accountService;
     private final ResponseService responseService;
 
     @PostMapping("/sign-up")

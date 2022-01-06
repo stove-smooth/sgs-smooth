@@ -18,10 +18,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Account {
+public class User extends BaseTimeEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "account_id")
+    @Column(name = "user_id")
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -47,6 +47,15 @@ public class Account {
 
     private String profileImage;
 
+    @Column(length = 190)
+    private String bio;
+
+    @Column(length = 3)
+    private String nation_code;
+
+    @Column(length = 3)
+    private String language_code;
+
     @OneToMany(mappedBy = "receiver",cascade = CascadeType.ALL)
     private List<Friend> responseList = new ArrayList<>();
 
@@ -54,14 +63,14 @@ public class Account {
     private List<Friend> requestList = new ArrayList<>();
 
 
-    public static Account createAccount(AccountAutoDto dto) {
+    public static User createAccount(AccountAutoDto dto) {
         StringBuilder randomCode = new StringBuilder();
         for (int i =1; i<=4;i++) {
             int n = (int) (Math.random() * 10);
             randomCode.append(n);
         }
 
-        return Account.builder()
+        return User.builder()
                 .email(dto.getEmail())
                 .password(dto.getPassword())
                 .name(dto.getName())
