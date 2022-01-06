@@ -48,6 +48,11 @@ class SignUpViewController: BaseViewController {
             .observe(on: MainScheduler.instance)
             .bind(onNext: self.goToVerifyCode)
             .disposed(by: disposeBag)
+        
+        self.signUpView.emailField.rx.text
+            .orEmpty
+            .bind(to: self.viewModel.input.emailTextField)
+            .disposed(by: disposeBag)
     }
     
     private func goToVerifyCode() {

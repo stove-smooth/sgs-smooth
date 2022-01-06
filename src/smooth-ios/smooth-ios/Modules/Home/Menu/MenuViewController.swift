@@ -36,6 +36,7 @@ class MenuViewController: BaseViewController, UITableViewDelegate, UITableViewDa
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
+    
     var ServerListView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(red: 33/255.0, green: 33/255.0, blue: 33/255.0, alpha: 1)
@@ -80,7 +81,6 @@ class MenuViewController: BaseViewController, UITableViewDelegate, UITableViewDa
     }
     
     // table
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return MenuOptions.allCases.count
     }

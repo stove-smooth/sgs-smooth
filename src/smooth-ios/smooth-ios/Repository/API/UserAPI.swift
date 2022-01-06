@@ -12,6 +12,7 @@ enum UserTarget {
     case signIn(param: SignInRequest)
     case signUp(param: SignUpRequest)
     case sendMail(param: SendMailRequest)
+    case verifyCode(param: VerifyCodeRequest)
     case fetchUserInfo
 }
 
@@ -25,8 +26,10 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
             return "/auth-server/sign-up"
         case .sendMail:
             return "/auth-server/send-mail"
+        case .verifyCode:
+            return "/auth-server/check-email"
         case .fetchUserInfo:
-            return "/auth-server/info"
+            return "/auth-server/auth/info"
         }
     }
     
@@ -35,6 +38,7 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
         case .signIn: return .post
         case .signUp: return .post
         case .sendMail: return .post
+        case .verifyCode: return .get
         case .fetchUserInfo: return .get
         }
     }
@@ -45,8 +49,10 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
             return .requestCustomJSONEncodable(user, encoder: JSONEncoder())
         case .signUp(let user):
             return .requestCustomJSONEncodable(user, encoder: JSONEncoder())
-        case .sendMail(let email):
-            return .requestParameters(parameters: ["email": email], encoding: URLEncoding.default)
+        case .sendMail(let request):
+            return .requestParameters(parameters: ["email": request.email], encoding: URLEncoding.queryString)
+        case .verifyCode(let request):
+            return .requestParameters(parameters: ["key": request.key], encoding: URLEncoding.queryString)
         case .fetchUserInfo:
             return .requestPlain
         }
@@ -54,7 +60,7 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
     
     var authorizationType: AuthorizationType? {
         switch  self {
-        case .signIn, .signUp, .sendMail:
+        case .signIn, .signUp, .sendMail, .verifyCode:
             return nil
         case .fetchUserInfo:
             return .custom("Authorization")

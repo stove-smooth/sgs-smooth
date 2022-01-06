@@ -45,6 +45,7 @@ class SplashViewConroller: BaseViewController {
         
         // MARK: input
         self.viewModel.input.viewDidLoad
+            .debug()
             .subscribe { _ in
                 self.viewModel.hasToken()
             }
@@ -60,15 +61,18 @@ class SplashViewConroller: BaseViewController {
         
         // MARK: output
         self.viewModel.output.goToSignIn
-            .debug()
             .observe(on: MainScheduler.instance)
             .bind(onNext: self.goToSignIn)
             .disposed(by: disposeBag)
 
         self.viewModel.output.goToSignUp
-            .debug()
             .observe(on: MainScheduler.instance)
             .bind(onNext: self.goToSignUp)
+            .disposed(by: disposeBag)
+        
+        self.viewModel.output.goToMain
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: self.goToMain)
             .disposed(by: disposeBag)
     }
     

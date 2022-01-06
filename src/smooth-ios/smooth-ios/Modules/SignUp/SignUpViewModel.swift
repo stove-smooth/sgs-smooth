@@ -40,13 +40,13 @@ class SignUpViewModel: BaseViewModel {
         self.input.tapNextButton
             .asDriver(onErrorJustReturn: ())
             .drive(onNext: {
-                self.verifyCode(request: SendMailRequest(email: self.input.emailTextField.value))
+                self.sendMail(request: SendMailRequest(email: self.input.emailTextField.value))
             })
             .disposed(by: disposeBag)
     }
     
-    private func verifyCode(request: SendMailRequest) {
-        UserRepository.shared.sendMail(request) { _ in 
+    private func sendMail(request: SendMailRequest) {
+        UserRepository.sendMail(request) { response,_ in
             self.output.goToVerifyCode.accept(())
         }
         

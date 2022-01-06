@@ -58,14 +58,12 @@ class SignInViewModel: BaseViewModel {
     }
     
     private func signIn(request: SignInRequest) {
-        UserRepository.shared.signIn(request) { response,_ in
-            guard let response = response else {
-                return
+        UserRepository.signIn(request) { response, error in
+            if error == nil {
+                self.output.goToMain.accept(())
+            } else {
+                print("🆘 error!")
             }
-
-            
-            UserDefaultsUtil.setUserToken(token: response.accessToken)
-            self.output.goToMain.accept(())
         }
     }
 }

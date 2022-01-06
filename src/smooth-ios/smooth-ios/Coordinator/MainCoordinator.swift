@@ -24,9 +24,17 @@ class MainCoordinator: NSObject, Coordinator {
     }
     
     func start() {
-        let vc = SplashViewConroller.instance()
-        vc.coordinator = self
-        navigationController.pushViewController(vc, animated: true)
+        let token = UserDefaultsUtil.getUserToken()
+        
+        if token == nil {
+            // 로그인이 안되어 있는 경우
+            let vc = SplashViewConroller.instance()
+            vc.coordinator = self
+            navigationController.pushViewController(vc, animated: true)
+        } else {
+            self.goToMain()
+        }
+        
     }
     
     func goToSigIn() {

@@ -45,14 +45,17 @@ class HomeViewController: BaseViewController {
         
         // Container VC
         containerViewController.delegate = self
-        let navVC = UINavigationController(rootViewController: containerViewController)
-        addChild(navVC)
-        view.addSubview(navVC.view)
+        guard let navVC = self.navigationViewController else {
+            return
+        }
+        
+//        let navVC = UINavigationController(rootViewController: containerViewController)
+//        addChild(navVC)
+//        view.addSubview(navVC.view)
         navVC.didMove(toParent: self)
-        self.navigationViewController = navVC
+//        self.navigationViewController = navVC
     }
 }
-
 
 extension HomeViewController: ContainerViewControllerDelegate {
     func didTapMenuButton() {

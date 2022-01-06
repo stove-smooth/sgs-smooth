@@ -19,7 +19,7 @@ struct SignUpRequest: Encodable {
     }
 }
 
-struct SignUpResponse: Decodable {
+struct SignUpResponse: Codable {
     
 }
 
@@ -33,6 +33,14 @@ struct SendMailRequest: Encodable {
     }
 }
 
-struct SendMailResponse: Decodable {
+struct SendMailResponse: Codable {
+    
+}
+
+struct VerifyCodeRequest: Encodable {
+    let key: String
+}
+
+struct VerifyCodeResponse: Codable {
     
 }
