@@ -7,6 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ChannelStatus {
     NORMAL("일반"),
+    SAVED("보관"),
     DELETED("삭제");
 
     private final String description;

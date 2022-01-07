@@ -29,5 +29,7 @@ public class Category {
     @Column(length = 200)
     private String name;
 
-    private double priority;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "before_id")
+    private Category before;
 }

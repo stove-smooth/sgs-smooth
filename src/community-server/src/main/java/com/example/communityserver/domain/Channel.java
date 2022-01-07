@@ -33,6 +33,10 @@ public class Channel extends BaseTimeEntity {
 
     private boolean isPublic;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "before_id")
+    private Channel before;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Channel parent;
@@ -42,8 +46,6 @@ public class Channel extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "channel_member")
     private List<ChannelMember> members = new ArrayList<>();
-
-    private double priority;
 
     @Column(length = 10)
     @Enumerated(EnumType.STRING)

@@ -34,6 +34,10 @@ public class CommunityMapper extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private CommunityRole role;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "before_id")
+    private CommunityMapper before;
+
     @Column(length = 10)
     @Enumerated(EnumType.STRING)
     private CommunityMapperStatus status;
