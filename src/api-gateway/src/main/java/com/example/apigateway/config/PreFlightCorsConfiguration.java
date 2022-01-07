@@ -1,5 +1,6 @@
 package com.example.apigateway.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -13,11 +14,12 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Configuration
 public class PreFlightCorsConfiguration {
 
-    private static final String ALLOWED_HEADERS = "x-requested-with, authorization, Content-Type";
-    private static final String ALLOWED_METHODS = "GET, PUT, POST, DELETE, PATCH";
+    private static final String ALLOWED_HEADERS = "x-requested-with, authorization, Content-Type, Content-Length, Authorization, credential, X-XSRF-TOKEN";
+    private static final String ALLOWED_METHODS = "GET, PUT, POST, DELETE, OPTIONS, PATCH";
     private static final String ALLOWED_ORIGIN = "http://localhost:3000";
     private static final String ALLOWED_CREDENTIALS = "true";
     private static final String MAX_AGE = "3600";
@@ -26,6 +28,7 @@ public class PreFlightCorsConfiguration {
     public WebFilter corsFilter() {
         return (ServerWebExchange ctx, WebFilterChain chain) -> {
             ServerHttpRequest request = ctx.getRequest();
+            log.info(String.valueOf(CorsUtils.isPreFlightRequest(request)));
             if (CorsUtils.isPreFlightRequest(request)) {
                 ServerHttpResponse response = ctx.getResponse();
                 HttpHeaders headers = response.getHeaders();

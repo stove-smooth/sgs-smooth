@@ -47,6 +47,9 @@ public enum CustomExceptionStatus {
     // friend
     FRIEND_NOT_FOUND(false, 2170, "친구 목록을 찾을 수 없습니다."),
 
+    // email
+    NOT_VALID_CODE(false,2180,"유효하지 않은 인증번호입니다."),
+
     /**
      * 2200 : Response 오류
      */
