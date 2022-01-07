@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,8 @@ public class Channel extends BaseTimeEntity {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    private Long userId;
+
     @Column(length = 200)
     private String name;
 
@@ -36,6 +39,8 @@ public class Channel extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "before_id")
     private Channel before;
+
+    private LocalDateTime expiredAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
