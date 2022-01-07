@@ -216,12 +216,12 @@ export default {
 }
 
 .layer {
-  display: -webkit-box;
-  display: -ms-flexbox;
+  /* display: -webkit-box;
+  display: -ms-flexbox; */
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-  -ms-flex-direction: column;
+  /* -ms-flex-direction: column; */
   flex-direction: column;
   overflow: hidden;
   -webkit-box-flex: 1;

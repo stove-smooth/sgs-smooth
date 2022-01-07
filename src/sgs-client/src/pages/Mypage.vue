@@ -7,6 +7,7 @@
       </div>
       <div class="friends-state-container">
         <friends-state-menu-bar></friends-state-menu-bar>
+        <friends-state-list></friends-state-list>
       </div>
     </div>
   </div>
@@ -14,13 +15,15 @@
 
 <script>
 import FriendsSideBar from "../components/FriendsSideBar.vue";
+import FriendsStateList from "../components/FriendsStateList.vue";
 import FriendsStateMenuBar from "../components/FriendsStateMenuBar.vue";
-import UserSection from "../components/UserSection.vue";
+import UserSection from "../components/common/UserSection.vue";
 export default {
   components: {
     FriendsSideBar,
     UserSection,
     FriendsStateMenuBar,
+    FriendsStateList,
   },
 };
 </script>
@@ -46,6 +49,7 @@ export default {
   /*   -ms-flex: 0 0 auto; */
   flex: 0 0 auto;
   background: #2f3136;
+  overflow: hidden;
 }
 .try {
   overflow: hidden scroll;

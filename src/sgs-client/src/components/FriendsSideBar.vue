@@ -4,7 +4,7 @@
       <button class="searchbar">대화 찾기 또는 시작하기</button>
     </div>
     <div class="thin-scrollbar dm-scroller">
-      <div class="dm-content">
+      <div class="side-content">
         <div class="dm-channel">
           <div class="dm-layout">
             <div class="avatar-container">
@@ -88,8 +88,8 @@ export default {
   line-height: 24px;
   white-space: nowrap;
 }
-.dm-content {
-  height: 1420px;
+.side-content {
+  /* height: 1420px; */
   position: relative;
   padding-top: 8px;
   /**padding은 임의로해봄. */
@@ -227,9 +227,6 @@ export default {
   cursor: pointer;
 }
 .invite-private-channels-icon {
-  -webkit-box-flex: 0;
-  /* -ms-flex: 0; */
-  flex: 0;
   width: 12px;
   height: 12px;
   margin-left: 0;

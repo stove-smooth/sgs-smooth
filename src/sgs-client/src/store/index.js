@@ -17,11 +17,11 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    email: "" || getUserEmailToCookie(),
-    nickname: "" || getUserNickNameToCookie(),
-    code: "" || getUserCodeToCookie(),
-    accesstoken: "" || getAccessAuthToCookie(),
-    refreshtoken: "" || getRefreshAuthToCookie(),
+    email: getUserEmailToCookie() || "",
+    nickname: getUserNickNameToCookie() || "",
+    code: getUserCodeToCookie() || "",
+    accesstoken: getAccessAuthToCookie() || "",
+    refreshtoken: getRefreshAuthToCookie() || "",
   },
   getters: {
     isLogin(state) {
@@ -63,12 +63,11 @@ export default new Vuex.Store({
   actions: {
     async LOGIN({ commit }, userData) {
       const response = await loginUser(userData);
-      console.log(commit, response);
       commit("setEmail", response.data.result.email);
       commit("setNickname", response.data.result.name);
       commit("setCode", response.data.result.code);
       commit("setAccessToken", response.data.result.accessToken);
-      commit("setAccessToken", response.data.result.refreshToken);
+      commit("setRefreshToken", response.data.result.refreshToken);
       saveAccessAuthToCookie(response.data.result.accessToken);
       saveRefreshAuthToCookie(response.data.result.refreshToken);
       saveUserCodeToCookie(response.data.result.code);

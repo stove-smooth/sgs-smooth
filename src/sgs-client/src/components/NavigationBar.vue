@@ -19,17 +19,30 @@
         </div>
         <div aria-label="서버">
           <!--서버 개수만큼 만들기.-->
-          <div class="listItem">
-            <div class="selected-wrapper" v-show="false">
-              <span class="selected-item"></span>
-            </div>
-            <div class="listItem-wrapper">
-              <div class="server"></div>
+          <div v-for="(item, index) in serverlist" :key="index">
+            <div class="listItem">
+              <div class="selected-wrapper" v-show="false">
+                <span class="selected-item"></span>
+              </div>
+              <div draggable="true">
+                <div class="listItem-wrapper">
+                  <div class="server-wrapper" v-if="item.image">
+                    <img
+                      :src="item.image"
+                      alt="image"
+                      class="server-nav-image"
+                    />
+                  </div>
+                  <div class="server-wrapper" v-else>
+                    <div class="server">{{ item.name }}</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
         <div class="tutorial-container">
-          <div class="listItem">
+          <div class="listItem" @click="openCreate">
             <div claass="listItem-wrapper">
               <div class="circleIcon-button">
                 <svg class="plus-icon"></svg>
@@ -46,7 +59,32 @@
 </template>
 
 <script>
-export default {};
+const storage = {
+  fetch() {
+    const serveritems = localStorage.getItem(3) || "[]";
+    const result = JSON.parse(serveritems);
+    return result;
+  },
+};
+export default {
+  data() {
+    return {
+      images: "",
+      serverlist: [],
+    };
+  },
+  methods: {
+    openCreate() {
+      this.$emit("create-server");
+    },
+    fetchTodoItems() {
+      this.serverlist = storage.fetch();
+    },
+  },
+  created() {
+    this.fetchTodoItems();
+  },
+};
 </script>
 
 <style>
@@ -149,11 +187,37 @@ export default {};
   border-radius: 1px;
   background-color: hsla(0, 0%, 100%, 0.06);
 }
-.server {
+/* .server {
   background-color: white;
   width: 100%;
   height: 100%;
   border-radius: 50%;
+} */
+.server {
+  font-weight: 500;
+  line-height: 1.2em;
+  white-space: nowrap;
+  background-color: #36393f;
+  color: #dcddde;
+  display: flex;
+  width: 48px;
+  height: 48px;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 50%;
+}
+.server-wrapper {
+  font-size: 12px;
+  display: flex;
+  width: 48px;
+  height: 48px;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
 }
 .circleIcon-button {
   cursor: pointer;
@@ -175,6 +239,13 @@ export default {};
   background-image: url("../assets/channel-plus.svg");
 }
 
+.server-nav-image {
+  display: flex;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  position: relative;
+}
 ol,
 ul {
   list-style: none;

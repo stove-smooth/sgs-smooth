@@ -193,19 +193,19 @@ export default {
 }
 .mute {
   display: flex;
-  background-image: url("../assets/mute.svg");
+  background-image: url("../../assets/mute.svg");
   width: 12px;
   height: 17px;
 }
 .deafen {
   display: flex;
-  background-image: url("../assets/deafen.svg");
+  background-image: url("../../assets/deafen.svg");
   width: 16px;
   height: 16px;
 }
 .settings {
   display: flex;
-  background-image: url("../assets/settings.svg");
+  background-image: url("../../assets/settings.svg");
   width: 16px;
   height: 16px;
 }
