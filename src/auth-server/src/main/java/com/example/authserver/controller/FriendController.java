@@ -23,7 +23,7 @@ public class FriendController {
     private final FriendService friendService;
     private final ResponseService responseService;
 
-    @PostMapping("/friend")
+    @PostMapping("/auth/friend")
     public CommonResponse requestFriend(@RequestBody @Valid FriendRequest friendRequest, Errors errors,
                                         @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         if (errors.hasErrors()) ValidationExceptionProvider.throwValidError(errors);
@@ -32,13 +32,19 @@ public class FriendController {
         return responseService.getSuccessResponse();
     }
 
-    @GetMapping("/friend")
+    @GetMapping("/auth/friend")
     public DataResponse<WaitingResponse> getFriendRequest(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return responseService.getDataResponse(friendService.getFriendRequest(customUserDetails.getAccount().getId()));
     }
 
-    //todo : 친구요청 취소, 거절
-    @DeleteMapping("/friend")
+    @PatchMapping("/auth/friend")
+    public CommonResponse addToFriend(@RequestParam(value="id") Long id) {
+        friendService.addToFriend(id);
+
+        return responseService.getSuccessResponse();
+    }
+
+    @DeleteMapping("/auth/friend")
     public CommonResponse refuseFriend(@RequestParam(value = "id") Long id) {
         friendService.refuseFriend(id);
         return responseService.getSuccessResponse();
