@@ -1,6 +1,5 @@
 package com.example.authserver.controller;
 
-import com.example.authserver.dto.request.TempRequest;
 import com.example.authserver.dto.response.*;
 import com.example.authserver.exception.CustomException;
 import com.example.authserver.exception.CustomExceptionStatus;
@@ -9,7 +8,7 @@ import com.example.authserver.configure.security.authentication.CustomUserDetail
 import com.example.authserver.domain.type.RoleType;
 import com.example.authserver.dto.*;
 import com.example.authserver.dto.request.SignInRequest;
-import com.example.authserver.service.AccountService;
+import com.example.authserver.service.UserService;
 import com.example.authserver.util.ValidationExceptionProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +24,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/auth-server")
-public class AccountController {
+public class UserController {
 
-    private final AccountService accountService;
+    private final UserService accountService;
     private final ResponseService responseService;
 
     @PostMapping("/sign-up")
@@ -43,7 +42,7 @@ public class AccountController {
         return responseService.getDataResponse(accountService.signIn(request));
     }
 
-    @GetMapping("/info")
+    @GetMapping("/auth/info")
     public DataResponse<AccountAutoDto> getAuthAccount(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return responseService.getDataResponse(accountService.getAuthAccount(customUserDetails));
     }
@@ -53,14 +52,14 @@ public class AccountController {
         return responseService.getDataResponse(accountService.sendEmail(email));
     }
 
-    @GetMapping("/check-email/{key}")
-    public CommonResponse checkEmail(@PathVariable String key) {
+    @GetMapping("/check-email")
+    public CommonResponse checkEmail(@RequestParam(value = "key") String key) {
         accountService.checkEmail(key);
 
         return responseService.getSuccessResponse();
     }
 
-    @PatchMapping("/role")
+    @PatchMapping("/auth/role")
     public CommonResponse updateRole(@RequestParam(value = "email") String email,
                                      @RequestParam(value = "role") String role) {
         RoleType roleType;
@@ -80,9 +79,9 @@ public class AccountController {
         return responseService.getDataResponse(accountService.checkRefreshToken(token,refreshToken));
     }
 
-    @PostMapping("/find-id-list")
-    public Map<Long, AccountInfoResponse> findIdList(@RequestBody List<Long> requestAccountIds) {
-        return accountService.findIdList(requestAccountIds);
+    @PostMapping("/auth/find-id-list")
+    public DataResponse<Map<Long, AccountInfoResponse>> findIdList(@RequestBody List<Long> requestAccountIds) {
+        return responseService.getDataResponse(accountService.findIdList(requestAccountIds));
     }
 
 }

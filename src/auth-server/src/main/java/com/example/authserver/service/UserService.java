@@ -11,16 +11,14 @@ import com.example.authserver.dto.*;
 import com.example.authserver.dto.request.SignInRequest;
 import com.example.authserver.dto.response.MailResponse;
 import com.example.authserver.dto.response.SignInResponse;
-import com.example.authserver.repository.AccountRepository;
+import com.example.authserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.utility.RandomString;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -34,11 +32,11 @@ import static com.example.authserver.domain.type.Status.*;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
-public class AccountService extends BaseTimeEntity {
+public class UserService extends BaseTimeEntity {
 
     private long refreshTime = 14 * 24 * 60 * 60 * 1000L;
 
-    private final AccountRepository accountRepository;
+    private final UserRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final EmailService emailService;
@@ -49,7 +47,7 @@ public class AccountService extends BaseTimeEntity {
         if (accountRepository.findByEmailAndStatus(dto.getEmail(), VALID).isPresent()) throw new CustomException(CustomExceptionStatus.DUPLICATED_EMAIL);
 
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
-        Account account = Account.createAccount(dto);
+        User account = User.createAccount(dto);
         accountRepository.save(account);
 
         return dto;
@@ -57,7 +55,7 @@ public class AccountService extends BaseTimeEntity {
 
     @Transactional
     public SignInResponse signIn(SignInRequest request) {
-        Account account = accountRepository.findByEmailAndStatus(request.getEmail(), VALID)
+        User account = accountRepository.findByEmailAndStatus(request.getEmail(), VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.FAILED_TO_LOGIN));
         if (!passwordEncoder.matches(request.getPassword(), account.getPassword())) {
             throw new CustomException(CustomExceptionStatus.FAILED_TO_LOGIN);
@@ -81,7 +79,7 @@ public class AccountService extends BaseTimeEntity {
 
     @Transactional
     public AccountAutoDto getAuthAccount(CustomUserDetails customUserDetails) {
-        Account account = customUserDetails.getAccount();
+        User account = customUserDetails.getAccount();
 
         return new AccountAutoDto(account);
     }
@@ -113,13 +111,16 @@ public class AccountService extends BaseTimeEntity {
     @Transactional
     public void checkEmail(String key) {
         String email = (String) redisTemplate.opsForValue().get(key);
-        accountRepository.findByEmailAndStatus(email,VALID).orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
-        redisTemplate.delete(key);
+        if (email == null) {
+            throw new CustomException(CustomExceptionStatus.NOT_VALID_CODE);
+        } else {
+            redisTemplate.delete(key);
+        }
     }
 
     @Transactional
     public void updateRole(String email, RoleType roleType) {
-        Account account = accountRepository.findByEmailAndStatus(email, VALID)
+        User account = accountRepository.findByEmailAndStatus(email, VALID)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID));
         account.changeRole(roleType);
     }
@@ -135,7 +136,7 @@ public class AccountService extends BaseTimeEntity {
         if (!refresh.equals(refreshToken)) {
             throw new CustomException(CustomExceptionStatus.INVALID_JWT);
         }
-        Account account = accountRepository.findByEmailAndStatus(email, VALID).orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
+        User account = accountRepository.findByEmailAndStatus(email, VALID).orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
         SignInResponse res = SignInResponse.builder()
                 .refreshToken(jwtTokenProvider.createToken(account.getEmail(),account.getRoleType(),account.getId()))
@@ -145,7 +146,7 @@ public class AccountService extends BaseTimeEntity {
     }
 
     public Map<Long,AccountInfoResponse> findIdList(List<Long> requestAccountIds) {
-        List<Account> accountList = accountRepository.findById(requestAccountIds);
+        List<User> accountList = accountRepository.findById(requestAccountIds);
 
         List<AccountInfoResponse> collect = accountList.stream().map(
                 a -> new AccountInfoResponse(a.getId(), a.getName(), a.getProfileImage(), a.getState().getName())

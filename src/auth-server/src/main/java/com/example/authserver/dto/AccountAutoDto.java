@@ -1,6 +1,6 @@
 package com.example.authserver.dto;
 
-import com.example.authserver.domain.Account;
+import com.example.authserver.domain.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
@@ -35,7 +35,7 @@ public class AccountAutoDto {
     private String code;
 
 
-    public AccountAutoDto(Account account) {
+    public AccountAutoDto(User account) {
         this.email = account.getEmail();
         this.name = account.getName();
         this.code = account.getCode();
