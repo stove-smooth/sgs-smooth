@@ -20,6 +20,10 @@ class MenuViewController: BaseViewController, UITableViewDelegate, UITableViewDa
         case addServer = "add_server"
     }
     
+    static func instance() -> MenuViewController {
+        return MenuViewController(nibName: nil, bundle: nil)
+    }
+    
     private let tableView: UITableView = {
         let table = UITableView()
         table.backgroundColor = nil
@@ -39,7 +43,7 @@ class MenuViewController: BaseViewController, UITableViewDelegate, UITableViewDa
     
     var ServerListView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(red: 33/255.0, green: 33/255.0, blue: 33/255.0, alpha: 1)
+        view.backgroundColor = UIColor.serverListDartGray
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -65,7 +69,6 @@ class MenuViewController: BaseViewController, UITableViewDelegate, UITableViewDa
         view.addSubview(stackView)
         
         ServerListView.addSubview(tableView)
-        
         stackView.snp.makeConstraints { make in
             make.top.left.right.bottom.equalToSuperview()
         }
@@ -89,8 +92,8 @@ class MenuViewController: BaseViewController, UITableViewDelegate, UITableViewDa
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = MenuOptions.allCases[indexPath.row].rawValue
         cell.textLabel?.textColor = .white
-        cell.backgroundColor = UIColor(red: 33/255.0, green: 33/255.0, blue: 33/255.0, alpha: 1)
-        cell.contentView.backgroundColor = UIColor(red: 33/255.0, green: 33/255.0, blue: 33/255.0, alpha: 1)
+        cell.backgroundColor = UIColor.serverListDartGray
+        cell.contentView.backgroundColor = UIColor.serverListDartGray
         return cell
     }
     

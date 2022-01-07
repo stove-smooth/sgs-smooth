@@ -27,7 +27,7 @@ class SignUpInfoView: BaseView {
         $0.keyboardType = .default
         
         $0.textColor = .white
-        $0.backgroundColor = UIColor.serverListDartGrey
+        $0.backgroundColor = UIColor.serverListDartGray
         
         $0.returnKeyType = .next
         $0.layer.cornerRadius = 5
@@ -39,7 +39,7 @@ class SignUpInfoView: BaseView {
         $0.isSecureTextEntry = true
         
         $0.textColor = .white
-        $0.backgroundColor = UIColor.serverListDartGrey
+        $0.backgroundColor = UIColor.serverListDartGray
         
         $0.returnKeyType = .done
         $0.layer.cornerRadius = 5
@@ -53,7 +53,7 @@ class SignUpInfoView: BaseView {
     }
     
     override func setup() {
-        self.backgroundColor = UIColor.backgroundDartGrey
+        self.backgroundColor = UIColor.backgroundDartGray
         
         [
             titleLabel, nickNameLabel, nickNameField, nextButton

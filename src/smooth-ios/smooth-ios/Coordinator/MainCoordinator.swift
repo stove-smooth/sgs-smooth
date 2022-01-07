@@ -17,7 +17,7 @@ class MainCoordinator: NSObject, Coordinator {
         self.navigationController = navigationController
         self.navigationController.navigationBar.tintColor = .white
         
-        self.navigationController.navigationBar.barTintColor = UIColor.backgroundDartGrey
+        self.navigationController.navigationBar.barTintColor = UIColor.backgroundDartGray
         self.navigationController.navigationBar.shadowImage = UIImage()
         self.navigationController.navigationBar.isTranslucent = false
         
@@ -47,6 +47,7 @@ class MainCoordinator: NSObject, Coordinator {
     func goToMain() {
         let vc = HomeViewController.instance()
         vc.coordinator = self
+        navigationController.removeFromParent()
         navigationController.pushViewController(vc, animated: true)
     }
     

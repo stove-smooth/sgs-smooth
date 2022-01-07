@@ -29,16 +29,6 @@ struct UserRepository: Networkable {
                 return completion(nil, error)
             }
         }
-//        provider.rx.request(.signIn(param: request))
-//            .filterSuccessfulStatusCodes()
-//            .map(SignInResponse.self, atKeyPath: "result")
-//            .debug()
-//            .subscribe(onSuccess: {
-//                completion($0, nil)
-//            }, onFailure: {
-//                completion(nil, $0)
-//            })
-//            .disposed(by: disposeBag)
     }
     
     static func signUp(_ request: SignUpRequest, _ completion: @escaping (SignUpResponse?, Error?) -> Void ) {

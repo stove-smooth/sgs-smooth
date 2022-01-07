@@ -8,10 +8,8 @@ target 'smooth-ios' do
   
   pod 'RxSwift'
   pod 'RxCocoa'
+  pod 'RxDataSources'
   
   pod 'Moya'
   pod 'Moya/RxSwift'
-  pod 'MoyaSugar'
-  
-
 end

@@ -21,19 +21,13 @@ class SignInView: BaseView {
         $0.textColor = .white
         $0.font = UIFont.systemFont(ofSize: 15, weight: .ultraLight)
     }
-    
-    
-    private let emailView = UIView().then {
-           $0.layer.cornerRadius = 15
-           $0.layer.borderWidth = 1
-       }
 
     let emailField = InputTextField().then {
         $0.placeholder = "이메일 또는 전화번호"
         $0.keyboardType = .emailAddress
         
         $0.textColor = .white
-        $0.backgroundColor = UIColor.serverListDartGrey
+        $0.backgroundColor = UIColor.serverListDartGray
         
         $0.returnKeyType = .next
         $0.layer.cornerRadius = 5
@@ -45,7 +39,7 @@ class SignInView: BaseView {
         $0.isSecureTextEntry = true
         
         $0.textColor = .white
-        $0.backgroundColor = UIColor.serverListDartGrey
+        $0.backgroundColor = UIColor.serverListDartGray
         
         $0.returnKeyType = .done
         $0.layer.cornerRadius = 5
@@ -60,7 +54,7 @@ class SignInView: BaseView {
     }
     
     override func setup() {
-        self.backgroundColor = UIColor.backgroundDartGrey
+        self.backgroundColor = UIColor.backgroundDartGray
         
         [
             titleLabel, titleDescriptionLabel,

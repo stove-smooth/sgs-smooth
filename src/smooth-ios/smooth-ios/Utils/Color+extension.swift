@@ -18,28 +18,28 @@ extension UIColor {
     static let yellow = UIColor(hex: "0xf7de52")
     static let white = UIColor(hex: "0xffffff")
     static let streaming = UIColor(hex: "0x593695")
-    static let backgroundDartGrey = UIColor(hex: "0x2c2f33")
+    static let backgroundDartGray = UIColor(hex: "0x2c2f33")
     static let textDescription = UIColor(hex: "0xB1B1B1")
     
     static let greyple = UIColor(hex: "0x99aab5")
     static let online = UIColor(hex: "0x51b581")
     static let offline = UIColor(hex: "0x747f8d")
     
-    static let iconsLightGrey = UIColor(hex: "0xc0bcbc")
-    static let iconsDarkGrey = UIColor(hex: "0x4f5660")
+    static let iconsLightGray = UIColor(hex: "0xc0bcbc")
+    static let iconsDarkGray = UIColor(hex: "0x4f5660")
     static let toolTip_UserProfile = UIColor(hex: "0x18191c")
     
-    static let messageBarDarkGrey = UIColor(hex: "0x40444b")
-    static let messageBarLightGrey = UIColor(hex: "0xf0ecf4")
+    static let messageBarDarkGray = UIColor(hex: "0x40444b")
+    static let messageBarLightGray = UIColor(hex: "0xf0ecf4")
     
-    static let textChannelDartGrey = UIColor(hex: "0x36393f")
+    static let textChannelDartGray = UIColor(hex: "0x36393f")
     
-    static let channelListDartGrey = UIColor(hex: "0x2f3136")
-    static let channelListLightGrey = UIColor(hex: "0xf8f4f4")
+    static let channelListDartGray = UIColor(hex: "0x2f3136")
+    static let channelListLightGray = UIColor(hex: "0xf8f4f4")
     
     
-    static let serverListDartGrey = UIColor(hex: "0x202225")
-    static let serverListLightGrey = UIColor(hex: "0xe8e4ec")
+    static let serverListDartGray = UIColor(hex: "0x202225")
+    static let serverListLightGray = UIColor(hex: "0xe8e4ec")
     
 }
 

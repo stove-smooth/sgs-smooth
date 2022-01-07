@@ -44,12 +44,12 @@ class SplashView: BaseView {
     
     let signInButton = UIButton().then {
         $0.setTitle("로그인", for: .normal)
-        $0.backgroundColor = UIColor.iconsDarkGrey
+        $0.backgroundColor = UIColor.iconsDarkGray
         $0.layer.cornerRadius = 5
     }
     
     override func setup() {
-        self.backgroundColor = UIColor.backgroundDartGrey
+        self.backgroundColor = UIColor.backgroundDartGray
         
         [
             logoImageView, splashImageView,

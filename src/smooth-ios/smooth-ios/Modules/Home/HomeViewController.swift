@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 protocol HomeViewControllerDelegate: AnyObject {
     func didTapMenuButton()
@@ -21,7 +23,7 @@ class HomeViewController: BaseViewController {
     weak var coordinator: MainCoordinator?
     var navigationViewController: UINavigationController?
     
-    private let menuViewController = MenuViewController()
+    private let menuViewController = MenuViewController.instance()
     private let containerViewController = ContainerViewController()
     lazy var serverViewController = ServerViewController()
     
@@ -29,6 +31,11 @@ class HomeViewController: BaseViewController {
     
     static func instance() -> HomeViewController {
         return HomeViewController(nibName: nil, bundle: nil)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        // main nav 숨기기
+        self.navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
     override func viewDidLoad() {
@@ -45,15 +52,14 @@ class HomeViewController: BaseViewController {
         
         // Container VC
         containerViewController.delegate = self
-        guard let navVC = self.navigationViewController else {
-            return
-        }
         
-//        let navVC = UINavigationController(rootViewController: containerViewController)
-//        addChild(navVC)
-//        view.addSubview(navVC.view)
+        let navVC = UINavigationController(rootViewController: containerViewController)
+        addChild(navVC)
+        view.addSubview(navVC.view)
         navVC.didMove(toParent: self)
-//        self.navigationViewController = navVC
+        
+        navVC.navigationBar.barTintColor = UIColor.backgroundDartGray
+        self.navigationViewController = navVC
     }
 }
 

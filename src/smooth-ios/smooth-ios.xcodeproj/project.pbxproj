@@ -52,6 +52,7 @@
 		C1D47F462785DCE200DBA3CA /* VerifyCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F452785DCE200DBA3CA /* VerifyCodeView.swift */; };
 		C1D47F482785DCEC00DBA3CA /* VerifyCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F472785DCEC00DBA3CA /* VerifyCodeViewController.swift */; };
 		C1D47F4A2785DCF700DBA3CA /* VerifyCodeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F492785DCF700DBA3CA /* VerifyCodeViewModel.swift */; };
+		C1D47F4D2787CFE300DBA3CA /* ChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F4C2787CFE300DBA3CA /* ChannelViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -104,6 +105,7 @@
 		C1D47F452785DCE200DBA3CA /* VerifyCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyCodeView.swift; sourceTree = "<group>"; };
 		C1D47F472785DCEC00DBA3CA /* VerifyCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyCodeViewController.swift; sourceTree = "<group>"; };
 		C1D47F492785DCF700DBA3CA /* VerifyCodeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyCodeViewModel.swift; sourceTree = "<group>"; };
+		C1D47F4C2787CFE300DBA3CA /* ChannelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -261,6 +263,7 @@
 			children = (
 				C1D47F0327795ED100DBA3CA /* HomeViewController.swift */,
 				C1D47F0F2779D66700DBA3CA /* Menu */,
+				C1D47F4B2787CFC200DBA3CA /* Content */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -269,8 +272,7 @@
 			isa = PBXGroup;
 			children = (
 				C1D47F0D2779D66300DBA3CA /* MenuViewController.swift */,
-				C1D47F102779D6FD00DBA3CA /* ContainerViewController.swift */,
-				C1D47F12277A0BCE00DBA3CA /* ServerViewController.swift */,
+				C1D47F4C2787CFE300DBA3CA /* ChannelViewController.swift */,
 			);
 			path = Menu;
 			sourceTree = "<group>";
@@ -314,6 +316,15 @@
 				C1D47F492785DCF700DBA3CA /* VerifyCodeViewModel.swift */,
 			);
 			name = VerifyCode;
+			sourceTree = "<group>";
+		};
+		C1D47F4B2787CFC200DBA3CA /* Content */ = {
+			isa = PBXGroup;
+			children = (
+				C1D47F102779D6FD00DBA3CA /* ContainerViewController.swift */,
+				C1D47F12277A0BCE00DBA3CA /* ServerViewController.swift */,
+			);
+			path = Content;
 			sourceTree = "<group>";
 		};
 		CABC661DFF2E909E8846E9B8 /* Pods */ = {
@@ -469,6 +480,7 @@
 				C1D47EF327795D6100DBA3CA /* Utils.swift in Sources */,
 				C1D47F2F2784220800DBA3CA /* Font+extension.swift in Sources */,
 				C1D47EF027795D1E00DBA3CA /* BaseViewModel.swift in Sources */,
+				C1D47F4D2787CFE300DBA3CA /* ChannelViewController.swift in Sources */,
 				C1D47EEC27795D0900DBA3CA /* BaseViewController.swift in Sources */,
 				C1D47EE927795CCB00DBA3CA /* SignInViewModel.swift in Sources */,
 				C1D47EC32779570000DBA3CA /* AppDelegate.swift in Sources */,
