@@ -1,6 +1,6 @@
 package com.example.authserver.configure.security.authentication;
 
-import com.example.authserver.domain.User;
+import com.example.authserver.domain.Account;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,13 +10,13 @@ import java.util.Collection;
 
 public class CustomUserDetails implements UserDetails {
 
-    private User account;
+    private Account account;
 
-    public User getAccount() {
+    public Account getAccount() {
         return account;
     }
 
-    public CustomUserDetails(User account) {
+    public CustomUserDetails(Account account) {
         this.account = account;
     }
 
