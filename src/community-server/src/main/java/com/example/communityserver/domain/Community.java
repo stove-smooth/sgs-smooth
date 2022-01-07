@@ -20,7 +20,7 @@ public class Community extends BaseTimeEntity {
     @Column(name = "community_id")
     private Long id;
 
-    @Column(length = 200)
+    @Column(length = 100)
     private String name;
 
     private String iconImage;
