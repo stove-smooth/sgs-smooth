@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum CommunityStatus {
+public enum CommonStatus {
     NORMAL("일반"),
     DELETED("삭제");
 

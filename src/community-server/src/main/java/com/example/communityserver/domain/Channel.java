@@ -31,6 +31,9 @@ public class Channel extends BaseTimeEntity {
     @Column(length = 200)
     private String name;
 
+    @Column(length = 1024)
+    private String description;
+
     @Enumerated(EnumType.STRING)
     private ChannelType type;
 

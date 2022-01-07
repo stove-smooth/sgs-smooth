@@ -1,5 +1,6 @@
 package com.example.communityserver.domain;
 
+import com.example.communityserver.domain.type.CommonStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.util.List;
 @Table(name = "category")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Category {
+public class Category extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,4 +33,6 @@ public class Category {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "before_id")
     private Category before;
+
+    private CommonStatus status;
 }

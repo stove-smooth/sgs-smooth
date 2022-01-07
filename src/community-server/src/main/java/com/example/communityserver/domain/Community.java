@@ -1,6 +1,6 @@
 package com.example.communityserver.domain;
 
-import com.example.communityserver.domain.type.CommunityStatus;
+import com.example.communityserver.domain.type.CommonStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,5 +38,5 @@ public class Community extends BaseTimeEntity {
 
     @Column(length = 10)
     @Enumerated(EnumType.STRING)
-    private CommunityStatus status;
+    private CommonStatus status;
 }
