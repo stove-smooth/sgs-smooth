@@ -19,7 +19,7 @@ public class DirectChat {
 
     @Id
     @Field("id")
-    private Long id;
+    private String id;
 
     private Long channel_id;
     private Long user_id;
