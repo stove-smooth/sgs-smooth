@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
@@ -26,7 +27,9 @@ public class MessageListener {
 
     @KafkaListener(topics = topicName, groupId = groupName)
     public void listen(DirectChat directChat) throws JsonProcessingException {
+        log.info("pass");
         messageRepository.save(directChat);
+
         HashMap<String,String> msg = new HashMap<>();
         msg.put("name","병찬");
         msg.put("message",directChat.getContent());

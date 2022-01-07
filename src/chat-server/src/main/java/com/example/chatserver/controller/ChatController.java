@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,8 +22,8 @@ public class ChatController {
 
     private final MessageSender messageSender;
 
-    @MessageMapping("/sendMessage")
-    @SendTo("/topic/group")
+    @MessageMapping("/send-message")
+//    @SendTo("/topic/group")
     public void sendMessage(@Payload DirectChat directChat) {
         directChat.setDateTime(LocalDateTime.now());
         messageSender.send(topicName,directChat);
