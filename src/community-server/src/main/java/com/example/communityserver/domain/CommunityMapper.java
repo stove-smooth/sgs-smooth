@@ -5,12 +5,13 @@ import com.example.communityserver.domain.type.CommunityRole;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "community_mapper")
-@Getter
+@Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommunityMapper extends BaseTimeEntity {
 
@@ -30,6 +31,9 @@ public class CommunityMapper extends BaseTimeEntity {
 
     private String profileImage;
 
+    @Column(length = 256)
+    private String memo;
+
     @Column(length = 10)
     @Enumerated(EnumType.STRING)
     private CommunityRole role;
@@ -41,4 +45,23 @@ public class CommunityMapper extends BaseTimeEntity {
     @Column(length = 10)
     @Enumerated(EnumType.STRING)
     private CommunityMapperStatus status;
+
+    //== 연관관계 메서드 ==//
+
+    //== 생성 메서드 ==//
+    public static CommunityMapper createCommunityMapper(
+            Long userId,
+            String nickname,
+            String profileImage,
+            CommunityRole role
+    ) {
+        CommunityMapper communityMapper = new CommunityMapper();
+        communityMapper.setUserId(userId);
+        communityMapper.setNickname(nickname);
+        communityMapper.setProfileImage(profileImage);
+        communityMapper.setMemo(null);
+        communityMapper.setRole(role);
+        communityMapper.setStatus(CommunityMapperStatus.NORMAL);
+
+    }
 }
