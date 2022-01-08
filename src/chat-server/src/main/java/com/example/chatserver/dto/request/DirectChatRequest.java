@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DirectChatRequest {
 
-    private String user;
+    private Long channel_id;
+
+    private String userId;
 
     private String content;
-
-    private Long roomId;
 }

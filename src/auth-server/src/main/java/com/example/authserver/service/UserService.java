@@ -1,5 +1,6 @@
 package com.example.authserver.service;
 
+import com.example.authserver.dto.request.ProfileRequest;
 import com.example.authserver.dto.response.AccountInfoResponse;
 import com.example.authserver.exception.CustomException;
 import com.example.authserver.exception.CustomExceptionStatus;
@@ -156,5 +157,17 @@ public class UserService extends BaseTimeEntity {
                 .collect(Collectors.toMap(AccountInfoResponse::getId, Function.identity()));
 
         return map;
+    }
+
+    @Transactional
+    public void uploadProfile(User account, String upload) {
+        account.changeProfileImage(upload);
+        accountRepository.save(account);
+    }
+
+    @Transactional
+    public void modifyProfile(User account, ProfileRequest profileRequest) {
+        account.changeBio(profileRequest.getBio());
+        accountRepository.save(account);
     }
 }

@@ -2,10 +2,12 @@ package com.example.chatserver.controller;
 
 import com.example.chatserver.configuration.MessageSender;
 import com.example.chatserver.domain.DirectChat;
+import com.example.chatserver.dto.request.DirectChatRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,4 +30,10 @@ public class ChatController {
         directChat.setDateTime(LocalDateTime.now());
         messageSender.send(topicName,directChat);
     }
+//    @MessageMapping("/file")
+//    @SendTo("/topic/group")
+//    public void sendFile(@Payload DirectChatRequest request) {
+//        DirectChat directChat = DirectChat.builder()
+//                .content(request.getContent())
+//    }
 }
