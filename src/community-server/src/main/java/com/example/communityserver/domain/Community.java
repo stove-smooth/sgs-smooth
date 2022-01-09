@@ -28,10 +28,10 @@ public class Community extends BaseTimeEntity {
 
     private boolean isPublic;
 
-    @OneToMany(mappedBy = "community_mapper", cascade = CascadeType.ALL)
-    private List<CommunityMapper> users = new ArrayList<>();
+    @OneToMany(mappedBy = "communityMember", cascade = CascadeType.ALL)
+    private List<CommunityMember> members = new ArrayList<>();
 
-    @OneToMany(mappedBy = "community_invitation", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "communityInvitation", cascade = CascadeType.ALL)
     private List<CommunityInvitation> invitations = new ArrayList<>();
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
@@ -41,31 +41,28 @@ public class Community extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private CommonStatus status;
 
-    - 이미지 원본
-    - 이미지 섬네일
-    - 타이틀
-    - 공개/비공개
-
     //== 연관관계 메서드 ==//
-    public void addUser(CommunityMapper communityMapper) {
-        users.add(communityMapper);
-        communityMapper.setCommunity(this);
+    public void addCategory(Category category) {
+        categories.add(category);
+        category.setCommunity(this);
     }
 
     //== 생성 메서드 ==//
     public static Community createCommunity(
-            Long userId,
-
+            String name,
+            String iconImage,
+            boolean isPublic,
+            Category... categories
     ) {
         Community community = new Community();
-        order.setMember(member);
-        order.setDelivery(delivery);
-        for (OrderItem orderItem: orderItems) {
-            order.addOrderItem(orderItem);
+        community.setName(name);
+        community.setIconImage(iconImage);
+        community.setPublic(isPublic);
+        for (Category category: categories) {
+            community.addCategory(category);
         }
-        order.setStatus(OrderStatus.ORDER);
-        order.setOrderDate(LocalDateTime.now());
-        return order;
+        community.setStatus(CommonStatus.NORMAL);
+        return community;
     }
 
     //== 비즈니스 로직 ==//
