@@ -1,5 +1,5 @@
 <template>
-  <div class="server-activity-container">
+  <div class="server-activity-container1">
     <div class="server-chatting-container">
       <div class="message-container">
         <div class="thin-scrollbar dm-scroller">
@@ -35,7 +35,7 @@ export default {};
 </script>
 
 <style>
-.server-activity-container {
+.server-activity-container1 {
   min-width: 0;
   min-height: 0;
   -webkit-box-flex: 1;

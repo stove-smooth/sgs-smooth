@@ -13,156 +13,204 @@
         </div>
       </header>
     </div>
-    <!-- <div class="tutorial-container">
+    <div class="tutorial-container" v-show="false">
       <div class="unread-container">
         <div class="unread-bar">
           <span>읽지 않은 메시지</span>
         </div>
       </div>
-    </div> -->
+    </div>
     <div class="thin-scrollbar dm-scroller">
       <div class="side-content">
-        <div
-          class="channel-default-container"
-          data-dnd-name="채팅 채널"
-          aria-label="채널 카테고리"
-        >
-          <!--카테고리는 드래그 가능해야하며 하위 채널까지 이동됨..-->
-          <div class="channel-category-wrapper clickable" role="listitem">
-            <div class="channel-category-content" tabindex="-1" role="button">
-              <!--카테고리 클릭시 선택한 채널 외 하위 채널을 접었다 펼 수 있음-->
-              <svg class="small-down-arrow"></svg>
-              <h2 class="small-title-text">채팅 채널</h2>
-            </div>
+        <draggable :list="all" @change="log" group="category">
+          <div v-for="element in all" :key="element.id">
             <div
-              class="create-children-wrapper"
-              aria-label="카테고리 하위 채널 생성"
+              class="channel-default-container"
+              data-dnd-name="element.name"
+              aria-label="채널 카테고리"
             >
-              <button class="create-channel-button" aria-label="채널 만들기">
-                <svg class="invite-private-channels-icon"></svg>
-              </button>
-            </div>
-          </div>
-        </div>
-        <div
-          class="channel-default-container"
-          data-dnd-name="일반"
-          aria-label="채널"
-        >
-          <div class="channel-content-wrapper" role="listitem">
-            <div class="channel-content">
-              <div class="channel-main-content">
-                <div class="channel-classification-wrapper" aria-label="텍스트">
-                  <svg class="hashtag-icon"></svg>
-                </div>
-                <!-- <div class="channel-classification-wrapper" aria-label="음성">
-                  <svg class="voice-channel"></svg>
-                </div> -->
-                <div class="channel-name-wrapper">
-                  <div class="channel-name">일반</div>
-                </div>
-              </div>
-              <div class="create-children-wrapper">
+              <!--카테고리는 드래그 가능해야하며 하위 채널까지 이동됨..-->
+              <div class="channel-category-wrapper clickable" role="listitem">
                 <div
-                  class="create-children-button"
-                  aria-label="초대 코드 만들기"
-                  tabindex="0"
+                  class="channel-category-content"
+                  tabindex="-1"
                   role="button"
                 >
-                  <svg class="invite-people-to-server"></svg>
+                  <!--카테고리 클릭시 선택한 채널 외 하위 채널을 접었다 펼 수 있음-->
+                  <svg class="small-down-arrow"></svg>
+                  <h2 class="small-title-text">{{ element.name }}</h2>
                 </div>
                 <div
-                  class="create-children-button"
-                  aria-label="채널 편집"
-                  tabindex="0"
-                  role="button"
+                  class="create-children-wrapper"
+                  aria-label="카테고리 하위 채널 생성"
                 >
-                  <svg class="small-settings"></svg>
+                  <button
+                    class="create-channel-button"
+                    aria-label="채널 만들기"
+                  >
+                    <svg class="plus-channel-in-this-category"></svg>
+                  </button>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-
-        <div
-          class="channel-default-container"
-          data-dnd-name="음성 채널"
-          aria-label="채널 카테고리"
-        >
-          <!--카테고리는 드래그 가능해야하며 하위 채널까지 이동됨..-->
-          <div class="channel-category-wrapper clickable" role="listitem">
-            <div class="channel-category-content" tabindex="-1" role="button">
-              <!--카테고리 클릭시 선택한 채널 외 하위 채널을 접었다 펼 수 있음-->
-              <svg class="small-down-arrow"></svg>
-              <h2 class="small-title-text">음성 채널</h2>
-            </div>
-            <div
-              class="create-children-wrapper"
-              aria-label="카테고리 하위 채널 생성"
-            >
-              <button class="create-channel-button" aria-label="채널 만들기">
-                <svg class="invite-private-channels-icon"></svg>
-              </button>
-            </div>
-          </div>
-        </div>
-        <div
-          class="channel-default-container"
-          data-dnd-name="일반"
-          aria-label="채널"
-        >
-          <div class="channel-content-wrapper" role="listitem">
-            <div class="channel-content">
-              <div class="channel-main-content">
-                <!-- <div class="channel-classification-wrapper" aria-label="텍스트">
-                  <svg class="hashtag-icon"></svg>
-                </div> -->
-                <div class="channel-classification-wrapper" aria-label="음성">
-                  <svg class="voice-channel"></svg>
+            <draggable :list="element.channels" @change="log" group="channel">
+              <div
+                class="channel-default-container"
+                data-dnd-name="일반"
+                aria-label="채널"
+                v-for="el in element.channels"
+                :key="el.id"
+              >
+                <div class="channel-content-wrapper" role="listitem">
+                  <div
+                    class="channel-content"
+                    @mouseover="hover(el.id)"
+                    @mouseleave="unhover"
+                  >
+                    <div class="channel-main-content">
+                      <div
+                        v-if="el.type === 'chat'"
+                        class="channel-classification-wrapper"
+                        aria-label="텍스트"
+                      >
+                        <svg class="hashtag-icon"></svg>
+                      </div>
+                      <div
+                        v-else
+                        class="channel-classification-wrapper"
+                        aria-label="음성"
+                      >
+                        <svg class="voice-channel"></svg>
+                      </div>
+                      <div class="channel-name-wrapper">
+                        <div class="channel-name">{{ el.name }}</div>
+                      </div>
+                    </div>
+                    <div
+                      class="create-children-wrapper"
+                      v-show="hovered === el.id"
+                    >
+                      <div
+                        class="create-children-button"
+                        aria-label="초대 코드 만들기"
+                        tabindex="0"
+                        role="button"
+                      >
+                        <svg class="invite-people-to-server"></svg>
+                      </div>
+                      <div
+                        class="create-children-button"
+                        aria-label="채널 편집"
+                        tabindex="0"
+                        role="button"
+                      >
+                        <svg class="small-settings"></svg>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="channel-name-wrapper">
-                  <div class="channel-name">일반</div>
-                </div>
-              </div>
-              <div class="create-children-wrapper">
-                <div
-                  class="create-children-button"
-                  aria-label="초대 코드 만들기"
-                  tabindex="0"
-                  role="button"
-                >
-                  <svg class="invite-people-to-server"></svg>
-                </div>
-                <div
-                  class="create-children-button"
-                  aria-label="채널 편집"
-                  tabindex="0"
-                  role="button"
-                >
-                  <svg class="small-settings"></svg>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!----음성 참여자 목록-->
-          <div class="voice-participants-list">
-            <div class="draggable">
-              <div class="voice-user-wrapper clickable">
-                <div class="voice-user-content">
-                  <div class="small-avatar-wrapper" />
-                  <div class="voice-participants-username-wrapper">밍디</div>
+                <!----음성 참여자 목록-->
+                <div class="voice-participants-list" v-show="false">
+                  <div class="draggable">
+                    <div class="voice-user-wrapper clickable">
+                      <div class="voice-user-content">
+                        <div class="small-avatar-wrapper" />
+                        <div class="voice-participants-username-wrapper">
+                          밍디
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            </draggable>
           </div>
-        </div>
+        </draggable>
       </div>
     </div>
   </nav>
 </template>
 
 <script>
-export default {};
+import draggable from "vuedraggable";
+export default {
+  components: {
+    draggable,
+  },
+  data() {
+    return {
+      hovered: "",
+      all: [
+        {
+          id: 1,
+          name: "채팅채널",
+          channels: [
+            {
+              id: 3,
+              name: "밍디의 채팅채널",
+              type: "chat",
+            },
+            {
+              id: 4,
+              name: "두리의 채팅채널",
+              type: "chat",
+            },
+            {
+              id: 5,
+              name: "병찬의 채팅채널",
+              type: "chat",
+            },
+            {
+              id: 6,
+              name: "희동의 채팅채널",
+              type: "chat",
+            },
+          ],
+        },
+        {
+          id: 2,
+          name: "음성채널",
+          channels: [
+            {
+              id: 7,
+              name: "노래방",
+              type: "voice",
+            },
+            {
+              id: 8,
+              name: "라운지",
+              type: "voice",
+            },
+            {
+              id: 9,
+              name: "광장",
+              type: "voice",
+            },
+          ],
+        },
+      ],
+    };
+  },
+  methods: {
+    add: function () {
+      this.list.push({ name: "Juan" });
+    },
+    clone: function (el) {
+      return {
+        name: el.name + " cloned",
+      };
+    },
+    log: function (evt) {
+      window.console.log(evt);
+    },
+    hover(index) {
+      this.hovered = index;
+    },
+    unhover() {
+      this.hovered = "";
+    },
+  },
+};
 </script>
 
 <style>
@@ -515,5 +563,12 @@ export default {};
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+.plus-channel-in-this-category {
+  width: 12px;
+  height: 12px;
+  margin-left: 0;
+  margin-right: 2px;
+  background-image: url("../assets/private-channel-plus.svg");
 }
 </style>
