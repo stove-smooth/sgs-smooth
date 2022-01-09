@@ -1,5 +1,6 @@
-package com.example.chatserver.configuration;
+package com.example.chatserver.configuration.message;
 
+import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.domain.DirectChat;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,13 @@ public class MessageSender {
 
     private final KafkaTemplate<String,DirectChat> kafkaTemplate;
 
+    private final KafkaTemplate<String, ChannelMessage> kafkaTemplate2;
+
     public void send(String topic, DirectChat directChat) {
         kafkaTemplate.send(topic,directChat);
+    }
+
+    public void send2(String topic,ChannelMessage channelMessage) {
+        kafkaTemplate2.send(topic,channelMessage);
     }
 }
