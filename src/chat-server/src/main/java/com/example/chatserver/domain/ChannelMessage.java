@@ -7,13 +7,13 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 
-@Document(collation = "direct-chat")
+@Document(collation = "channel-message")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DirectChat {
+public class ChannelMessage {
 
     @Id
     @Field("id")
@@ -21,10 +21,9 @@ public class DirectChat {
 
     private Long channel_id;
 
-    private Long user_id;
+    private Long account_id;
 
     private String content;
 
-    private LocalDateTime dateTime;
-
+    private LocalDateTime localDateTime;
 }

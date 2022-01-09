@@ -1,16 +1,14 @@
 package com.example.chatserver.controller;
 
-import com.example.chatserver.configuration.MessageSender;
+import com.example.chatserver.configuration.message.MessageSender;
 import com.example.chatserver.configuration.S3Config;
 import com.example.chatserver.domain.DirectChat;
-import com.example.chatserver.dto.request.DirectChatRequest;
 import com.example.chatserver.repository.MessageRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
