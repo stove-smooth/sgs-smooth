@@ -91,14 +91,13 @@ export default {
 
 <style>
 .friends-state-list-container {
-  display: flex;
   height: 100%;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
   /* -ms-flex-direction: row; */
   flex-direction: row;
   position: relative;
-  overflow: hidden;
+  overflow: auto;
   /* -webkit-transform: translateZ(0); */
   transform: translateZ(0);
 }

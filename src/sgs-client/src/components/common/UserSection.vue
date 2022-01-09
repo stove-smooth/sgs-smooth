@@ -31,9 +31,9 @@
           tabindex="0"
         >
           <div class="myname-container">
-            <div class="myname">밍디</div>
+            <div class="myname">{{ $store.state.nickname }}</div>
           </div>
-          <div class="mycode">#7959</div>
+          <div class="mycode">#{{ $store.state.code }}</div>
         </div>
         <div class="mydevice-controller">
           <button

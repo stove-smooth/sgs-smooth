@@ -1,10 +1,18 @@
 <template>
   <nav class="nav-wrapper" aria-label="서버 사이드바.">
     <ul role="tree" tabindex="0" data-list-id="guildnav" class="tree">
-      <div class="scroller scroll-base">
+      <div class="thin-scrollbar nav-scroller">
         <div class="tutorial-container">
-          <div class="listItem">
-            <div class="selected-wrapper" v-show="true">
+          <div
+            class="listItem"
+            @mouseover="hover('me')"
+            @mouseleave="unhover"
+            @click="enterMe('me')"
+          >
+            <div
+              class="selected-wrapper"
+              v-show="hovered === 'me' || selected === 'me'"
+            >
               <span class="selected-item"></span>
             </div>
             <div class="listItem-wrapper">
@@ -20,15 +28,23 @@
         <div aria-label="서버">
           <!--서버 개수만큼 만들기.-->
           <div v-for="(item, index) in serverlist" :key="index">
-            <div class="listItem">
-              <div class="selected-wrapper" v-show="false">
+            <div
+              class="listItem"
+              @mouseover="hover(index)"
+              @mouseleave="unhover"
+              @click="enterServer(index)"
+            >
+              <div
+                class="selected-wrapper"
+                v-show="hovered === index || selected === index"
+              >
                 <span class="selected-item"></span>
               </div>
               <div draggable="true">
                 <div class="listItem-wrapper">
-                  <div class="server-wrapper" v-if="item.image">
+                  <div class="server-wrapper" v-if="item.thumbnail">
                     <img
-                      :src="item.image"
+                      :src="item.thumbnail"
                       alt="image"
                       class="server-nav-image"
                     />
@@ -69,6 +85,8 @@ const storage = {
 export default {
   data() {
     return {
+      hovered: "",
+      selected: "me",
       images: "",
       serverlist: [],
     };
@@ -79,6 +97,28 @@ export default {
     },
     fetchTodoItems() {
       this.serverlist = storage.fetch();
+    },
+    hover(index) {
+      this.hovered = index;
+    },
+    unhover() {
+      this.hovered = "";
+    },
+    select(index) {
+      this.selected = index;
+    },
+    unselect() {
+      this.selected = "";
+    },
+    enterServer(index) {
+      this.$router.push("/channels/" + index).catch((err) => {
+        console.log(err);
+      });
+      this.select(index);
+    },
+    enterMe(index) {
+      this.$router.push("/channels/@me");
+      this.select(index);
     },
   },
   created() {
@@ -105,23 +145,11 @@ export default {
   height: 100%;
   padding: 0;
 }
-
-.scroller {
-  /*   overflow: hidden scroll; */
+.nav-scroller {
+  overflow: hidden scroll;
   padding-right: 0px;
-  /*user-select: none;*/
-  padding: 0px 0px;
   background-color: #202225;
-  /* contain: layout size;*/
 }
-.scroll-base {
-  position: relative;
-  box-sizing: border-box;
-  min-height: 0;
-  -webkit-box-flex: 1;
-  flex: 1 1 auto;
-}
-
 .tutorial-container {
   position: relative;
 }
@@ -165,15 +193,6 @@ export default {
   height: 48px;
   cursor: pointer;
 }
-/* .home-box {
-  z-index: 1;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background-image: url("../assets/home-box.svg");
-  width: 48px;
-  height: 48px;
-} */
 
 .discord-logo {
   display: flex;
@@ -187,12 +206,7 @@ export default {
   border-radius: 1px;
   background-color: hsla(0, 0%, 100%, 0.06);
 }
-/* .server {
-  background-color: white;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-} */
+
 .server {
   font-weight: 500;
   line-height: 1.2em;

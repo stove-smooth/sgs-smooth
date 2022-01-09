@@ -71,8 +71,8 @@
             <template slot="content">
               <div class="upload-server-image-wrapper">
                 <div class="upload-server-image-icon">
-                  <template v-if="images">
-                    <img :src="images" alt="image" class="server-image" />
+                  <template v-if="thumbnail">
+                    <img :src="thumbnail" alt="image" class="server-image" />
                   </template>
                   <template v-else>
                     <svg class="upload-image"></svg>
@@ -148,7 +148,13 @@ export default {
       images: "",
       progress: "openCreate",
       serverList: [],
+      thumbnail: "",
     };
+  },
+  watch: {
+    thumbnail(newVal, oldVal) {
+      console.log(newVal, oldVal);
+    },
   },
   methods: {
     openSelectServer() {
@@ -163,16 +169,38 @@ export default {
     openFinalSelect() {
       this.progress = "finalSelect";
     },
-    uploadImage() {
+    async uploadImage() {
       let image = this.$refs["image"].files[0];
-      console.log(image);
-      console.log(URL.createObjectURL(image));
       this.images = URL.createObjectURL(image);
+      console.log(this.images);
+      var reader = new FileReader();
+      reader.readAsDataURL(image);
+      var dataURI;
+      const that = this;
+      reader.onload = function () {
+        var tempImage = new Image();
+        tempImage.src = reader.result;
+        tempImage.onload = function () {
+          var canvas = document.createElement("canvas");
+          var canvasContext = canvas.getContext("2d");
+
+          canvas.width = 100;
+          canvas.height = 100;
+
+          canvasContext.drawImage(this, 0, 0, 100, 100);
+
+          dataURI = canvas.toDataURL("image/jpeg");
+          console.log(dataURI);
+          that.thumbnail = dataURI;
+          console.log(that.thumbnail);
+        };
+      };
     },
     createServer() {
       const serverProfile = {
         name: this.serverName,
         image: this.images,
+        thumbnail: this.thumbnail,
       };
       this.serverList.push(serverProfile);
       storage.save(this.serverList);
