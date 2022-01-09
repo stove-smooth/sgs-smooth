@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum CommunityMapperStatus {
+public enum CommunityMemberStatus {
     NORMAL("일반"),
     DELETED("추방"),
     SUSPENDED("차단");
