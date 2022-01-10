@@ -13,7 +13,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Friend {
+public class Friend extends BaseTimeEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "friend_id")
@@ -22,13 +22,17 @@ public class Friend {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
-    private Account sender;
+    private User sender;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id")
-    private Account receiver;
+    private User receiver;
 
     @Enumerated(EnumType.STRING)
     private FriendState friendState;
+
+    public void changeFriendState(FriendState friendState) {
+        this.friendState = friendState;
+    }
 }

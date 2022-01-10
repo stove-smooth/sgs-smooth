@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 public class WaitingResponse {
 
-    List<FriendResponse> toMe = new ArrayList<>();
+    List<FriendResponse> receiveFromFriend = new ArrayList<>();
 
-    List<FriendResponse> toFriend = new ArrayList<>();
+    List<FriendResponse> sendToFriend = new ArrayList<>();
 }

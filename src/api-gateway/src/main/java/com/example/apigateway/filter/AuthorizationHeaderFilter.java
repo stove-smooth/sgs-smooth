@@ -3,6 +3,7 @@ package com.example.apigateway.filter;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.util.Base64;
 
 @Component
 @Slf4j
@@ -26,6 +26,7 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         super(Config.class);
     }
 
+
     @Override
     public GatewayFilter apply(Config config) {
         return (((exchange, chain) -> {
@@ -33,26 +34,18 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
             ServerHttpResponse response = exchange.getResponse();
 
             if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                return onError(exchange,"no authorization header", HttpStatus.UNAUTHORIZED);
+                return onError(exchange,"JWT token is not valid",HttpStatus.UNAUTHORIZED);
             }
 
-
-
             String jwt = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
-
             if (!isJwtValid(jwt)) {
                 log.info("실패");
                 return onError(exchange,"JWT token is not valid",HttpStatus.UNAUTHORIZED);
             }
 
-            log.info(Jwts.parser().setSigningKey(secretKey)
-                    .parseClaimsJws(jwt).getBody().toString());
-
             Integer id = (Integer) Jwts.parser().setSigningKey(secretKey)
                     .parseClaimsJws(jwt).getBody().get("id");
 
-            log.info(Jwts.parser().setSigningKey(secretKey)
-                    .parseClaimsJws(jwt).getBody().toString());
             ServerHttpRequest req = exchange.getRequest().mutate().header("id", String.valueOf(id)).build();
 
             return chain.filter(exchange.mutate().request(req).build());
@@ -79,7 +72,6 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
     private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
-
         return response.setComplete();
 
     }
