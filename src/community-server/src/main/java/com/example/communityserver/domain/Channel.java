@@ -43,7 +43,7 @@ public class Channel extends BaseTimeEntity {
 
     private boolean isPublic;
 
-    private Long before;
+    private Long beforeId;
 
     private LocalDateTime expiredAt;
 
@@ -54,7 +54,7 @@ public class Channel extends BaseTimeEntity {
     @OneToMany(mappedBy = "parent")
     private List<Channel> thread = new ArrayList<>();
 
-    @OneToMany(mappedBy = "channelMember", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL)
     private List<ChannelMember> members = new ArrayList<>();
 
     @Column(length = 10)
@@ -90,7 +90,7 @@ public class Channel extends BaseTimeEntity {
                 channel.addMember(member);
             }
         }
-        channel.setBefore(null);
+        channel.setBeforeId(null);
         channel.setStatus(ChannelStatus.NORMAL);
         return channel;
     }

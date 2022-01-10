@@ -28,17 +28,17 @@ public class Category extends BaseTimeEntity {
     @JoinColumn(name = "community_id")
     private Community community;
 
-    @OneToMany(mappedBy = "channels", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Channel> channels = new ArrayList<>();
 
     @Column(length = 200)
     private String name;
 
-    private Long before;
+    private Long beforeId;
 
     private boolean isPublic;
 
-    @OneToMany(mappedBy = "categoryMember", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<CategoryMember> members = new ArrayList<>();
 
     private CommonStatus status;
@@ -63,7 +63,7 @@ public class Category extends BaseTimeEntity {
                 category.addMember(member);
             }
         }
-        category.setBefore(null);
+        category.setBeforeId(null);
         category.setStatus(CommonStatus.NORMAL);
         return category;
     }

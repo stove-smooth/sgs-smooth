@@ -38,7 +38,7 @@ public class CommunityMember extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private CommunityRole role;
 
-    private Long before;
+    private Long beforeId;
 
     @Column(length = 10)
     @Enumerated(EnumType.STRING)
@@ -65,7 +65,7 @@ public class CommunityMember extends BaseTimeEntity {
         communityMember.setProfileImage(profileImage);
         communityMember.setMemo(null);
         communityMember.setRole(role);
-        communityMember.setBefore(null);
+        communityMember.setBeforeId(null);
         communityMember.setStatus(CommunityMemberStatus.NORMAL);
         return communityMember;
     }

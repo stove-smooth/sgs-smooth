@@ -28,13 +28,13 @@ public class Community extends BaseTimeEntity {
 
     private boolean isPublic;
 
-    @OneToMany(mappedBy = "communityMember", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL)
     private List<CommunityMember> members = new ArrayList<>();
 
-    @OneToMany(mappedBy = "communityInvitation", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL)
     private List<CommunityInvitation> invitations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL)
     private List<Category> categories = new ArrayList<>();
 
     @Column(length = 10)
