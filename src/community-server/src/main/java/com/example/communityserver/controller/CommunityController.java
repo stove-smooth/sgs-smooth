@@ -1,6 +1,7 @@
 package com.example.communityserver.controller;
 
 import com.example.communityserver.dto.request.CreateCommunityRequest;
+import com.example.communityserver.dto.request.EditCommunityNameRequest;
 import com.example.communityserver.dto.response.CreateCommunityResponse;
 import com.example.communityserver.dto.response.DataResponse;
 import com.example.communityserver.service.CommunityService;
@@ -47,13 +48,14 @@ public class CommunityController {
      */
     @PostMapping
     public DataResponse<CreateCommunityResponse> createCommunity(
+            @RequestHeader("AUTHORIZATION") String token,
             @RequestHeader("id") String userId,
             @Valid @ModelAttribute CreateCommunityRequest request
     ) {
         log.info("/community-server/community");
 
         CreateCommunityResponse createCommunityResponse =
-                communityService.createCommunity(Long.parseLong(userId), request);
+                communityService.createCommunity(Long.parseLong(userId), request, token);
 
         return responseService.getDataResponse(createCommunityResponse);
     }
@@ -61,10 +63,12 @@ public class CommunityController {
     /**
      * 3. 커뮤니티 이름 수정하기
      */
-//    @PatchMapping("/name")
-//    public void editName() {
-//
-//    }
+    @PatchMapping("/name")
+    public void editName(@Valid @RequestBody EditCommunityNameRequest request) {
+        log.info("/community-server/community/name");
+        // communityService.editName(request);
+        // return responseService
+    }
 
     /**
      * 4. 커뮤니티 아이콘 이미지 수정하기

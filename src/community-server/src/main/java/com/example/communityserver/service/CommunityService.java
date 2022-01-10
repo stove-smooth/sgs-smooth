@@ -1,11 +1,13 @@
 package com.example.communityserver.service;
 
+import com.example.communityserver.client.UserClient;
 import com.example.communityserver.domain.Category;
 import com.example.communityserver.domain.Community;
 import com.example.communityserver.domain.type.ChannelType;
 import com.example.communityserver.domain.type.CommunityRole;
 import com.example.communityserver.dto.request.CreateCommunityRequest;
 import com.example.communityserver.dto.response.CreateCommunityResponse;
+import com.example.communityserver.dto.response.UserInfoFeignResponse;
 import com.example.communityserver.repository.CommunityRepository;
 import com.example.communityserver.util.AmazonS3Connector;
 import lombok.RequiredArgsConstructor;
@@ -27,13 +29,15 @@ public class CommunityService {
 
     private final AmazonS3Connector amazonS3Connector;
 
+    private final UserClient userClient;
+
     @Transactional
     public CreateCommunityResponse createCommunity(
             Long userId,
-            CreateCommunityRequest request
+            CreateCommunityRequest request,
+            String token
     ) {
-        // String iconImage = amazonS3Connector.uploadImage(userId, request.getIcon(), request.getThumbnail());
-        String iconImage = "a";
+        String iconImage = amazonS3Connector.uploadImage(userId, request.getIcon(), request.getThumbnail());
 
         Category textCategory = makeDefaultCategory(ChannelType.TEXT);
         Category voiceCategory = makeDefaultCategory(ChannelType.VOICE);
@@ -41,9 +45,10 @@ public class CommunityService {
         Community newCommunity = Community.createCommunity(
                 request.getName(), iconImage, request.isPublic(), textCategory, voiceCategory);
 
-        // Todo 사용자 정보 불러오기 - user service
-        String nickname = "김희동";
-        String profileImage = "프로필이미지";
+        // Todo feign config로 처리하기 controller, servive, userclient
+        UserInfoFeignResponse userInfoFeignResponse = userClient.getUserInfo(token);
+        String nickname = userInfoFeignResponse.getResult().getName();
+        String profileImage = userInfoFeignResponse.getResult().getProfileImage();
 
         createCommunityMember(userId, newCommunity, nickname, profileImage, CommunityRole.OWNER);
 
