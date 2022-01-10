@@ -19,7 +19,4 @@ public class EditCommunityIconRequest {
 
     @NotNull
     private MultipartFile icon;
-
-    @NotNull
-    private MultipartFile thumbnail;
 }

@@ -66,4 +66,8 @@ public class Community extends BaseTimeEntity {
     }
 
     //== 비즈니스 로직 ==//
+    public String getOriginImage() {
+        j
+        return iconImage;
+    }
 }

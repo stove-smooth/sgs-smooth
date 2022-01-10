@@ -45,7 +45,7 @@ public class CommunityService {
             CreateCommunityRequest request,
             String token
     ) {
-        String iconImage = amazonS3Connector.uploadImage(userId, request.getIcon(), request.getThumbnail());
+        String iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
 
         Category textCategory = makeDefaultCategory(ChannelType.TEXT);
         Category voiceCategory = makeDefaultCategory(ChannelType.VOICE);
@@ -98,7 +98,7 @@ public class CommunityService {
         if (!isAuthorizedMember(community, userId))
             throw new CustomException(NON_AUTHORIZATION);
 
-        String iconImage = amazonS3Connector.uploadImage(userId, request.getIcon(), request.getThumbnail());
+        String iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
 
         community.setIconImage(iconImage);
     }

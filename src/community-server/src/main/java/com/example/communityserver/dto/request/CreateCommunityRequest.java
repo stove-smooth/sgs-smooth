@@ -25,7 +25,4 @@ public class CreateCommunityRequest {
 
     @NotNull
     private MultipartFile icon;
-
-    @NotNull
-    private MultipartFile thumbnail;
 }

@@ -41,23 +41,16 @@ public class AmazonS3Connector {
 
     public String uploadImage(
             Long id,
-            MultipartFile origin,
-            MultipartFile thumbnail
+            MultipartFile multipartFile
     ) {
-        File originFile = convertToFile(origin);
-        File thumbnailFile = convertToFile(thumbnail);
+        File file = convertToFile(multipartFile);
 
-        String fileName = IMAGE_DIR + id + "/" + UUID.randomUUID();
+        String fileName = IMAGE_DIR + id + "/" + UUID.randomUUID() + extension(multipartFile);
 
-        String originFileName = fileName + extension(origin);
-        String thumbnailFileName = fileName + "-thumbnail" + extension(thumbnail);
+        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, file));
+        file.delete();
 
-        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, originFile));
-        originFile.delete();
-        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, thumbnailFile));
-        thumbnailFile.delete();
-
-        return convertJsonToString(originFileName, thumbnailFileName);
+        return cloudfrontUrl + fileName;
     }
 
     private File convertToFile(MultipartFile multipartFile) {
@@ -83,16 +76,5 @@ public class AmazonS3Connector {
         } catch (MimeTypeException | IOException e) {
             throw new CustomException(FILE_EXTENSION_ERROR);
         }
-    }
-
-    /**
-     * 사진 정보(원본, 썸네일) json형식을 string 으로 변환
-     */
-    private String convertJsonToString(
-            String originFileName,
-            String thumbnailFileName
-    ) {
-        return "{\"origin\": \"" + originFileName + "\","
-                +"\"thumbnail\": \""+ thumbnailFileName + "\"}";
     }
 }
