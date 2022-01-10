@@ -7,6 +7,7 @@ import com.example.communityserver.domain.CommunityMember;
 import com.example.communityserver.domain.type.ChannelType;
 import com.example.communityserver.domain.type.CommunityRole;
 import com.example.communityserver.dto.request.CreateCommunityRequest;
+import com.example.communityserver.dto.request.EditCommunityIconRequest;
 import com.example.communityserver.dto.request.EditCommunityNameRequest;
 import com.example.communityserver.dto.response.CreateCommunityResponse;
 import com.example.communityserver.dto.response.UserInfoFeignResponse;
@@ -86,5 +87,19 @@ public class CommunityService {
         return community.getMembers().stream()
                 .map(CommunityMember::getUserId).collect(Collectors.toList())
                 .contains(userId);
+    }
+
+    @Transactional
+    public void editIcon(Long userId, EditCommunityIconRequest request) {
+
+        Community community = communityRepository.findById(request.getCommunityId())
+                .orElseThrow(() -> new CustomException(EMPTY_COMMUNITY));
+
+        if (!isAuthorizedMember(community, userId))
+            throw new CustomException(NON_AUTHORIZATION);
+
+        String iconImage = amazonS3Connector.uploadImage(userId, request.getIcon(), request.getThumbnail());
+
+        community.setIconImage(iconImage);
     }
 }

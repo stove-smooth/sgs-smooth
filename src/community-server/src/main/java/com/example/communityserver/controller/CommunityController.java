@@ -1,6 +1,7 @@
 package com.example.communityserver.controller;
 
 import com.example.communityserver.dto.request.CreateCommunityRequest;
+import com.example.communityserver.dto.request.EditCommunityIconRequest;
 import com.example.communityserver.dto.request.EditCommunityNameRequest;
 import com.example.communityserver.dto.response.CommonResponse;
 import com.example.communityserver.dto.response.CreateCommunityResponse;
@@ -10,7 +11,6 @@ import com.example.communityserver.service.ResponseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -22,6 +22,8 @@ public class CommunityController {
 
     private final CommunityService communityService;
     private final ResponseService responseService;
+
+    private final static String ID = "id";
 
     /**
      * 1. 메인 - 사용자의 커뮤니티 정보 조회하기
@@ -50,7 +52,7 @@ public class CommunityController {
     @PostMapping
     public DataResponse<CreateCommunityResponse> createCommunity(
             @RequestHeader("AUTHORIZATION") String token,
-            @RequestHeader("id") String userId,
+            @RequestHeader(ID) String userId,
             @Valid @ModelAttribute CreateCommunityRequest request
     ) {
         log.info("/community-server/community");
@@ -66,7 +68,7 @@ public class CommunityController {
      */
     @PatchMapping("/name")
     public CommonResponse editName(
-            @RequestHeader("id") String userId,
+            @RequestHeader(ID) String userId,
             @Valid @RequestBody EditCommunityNameRequest request
     ) {
         log.info("/community-server/community/name");
@@ -77,10 +79,15 @@ public class CommunityController {
     /**
      * 4. 커뮤니티 아이콘 이미지 수정하기
      */
-//    @PatchMapping("/icon")
-//    public void editIcon() {
-//
-//    }
+    @PatchMapping("/icon")
+    public CommonResponse editIcon(
+            @RequestHeader(ID) String userId,
+            @Valid @ModelAttribute EditCommunityIconRequest request
+    ) {
+        log.info("/community-server/community/icon");
+        communityService.editIcon(Long.parseLong(userId), request);
+        return responseService.getSuccessResponse();
+    }
 
     /**
      * 5. 초대장 만들기
