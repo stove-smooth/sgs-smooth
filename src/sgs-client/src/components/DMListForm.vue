@@ -1,8 +1,12 @@
 <template>
   <div>
     <div v-for="(item, index) in friends" :key="index">
-      <div class="dm-channel">
-        <div class="dm-layout" @mouseover="hold(index)" @mouseleave="unhold">
+      <div class="primary-member-container">
+        <div
+          class="primary-member-layout"
+          @mouseover="hold(index)"
+          @mouseleave="unhold"
+        >
           <div class="avatar-container">
             <div class="profile-wrapper" aria-label="칭구1">
               <div class="avatar-wrapper">

@@ -5,8 +5,8 @@
     </div>
     <div class="thin-scrollbar dm-scroller">
       <div class="side-content">
-        <div class="dm-channel">
-          <div class="dm-layout">
+        <div class="primary-member-container">
+          <div class="primary-member-layout">
             <div class="avatar-container">
               <svg class="friends-icon"></svg>
             </div>
@@ -94,41 +94,7 @@ export default {
   padding-top: 8px;
   /**padding은 임의로해봄. */
 }
-.dm-channel {
-  position: relative;
-  max-width: 224px;
-  margin-left: 8px;
 
-  /*   -webkit-box-sizing: border-box; */
-  box-sizing: border-box;
-  display: block;
-  padding: 1px 0;
-  border-radius: 4px;
-  /*     -webkit-transition: none; */
-  transition: none;
-  color: #8e9297;
-}
-.dm-layout {
-  /*   display: -webkit-box;
-    display: -ms-flexbox; */
-  display: flex;
-  -webkit-box-align: center;
-  /*     -ms-flex-align: center; */
-  align-items: center;
-  border-radius: 4px;
-  height: 42px;
-  padding: 0 8px;
-  cursor: pointer;
-}
-.dm-layout:hover {
-  background-color: rgb(79 84 92 / 32%);
-}
-.dm-layout:active {
-  background-color: rgb(79 84 92 / 32%);
-}
-.dm-layout:visited {
-  background-color: rgb(79 84 92 / 32%);
-}
 .avatar-container {
   /*   display: -webkit-box;
     display: -ms-flexbox; */

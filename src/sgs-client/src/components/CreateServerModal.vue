@@ -413,16 +413,6 @@ export default {
   height: 80px;
   background-image: url("../assets/upload-image.svg");
 }
-.file-input {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
-  font-size: 0px;
-}
 .server-name-input-container {
   margin-top: 24px;
 }

@@ -1,7 +1,7 @@
 <template>
-  <div class="friends-state-list-container">
+  <div class="friends-state-list-container auto-scrollbar">
     <div
-      class="friends-state-list auto-scrollbar"
+      class="friends-state-list"
       role="list"
       tabindex="0"
       data-list-id="people"
@@ -102,7 +102,7 @@ export default {
   transform: translateZ(0);
 }
 .friends-state-list {
-  overflow: hidden scroll;
+  /* overflow: hidden scroll; */
   padding-right: 0px;
   padding-bottom: 8px;
   margin-top: 8px;
