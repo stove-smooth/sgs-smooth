@@ -2,6 +2,7 @@ package com.example.communityserver.controller;
 
 import com.example.communityserver.dto.request.CreateCommunityRequest;
 import com.example.communityserver.dto.request.EditCommunityNameRequest;
+import com.example.communityserver.dto.response.CommonResponse;
 import com.example.communityserver.dto.response.CreateCommunityResponse;
 import com.example.communityserver.dto.response.DataResponse;
 import com.example.communityserver.service.CommunityService;
@@ -64,10 +65,13 @@ public class CommunityController {
      * 3. 커뮤니티 이름 수정하기
      */
     @PatchMapping("/name")
-    public void editName(@Valid @RequestBody EditCommunityNameRequest request) {
+    public CommonResponse editName(
+            @RequestHeader("id") String userId,
+            @Valid @RequestBody EditCommunityNameRequest request
+    ) {
         log.info("/community-server/community/name");
-        // communityService.editName(request);
-        // return responseService
+        communityService.editName(Long.parseLong(userId), request);
+        return responseService.getSuccessResponse();
     }
 
     /**
