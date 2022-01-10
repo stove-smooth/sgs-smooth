@@ -1,6 +1,6 @@
 package com.example.communityserver.domain;
 
-import com.example.communityserver.domain.type.CommunityMapperStatus;
+import com.example.communityserver.domain.type.CommunityMemberStatus;
 import com.example.communityserver.domain.type.CommunityRole;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,14 +10,14 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "community_mapper")
+@Table(name = "community_member")
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CommunityMapper extends BaseTimeEntity {
+public class CommunityMember extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "community_mapper_id")
+    @Column(name = "community_member_id")
     private Long id;
 
     private Long userId;
@@ -38,30 +38,35 @@ public class CommunityMapper extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private CommunityRole role;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "before_id")
-    private CommunityMapper before;
+    private Long beforeId;
 
     @Column(length = 10)
     @Enumerated(EnumType.STRING)
-    private CommunityMapperStatus status;
+    private CommunityMemberStatus status;
 
     //== 연관관계 메서드 ==//
+    public void setCommunity(Community community) {
+        this.community = community;
+        community.getMembers().add(this);
+    }
 
     //== 생성 메서드 ==//
-    public static CommunityMapper createCommunityMapper(
+    public static CommunityMember createCommunityMember(
             Long userId,
+            Community community,
             String nickname,
             String profileImage,
             CommunityRole role
     ) {
-        CommunityMapper communityMapper = new CommunityMapper();
-        communityMapper.setUserId(userId);
-        communityMapper.setNickname(nickname);
-        communityMapper.setProfileImage(profileImage);
-        communityMapper.setMemo(null);
-        communityMapper.setRole(role);
-        communityMapper.setStatus(CommunityMapperStatus.NORMAL);
-
+        CommunityMember communityMember = new CommunityMember();
+        communityMember.setUserId(userId);
+        communityMember.setCommunity(community);
+        communityMember.setNickname(nickname);
+        communityMember.setProfileImage(profileImage);
+        communityMember.setMemo(null);
+        communityMember.setRole(role);
+        communityMember.setBeforeId(null);
+        communityMember.setStatus(CommunityMemberStatus.NORMAL);
+        return communityMember;
     }
 }

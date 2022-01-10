@@ -8,6 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.method.annotation.MethodArgumentConversionNotSupportedException;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -33,7 +36,10 @@ public class ExceptionAdvice {
     @ExceptionHandler(value = {
             HttpRequestMethodNotSupportedException.class,
             MethodArgumentNotValidException.class,
-            InvalidFormatException.class
+            InvalidFormatException.class,
+            MultipartException.class,
+            MethodArgumentConversionNotSupportedException.class,
+            BindException.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public CommonResponse handleBadRequest(Exception e) {
