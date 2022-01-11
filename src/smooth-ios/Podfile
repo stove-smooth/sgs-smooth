@@ -3,13 +3,13 @@
 
 target 'smooth-ios' do
   use_frameworks!
-  pod 'SnapKit'
+  pod 'SnapKit', '~> 5'
   pod 'Then'
   
-  pod 'RxSwift'
-  pod 'RxCocoa'
-  pod 'RxDataSources'
+  pod 'RxSwift', '~> 6'
+  pod 'RxCocoa', '~> 6'
+  pod 'RxDataSources', '~> 5'
   
-  pod 'Moya'
+  pod 'Moya', '~> 15.0.0'
   pod 'Moya/RxSwift'
 end

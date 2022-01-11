@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import SnapKit
 
 protocol HomeViewControllerDelegate: AnyObject {
     func didTapMenuButton()
@@ -63,6 +64,7 @@ class HomeViewController: BaseViewController {
     }
 }
 
+// MARK: - Menu Animation
 extension HomeViewController: ContainerViewControllerDelegate {
     func didTapMenuButton() {
         toggleMenu(completion: nil)
