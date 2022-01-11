@@ -7,7 +7,9 @@
       data-list-id="people"
     >
       <div>
-        <h2 class="number-of-friends-container small-title-text">온라인-7명</h2>
+        <h2 class="number-of-friends-container small-title-text">
+          오프라인-3명
+        </h2>
         <div v-for="(item, index) in friends" :key="index">
           <div class="firends-list-item" role="listitem" tabindex="-1">
             <div class="friends-list-item-contents">
@@ -58,32 +60,7 @@
 export default {
   data() {
     return {
-      friends: [
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-      ],
+      friends: [{ name: "두리짱" }, { name: "병각" }, { name: "히동" }],
     };
   },
 };
@@ -109,7 +86,7 @@ export default {
 }
 .number-of-friends-container {
   margin: 16px 20px 8px 30px;
-  color: #b9bbbe;
+  color: var(--description-primary);
 }
 .firends-list-item {
   height: 62px;
@@ -182,7 +159,7 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  color: #fff;
+  color: var(--white-color);
   font-weight: 600;
   -webkit-box-flex: 0;
   display: block;
@@ -191,10 +168,10 @@ export default {
 .user-code {
   font-size: 14px;
   line-height: 16px;
-  color: #b9bbbe;
+  color: var(--description-primary);
 }
 .status-description {
-  color: #b9bbbe;
+  color: var(--description-primary);
   font-size: 12px;
 }
 .status-subtext {
@@ -213,7 +190,7 @@ export default {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  color: #b9bbbe;
+  color: var(--description-primary);
   background-color: #2f3136;
   /* display: -webkit-box;
   display: -ms-flexbox; */
@@ -246,7 +223,7 @@ export default {
   background-color: transparent;
 }
 .auto-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #202225;
+  background-color: var(--dark-grey-color);
   min-height: 40px;
 }
 .auto-scrollbar::-webkit-scrollbar-thumb,

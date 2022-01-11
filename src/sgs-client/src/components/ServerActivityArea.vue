@@ -14,10 +14,10 @@
                       alt="image"
                     />
                     <h2 class="chat-avatar-header">
-                      <span class="chat-user-name">두리짱</span>
+                      <span class="chat-user-name">user0</span>
                       <span class="chat-time-stamp">어제 오후 11:56</span>
                     </h2>
-                    <div class="message-content">개철벽 김희동</div>
+                    <div class="message-content">안녕~^^</div>
                   </div>
                 </div>
               </li>
@@ -95,7 +95,39 @@
             <h2 class="members-group-container" aria-label="온라인">
               온라인 - 5
             </h2>
-            <div v-for="(item, index) in 30" :key="index">
+            <div v-for="(item, index) in 5" :key="index">
+              <div class="primary-member-container clickable" role="listitem">
+                <div class="primary-member-layout">
+                  <div class="avatar-container">
+                    <div class="profile-wrapper" aria-label="칭구1">
+                      <div class="avatar-wrapper">
+                        <img
+                          class="avatar"
+                          src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=32"
+                          alt=" "
+                        />
+                        <template aria-label="status-invisible">
+                          <div class="status-ring">
+                            <div class="status-online"></div>
+                          </div>
+                        </template>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="friends-contents">
+                    <div class="friends-name-decorator">
+                      <div class="friends-name">user{{ index }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div role="list" aria-label="멤버" class="server-member-list">
+            <h2 class="members-group-container" aria-label="온라인">
+              오프라인 - 3
+            </h2>
+            <div v-for="(item, index) in 3" :key="index">
               <div class="primary-member-container clickable" role="listitem">
                 <div class="primary-member-layout">
                   <div class="avatar-container">
@@ -116,7 +148,7 @@
                   </div>
                   <div class="friends-contents">
                     <div class="friends-name-decorator">
-                      <div class="friends-name">밍디</div>
+                      <div class="friends-name">user{{ index + 5 }}</div>
                     </div>
                   </div>
                 </div>
@@ -259,7 +291,7 @@ export default {};
   font-size: 1rem;
   font-weight: 500;
   line-height: 1.375rem;
-  color: #fff;
+  color: var(--white-color);
   display: inline;
   vertical-align: baseline;
   position: relative;

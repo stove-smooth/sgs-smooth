@@ -70,7 +70,7 @@ export default {
   background-clip: padding-box;
   border: 2px solid #00000000;
   border-radius: 4px;
-  background-color: #202225;
+  background-color: var(--dark-grey-color);
   min-height: 40px;
 }
 .thin-scrollbar::-webkit-scrollbar-track {

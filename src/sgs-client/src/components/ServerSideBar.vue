@@ -47,6 +47,7 @@
                   <button
                     class="create-channel-button"
                     aria-label="채널 만들기"
+                    @click="createNewChannel"
                   >
                     <svg class="plus-channel-in-this-category"></svg>
                   </button>
@@ -209,6 +210,9 @@ export default {
     unhover() {
       this.hovered = "";
     },
+    createNewChannel() {
+      this.$store.state.createchannel = true;
+    },
   },
 };
 </script>
@@ -250,7 +254,7 @@ export default {
   z-index: 3;
   /* -webkit-transition: background-color .1s linear; */
   transition: #202225 0.1s linear;
-  color: #fff;
+  color: var(--white-color);
   /* -webkit-box-shadow: var(--elevation-low); */
   box-shadow: 0 1px 0 rgba(4, 4, 5, 0.2), 0 1.5px 0 rgba(6, 6, 7, 0.05),
     0 2px 0 rgba(4, 4, 5, 0.05);
@@ -314,7 +318,7 @@ export default {
   line-height: 16px;
   /* font-family: var(--font-display); */
   font-weight: 600;
-  color: #fff;
+  color: var(--white-color);
   height: 24px;
   cursor: pointer;
   text-transform: uppercase;
@@ -466,7 +470,7 @@ export default {
   text-overflow: ellipsis;
   overflow: hidden;
   position: relative;
-  color: #fff;
+  color: var(--white-color);
 }
 .channel-name {
   white-space: nowrap;

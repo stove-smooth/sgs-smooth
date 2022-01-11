@@ -135,7 +135,7 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  color: #fff;
+  color: var(--white-color);
   line-height: 18px;
   font-weight: 600;
   font-size: 14px;
@@ -145,7 +145,7 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  color: #b9bbbe;
+  color: var(--description-primary);
   line-height: 13px;
   font-size: 12px;
   line-height: 16px;
@@ -183,7 +183,7 @@ export default {
   justify-content: center;
   border-radius: 4px;
   position: relative;
-  color: #b9bbbe;
+  color: var(--description-primary);
   font-size: 14px;
   font-weight: 500;
   background: #00000000;

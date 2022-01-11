@@ -77,7 +77,7 @@ export default {
   height: 28px;
   overflow: hidden;
   border-radius: 4px;
-  background-color: #202225;
+  background-color: var(--dark-grey-color);
   /*  -webkit-box-shadow: none; */
   box-shadow: none;
   color: #72767d;
@@ -233,42 +233,5 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-}
-/**프로필 상태 */
-.status-ring {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 12px;
-  height: 12px;
-  /* Ring */
-  position: absolute;
-  bottom: 0%;
-  right: 0%;
-  border-radius: 50%;
-  /* Dark Mode/Gray 1 */
-  background: #2f3136;
-  transform: rotate(90deg);
-}
-
-.status-offline {
-  background-image: url("../assets/status-offline.svg");
-  width: 10px;
-  height: 10px;
-}
-.status-online {
-  background-image: url("../assets/status-online.svg");
-  width: 10px;
-  height: 10px;
-}
-.status-dnd {
-  background-image: url("../assets/status-dnd.svg");
-  width: 10px;
-  height: 10px;
-}
-.status-away {
-  background-image: url("../assets/status-away.svg");
-  width: 10x;
-  height: 10px;
 }
 </style>

@@ -255,7 +255,7 @@ export default {
   font-size: 24px;
   line-height: 30px;
   margin-bottom: 8px;
-  color: #fff;
+  color: var(--white-color);
 }
 .description {
   font-size: 16px;
@@ -269,7 +269,7 @@ export default {
 }
 
 .label-id {
-  color: #b9bbbe;
+  color: var(--description-primary);
   margin-bottom: 8px;
   font-size: 12px;
   line-height: 16px;
@@ -323,7 +323,7 @@ export default {
 }
 
 .large-button {
-  color: #fff;
+  color: var(--white-color);
   font-size: 16px;
   line-height: 24px;
   margin-bottom: 8px;
@@ -343,7 +343,7 @@ export default {
   font-weight: 500;
   line-height: 16px;
   padding: 2px 16px;
-  background-color: #5865f2;
+  background-color: var(--discord-primary);
   margin-top: 20px;
   cursor: pointer;
 }

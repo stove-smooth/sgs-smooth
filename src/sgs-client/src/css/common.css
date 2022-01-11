@@ -109,3 +109,50 @@
 .primary-member-layout:visited {
   background-color: rgb(79 84 92 / 32%);
 }
+
+/**프로필 상태 */
+.status-ring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  /* Ring */
+  position: absolute;
+  bottom: -5%;
+  right: -5%;
+  border-radius: 50%;
+  /* Dark Mode/Gray 1 */
+  background: #2f3136;
+  transform: rotate(90deg);
+}
+.status-offline {
+  background-image: url("../assets/status-offline.svg");
+  width: 10px;
+  height: 10px;
+}
+.status-online {
+  background-image: url("../assets/status-online.svg");
+  width: 10px;
+  height: 10px;
+}
+.status-dnd {
+  background-image: url("../assets/status-dnd.svg");
+  width: 10px;
+  height: 10px;
+}
+.status-away {
+  background-image: url("../assets/status-away.svg");
+  width: 10x;
+  height: 10px;
+}
+.flex-direction-column {
+  display: flex;
+  flex-direction: column;
+}
+:root {
+  --white-color: #fff;
+  --discord-primary: #5865f2;
+  --description-primary: #b9bbbe;
+  --dark-grey-color: #202225;
+}
