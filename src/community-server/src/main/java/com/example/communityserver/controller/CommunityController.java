@@ -1,5 +1,6 @@
 package com.example.communityserver.controller;
 
+import com.example.communityserver.dto.request.CreateInvitationRequest;
 import com.example.communityserver.dto.request.CreateCommunityRequest;
 import com.example.communityserver.dto.request.EditCommunityIconRequest;
 import com.example.communityserver.dto.request.EditCommunityNameRequest;
@@ -56,10 +57,8 @@ public class CommunityController {
             @Valid @ModelAttribute CreateCommunityRequest request
     ) {
         log.info("/community-server/community");
-
         CreateCommunityResponse createCommunityResponse =
                 communityService.createCommunity(Long.parseLong(userId), request, token);
-
         return responseService.getDataResponse(createCommunityResponse);
     }
 
@@ -92,10 +91,16 @@ public class CommunityController {
     /**
      * 5. 초대장 만들기
      */
-//    @PostMapping("/invitation")
-//    public void createInvitation() {
-//
-//    }
+    @PostMapping("/invitation")
+    public DataResponse<CreateInvitationResponse> createInvitation(
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody CreateInvitationRequest request
+    ) {
+        log.info("/community-server/community/invitation");
+        CreateInvitationResponse createInvitationResponse =
+                communityService.createInvitation(Long.parseLong(userId), request);
+        return responseService.getDataResponse(createInvitationResponse);
+    }
 
     /**
      * 6. 초대장 조회하기

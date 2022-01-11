@@ -1,12 +1,14 @@
 package com.example.communityserver.service;
 
 import com.example.communityserver.client.UserClient;
+import com.example.communityserver.controller.CreateInvitationResponse;
 import com.example.communityserver.domain.Category;
 import com.example.communityserver.domain.Community;
 import com.example.communityserver.domain.CommunityMember;
 import com.example.communityserver.domain.type.ChannelType;
 import com.example.communityserver.domain.type.CommunityRole;
 import com.example.communityserver.dto.request.CreateCommunityRequest;
+import com.example.communityserver.dto.request.CreateInvitationRequest;
 import com.example.communityserver.dto.request.EditCommunityIconRequest;
 import com.example.communityserver.dto.request.EditCommunityNameRequest;
 import com.example.communityserver.dto.response.CreateCommunityResponse;
@@ -101,5 +103,14 @@ public class CommunityService {
         String iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
 
         community.setIconImage(iconImage);
+    }
+
+    @Transactional
+    public CreateInvitationResponse createInvitation(Long userId, CreateInvitationRequest request) {
+        validateCreateInvitation(request);
+    }
+
+    private void validateCreateInvitation(CreateInvitationRequest request) {
+
     }
 }
