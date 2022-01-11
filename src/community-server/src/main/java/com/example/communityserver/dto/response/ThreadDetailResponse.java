@@ -14,7 +14,9 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ThreadDetailResponse extends ThreadResponse {
+public class ThreadDetailResponse {
+    private Long channelId;
+    private String name;
     private UserResponse author;
     private LocalDateTime createdAt;
     @Enumerated(EnumType.STRING)
