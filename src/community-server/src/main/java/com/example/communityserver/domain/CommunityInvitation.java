@@ -25,7 +25,7 @@ public class CommunityInvitation {
 
     private Long userId;
 
-    @Column(length = 8)
+    @Column(length = 10)
     private String code;
 
     @CreatedDate
