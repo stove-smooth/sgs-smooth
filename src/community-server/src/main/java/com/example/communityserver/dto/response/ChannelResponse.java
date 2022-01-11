@@ -21,8 +21,4 @@ public class ChannelResponse {
     private ChannelType type;
     private boolean isPublic;
     private List<ThreadResponse> threads;
-
-    public void setChannelId(Long channelId) {
-        this.channelId = channelId;
-    }
 }
