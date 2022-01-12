@@ -8,13 +8,74 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import RxDataSources
 
 protocol MenuViewControllerDelegate: AnyObject {
     func didSelect(menuItem: MenuViewController.MenuOptions)
 }
 
-class MenuViewController: BaseViewController{
-    weak var delegate: MenuViewControllerDelegate?
+struct Channel: Codable, Equatable, IdentifiableType {
+    var id: String
+    var name: String
+    var identity: String {
+        return self.id
+    }
+}
+
+struct ChannelSection {
+    var header: String
+    var items: [Item]
+    var identity: String
+    
+    init(header: String, items: [Item]) {
+        self.header = header
+        self.items = items
+        self.identity = UUID().uuidString
+    }
+}
+
+extension ChannelSection: AnimatableSectionModelType {
+    typealias Item = Channel
+    
+    init(original: ChannelSection, items: [Channel]) {
+        self = original
+        self.items = items
+    }
+}
+
+class MenuViewController: BaseViewController {
+    weak var delegate: MenuViewControllerDelegate? // 레거시 코드 확인 필요
+    
+    typealias channelDataSource = RxTableViewSectionedReloadDataSource<ChannelSection>
+    
+    let dataSource: channelDataSource = {
+        let ds = channelDataSource(
+            configureCell: { dataSource, tableView, indexPath, channel -> UITableViewCell in
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: ChannelCell.identifier, for: indexPath) as? ChannelCell else { return UITableViewCell() }
+                cell.backgroundColor = .messageBarDarkGray
+                cell.textLabel?.text = "\(dataSource[indexPath].name)"
+                cell.textLabel?.textColor = .white
+                cell.tintColor = .white
+                
+                return cell
+            }
+        )
+        
+        ds.titleForHeaderInSection = { dataSource, index in
+            return "channel - \(dataSource.sectionModels[index].header)"
+        }
+        
+        ds.canEditRowAtIndexPath = { dataSource, indexPath in
+            return true
+        }
+        
+        ds.canMoveRowAtIndexPath = { dataSource, indexPath in
+            return true
+        }
+        
+        return ds
+    }()
+    
     
     // MARK: - viewModel
     let serverViewModel = ServerViewModel()
@@ -33,31 +94,23 @@ class MenuViewController: BaseViewController{
         return MenuViewController(nibName: nil, bundle: nil)
     }
     
-    private var channelView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
+    private var channelView = UITableView().then {
+        $0.backgroundColor = .messageBarDarkGray
         
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        $0.layer.cornerRadius = 10
+        $0.layer.maskedCorners = [.layerMinXMinYCorner,.layerMaxXMinYCorner]
+        $0.translatesAutoresizingMaskIntoConstraints = false
         
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        
-        collectionView.backgroundColor = .messageBarDarkGray
-        collectionView.layer.cornerRadius = 10
-        collectionView.layer.maskedCorners = [.layerMinXMinYCorner,.layerMaxXMinYCorner]
-        
-        collectionView.contentInset = UIEdgeInsets.all(20)
-//        collectionView.lay
-        collectionView.register(ChannelCell.self, forCellWithReuseIdentifier: ChannelCell.identifier)
-        return collectionView
-    }()
+        $0.cellLayoutMarginsFollowReadableWidth = true
+        $0.register(ChannelCell.self, forCellReuseIdentifier: ChannelCell.identifier)
+    }
     
     private let tableView = UITableView().then {
         $0.backgroundColor = nil
         $0.separatorStyle = .none
         $0.rowHeight = 80
-
-        $0.cellLayoutMarginsFollowReadableWidth = true
         
+        $0.cellLayoutMarginsFollowReadableWidth = true
         $0.separatorInsetReference = .fromAutomaticInsets
         
         $0.register(ServerCell.self, forCellReuseIdentifier: ServerCell.identifier)
@@ -77,10 +130,27 @@ class MenuViewController: BaseViewController{
         return stackView
     }()
     
+    let sections = [
+        ChannelSection(header: "first", items: [
+            Channel(id: "1", name: "a"),
+            Channel(id: "2", name: "b"),
+            Channel(id: "3", name: "c")
+        ]),
+        ChannelSection(header: "second", items: [
+            Channel(id: "1", name: "a"),
+            Channel(id: "2", name: "b"),
+            Channel(id: "3", name: "c")
+        ]),
+        ChannelSection(header: "third", items: [
+            Channel(id: "1", name: "a"),
+            Channel(id: "2", name: "b"),
+            Channel(id: "3", name: "c")
+        ])
+    ]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .serverListDartGray
-        
         view.addSubview(layout)
         
         // MARK: - setupLayout
@@ -93,24 +163,19 @@ class MenuViewController: BaseViewController{
         tableView.snp.makeConstraints {
             $0.width.equalTo(80)
         }
-        
-//        channelView.snp.makeConstraints {
-//            $0.top.equalTo(view.snp.top)
-//            $0.top.bottom.equalTo(self.view)
-//        }
     }
     
     override func bindViewModel() {
         // MARK: - channels Bindings
-        Observable.just(serverViewModel.data)
-            .bind(to: channelView.rx.items(cellIdentifier: ChannelCell.identifier, cellType: ChannelCell.self)) { index, value, cell in
-                cell.label.text = "index \(index) \(value)"
-                
-            }.disposed(by: disposeBag)
+        channelView.rx.setDelegate(self).disposed(by: disposeBag)
         
-            
-        channelView.rx.modelSelected(String.self)
+        Observable.just(sections)
+            .bind(to: channelView.rx.items(dataSource: dataSource))
+            .disposed(by: disposeBag)
+        
+        channelView.rx.modelSelected(Channel.self)
             .subscribe(onNext: { model in
+                // TODO: - contentView Bindign
                 print("\(model) was selected")
             })
             .disposed(by: disposeBag)
@@ -145,22 +210,24 @@ class MenuViewController: BaseViewController{
         
         // server 아이콘을 선택한 경우
         /* 🚀tableView Rx Binding
-        
-        tableView.rx.itemSelected
-            .subscribe(onNext: { [weak self] indexPath in
-                guard let self = self else { return }
-                let data = self.roomViewModel.data
-                print("\(indexPath.row)번째 Cell: \(data[indexPath.row])")
-                
-                // todos: 선택 시 channel viewModel에게 이벤트 방출
-            })
-            .disposed(by: disposeBag)
-        */
+         
+         tableView.rx.itemSelected
+         .subscribe(onNext: { [weak self] indexPath in
+         guard let self = self else { return }
+         let data = self.roomViewModel.data
+         print("\(indexPath.row)번째 Cell: \(data[indexPath.row])")
+         
+         // todos: 선택 시 channel viewModel에게 이벤트 방출
+         })
+         .disposed(by: disposeBag)
+         */
     }
 }
 
-extension MenuViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.frame.inset(by: collectionView.contentInset).width, height: 70)
+extension MenuViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        view.tintColor = .clear
+        let header:UITableViewHeaderFooterView = view as! UITableViewHeaderFooterView
+        header.textLabel?.textColor = .white
     }
 }

@@ -19,7 +19,7 @@ class ServerViewModel: BaseViewModel {
     let output = Output()
     
     // 서버에서 오는 값 바인딩해야함
-    let data = ["Logo", "Logo+Title", "AppIcon"]
+    let data = ["Logo", "Logo+Title", "AppIcon", "Logo", "Logo+Title"]
     
     struct Input {
         
