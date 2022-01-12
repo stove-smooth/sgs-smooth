@@ -150,6 +150,32 @@
   display: flex;
   flex-direction: column;
 }
+
+.primary-text-content {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.profile-wrapper {
+  width: 32px;
+  height: 32px;
+  position: relative;
+  border-radius: 50%;
+}
+.large-white-description {
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 18px;
+  color: #dcddde;
+}
+.subtext {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
 :root {
   --white-color: #fff;
   --discord-primary: #5865f2;

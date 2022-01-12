@@ -8,7 +8,9 @@
               <form @submit.prevent="submitForm" class="auth-container layer">
                 <div class="header">
                   <h3 class="title-welcome">돌아오신 걸 환영해요!</h3>
-                  <div class="description">다시 만나다니 너무 반가워요!</div>
+                  <div class="large-description">
+                    다시 만나다니 너무 반가워요!
+                  </div>
                 </div>
                 <div class="content">
                   <h5 class="label-id">이메일 또는 전화번호</h5>
@@ -257,7 +259,7 @@ export default {
   margin-bottom: 8px;
   color: var(--white-color);
 }
-.description {
+.large-description {
   font-size: 16px;
   line-height: 20px;
   font-weight: 600;

@@ -84,7 +84,7 @@
                         <svg class="voice-channel"></svg>
                       </div>
                       <div class="channel-name-wrapper">
-                        <div class="channel-name">{{ el.name }}</div>
+                        <div class="primary-text-content">{{ el.name }}</div>
                       </div>
                     </div>
                     <div
@@ -472,11 +472,7 @@ export default {
   position: relative;
   color: var(--white-color);
 }
-.channel-name {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+
 .create-children-button {
   padding: 6px 2px;
   position: relative;

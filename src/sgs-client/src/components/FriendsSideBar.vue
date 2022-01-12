@@ -199,12 +199,7 @@ export default {
   margin-right: 2px;
   background-image: url("../assets/private-channel-plus.svg");
 }
-.profile-wrapper {
-  width: 32px;
-  height: 32px;
-  position: relative;
-  border-radius: 50%;
-}
+
 .avatar-wrapper {
   display: relative;
   width: 100%;
@@ -222,14 +217,6 @@ export default {
 }
 .subtext-decorator {
   margin-top: -2px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-.subtext {
-  font-size: 12px;
-  line-height: 16px;
-  font-weight: 500;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;

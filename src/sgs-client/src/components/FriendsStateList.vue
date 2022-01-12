@@ -1,7 +1,7 @@
 <template>
-  <div class="friends-state-list-container auto-scrollbar">
+  <div class="friends-state-list-container">
     <div
-      class="friends-state-list"
+      class="friends-state-list auto-scrollbar"
       role="list"
       tabindex="0"
       data-list-id="people"
@@ -60,7 +60,35 @@
 export default {
   data() {
     return {
-      friends: [{ name: "두리짱" }, { name: "병각" }, { name: "히동" }],
+      friends: [
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+      ],
     };
   },
 };
@@ -68,18 +96,18 @@ export default {
 
 <style>
 .friends-state-list-container {
-  height: 100%;
-  -webkit-box-orient: horizontal;
+  display: flex;
+  -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-  /* -ms-flex-direction: row; */
-  flex-direction: row;
-  position: relative;
-  overflow: auto;
-  /* -webkit-transform: translateZ(0); */
-  transform: translateZ(0);
+  /* -ms-flex-direction: column; */
+  flex-direction: column;
+  -webkit-box-flex: 1;
+  /* -ms-flex: 1 1 auto; */
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 .friends-state-list {
-  /* overflow: hidden scroll; */
+  overflow: hidden scroll;
   padding-right: 0px;
   padding-bottom: 8px;
   margin-top: 8px;
