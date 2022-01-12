@@ -4,10 +4,7 @@ import com.example.communityserver.dto.request.CreateInvitationRequest;
 import com.example.communityserver.dto.request.CreateCommunityRequest;
 import com.example.communityserver.dto.request.EditCommunityIconRequest;
 import com.example.communityserver.dto.request.EditCommunityNameRequest;
-import com.example.communityserver.dto.response.CommonResponse;
-import com.example.communityserver.dto.response.CreateCommunityResponse;
-import com.example.communityserver.dto.response.CreateInvitationResponse;
-import com.example.communityserver.dto.response.DataResponse;
+import com.example.communityserver.dto.response.*;
 import com.example.communityserver.service.CommunityService;
 import com.example.communityserver.service.ResponseService;
 import lombok.RequiredArgsConstructor;
@@ -34,10 +31,11 @@ public class CommunityController {
      * 4. 커뮤니티 아이콘 이미지 수정하기
      * 5. 초대장 만들기
      * 6. 초대장 조회하기
-     * 7. 커뮤니티 멤버 조회하기
-     * 8. 초대장으로 커뮤니티 들어오기
-     * 9. 멤버 추방하기
-     * 10. 멤버 차단하기
+     * 7. 초대장 삭제하기
+     * 8. 커뮤니티 멤버 조회하기
+     * 9. 초대장으로 커뮤니티 들어오기
+     * 10. 멤버 추방하기
+     * 11. 멤버 차단하기
      */
 
     /**
@@ -107,14 +105,22 @@ public class CommunityController {
      * 6. 초대장 조회하기
      */
     @GetMapping("/{communityId}/invitation")
-    public void getInvitations(
-            @PathVariable(value = "communityId") Long communityId
+    public DataResponse<InvitationListResponse> getInvitations(
+            @RequestHeader("AUTHORIZATION") String token,
+            @RequestHeader(ID) String userId,
+            @PathVariable Long communityId
     ) {
-
+        log.info("/community-server/community/{}/invitation", communityId);
+        InvitationListResponse response = communityService.getInvitations(Long.parseLong(userId), communityId, token);
+        return responseService.getDataResponse(response);
     }
 
     /**
-     * 7. 커뮤니티 멤버 조회하기
+     * 7. 초대장 삭제하기
+     */
+
+    /**
+     * 8. 커뮤니티 멤버 조회하기
      */
 //    @GetMapping("/{communityId}/member")
 //    public void getMembers() {
@@ -122,7 +128,7 @@ public class CommunityController {
 //    }
 
     /**
-     * 8. 초대장으로 커뮤니티 들어오기
+     * 9. 초대장으로 커뮤니티 들어오기
      */
     @PostMapping("/")
     public void join() {
@@ -130,7 +136,7 @@ public class CommunityController {
     }
 
     /**
-     * 9. 멤버 추방하기
+     * 10. 멤버 추방하기
      */
 //    @DeleteMapping("/member")
 //    public void deleteMember() {
@@ -138,7 +144,7 @@ public class CommunityController {
 //    }
 
     /**
-     * 10. 멤버 차단하기
+     * 11. 멤버 차단하기
      */
 //    @PostMapping("/member/ban")
 //    public void suspendMember() {

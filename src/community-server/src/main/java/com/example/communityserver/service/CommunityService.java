@@ -2,15 +2,14 @@ package com.example.communityserver.service;
 
 import com.example.communityserver.client.UserClient;
 import com.example.communityserver.domain.*;
-import com.example.communityserver.dto.response.CreateInvitationResponse;
+import com.example.communityserver.domain.type.CommonStatus;
+import com.example.communityserver.dto.response.*;
 import com.example.communityserver.domain.type.ChannelType;
 import com.example.communityserver.domain.type.CommunityRole;
 import com.example.communityserver.dto.request.CreateCommunityRequest;
 import com.example.communityserver.dto.request.CreateInvitationRequest;
 import com.example.communityserver.dto.request.EditCommunityIconRequest;
 import com.example.communityserver.dto.request.EditCommunityNameRequest;
-import com.example.communityserver.dto.response.CreateCommunityResponse;
-import com.example.communityserver.dto.response.UserInfoFeignResponse;
 import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.ChannelRepository;
 import com.example.communityserver.repository.CommunityInvitationRepository;
@@ -22,7 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.communityserver.domain.Category.createCategory;
@@ -62,6 +61,7 @@ public class CommunityService {
         Community newCommunity = Community.createCommunity(
                 request.getName(), iconImage, request.isPublic(), textCategory, voiceCategory);
 
+        // Todo auth 터졌을 때 예외 처리
         // Todo feign config로 처리하기 controller, servive, userclient
         UserInfoFeignResponse userInfoFeignResponse = userClient.getUserInfo(token);
         String nickname = userInfoFeignResponse.getResult().getName();
@@ -135,5 +135,36 @@ public class CommunityService {
         }
 
         return new CreateInvitationResponse(HOST_ADDRESS + "/" + communityInvitation.getCode());
+    }
+
+    public InvitationListResponse getInvitations(Long userId, Long communityId, String token) {
+
+        Community community = communityRepository.findById(communityId)
+                .orElseThrow(() -> new CustomException(EMPTY_COMMUNITY));
+
+        if (!isAuthorizedMember(community, userId))
+            throw new CustomException(NON_AUTHORIZATION);
+
+        List<Long> ids = community.getInvitations().stream()
+                .filter(i -> i.isActivate())
+                .map(invitation -> invitation.getUserId())
+                .collect(Collectors.toList());
+
+        Set<Long> set = new HashSet<>(ids);
+        ids = new ArrayList<>(set);
+
+        // Todo auth 터졌을 때 예외 처리
+        UserInfoListFeignResponse response = userClient.getUserInfoList(token, ids);
+        HashMap<Long, UserInfoListFeignResponse.UserInfoListResponse> userInfoMap = response.getResult();
+
+        System.out.println(userInfoMap.get(1L));
+
+        List<InvitationResponse> invitations = community.getInvitations().stream()
+                .filter(i -> i.isActivate())
+                .map(invitation ->
+                        new InvitationResponse(invitation.getCode(), userInfoMap.get(invitation.getUserId())))
+                .collect(Collectors.toList());
+
+        return new InvitationListResponse(invitations);
     }
 }
