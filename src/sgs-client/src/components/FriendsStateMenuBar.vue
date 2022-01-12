@@ -38,6 +38,7 @@
           @click="MenuSelected('waiting')"
         >
           대기 중
+          <number-badge></number-badge>
         </div>
         <div
           class="friends-tab-decorator"
@@ -79,11 +80,15 @@
 </template>
 
 <script>
+import NumberBadge from "./common/NumberBadge.vue";
 export default {
   methods: {
     MenuSelected(value) {
       this.$store.state.friendsstatemenu = value;
     },
+  },
+  components: {
+    NumberBadge,
   },
 };
 </script>
