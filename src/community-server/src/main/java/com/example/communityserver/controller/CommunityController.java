@@ -1,9 +1,6 @@
 package com.example.communityserver.controller;
 
-import com.example.communityserver.dto.request.CreateInvitationRequest;
-import com.example.communityserver.dto.request.CreateCommunityRequest;
-import com.example.communityserver.dto.request.EditCommunityIconRequest;
-import com.example.communityserver.dto.request.EditCommunityNameRequest;
+import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.service.CommunityService;
 import com.example.communityserver.service.ResponseService;
@@ -23,6 +20,7 @@ public class CommunityController {
     private final ResponseService responseService;
 
     private final static String ID = "id";
+    private final static String AUTHORIZATION = "AUTHORIZATION";
 
     /**
      * 1. 메인 - 사용자의 커뮤니티 정보 조회하기
@@ -51,7 +49,7 @@ public class CommunityController {
      */
     @PostMapping
     public DataResponse<CreateCommunityResponse> createCommunity(
-            @RequestHeader("AUTHORIZATION") String token,
+            @RequestHeader(AUTHORIZATION) String token,
             @RequestHeader(ID) String userId,
             @Valid @ModelAttribute CreateCommunityRequest request
     ) {
@@ -106,7 +104,7 @@ public class CommunityController {
      */
     @GetMapping("/{communityId}/invitation")
     public DataResponse<InvitationListResponse> getInvitations(
-            @RequestHeader("AUTHORIZATION") String token,
+            @RequestHeader(AUTHORIZATION) String token,
             @RequestHeader(ID) String userId,
             @PathVariable Long communityId
     ) {
@@ -133,7 +131,7 @@ public class CommunityController {
      */
     @GetMapping("/{communityId}/member")
     public DataResponse<MemberListResponse> getMembers(
-            @RequestHeader("AUTHORIZATION") String token,
+            @RequestHeader(AUTHORIZATION) String token,
             @RequestHeader(ID) String userId,
             @PathVariable Long communityId
     ) {
@@ -146,9 +144,15 @@ public class CommunityController {
     /**
      * 9. 초대장으로 커뮤니티 들어오기
      */
-    @PostMapping("/")
-    public void join() {
-
+    @PostMapping("/invite")
+    public CommonResponse join(
+            @RequestHeader(AUTHORIZATION) String token,
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody JoinCommunityRequest request
+    ) {
+        log.info("/community-server/community/invite");
+        communityService.join(Long.parseLong(userId), request, token);
+        return responseService.getSuccessResponse();
     }
 
     /**

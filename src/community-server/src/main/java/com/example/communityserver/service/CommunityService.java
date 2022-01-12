@@ -4,13 +4,10 @@ import com.example.communityserver.client.UserClient;
 import com.example.communityserver.domain.*;
 import com.example.communityserver.domain.type.CommonStatus;
 import com.example.communityserver.domain.type.CommunityMemberStatus;
+import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.domain.type.ChannelType;
 import com.example.communityserver.domain.type.CommunityRole;
-import com.example.communityserver.dto.request.CreateCommunityRequest;
-import com.example.communityserver.dto.request.CreateInvitationRequest;
-import com.example.communityserver.dto.request.EditCommunityIconRequest;
-import com.example.communityserver.dto.request.EditCommunityNameRequest;
 import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.ChannelRepository;
 import com.example.communityserver.repository.CommunityInvitationRepository;
@@ -89,7 +86,7 @@ public class CommunityService {
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
-        if (!isAuthorizedMember(community, userId))
+        if (!isOwner(community, userId))
             throw new CustomException(NON_AUTHORIZATION);
 
         community.setName(request.getName());
@@ -97,7 +94,16 @@ public class CommunityService {
 
     private boolean isAuthorizedMember(Community community, Long userId) {
         return community.getMembers().stream()
-                .map(CommunityMember::getUserId).collect(Collectors.toList())
+                .filter(communityMember -> communityMember.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .map(CommunityMember::getUserId)
+                .collect(Collectors.toList())
+                .contains(userId);
+    }
+
+    private boolean isOwner(Community community, Long userId) {
+        return community.getMembers().stream()
+                .filter(communityMember -> communityMember.getRole().equals(CommunityRole.OWNER))
+                .collect(Collectors.toList())
                 .contains(userId);
     }
 
@@ -108,7 +114,7 @@ public class CommunityService {
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
-        if (!isAuthorizedMember(community, userId))
+        if (!isOwner(community, userId))
             throw new CustomException(NON_AUTHORIZATION);
 
         String iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
@@ -207,5 +213,34 @@ public class CommunityService {
                 .collect(Collectors.toList());
 
         return new MemberListResponse(members);
+    }
+
+    @Transactional
+    public void join(Long userId, JoinCommunityRequest request, String token) {
+
+        CommunityInvitation invitation = communityInvitationRepository.findByCode(request.getCode())
+                .filter(i -> i.isActivate())
+                .orElseThrow(() -> new CustomException(NON_VALID_INVITATION));
+
+        Community community = invitation.getCommunity();
+
+        if (isSuspendedMember(community, userId))
+            throw new CustomException(SUSPENDED_COMMUNITY);
+
+        if (!isAuthorizedMember(community, userId)) {
+            // Todo auth 터졌을 때 예외 처리
+            // Todo feign config로 처리하기 controller, servive, userclient
+            UserInfoFeignResponse userInfoFeignResponse = userClient.getUserInfo(token);
+            String nickname = userInfoFeignResponse.getResult().getName();
+            String profileImage = userInfoFeignResponse.getResult().getProfileImage();
+            createCommunityMember(userId, community, nickname, profileImage, CommunityRole.NONE);
+        }
+    }
+
+    private boolean isSuspendedMember(Community community, Long userId) {
+        return community.getMembers().stream()
+                .filter(member -> member.getStatus().equals(CommunityMemberStatus.SUSPENDED))
+                .collect(Collectors.toList())
+                .contains(userId);
     }
 }
