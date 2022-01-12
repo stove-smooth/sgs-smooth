@@ -1,18 +1,16 @@
 package com.example.communityserver.domain;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-
+import lombok.Setter;
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "community_invitation")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CommunityInvitation {
+@Setter
+@NoArgsConstructor
+public class CommunityInvitation extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,10 +26,22 @@ public class CommunityInvitation {
     @Column(length = 10)
     private String code;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
+    private boolean activate;
 
-    private LocalDateTime expiredAt;
+    //== 연관관계 메서드 ==//
+    public void setCommunity(Community community) {
+        this.community = community;
+        community.getInvitations().add(this);
+    }
 
-    private int count;
+    //== 생성 메서드 ==//
+//    public static CommunityInvitation createCommunityInvitation(
+//            Community community,
+//            Long userId
+//    ) {
+//        CommunityInvitation invitation = new CommunityInvitation();
+//        invitation.setCommunity(community);
+//        invitation.setUserId(userId);
+//        return invitation;
+//    }
 }

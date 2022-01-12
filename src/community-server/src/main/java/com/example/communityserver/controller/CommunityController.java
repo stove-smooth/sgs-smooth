@@ -6,6 +6,7 @@ import com.example.communityserver.dto.request.EditCommunityIconRequest;
 import com.example.communityserver.dto.request.EditCommunityNameRequest;
 import com.example.communityserver.dto.response.CommonResponse;
 import com.example.communityserver.dto.response.CreateCommunityResponse;
+import com.example.communityserver.dto.response.CreateInvitationResponse;
 import com.example.communityserver.dto.response.DataResponse;
 import com.example.communityserver.service.CommunityService;
 import com.example.communityserver.service.ResponseService;
@@ -92,7 +93,7 @@ public class CommunityController {
      * 5. 초대장 만들기
      */
     @PostMapping("/invitation")
-    public DataResponse<CreateInvitationResponse> createInvitation(
+    public DataResponse<CreateInvitationResponse> invite(
             @RequestHeader(ID) String userId,
             @Valid @RequestBody CreateInvitationRequest request
     ) {
@@ -105,10 +106,12 @@ public class CommunityController {
     /**
      * 6. 초대장 조회하기
      */
-//    @GetMapping("/{communityId}/invitation")
-//    public void getInvitations() {
-//
-//    }
+    @GetMapping("/{communityId}/invitation")
+    public void getInvitations(
+            @PathVariable(value = "communityId") Long communityId
+    ) {
+
+    }
 
     /**
      * 7. 커뮤니티 멤버 조회하기
@@ -121,10 +124,10 @@ public class CommunityController {
     /**
      * 8. 초대장으로 커뮤니티 들어오기
      */
-//    @PostMapping("/member")
-//    public void joinByInvitation() {
-//
-//    }
+    @PostMapping("/")
+    public void join() {
+
+    }
 
     /**
      * 9. 멤버 추방하기

@@ -15,7 +15,9 @@ public enum CustomExceptionStatus {
     // 4000 ~ 4999
     FILE_CONVERT_ERROR(false, 4000, "파일 변환 중 에러가 발생했습니다."),
     FILE_EXTENSION_ERROR(false, 4001, "파일의 확장자가 유효하지 않습니다."),
-    EMPTY_COMMUNITY(false, 4002, "존재하지 않는 커뮤니티입니다.");
+    EMPTY_COMMUNITY(false, 4002, "존재하지 않는 커뮤니티입니다."),
+    EMPTY_CHANNEL(false, 4003, "존재하지 않은 채널입니다."),
+    NON_VALID_CHANNEL(false, 4004, "커뮤니티에 속한 채널이 아닙니다.");
 
 
     private final boolean isSuccess;

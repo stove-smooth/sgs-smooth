@@ -12,11 +12,6 @@ import javax.validation.constraints.NotNull;
 public class CreateInvitationRequest {
 
     @NotNull
-    private int validTime;
+    private Long communityId;
 
-    @NotNull
-    private int count;
-
-    @NotNull
-    private Long channelId;
 }

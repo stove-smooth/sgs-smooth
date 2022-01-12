@@ -1,4 +1,4 @@
-package com.example.communityserver.controller;
+package com.example.communityserver.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
