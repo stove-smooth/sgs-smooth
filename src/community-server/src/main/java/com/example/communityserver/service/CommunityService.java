@@ -1,31 +1,32 @@
 package com.example.communityserver.service;
 
 import com.example.communityserver.client.UserClient;
-import com.example.communityserver.domain.Category;
-import com.example.communityserver.domain.Community;
-import com.example.communityserver.domain.CommunityMember;
+import com.example.communityserver.domain.*;
+import com.example.communityserver.domain.type.CommonStatus;
+import com.example.communityserver.domain.type.CommunityMemberStatus;
+import com.example.communityserver.dto.request.*;
+import com.example.communityserver.dto.response.*;
 import com.example.communityserver.domain.type.ChannelType;
 import com.example.communityserver.domain.type.CommunityRole;
-import com.example.communityserver.dto.request.CreateCommunityRequest;
-import com.example.communityserver.dto.request.EditCommunityIconRequest;
-import com.example.communityserver.dto.request.EditCommunityNameRequest;
-import com.example.communityserver.dto.response.CreateCommunityResponse;
-import com.example.communityserver.dto.response.UserInfoFeignResponse;
 import com.example.communityserver.exception.CustomException;
+import com.example.communityserver.repository.ChannelRepository;
+import com.example.communityserver.repository.CommunityInvitationRepository;
 import com.example.communityserver.repository.CommunityRepository;
 import com.example.communityserver.util.AmazonS3Connector;
+import com.example.communityserver.util.Base62;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.communityserver.domain.Category.createCategory;
 import static com.example.communityserver.domain.Channel.createChannel;
 import static com.example.communityserver.domain.CommunityMember.createCommunityMember;
-import static com.example.communityserver.exception.CustomExceptionStatus.EMPTY_COMMUNITY;
-import static com.example.communityserver.exception.CustomExceptionStatus.NON_AUTHORIZATION;
+import static com.example.communityserver.dto.response.MemberResponse.fromEntity;
+import static com.example.communityserver.exception.CustomExceptionStatus.*;
 import static com.example.communityserver.service.ChannelService.CHANNEL_DEFAULT_NAME;
 
 @Service
@@ -33,9 +34,15 @@ import static com.example.communityserver.service.ChannelService.CHANNEL_DEFAULT
 @Transactional(readOnly = true)
 public class CommunityService {
 
+    @Value("${smooth.url}")
+    public String HOST_ADDRESS;
+
     private final CommunityRepository communityRepository;
+    private final CommunityInvitationRepository communityInvitationRepository;
+    private final ChannelRepository channelRepository;
 
     private final AmazonS3Connector amazonS3Connector;
+    private final Base62 base62;
 
     private final UserClient userClient;
 
@@ -45,7 +52,7 @@ public class CommunityService {
             CreateCommunityRequest request,
             String token
     ) {
-        String iconImage = amazonS3Connector.uploadImage(userId, request.getIcon(), request.getThumbnail());
+        String iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
 
         Category textCategory = makeDefaultCategory(ChannelType.TEXT);
         Category voiceCategory = makeDefaultCategory(ChannelType.VOICE);
@@ -53,6 +60,7 @@ public class CommunityService {
         Community newCommunity = Community.createCommunity(
                 request.getName(), iconImage, request.isPublic(), textCategory, voiceCategory);
 
+        // Todo auth 터졌을 때 예외 처리
         // Todo feign config로 처리하기 controller, servive, userclient
         UserInfoFeignResponse userInfoFeignResponse = userClient.getUserInfo(token);
         String nickname = userInfoFeignResponse.getResult().getName();
@@ -75,9 +83,10 @@ public class CommunityService {
     public void editName(Long userId, EditCommunityNameRequest request) {
 
         Community community = communityRepository.findById(request.getCommunityId())
-                .orElseThrow(() -> new CustomException(EMPTY_COMMUNITY));
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
-        if (!isAuthorizedMember(community, userId))
+        if (!isOwner(community, userId))
             throw new CustomException(NON_AUTHORIZATION);
 
         community.setName(request.getName());
@@ -85,7 +94,16 @@ public class CommunityService {
 
     private boolean isAuthorizedMember(Community community, Long userId) {
         return community.getMembers().stream()
-                .map(CommunityMember::getUserId).collect(Collectors.toList())
+                .filter(communityMember -> communityMember.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .map(CommunityMember::getUserId)
+                .collect(Collectors.toList())
+                .contains(userId);
+    }
+
+    private boolean isOwner(Community community, Long userId) {
+        return community.getMembers().stream()
+                .filter(communityMember -> communityMember.getRole().equals(CommunityRole.OWNER))
+                .collect(Collectors.toList())
                 .contains(userId);
     }
 
@@ -93,13 +111,161 @@ public class CommunityService {
     public void editIcon(Long userId, EditCommunityIconRequest request) {
 
         Community community = communityRepository.findById(request.getCommunityId())
-                .orElseThrow(() -> new CustomException(EMPTY_COMMUNITY));
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
+
+        if (!isOwner(community, userId))
+            throw new CustomException(NON_AUTHORIZATION);
+
+        String iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
+
+        community.setIconImage(iconImage);
+    }
+
+    @Transactional
+    public CreateInvitationResponse createInvitation(Long userId, CreateInvitationRequest request) {
+
+        Community community = communityRepository.findById(request.getCommunityId())
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
         if (!isAuthorizedMember(community, userId))
             throw new CustomException(NON_AUTHORIZATION);
 
-        String iconImage = amazonS3Connector.uploadImage(userId, request.getIcon(), request.getThumbnail());
+        CommunityInvitation communityInvitation = community.getInvitations().stream()
+                .filter(i -> i.isActivate())
+                .filter(invitation -> invitation.getUserId().equals(userId))
+                .findAny().orElse(null);
 
-        community.setIconImage(iconImage);
+        if (Objects.isNull(communityInvitation)) {
+            CommunityInvitation newInvitation = new CommunityInvitation();
+            newInvitation.setCommunity(community);
+            newInvitation.setUserId(userId);
+            newInvitation.setActivate(true);
+            communityInvitation = communityInvitationRepository.save(newInvitation);
+            communityInvitation.setCode(base62.encode(communityInvitation.getId()));
+        }
+
+        return new CreateInvitationResponse(HOST_ADDRESS + "/" + communityInvitation.getCode());
+    }
+
+    public InvitationListResponse getInvitations(Long userId, Long communityId, String token) {
+
+        Community community = communityRepository.findById(communityId)
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
+
+        if (!isAuthorizedMember(community, userId))
+            throw new CustomException(NON_AUTHORIZATION);
+
+        HashMap<Long, UserResponse> userInfoMap = getUserMap(community, token);
+
+        List<InvitationResponse> invitations = community.getInvitations().stream()
+                .filter(i -> i.isActivate())
+                .map(invitation ->
+                        new InvitationResponse(invitation, userInfoMap.get(invitation.getUserId())))
+                .collect(Collectors.toList());
+
+        return new InvitationListResponse(invitations);
+    }
+
+    private HashMap<Long, UserResponse> getUserMap(Community community, String token) {
+        List<Long> ids = community.getInvitations().stream()
+                .filter(i -> i.isActivate())
+                .map(invitation -> invitation.getUserId())
+                .collect(Collectors.toList());
+
+        Set<Long> set = new HashSet<>(ids);
+        ids = new ArrayList<>(set);
+
+        // Todo auth 터졌을 때 예외 처리
+        UserInfoListFeignResponse response = userClient.getUserInfoList(token, ids);
+        return response.getResult();
+    }
+
+    @Transactional
+    public void deleteInvitation(Long userId, Long invitationId) {
+
+        CommunityInvitation invitation = communityInvitationRepository.findById(invitationId)
+                .filter(i -> i.isActivate())
+                .orElseThrow(() -> new CustomException(NON_VALID_INVITATION));
+
+        if (!isAuthorizedMember(invitation.getCommunity(), userId))
+            throw new CustomException(NON_AUTHORIZATION);
+
+        invitation.setActivate(false);
+    }
+
+    public MemberListResponse getMembers(Long userId, Long communityId, String token) {
+
+        Community community = communityRepository.findById(communityId)
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
+
+        if (!isAuthorizedMember(community, userId))
+            throw new CustomException(NON_AUTHORIZATION);
+
+        HashMap<Long, UserResponse> userInfoMap = getUserMap(community, token);
+
+        List<MemberResponse> members = community.getMembers().stream()
+                .filter(member -> member.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .map(member -> fromEntity(member, userInfoMap.get(member.getUserId())))
+                .collect(Collectors.toList());
+
+        return new MemberListResponse(members);
+    }
+
+    @Transactional
+    public void join(Long userId, JoinCommunityRequest request, String token) {
+
+        CommunityInvitation invitation = communityInvitationRepository.findByCode(request.getCode())
+                .filter(i -> i.isActivate())
+                .orElseThrow(() -> new CustomException(NON_VALID_INVITATION));
+
+        Community community = invitation.getCommunity();
+
+        if (isSuspendedMember(community, userId))
+            throw new CustomException(SUSPENDED_COMMUNITY);
+
+        if (!isAuthorizedMember(community, userId)) {
+            // Todo auth 터졌을 때 예외 처리
+            // Todo feign config로 처리하기 controller, servive, userclient
+            UserInfoFeignResponse userInfoFeignResponse = userClient.getUserInfo(token);
+            String nickname = userInfoFeignResponse.getResult().getName();
+            String profileImage = userInfoFeignResponse.getResult().getProfileImage();
+            createCommunityMember(userId, community, nickname, profileImage, CommunityRole.NONE);
+        }
+    }
+
+    private boolean isSuspendedMember(Community community, Long userId) {
+        return community.getMembers().stream()
+                .filter(member -> member.getStatus().equals(CommunityMemberStatus.SUSPENDED))
+                .collect(Collectors.toList())
+                .contains(userId);
+    }
+
+    @Transactional
+    public void deleteMember(Long userId, Long communityId, Long memberId) {
+        CommunityMember member = getMember(userId, communityId, memberId);
+        member.setStatus(CommunityMemberStatus.DELETED);
+    }
+
+    private CommunityMember getMember(Long userId, Long communityId, Long memberId) {
+        Community community = communityRepository.findById(communityId)
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
+
+        if (!isOwner(community, userId))
+            throw new CustomException(NON_AUTHORIZATION);
+
+        return community.getMembers().stream()
+                .filter(member -> member.getUserId().equals(memberId))
+                .filter(member -> member.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .findAny().orElseThrow(() -> new CustomException(EMPTY_MEMBER));
+    }
+
+    public void suspendMember(Long userId, Long communityId, Long memberId) {
+        CommunityMember member = getMember(userId, communityId, memberId);
+        member.setStatus(CommunityMemberStatus.SUSPENDED);
     }
 }

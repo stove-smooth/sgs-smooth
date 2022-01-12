@@ -64,6 +64,4 @@ public class Community extends BaseTimeEntity {
         community.setStatus(CommonStatus.NORMAL);
         return community;
     }
-
-    //== 비즈니스 로직 ==//
 }

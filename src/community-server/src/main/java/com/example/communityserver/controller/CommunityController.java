@@ -1,11 +1,7 @@
 package com.example.communityserver.controller;
 
-import com.example.communityserver.dto.request.CreateCommunityRequest;
-import com.example.communityserver.dto.request.EditCommunityIconRequest;
-import com.example.communityserver.dto.request.EditCommunityNameRequest;
-import com.example.communityserver.dto.response.CommonResponse;
-import com.example.communityserver.dto.response.CreateCommunityResponse;
-import com.example.communityserver.dto.response.DataResponse;
+import com.example.communityserver.dto.request.*;
+import com.example.communityserver.dto.response.*;
 import com.example.communityserver.service.CommunityService;
 import com.example.communityserver.service.ResponseService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +20,7 @@ public class CommunityController {
     private final ResponseService responseService;
 
     private final static String ID = "id";
+    private final static String AUTHORIZATION = "AUTHORIZATION";
 
     /**
      * 1. 메인 - 사용자의 커뮤니티 정보 조회하기
@@ -32,10 +29,11 @@ public class CommunityController {
      * 4. 커뮤니티 아이콘 이미지 수정하기
      * 5. 초대장 만들기
      * 6. 초대장 조회하기
-     * 7. 커뮤니티 멤버 조회하기
-     * 8. 초대장으로 커뮤니티 들어오기
-     * 9. 멤버 추방하기
-     * 10. 멤버 차단하기
+     * 7. 초대장 삭제하기
+     * 8. 커뮤니티 멤버 조회하기
+     * 9. 초대장으로 커뮤니티 들어오기
+     * 10. 멤버 추방하기
+     * 11. 멤버 차단하기
      */
 
     /**
@@ -51,15 +49,13 @@ public class CommunityController {
      */
     @PostMapping
     public DataResponse<CreateCommunityResponse> createCommunity(
-            @RequestHeader("AUTHORIZATION") String token,
+            @RequestHeader(AUTHORIZATION) String token,
             @RequestHeader(ID) String userId,
             @Valid @ModelAttribute CreateCommunityRequest request
     ) {
         log.info("/community-server/community");
-
         CreateCommunityResponse createCommunityResponse =
                 communityService.createCommunity(Long.parseLong(userId), request, token);
-
         return responseService.getDataResponse(createCommunityResponse);
     }
 
@@ -92,48 +88,98 @@ public class CommunityController {
     /**
      * 5. 초대장 만들기
      */
-//    @PostMapping("/invitation")
-//    public void createInvitation() {
-//
-//    }
+    @PostMapping("/invitation")
+    public DataResponse<CreateInvitationResponse> invite(
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody CreateInvitationRequest request
+    ) {
+        log.info("/community-server/community/invitation");
+        CreateInvitationResponse createInvitationResponse =
+                communityService.createInvitation(Long.parseLong(userId), request);
+        return responseService.getDataResponse(createInvitationResponse);
+    }
 
     /**
      * 6. 초대장 조회하기
      */
-//    @GetMapping("/{communityId}/invitation")
-//    public void getInvitations() {
-//
-//    }
+    @GetMapping("/{communityId}/invitation")
+    public DataResponse<InvitationListResponse> getInvitations(
+            @RequestHeader(AUTHORIZATION) String token,
+            @RequestHeader(ID) String userId,
+            @PathVariable Long communityId
+    ) {
+        log.info("/community-server/community/{}/invitation", communityId);
+        InvitationListResponse response = communityService.getInvitations(Long.parseLong(userId), communityId, token);
+        return responseService.getDataResponse(response);
+    }
 
     /**
-     * 7. 커뮤니티 멤버 조회하기
+     * 7. 초대장 삭제하기
      */
-//    @GetMapping("/{communityId}/member")
-//    public void getMembers() {
-//          // Mapper 부르고 user service에 open feign
-//    }
+    @DeleteMapping("/invitation")
+    public CommonResponse deleteInvitations(
+            @RequestHeader(ID) String userId,
+            @RequestParam(name = "id") Long invitationId
+    ) {
+        log.info("/community-server/community/invitation");
+        communityService.deleteInvitation(Long.parseLong(userId), invitationId);
+        return responseService.getSuccessResponse();
+    }
 
     /**
-     * 8. 초대장으로 커뮤니티 들어오기
+     * 8. 커뮤니티 멤버 조회하기
      */
-//    @PostMapping("/member")
-//    public void joinByInvitation() {
-//
-//    }
+    @GetMapping("/{communityId}/member")
+    public DataResponse<MemberListResponse> getMembers(
+            @RequestHeader(AUTHORIZATION) String token,
+            @RequestHeader(ID) String userId,
+            @PathVariable Long communityId
+    ) {
+        log.info("/community-server/community/{}/member", communityId);
+        MemberListResponse response =
+                communityService.getMembers(Long.parseLong(userId), communityId, token);
+        return responseService.getDataResponse(response);
+    }
 
     /**
-     * 9. 멤버 추방하기
+     * 9. 초대장으로 커뮤니티 들어오기
      */
-//    @DeleteMapping("/member")
-//    public void deleteMember() {
-//
-//    }
+    @PostMapping("/invite")
+    public CommonResponse join(
+            @RequestHeader(AUTHORIZATION) String token,
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody JoinCommunityRequest request
+    ) {
+        log.info("/community-server/community/invite");
+        communityService.join(Long.parseLong(userId), request, token);
+        return responseService.getSuccessResponse();
+    }
 
     /**
-     * 10. 멤버 차단하기
+     * 10. 멤버 추방하기
      */
-//    @PostMapping("/member/ban")
-//    public void suspendMember() {
-//
-//    }
+    @DeleteMapping("/{communityId}/member")
+    public CommonResponse deleteMember(
+            @RequestHeader(ID) String userId,
+            @PathVariable Long communityId,
+            @RequestParam(name = "id") Long memberId
+    ) {
+        log.info("/community-server/community/member");
+        communityService.deleteMember(Long.parseLong(userId), communityId, memberId);
+        return responseService.getSuccessResponse();
+    }
+
+    /**
+     * 11. 멤버 차단하기
+     */
+    @PostMapping("/{communityId}/member/ban")
+    public CommonResponse suspendMember(
+            @RequestHeader(ID) String userId,
+            @PathVariable Long communityId,
+            @RequestParam(name = "id") Long memberId
+    ) {
+        log.info("/community-server/community/member/ban");
+        communityService.suspendMember(Long.parseLong(userId), communityId, memberId);
+        return responseService.getSuccessResponse();
+    }
 }

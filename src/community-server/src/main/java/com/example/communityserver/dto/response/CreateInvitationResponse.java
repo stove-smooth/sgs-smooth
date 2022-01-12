@@ -9,10 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponse {
-    private Long id;
-    private String name;
-    private String code;
-    private String image;
-    private String state;
+public class CreateInvitationResponse {
+    private String url;
 }
