@@ -131,10 +131,17 @@ public class CommunityController {
     /**
      * 8. 커뮤니티 멤버 조회하기
      */
-//    @GetMapping("/{communityId}/member")
-//    public void getMembers() {
-//          // Mapper 부르고 user service에 open feign
-//    }
+    @GetMapping("/{communityId}/member")
+    public DataResponse<MemberListResponse> getMembers(
+            @RequestHeader("AUTHORIZATION") String token,
+            @RequestHeader(ID) String userId,
+            @PathVariable Long communityId
+    ) {
+        log.info("/community-server/community/{}/member", communityId);
+        MemberListResponse response =
+                communityService.getMembers(Long.parseLong(userId), communityId, token);
+        return responseService.getDataResponse(response);
+    }
 
     /**
      * 9. 초대장으로 커뮤니티 들어오기

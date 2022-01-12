@@ -3,6 +3,7 @@ package com.example.communityserver.service;
 import com.example.communityserver.client.UserClient;
 import com.example.communityserver.domain.*;
 import com.example.communityserver.domain.type.CommonStatus;
+import com.example.communityserver.domain.type.CommunityMemberStatus;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.domain.type.ChannelType;
 import com.example.communityserver.domain.type.CommunityRole;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 import static com.example.communityserver.domain.Category.createCategory;
 import static com.example.communityserver.domain.Channel.createChannel;
 import static com.example.communityserver.domain.CommunityMember.createCommunityMember;
+import static com.example.communityserver.dto.response.MemberResponse.fromEntity;
 import static com.example.communityserver.exception.CustomExceptionStatus.*;
 import static com.example.communityserver.service.ChannelService.CHANNEL_DEFAULT_NAME;
 
@@ -84,7 +86,8 @@ public class CommunityService {
     public void editName(Long userId, EditCommunityNameRequest request) {
 
         Community community = communityRepository.findById(request.getCommunityId())
-                .orElseThrow(() -> new CustomException(EMPTY_COMMUNITY));
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
         if (!isAuthorizedMember(community, userId))
             throw new CustomException(NON_AUTHORIZATION);
@@ -102,7 +105,8 @@ public class CommunityService {
     public void editIcon(Long userId, EditCommunityIconRequest request) {
 
         Community community = communityRepository.findById(request.getCommunityId())
-                .orElseThrow(() -> new CustomException(EMPTY_COMMUNITY));
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
         if (!isAuthorizedMember(community, userId))
             throw new CustomException(NON_AUTHORIZATION);
@@ -116,7 +120,8 @@ public class CommunityService {
     public CreateInvitationResponse createInvitation(Long userId, CreateInvitationRequest request) {
 
         Community community = communityRepository.findById(request.getCommunityId())
-                .orElseThrow(() -> new CustomException(EMPTY_COMMUNITY));
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
         if (!isAuthorizedMember(community, userId))
             throw new CustomException(NON_AUTHORIZATION);
@@ -141,22 +146,13 @@ public class CommunityService {
     public InvitationListResponse getInvitations(Long userId, Long communityId, String token) {
 
         Community community = communityRepository.findById(communityId)
-                .orElseThrow(() -> new CustomException(EMPTY_COMMUNITY));
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
         if (!isAuthorizedMember(community, userId))
             throw new CustomException(NON_AUTHORIZATION);
 
-        List<Long> ids = community.getInvitations().stream()
-                .filter(i -> i.isActivate())
-                .map(invitation -> invitation.getUserId())
-                .collect(Collectors.toList());
-
-        Set<Long> set = new HashSet<>(ids);
-        ids = new ArrayList<>(set);
-
-        // Todo auth 터졌을 때 예외 처리
-        UserInfoListFeignResponse response = userClient.getUserInfoList(token, ids);
-        HashMap<Long, UserInfoListFeignResponse.UserInfoListResponse> userInfoMap = response.getResult();
+        HashMap<Long, UserResponse> userInfoMap = getUserMap(community, token);
 
         List<InvitationResponse> invitations = community.getInvitations().stream()
                 .filter(i -> i.isActivate())
@@ -167,18 +163,49 @@ public class CommunityService {
         return new InvitationListResponse(invitations);
     }
 
+    private HashMap<Long, UserResponse> getUserMap(Community community, String token) {
+        List<Long> ids = community.getInvitations().stream()
+                .filter(i -> i.isActivate())
+                .map(invitation -> invitation.getUserId())
+                .collect(Collectors.toList());
+
+        Set<Long> set = new HashSet<>(ids);
+        ids = new ArrayList<>(set);
+
+        // Todo auth 터졌을 때 예외 처리
+        UserInfoListFeignResponse response = userClient.getUserInfoList(token, ids);
+        return response.getResult();
+    }
+
     @Transactional
     public void deleteInvitation(Long userId, Long invitationId) {
 
         CommunityInvitation invitation = communityInvitationRepository.findById(invitationId)
-                .orElseThrow(() -> new CustomException(EMPTY_INVITATION));
+                .filter(i -> i.isActivate())
+                .orElseThrow(() -> new CustomException(NON_VALID_INVITATION));
 
         if (!isAuthorizedMember(invitation.getCommunity(), userId))
             throw new CustomException(NON_AUTHORIZATION);
 
-        if (!invitation.isActivate())
-            throw new CustomException(NON_VALID_INVITATION);
-
         invitation.setActivate(false);
+    }
+
+    public MemberListResponse getMembers(Long userId, Long communityId, String token) {
+
+        Community community = communityRepository.findById(communityId)
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
+
+        if (!isAuthorizedMember(community, userId))
+            throw new CustomException(NON_AUTHORIZATION);
+
+        HashMap<Long, UserResponse> userInfoMap = getUserMap(community, token);
+
+        List<MemberResponse> members = community.getMembers().stream()
+                .filter(member -> member.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .map(member -> fromEntity(member, userInfoMap.get(member.getUserId())))
+                .collect(Collectors.toList());
+
+        return new MemberListResponse(members);
     }
 }

@@ -18,7 +18,7 @@ public class InvitationResponse {
 
     public InvitationResponse(
             CommunityInvitation communityInvitation,
-            UserInfoListFeignResponse.UserInfoListResponse userInfo
+            UserResponse userInfo
     ) {
         this.invitationId = communityInvitation.getId();
         this.inviteCode = communityInvitation.getCode();

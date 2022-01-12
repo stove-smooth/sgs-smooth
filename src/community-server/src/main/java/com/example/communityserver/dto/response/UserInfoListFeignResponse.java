@@ -13,14 +13,5 @@ import java.util.HashMap;
 @AllArgsConstructor
 public class UserInfoListFeignResponse extends CommonResponse {
 
-    private HashMap<Long, UserInfoListResponse> result;
-
-    @Getter
-    public static class UserInfoListResponse {
-        private Long id;
-        private String name;
-        private String code;
-        private String image;
-        private String state;
-    }
+    private HashMap<Long, UserResponse> result;
 }

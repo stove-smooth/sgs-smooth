@@ -11,7 +11,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberInfoResponse {
-    private int count;
-    private List<UserDetailResponse> members;
+public class MemberListResponse {
+    private List<MemberResponse> members;
 }
