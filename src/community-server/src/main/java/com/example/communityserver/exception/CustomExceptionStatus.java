@@ -18,7 +18,9 @@ public enum CustomExceptionStatus {
     NON_VALID_COMMUNITY(false, 4002, "존재하지 않는 커뮤니티입니다."),
     NON_VALID_CATEGORY(false, 4003, "존재하지 않은 채널입니다."),
     NON_VALID_CHANNEL(false, 4004, "커뮤니티에 속한 채널이 아닙니다."),
-    NON_VALID_INVITATION(false, 4005, "유효하지 않은 초대장입니다.");
+    NON_VALID_INVITATION(false, 4005, "유효하지 않은 초대장입니다."),
+    SUSPENDED_COMMUNITY(false, 4006, "차단된 커뮤니티입니다."),
+    EMPTY_MEMBER(false, 4007, "존재하지 않는 회원입니다.");
 
 
     private final boolean isSuccess;

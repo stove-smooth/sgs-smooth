@@ -158,10 +158,16 @@ public class CommunityController {
     /**
      * 10. 멤버 추방하기
      */
-//    @DeleteMapping("/member")
-//    public void deleteMember() {
-//
-//    }
+    @DeleteMapping("/{communityId}/member")
+    public CommonResponse deleteMember(
+            @RequestHeader(ID) String userId,
+            @PathVariable Long communityId,
+            @RequestParam(name = "id") Long memberId
+    ) {
+        log.info("/community-server/community/member");
+        communityService.deleteMember(Long.parseLong(userId), communityId, memberId);
+        return responseService.getSuccessResponse();
+    }
 
     /**
      * 11. 멤버 차단하기

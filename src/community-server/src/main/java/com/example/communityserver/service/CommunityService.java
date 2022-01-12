@@ -243,4 +243,22 @@ public class CommunityService {
                 .collect(Collectors.toList())
                 .contains(userId);
     }
+
+    @Transactional
+    public void deleteMember(Long userId, Long communityId, Long memberId) {
+
+        Community community = communityRepository.findById(communityId)
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
+
+        if (!isOwner(community, userId))
+            throw new CustomException(NON_AUTHORIZATION);
+
+        CommunityMember communityMember = community.getMembers().stream()
+                .filter(member -> member.getUserId().equals(memberId))
+                .filter(member -> member.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .findAny().orElseThrow(() -> new CustomException(EMPTY_MEMBER));
+
+        communityMember.setStatus(CommunityMemberStatus.DELETED);
+    }
 }
