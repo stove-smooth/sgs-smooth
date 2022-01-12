@@ -1,13 +1,15 @@
 <template>
-  <div class="friends-state-list-container auto-scrollbar">
+  <div class="friends-state-list-container">
     <div
-      class="friends-state-list"
+      class="friends-state-list auto-scrollbar"
       role="list"
       tabindex="0"
       data-list-id="people"
     >
       <div>
-        <h2 class="number-of-friends-container small-title-text">온라인-7명</h2>
+        <h2 class="number-of-friends-container small-title-text">
+          오프라인-3명
+        </h2>
         <div v-for="(item, index) in friends" :key="index">
           <div class="firends-list-item" role="listitem" tabindex="-1">
             <div class="friends-list-item-contents">
@@ -83,6 +85,9 @@ export default {
         { name: "두리짱" },
         { name: "병각" },
         { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
       ],
     };
   },
@@ -91,25 +96,25 @@ export default {
 
 <style>
 .friends-state-list-container {
-  height: 100%;
-  -webkit-box-orient: horizontal;
+  display: flex;
+  -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-  /* -ms-flex-direction: row; */
-  flex-direction: row;
-  position: relative;
-  overflow: auto;
-  /* -webkit-transform: translateZ(0); */
-  transform: translateZ(0);
+  /* -ms-flex-direction: column; */
+  flex-direction: column;
+  -webkit-box-flex: 1;
+  /* -ms-flex: 1 1 auto; */
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 .friends-state-list {
-  /* overflow: hidden scroll; */
+  overflow: hidden scroll;
   padding-right: 0px;
   padding-bottom: 8px;
   margin-top: 8px;
 }
 .number-of-friends-container {
   margin: 16px 20px 8px 30px;
-  color: #b9bbbe;
+  color: var(--description-primary);
 }
 .firends-list-item {
   height: 62px;
@@ -182,7 +187,7 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  color: #fff;
+  color: var(--white-color);
   font-weight: 600;
   -webkit-box-flex: 0;
   display: block;
@@ -191,10 +196,10 @@ export default {
 .user-code {
   font-size: 14px;
   line-height: 16px;
-  color: #b9bbbe;
+  color: var(--description-primary);
 }
 .status-description {
-  color: #b9bbbe;
+  color: var(--description-primary);
   font-size: 12px;
 }
 .status-subtext {
@@ -213,7 +218,7 @@ export default {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  color: #b9bbbe;
+  color: var(--description-primary);
   background-color: #2f3136;
   /* display: -webkit-box;
   display: -ms-flexbox; */
@@ -246,7 +251,7 @@ export default {
   background-color: transparent;
 }
 .auto-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #202225;
+  background-color: var(--dark-grey-color);
   min-height: 40px;
 }
 .auto-scrollbar::-webkit-scrollbar-thumb,

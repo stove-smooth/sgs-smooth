@@ -8,7 +8,9 @@
               <form @submit.prevent="submitForm" class="auth-container layer">
                 <div class="header">
                   <h3 class="title-welcome">돌아오신 걸 환영해요!</h3>
-                  <div class="description">다시 만나다니 너무 반가워요!</div>
+                  <div class="large-description">
+                    다시 만나다니 너무 반가워요!
+                  </div>
                 </div>
                 <div class="content">
                   <h5 class="label-id">이메일 또는 전화번호</h5>
@@ -255,9 +257,9 @@ export default {
   font-size: 24px;
   line-height: 30px;
   margin-bottom: 8px;
-  color: #fff;
+  color: var(--white-color);
 }
-.description {
+.large-description {
   font-size: 16px;
   line-height: 20px;
   font-weight: 600;
@@ -269,7 +271,7 @@ export default {
 }
 
 .label-id {
-  color: #b9bbbe;
+  color: var(--description-primary);
   margin-bottom: 8px;
   font-size: 12px;
   line-height: 16px;
@@ -323,7 +325,7 @@ export default {
 }
 
 .large-button {
-  color: #fff;
+  color: var(--white-color);
   font-size: 16px;
   line-height: 24px;
   margin-bottom: 8px;
@@ -343,7 +345,7 @@ export default {
   font-weight: 500;
   line-height: 16px;
   padding: 2px 16px;
-  background-color: #5865f2;
+  background-color: var(--discord-primary);
   margin-top: 20px;
   cursor: pointer;
 }

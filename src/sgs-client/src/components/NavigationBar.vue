@@ -137,7 +137,7 @@ export default {
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   flex-direction: column;
-  background-color: #202225;
+  background-color: var(--dark-grey-color);
 }
 
 .tree {
@@ -148,7 +148,7 @@ export default {
 .nav-scroller {
   overflow: hidden scroll;
   padding-right: 0px;
-  background-color: #202225;
+  background-color: var(--dark-grey-color);
 }
 .tutorial-container {
   position: relative;
@@ -184,7 +184,7 @@ export default {
   width: 8px;
   border-radius: 0 4px 4px 0;
   margin-left: -4px;
-  background-color: #fff;
+  background-color: var(--white-color);
 }
 .listItem-wrapper {
   box-sizing: border-box;

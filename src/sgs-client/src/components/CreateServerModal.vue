@@ -1,124 +1,122 @@
 <template>
-  <div>
-    <div class="create-server-container">
-      <div class="blurred-background" @click="exitCreate"></div>
-      <div class="create-server-form-container">
-        <template v-if="progress === 'openCreate'">
-          <CreateServerForm @exit="exitCreate">
-            <template slot="header">
-              <h3 class="big-title">서버 만들기</h3>
-              <div class="subtitle">
-                서버는 나와 친구들이 함께 어울리는 공간입니다. 내 서버를 만들고
-                대화를 시작해보세요.
-              </div>
-            </template>
-            <template slot="content">
-              <button class="create-server-button" @click="openSelectServer">
-                <svg class="create-server-image-wrapper"></svg>
-                <div class="action-title">직접 만들기</div>
-                <svg class="right-arrow"></svg>
+  <div class="create-server-container">
+    <div class="blurred-background" @click="exitCreate"></div>
+    <div class="create-server-form-container">
+      <template v-if="progress === 'openCreate'">
+        <CreateServerForm @exit="exitCreate">
+          <template slot="header">
+            <h3 class="big-title">서버 만들기</h3>
+            <div class="subtitle">
+              서버는 나와 친구들이 함께 어울리는 공간입니다. 내 서버를 만들고
+              대화를 시작해보세요.
+            </div>
+          </template>
+          <template slot="content">
+            <button class="create-server-button" @click="openSelectServer">
+              <svg class="create-server-image-wrapper"></svg>
+              <div class="action-title">직접 만들기</div>
+              <svg class="right-arrow"></svg>
+            </button>
+          </template>
+          <template slot="footer">
+            <div class="create-server-form-footer">
+              <h3 class="footer-title">이미 초대장을 받으셨나요?</h3>
+              <button class="grey-large-button" type="button">
+                <div>서버 참가하기</div>
               </button>
-            </template>
-            <template slot="footer">
-              <div class="create-server-form-footer">
-                <h3 class="footer-title">이미 초대장을 받으셨나요?</h3>
-                <button class="grey-large-button" type="button">
-                  <div>서버 참가하기</div>
-                </button>
-              </div>
-            </template>
-          </CreateServerForm>
-        </template>
-        <template v-else-if="progress === 'openSelect'">
-          <CreateServerForm @exit="exitCreate">
-            <template slot="header">
-              <h3 class="big-title">이 서버에 대해 더 자세히 말해주세요.</h3>
-              <div class="subtitle">
-                설정을 돕고자 질문을 드려요. 혹시 서버가 친구 몇 명만을 위한
-                서버인가요, 아니면 더 큰 커뮤니티를 위한 서버인가요?
-              </div>
-            </template>
-            <template slot="content">
-              <button class="create-server-button" @click="openFinalSelect">
-                <svg class="private-server"></svg>
-                <div class="action-title">나와 친구들을 위한 서버</div>
-                <svg class="right-arrow"></svg>
+            </div>
+          </template>
+        </CreateServerForm>
+      </template>
+      <template v-else-if="progress === 'openSelect'">
+        <CreateServerForm @exit="exitCreate">
+          <template slot="header">
+            <h3 class="big-title">이 서버에 대해 더 자세히 말해주세요.</h3>
+            <div class="subtitle">
+              설정을 돕고자 질문을 드려요. 혹시 서버가 친구 몇 명만을 위한
+              서버인가요, 아니면 더 큰 커뮤니티를 위한 서버인가요?
+            </div>
+          </template>
+          <template slot="content">
+            <button class="create-server-button" @click="openFinalSelect">
+              <svg class="private-server"></svg>
+              <div class="action-title">나와 친구들을 위한 서버</div>
+              <svg class="right-arrow"></svg>
+            </button>
+            <button class="create-server-button" @click="openFinalSelect">
+              <svg class="public-server"></svg>
+              <div class="action-title">클럽 혹은 파티용 서버</div>
+              <svg class="right-arrow"></svg>
+            </button>
+          </template>
+          <template slot="footer">
+            <div class="create-server-form-footer">
+              <button class="back-button" @click="goBackCreate">
+                뒤로 가기
               </button>
-              <button class="create-server-button" @click="openFinalSelect">
-                <svg class="public-server"></svg>
-                <div class="action-title">클럽 혹은 파티용 서버</div>
-                <svg class="right-arrow"></svg>
-              </button>
-            </template>
-            <template slot="footer">
-              <div class="create-server-form-footer">
-                <button class="back-button" @click="goBackCreate">
-                  뒤로 가기
-                </button>
+            </div>
+          </template>
+        </CreateServerForm>
+      </template>
+      <template v-else>
+        <CreateServerForm @exit="exitCreate">
+          <template slot="header">
+            <h3 class="big-title">서버 커스터마이징 하기</h3>
+            <div class="subtitle">
+              새로운 서버에 이름과 아이콘을 부여해 개성을 드러내보세요. 나중에
+              언제든 바꿀 수 있어요.
+            </div>
+          </template>
+          <template slot="content">
+            <div class="upload-server-image-wrapper">
+              <div class="upload-server-image-icon">
+                <template v-if="thumbnail">
+                  <img :src="thumbnail" alt="image" class="server-image" />
+                </template>
+                <template v-else>
+                  <svg class="upload-image"></svg>
+                </template>
+                <input
+                  class="file-input"
+                  type="file"
+                  ref="image"
+                  accept="image/*"
+                  @change="uploadImage()"
+                />
               </div>
-            </template>
-          </CreateServerForm>
-        </template>
-        <template v-else>
-          <CreateServerForm @exit="exitCreate">
-            <template slot="header">
-              <h3 class="big-title">서버 커스터마이징 하기</h3>
-              <div class="subtitle">
-                새로운 서버에 이름과 아이콘을 부여해 개성을 드러내보세요. 나중에
-                언제든 바꿀 수 있어요.
-              </div>
-            </template>
-            <template slot="content">
-              <div class="upload-server-image-wrapper">
-                <div class="upload-server-image-icon">
-                  <template v-if="thumbnail">
-                    <img :src="thumbnail" alt="image" class="server-image" />
-                  </template>
-                  <template v-else>
-                    <svg class="upload-image"></svg>
-                  </template>
+            </div>
+            <form>
+              <div class="server-name-input-container">
+                <div class="server-name-label">서버 이름</div>
+                <div class="flex-direction-column">
                   <input
-                    class="file-input"
-                    type="file"
-                    ref="image"
-                    accept="image/*"
-                    @change="uploadImage()"
+                    class="server-name-input"
+                    type="text"
+                    placeholder="serverName"
+                    maxlength="100"
+                    v-model="serverName"
                   />
                 </div>
               </div>
-              <form>
-                <div class="server-name-input-container">
-                  <div class="server-name-label">서버 이름</div>
-                  <div class="server-name-input-wrapper">
-                    <input
-                      class="server-name-input"
-                      type="text"
-                      placeholder="serverName"
-                      maxlength="100"
-                      v-model="serverName"
-                    />
-                  </div>
-                </div>
-              </form>
-            </template>
-            <template slot="footer">
-              <div class="submit-server-form-footer">
-                <button
-                  :disabled="!serverName"
-                  type="button"
-                  class="medium-submit-button"
-                  @click="createServer"
-                >
-                  <div>만들기</div>
-                </button>
-                <button class="back-button" @click="goBackSelect">
-                  뒤로 가기
-                </button>
-              </div>
-            </template>
-          </CreateServerForm>
-        </template>
-      </div>
+            </form>
+          </template>
+          <template slot="footer">
+            <div class="submit-server-form-footer">
+              <button
+                :disabled="!serverName"
+                type="button"
+                class="medium-submit-button"
+                @click="createServer"
+              >
+                <div>만들기</div>
+              </button>
+              <button class="back-button" @click="goBackSelect">
+                뒤로 가기
+              </button>
+            </div>
+          </template>
+        </CreateServerForm>
+      </template>
     </div>
   </div>
 </template>
@@ -225,53 +223,33 @@ export default {
 
 <style>
 .create-server-container {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+  display: flex;
   background: none !important;
-  pointer-events: none;
   z-index: 1002;
+  justify-content: center;
+  align-items: center;
 }
 
 .blurred-background {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  opacity: 0.5;
-  background: black;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 .create-server-form-container {
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  min-height: 0;
-  padding-top: 40px;
-  padding-bottom: 40px;
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
-.create-server-form-wrapper {
-  background: #fff;
-  opacity: 1;
+  background-color: var(--white-color);
   width: 440px;
   max-height: 720px;
   min-height: 200px;
   border-radius: 4px;
-  margin: 0 auto;
-  pointer-events: all;
-  position: relative;
-  display: flex;
-  flex-direction: column;
 }
+
 .big-title {
   color: #060607;
   font-size: 24px;
@@ -285,30 +263,11 @@ export default {
   line-height: 20px;
   color: #4f5660;
 }
-.close-button-wrapper {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  height: 26px;
-  opacity: 0.5;
-  cursor: pointer;
-  border-radius: 3px;
-  color: #4f5660;
-  background-color: #fff;
-  box-sizing: content-box;
-  width: auto;
-  border: 0;
-  padding: 0;
-  margin: 0;
-}
-.create-server-form-content {
-  margin-top: 24px;
-  padding: 0 8px 8px 16px;
-}
+
 .create-server-button {
   border-radius: 8px;
   border: 1px solid rgba(6, 6, 7, 0.08);
-  background-color: #fff;
+  background-color: var(--white-color);
   margin-bottom: 8px;
   display: flex;
   -webkit-box-align: center;
@@ -354,7 +313,7 @@ export default {
   line-height: 24px;
 }
 .grey-large-button {
-  color: #fff;
+  color: var(--white-color);
   background-color: #747f8d !important;
   align-self: stretch;
   width: auto;
@@ -423,10 +382,6 @@ export default {
   line-height: 16px;
   font-weight: 600;
 }
-.server-name-input-wrapper {
-  display: flex;
-  flex-direction: column;
-}
 .server-name-input {
   padding: 10px;
   height: 40px;
@@ -453,8 +408,8 @@ export default {
   background-color: #f6f6f7;
 }
 .medium-submit-button {
-  color: #fff;
-  background-color: #5865f2 !important;
+  color: var(--white-color);
+  background-color: var(--discord-primary) !important;
   height: 38px;
   min-width: 96px;
   min-height: 38px;

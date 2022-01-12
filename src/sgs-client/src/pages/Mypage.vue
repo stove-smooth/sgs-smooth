@@ -7,7 +7,10 @@
       </div>
       <div class="friends-state-container">
         <friends-state-menu-bar></friends-state-menu-bar>
-        <friends-state-list></friends-state-list>
+        <div class="friends-state-container2">
+          <friends-state-list></friends-state-list>
+          <friends-now-playing-list></friends-now-playing-list>
+        </div>
       </div>
     </div>
   </div>
@@ -18,12 +21,14 @@ import FriendsSideBar from "../components/FriendsSideBar.vue";
 import FriendsStateList from "../components/FriendsStateList.vue";
 import FriendsStateMenuBar from "../components/FriendsStateMenuBar.vue";
 import UserSection from "../components/common/UserSection.vue";
+import FriendsNowPlayingList from "../components/FriendsNowPlayingList.vue";
 export default {
   components: {
     FriendsSideBar,
     UserSection,
     FriendsStateMenuBar,
     FriendsStateList,
+    FriendsNowPlayingList,
   },
 };
 </script>
@@ -51,9 +56,6 @@ export default {
   background: #2f3136;
   overflow: hidden;
 }
-.try {
-  overflow: hidden scroll;
-}
 .dm-scroller {
   overflow: hidden scroll;
   padding-right: 0px;
@@ -70,7 +72,7 @@ export default {
   background-clip: padding-box;
   border: 2px solid #00000000;
   border-radius: 4px;
-  background-color: #202225;
+  background-color: var(--dark-grey-color);
   min-height: 40px;
 }
 .thin-scrollbar::-webkit-scrollbar-track {
@@ -88,5 +90,18 @@ export default {
   -webkit-box-direction: normal;
   /*  -ms-flex-direction: column; */
   flex-direction: column;
+}
+
+.friends-state-container2 {
+  height: 100%;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  /* -ms-flex-direction: row; */
+  flex-direction: row;
+  position: relative;
+  overflow: hidden;
+  /* -webkit-transform: translateZ(0); */
+  transform: translateZ(0);
+  display: flex;
 }
 </style>

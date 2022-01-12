@@ -95,7 +95,7 @@ export default {};
   /* -ms-flex-align: center; */
   align-items: center;
   box-sizing: border-box;
-  color: #fff;
+  color: var(--white-color);
 }
 .divider {
   width: 1px;
@@ -129,7 +129,7 @@ export default {};
   border-radius: 4px;
   margin: 0 8px;
   padding: 2px 8px;
-  color: #b9bbbe;
+  color: var(--description-primary);
   position: relative;
   font-size: 16px;
   line-height: 20px;
@@ -144,17 +144,17 @@ export default {};
 .friends-tab-decorator:hover {
   background-color: rgb(47 49 54);
   cursor: default;
-  color: #fff;
+  color: var(--white-color);
 }
 .friends-tab-decorator:active {
   background-color: rgb(47 49 54);
   cursor: default;
-  color: #fff;
+  color: var(--white-color);
 }
 .friends-tab-decorator:visited {
   background-color: rgb(47 49 54);
   cursor: default;
-  color: #fff;
+  color: var(--white-color);
 }
 .add-friends-button {
   color: hsl(0, calc(var(--saturation-factor, 1) * 0%), 100%);

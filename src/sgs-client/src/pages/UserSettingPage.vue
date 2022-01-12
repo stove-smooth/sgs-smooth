@@ -8,23 +8,13 @@
 </template>
 
 <script>
-import { deleteCookie } from "../utils/cookies.js";
 export default {
   methods: {
     closeSettings() {
       this.$router.go(-1);
     },
-    logoutUser() {
-      this.$store.commit("clearEmail");
-      this.$store.commit("clearNickname");
-      this.$store.commit("clearCode");
-      this.$store.commit("clearAccessToken");
-      this.$store.commit("clearRefreshToken");
-      deleteCookie("accessauth");
-      deleteCookie("refreshauth");
-      deleteCookie("useremail");
-      deleteCookie("usernickname");
-      deleteCookie("usercode");
+    async logoutUser() {
+      await this.$store.dispatch("LOGOUT");
       this.$router.push("/");
     },
   },

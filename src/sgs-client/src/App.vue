@@ -13,19 +13,26 @@
     </div>
     <create-server-modal
       v-if="createServer"
-      @exit="exiteCreateServer"
+      @exit="exitCreateServer"
     ></create-server-modal>
+    <create-channel-modal
+      v-if="$store.state.createchannel"
+      @exit-create-channel="exitCreateChannel"
+    ></create-channel-modal>
   </div>
 </template>
 
 <script>
 import NavigationBar from "./components/NavigationBar.vue";
 import CreateServerModal from "./components/CreateServerModal.vue";
+import CreateChannelModal from "./components/CreateChannelModal.vue";
+
 export default {
   name: "App",
-  components: { NavigationBar, CreateServerModal },
+  components: { NavigationBar, CreateServerModal, CreateChannelModal },
   data() {
     return {
+      createChannel: true,
       navbar: true,
       createServer: false,
     };
@@ -46,8 +53,11 @@ export default {
     openCreateServer() {
       this.createServer = true;
     },
-    exiteCreateServer() {
+    exitCreateServer() {
       this.createServer = false;
+    },
+    exitCreateChannel() {
+      this.$store.state.createchannel = false;
     },
   },
 };
@@ -61,7 +71,7 @@ export default {
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: #202225;
+  background-color: var(--dark-grey-color);
   /*   display: -webkit-box;
   display: -ms-flexbox; */
   display: flex;

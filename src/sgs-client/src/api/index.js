@@ -15,4 +15,10 @@ function registerUser(userData) {
 function loginUser(userData) {
   return instance.post("auth-server/sign-in", userData);
 }
-export { registerUser, loginUser };
+function sendAuthCode(userData) {
+  return instance.post("auth-server/send-mail?email=" + userData.email);
+}
+function verifyAuthCode(authcode) {
+  return instance.get("auth-server/check-email?key=" + authcode);
+}
+export { registerUser, loginUser, sendAuthCode, verifyAuthCode };

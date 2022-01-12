@@ -9,24 +9,75 @@
                 <div class="header">
                   <h3 class="title-welcome">계정 만들기</h3>
                 </div>
-                <div class="content">
-                  <h5 class="label-id">이메일</h5>
+                <template v-if="checked">
                   <div class="input-wrapper">
-                    <input
-                      class="input-default"
-                      type="text"
-                      name="id"
-                      placeholder
-                      aria-label="이메일"
-                      autocomplete="off"
-                      maxlength="999"
-                      v-model="id"
-                    />
+                    <div class="input-default">
+                      {{ id }}
+                    </div>
                   </div>
-                </div>
-                <p class="warning" v-show="!isIdValid && id">
-                  이메일 주소에 @를 포함해주세요.
-                </p>
+                </template>
+                <template v-else>
+                  <form class="content" @submit.prevent="verifyEmail">
+                    <div class="verify-email-wrapper">
+                      <h5 class="label-id">이메일</h5>
+                      <button
+                        class="small-button"
+                        :disabled="!isIdValid"
+                        type="submit"
+                      >
+                        전송
+                      </button>
+                    </div>
+                    <div class="input-wrapper">
+                      <input
+                        class="input-default"
+                        type="text"
+                        name="id"
+                        placeholder
+                        aria-label="이메일"
+                        autocomplete="off"
+                        maxlength="999"
+                        v-model="id"
+                      />
+                    </div>
+                  </form>
+                  <p class="warning" v-show="!isIdValid && id">
+                    이메일 주소에 @를 포함해주세요.
+                  </p>
+                  <p class="warning" v-show="isIdValid && !emailsend">
+                    전송 버튼을 눌러 이메일을 인증해주세요.
+                  </p>
+                  <form class="content" @submit.prevent="verifyAuthCode">
+                    <div class="verify-email-wrapper">
+                      <h5 class="label-id">인증코드</h5>
+                      <button
+                        class="small-button"
+                        :disabled="!authcode"
+                        type="submit"
+                      >
+                        확인
+                      </button>
+                    </div>
+                    <div class="input-wrapper">
+                      <input
+                        class="input-default"
+                        type="text"
+                        name="authcode"
+                        placeholder
+                        aria-label="인증코드"
+                        autocomplete="off"
+                        maxlength="999"
+                        v-model="authcode"
+                      />
+                    </div>
+                  </form>
+                  <p class="warning" v-show="emailsend && !authcode">
+                    이메일을 통해 전해 받은 인증코드 6자리를 입력해주세요.
+                  </p>
+                  <p class="warning" v-show="authlogmessage">
+                    {{ authlogmessage }}
+                  </p>
+                </template>
                 <div class="content">
                   <h5 class="label-id">사용자명</h5>
                   <div class="input-wrapper">
@@ -172,7 +223,7 @@
                   </div>
                 </div>
                 <button
-                  :disabled="!isnameValid || !ispwdValid || !isIdValid"
+                  :disabled="!isnameValid || !ispwdValid || !checked"
                   class="large-button"
                   type="submit"
                 >
@@ -199,7 +250,7 @@
 </template>
 
 <script>
-import { registerUser } from "../api/index.js";
+import { registerUser, sendAuthCode, verifyAuthCode } from "../api/index.js";
 import { validateEmail, validateName } from "../utils/validation.js";
 export default {
   data() {
@@ -210,6 +261,10 @@ export default {
       year: "",
       month: "",
       day: "",
+      authcode: "",
+      emailsend: false,
+      checked: false,
+      authlogmessage: "",
     };
   },
   computed: {
@@ -244,19 +299,69 @@ export default {
   },
   methods: {
     async submitForm() {
-      console.log("submit");
       const userData = {
         email: this.id,
         password: this.pwd,
         name: this.username,
       };
       await registerUser(userData);
+      await this.$store.dispatch("LOGIN", userData);
       this.$router.push("/channels/@me");
+    },
+    async verifyEmail() {
+      this.emailsend = false;
+      const userData = {
+        email: this.id,
+      };
+      const result = await sendAuthCode(userData);
+      if (result.data.code === 1000) {
+        this.emailsend = true;
+      }
+    },
+    /*     async verifyAuthCode() {
+      this.authlogmessage = "";
+      const result = await verifyAuthCode(this.authcode);
+      if (result.data.code === 1000) {
+        this.checked = true;
+      } else {
+        this.authlogmessage = result.data.message;
+      }
+    }, */
+    async verifyAuthCode() {
+      this.authlogmessage = "";
+      try {
+        const result = await verifyAuthCode(this.authcode);
+        if (result.data.code === 1000) {
+          this.checked = true;
+        }
+      } catch (err) {
+        this.authlogmessage = "유효하지 않은 인증번호입니다";
+      }
     },
   },
 };
 </script>
 <style>
+.verify-email-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.small-button {
+  font-weight: 400;
+  font-size: 11px;
+  background-color: var(--discord-primary);
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  height: 16px;
+  align-self: flex-end;
+  margin-bottom: 12px;
+}
+.small-button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
 .input-container {
   width: 100%;
   display: flex;

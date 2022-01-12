@@ -1,4 +1,10 @@
 import store from "../../store/index";
+import axios from "axios";
+
+async function logoutUser() {
+  await this.$store.dispatch("LOGOUT");
+  this.$router.push("/");
+}
 
 export function setInterceptors(instance) {
   // Add a request interceptor
@@ -21,9 +27,30 @@ export function setInterceptors(instance) {
       // Do something with response data
       return response;
     },
-    function (error) {
+    async function (error) {
       // Any status codes that falls outside the range of 2xx cause this function to trigger
       // Do something with response error
+      if (
+        error.response?.status === 401 &&
+        window.location.pathname !== "/login" &&
+        window.location.pathname != "/register"
+      ) {
+        axios
+          .post("http://3.38.10.189:8000/auth-server/refresh", {
+            headers: {
+              AUTHORIZATION: this.$store.state.accesstoken,
+              "REFRESH-TOKEN": this.$store.state.refreshtoken,
+            },
+          })
+          .then(function (response) {
+            console.log("응답", response);
+          })
+          .catch((error) => {
+            console.log("error : ", error.response);
+            alert("로그아웃이 만료되었습니다.");
+            logoutUser();
+          });
+      }
       return Promise.reject(error);
     }
   );

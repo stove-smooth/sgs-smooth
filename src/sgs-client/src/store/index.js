@@ -11,6 +11,7 @@ import {
   getUserEmailToCookie,
   getUserNickNameToCookie,
   getUserCodeToCookie,
+  deleteCookie,
 } from "../utils/cookies";
 import { loginUser } from "../api/index.js";
 Vue.use(Vuex);
@@ -22,6 +23,7 @@ export default new Vuex.Store({
     code: getUserCodeToCookie() || "",
     accesstoken: getAccessAuthToCookie() || "",
     refreshtoken: getRefreshAuthToCookie() || "",
+    createchannel: false,
   },
   getters: {
     isLogin(state) {
@@ -73,6 +75,18 @@ export default new Vuex.Store({
       saveUserCodeToCookie(response.data.result.code);
       saveUserEmailToCookie(response.data.result.email);
       saveUserNickNameToCookie(response.data.result.name);
+    },
+    LOGOUT({ commit }) {
+      commit("clearEmail");
+      commit("clearNickname");
+      commit("clearCode");
+      commit("clearAccessToken");
+      commit("clearRefreshToken");
+      deleteCookie("accessauth");
+      deleteCookie("refreshauth");
+      deleteCookie("useremail");
+      deleteCookie("usernickname");
+      deleteCookie("usercode");
     },
   },
 });
