@@ -122,6 +122,7 @@ public class CommunityService {
             throw new CustomException(NON_AUTHORIZATION);
 
         CommunityInvitation communityInvitation = community.getInvitations().stream()
+                .filter(i -> i.isActivate())
                 .filter(invitation -> invitation.getUserId().equals(userId))
                 .findAny().orElse(null);
 
@@ -157,14 +158,27 @@ public class CommunityService {
         UserInfoListFeignResponse response = userClient.getUserInfoList(token, ids);
         HashMap<Long, UserInfoListFeignResponse.UserInfoListResponse> userInfoMap = response.getResult();
 
-        System.out.println(userInfoMap.get(1L));
-
         List<InvitationResponse> invitations = community.getInvitations().stream()
                 .filter(i -> i.isActivate())
                 .map(invitation ->
-                        new InvitationResponse(invitation.getCode(), userInfoMap.get(invitation.getUserId())))
+                        new InvitationResponse(invitation, userInfoMap.get(invitation.getUserId())))
                 .collect(Collectors.toList());
 
         return new InvitationListResponse(invitations);
+    }
+
+    @Transactional
+    public void deleteInvitation(Long userId, Long invitationId) {
+
+        CommunityInvitation invitation = communityInvitationRepository.findById(invitationId)
+                .orElseThrow(() -> new CustomException(EMPTY_INVITATION));
+
+        if (!isAuthorizedMember(invitation.getCommunity(), userId))
+            throw new CustomException(NON_AUTHORIZATION);
+
+        if (!invitation.isActivate())
+            throw new CustomException(NON_VALID_INVITATION);
+
+        invitation.setActivate(false);
     }
 }

@@ -17,7 +17,9 @@ public enum CustomExceptionStatus {
     FILE_EXTENSION_ERROR(false, 4001, "파일의 확장자가 유효하지 않습니다."),
     EMPTY_COMMUNITY(false, 4002, "존재하지 않는 커뮤니티입니다."),
     EMPTY_CHANNEL(false, 4003, "존재하지 않은 채널입니다."),
-    NON_VALID_CHANNEL(false, 4004, "커뮤니티에 속한 채널이 아닙니다.");
+    NON_VALID_CHANNEL(false, 4004, "커뮤니티에 속한 채널이 아닙니다."),
+    EMPTY_INVITATION(false, 4005, "존재하지 않는 초대장입니다."),
+    NON_VALID_INVITATION(false, 4006, "유효하지 않은 초대장입니다.");
 
 
     private final boolean isSuccess;

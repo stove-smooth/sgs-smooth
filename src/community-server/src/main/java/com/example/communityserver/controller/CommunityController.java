@@ -118,6 +118,15 @@ public class CommunityController {
     /**
      * 7. 초대장 삭제하기
      */
+    @DeleteMapping("/invitation")
+    public CommonResponse deleteInvitations(
+            @RequestHeader(ID) String userId,
+            @RequestParam(name = "id") Long invitationId
+    ) {
+        log.info("/community-server/community/invitation");
+        communityService.deleteInvitation(Long.parseLong(userId), invitationId);
+        return responseService.getSuccessResponse();
+    }
 
     /**
      * 8. 커뮤니티 멤버 조회하기
