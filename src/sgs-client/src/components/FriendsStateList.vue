@@ -1,5 +1,15 @@
 <template>
   <div class="friends-state-list-container">
+    <div class="large-searchbar-cotainer">
+      <div class="large-searchbar-inner">
+        <input class="large-searchbar-input" placeholder="검색하기" />
+        <div class="searchicon-wrapper">
+          <div class=""></div>
+          <!-- <svg class="search-icon"></svg> -->
+          <svg class="primary-close"></svg>
+        </div>
+      </div>
+    </div>
     <div
       class="friends-state-list auto-scrollbar"
       role="list"
@@ -95,6 +105,54 @@ export default {
 </script>
 
 <style>
+.large-searchbar-cotainer {
+  margin: 16px 20px 8px 30px;
+  -webkit-box-flex: 0;
+  flex: none;
+  box-sizing: border-box;
+  display: flex;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: #202225;
+}
+.large-searchbar-inner {
+  position: relative;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 1px;
+  min-width: 0;
+  display: flex;
+  box-sizing: border-box;
+  flex: 1 1 auto;
+}
+.large-searchbar-input {
+  font-size: 16px;
+  line-height: 32px;
+  height: 30px;
+  padding: 0 8px;
+  box-sizing: border-box;
+  background: transparent;
+  border: none;
+  resize: none;
+  -webkit-box-flex: 1;
+  flex: 1;
+  min-width: 48px;
+  margin: 1px;
+  appearance: none;
+  color: #dcddde;
+}
+.searchicon-wrapper {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  cursor: text;
+}
 .friends-state-list-container {
   display: flex;
   -webkit-box-orient: vertical;
@@ -268,5 +326,15 @@ export default {
 }
 .auto-scrollbar::-webkit-scrollbar-track {
   background-color: hsl(210, calc(var(--saturation-factor, 1) * 9.8%), 20%);
+}
+.search-icon {
+  width: 20px;
+  height: 20px;
+  background-image: url("../assets/search-icon.svg");
+}
+.primary-close {
+  width: 20px;
+  height: 20px;
+  background-image: url("../assets/primary-close.svg");
 }
 </style>
