@@ -150,7 +150,7 @@ public class UserService extends BaseTimeEntity {
         List<User> accountList = accountRepository.findById(requestAccountIds);
 
         List<AccountInfoResponse> collect = accountList.stream().map(
-                a -> new AccountInfoResponse(a.getId(), a.getName(), a.getProfileImage(), a.getState().getName())
+                a -> new AccountInfoResponse(a.getId(), a.getName(), a.getCode(), a.getProfileImage(), a.getState().getName())
         ).collect(Collectors.toList());
 
         Map<Long,AccountInfoResponse> map = collect.stream()

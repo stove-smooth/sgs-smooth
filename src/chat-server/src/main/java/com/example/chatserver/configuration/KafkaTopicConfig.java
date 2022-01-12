@@ -29,11 +29,11 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic newTopic() {
-        return new NewTopic(topicName,3, (short) 3);
+        return new NewTopic(topicName,3, (short) 2);
     }
 
     @Bean
     public NewTopic newTopic2() {
-        return new NewTopic(topicName2,3, (short) 3);
+        return new NewTopic(topicName2,3, (short) 2);
     }
 }
