@@ -246,7 +246,11 @@ public class CommunityService {
 
     @Transactional
     public void deleteMember(Long userId, Long communityId, Long memberId) {
+        CommunityMember member = getMember(userId, communityId, memberId);
+        member.setStatus(CommunityMemberStatus.DELETED);
+    }
 
+    private CommunityMember getMember(Long userId, Long communityId, Long memberId) {
         Community community = communityRepository.findById(communityId)
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
@@ -254,11 +258,14 @@ public class CommunityService {
         if (!isOwner(community, userId))
             throw new CustomException(NON_AUTHORIZATION);
 
-        CommunityMember communityMember = community.getMembers().stream()
+        return community.getMembers().stream()
                 .filter(member -> member.getUserId().equals(memberId))
                 .filter(member -> member.getStatus().equals(CommunityMemberStatus.NORMAL))
                 .findAny().orElseThrow(() -> new CustomException(EMPTY_MEMBER));
+    }
 
-        communityMember.setStatus(CommunityMemberStatus.DELETED);
+    public void suspendMember(Long userId, Long communityId, Long memberId) {
+        CommunityMember member = getMember(userId, communityId, memberId);
+        member.setStatus(CommunityMemberStatus.SUSPENDED);
     }
 }

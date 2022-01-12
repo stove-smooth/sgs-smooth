@@ -172,8 +172,14 @@ public class CommunityController {
     /**
      * 11. 멤버 차단하기
      */
-//    @PostMapping("/member/ban")
-//    public void suspendMember() {
-//
-//    }
+    @PostMapping("/{communityId}/member/ban")
+    public CommonResponse suspendMember(
+            @RequestHeader(ID) String userId,
+            @PathVariable Long communityId,
+            @RequestParam(name = "id") Long memberId
+    ) {
+        log.info("/community-server/community/member/ban");
+        communityService.suspendMember(Long.parseLong(userId), communityId, memberId);
+        return responseService.getSuccessResponse();
+    }
 }
