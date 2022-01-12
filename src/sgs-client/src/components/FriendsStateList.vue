@@ -4,7 +4,6 @@
       <div class="large-searchbar-inner">
         <input class="large-searchbar-input" placeholder="검색하기" />
         <div class="searchicon-wrapper">
-          <div class=""></div>
           <!-- <svg class="search-icon"></svg> -->
           <svg class="primary-close"></svg>
         </div>

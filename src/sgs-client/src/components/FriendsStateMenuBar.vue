@@ -4,7 +4,7 @@
       <div class="primary-icon-wrapper">
         <svg class="friends-icon"></svg>
       </div>
-      <h3 class="friends-section-title description">친구</h3>
+      <h3 class="friends-section-title">친구</h3>
       <div class="divider"></div>
       <div
         class="friends-tabbar"
@@ -17,6 +17,7 @@
           role="tab"
           aria-controls="online-tab"
           tabindex="0"
+          @click="MenuSelected('online')"
         >
           온라인
         </div>
@@ -25,6 +26,7 @@
           role="tab"
           aria-controls="all-tab"
           tabindex="-1"
+          @click="MenuSelected('all')"
         >
           모두
         </div>
@@ -33,6 +35,7 @@
           role="tab"
           aria-controls="pending-tab"
           tabindex="-1"
+          @click="MenuSelected('waiting')"
         >
           대기 중
         </div>
@@ -41,10 +44,14 @@
           role="tab"
           aria-controls="blocked-tab"
           tabindex="-1"
+          @click="MenuSelected('blockedlist')"
         >
           차단 목록
         </div>
-        <div class="friends-tab-decorator add-friends-button">
+        <div
+          class="friends-tab-decorator add-friends-button"
+          @click="MenuSelected('addfriends')"
+        >
           <span>친구 추가하기</span>
         </div>
       </div>
@@ -72,7 +79,13 @@
 </template>
 
 <script>
-export default {};
+export default {
+  methods: {
+    MenuSelected(value) {
+      this.$store.state.friendsstatemenu = value;
+    },
+  },
+};
 </script>
 
 <style>

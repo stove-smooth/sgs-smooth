@@ -105,6 +105,7 @@ export default {};
 .frineds-now-playing-container {
   background-color: #36393f;
   height: 100%;
+  border-left: 1px solid hsla(0, 0%, 100%, 0.06);
 }
 .now-playing-card {
   margin-top: 0;

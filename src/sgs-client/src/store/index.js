@@ -24,6 +24,7 @@ export default new Vuex.Store({
     accesstoken: getAccessAuthToCookie() || "",
     refreshtoken: getRefreshAuthToCookie() || "",
     createchannel: false,
+    friendsstatemenu: "online",
   },
   getters: {
     isLogin(state) {
