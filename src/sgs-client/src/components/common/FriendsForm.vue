@@ -3,7 +3,7 @@
     <h2 class="number-of-friends-container small-title-text">
       <slot name="title"></slot>
     </h2>
-    <div v-for="(item, index) in friends" :key="index">
+    <div v-for="item in friend" :key="item.id">
       <div class="firends-list-item" role="listitem" tabindex="-1">
         <div class="friends-list-item-contents">
           <div class="friends-state-info">
@@ -42,47 +42,11 @@
 
 <script>
 export default {
-  data() {
-    return {
-      friends: [
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-      ],
-    };
+  props: {
+    friend: {
+      type: Array,
+      required: true,
+    },
   },
 };
 </script>

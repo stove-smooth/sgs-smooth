@@ -82,13 +82,13 @@
 <script>
 import NumberBadge from "./common/NumberBadge.vue";
 export default {
+  components: {
+    NumberBadge,
+  },
   methods: {
     MenuSelected(value) {
       this.$store.state.friendsstatemenu = value;
     },
-  },
-  components: {
-    NumberBadge,
   },
 };
 </script>

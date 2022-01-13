@@ -4,7 +4,7 @@
       <h2 class="large-description" v-bind:style="{ color: '#fff' }">
         친구 추가하기
       </h2>
-      <form autocomplete="off">
+      <form autocomplete="off" @submit.prevent="addNewFriends">
         <div class="large-description">
           Discord Tag를 사용하여 친구를 추가할 수 있어요. 대문자, 소문자를
           구별한답니다!
@@ -18,8 +18,15 @@
             maxlength="37"
             placeholder="사용자명#0000"
             aria-label="사용자명#0000 입력"
+            v-model="userinfo"
           />
-          <button type="submit" class="middle-button">친구 요청보내기</button>
+          <button
+            type="submit"
+            class="middle-button"
+            :disabled="!isUserInfoValid"
+          >
+            친구 요청보내기
+          </button>
         </div>
         <div
           v-if="isAdded"
@@ -42,11 +49,39 @@
 </template>
 
 <script>
+import { friendRequest } from "../api/index.js";
 export default {
   data() {
     return {
       isAdded: true,
+      userinfo: "",
+      username: "",
+      usercode: "",
     };
+  },
+  computed: {
+    isUserInfoValid() {
+      var user = this.userinfo.split("#");
+      if (user[1]) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+  },
+  methods: {
+    async addNewFriends() {
+      var user = this.userinfo.split("#");
+      this.username = user[0];
+      this.usercode = user[1];
+      console.log(this.username, this.usercode);
+      const userData = {
+        name: this.username,
+        code: this.usercode,
+      };
+      const result = await friendRequest(userData);
+      console.log("result", result);
+    },
   },
 };
 </script>
@@ -118,5 +153,9 @@ export default {
 }
 .positive-border-color {
   border-color: #58f287;
+}
+.middle-button:disabled {
+  cursor: default;
+  opacity: 0.5;
 }
 </style>

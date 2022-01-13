@@ -16,7 +16,7 @@
       data-list-id="people"
     >
       <template v-if="$store.state.friendsstatemenu === 'online'">
-        <friends-form>
+        <friends-form :friend="list">
           <template slot="title">온라인-3명</template>
           <template slot="action">
             <div class="action-button" aria-label="메시지 보내기" role="button">
@@ -28,8 +28,8 @@
           </template>
         </friends-form>
       </template>
-      <template v-if="$store.state.friendsstatemenu === 'all'">
-        <friends-form>
+      <template v-else-if="$store.state.friendsstatemenu === 'all'">
+        <friends-form :friend="list">
           <template slot="title">모든친구-3명</template>
           <template slot="action">
             <div class="action-button" aria-label="메시지 보내기" role="button">
@@ -41,8 +41,8 @@
           </template>
         </friends-form>
       </template>
-      <template v-if="$store.state.friendsstatemenu === 'waiting'">
-        <friends-form>
+      <template v-else-if="$store.state.friendsstatemenu === 'waiting'">
+        <friends-form :friend="friendswaiting">
           <template slot="title">대기중-3명</template>
           <template slot="action">
             <div class="action-button" aria-label="메시지 보내기" role="button">
@@ -54,8 +54,8 @@
           </template>
         </friends-form>
       </template>
-      <template v-if="$store.state.friendsstatemenu === 'blockedlist'">
-        <friends-form>
+      <template v-else-if="$store.state.friendsstatemenu === 'blockedlist'">
+        <friends-form :friend="list">
           <template slot="title">차단-3명</template>
           <template slot="action">
             <div class="action-button" aria-label="메시지 보내기" role="button">
@@ -72,6 +72,31 @@
 import FriendsForm from "./common/FriendsForm.vue";
 export default {
   components: { FriendsForm },
+  data() {
+    return {
+      list: [
+        { id: 0, name: "두리짱" },
+        { id: 1, name: "병각" },
+        { id: 2, name: "히동" },
+        { id: 3, name: "두리짱" },
+        { id: 4, name: "병각" },
+        { id: 5, name: "히동" },
+        { id: 6, name: "두리짱" },
+        { id: 7, name: "병각" },
+        { id: 8, name: "히동" },
+        { id: 9, name: "두리짱" },
+        { id: 10, name: "병각" },
+      ],
+    };
+  },
+  created() {
+    this.$store.dispatch("FETCH_FRIENDSWAITING");
+  },
+  computed: {
+    friendswaiting() {
+      return this.$store.state.friendswaiting;
+    },
+  },
 };
 </script>
 
