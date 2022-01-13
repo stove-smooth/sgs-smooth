@@ -335,4 +335,16 @@ public class CommunityService {
 
         target.locate(before, first);
     }
+
+    @Transactional
+    public void deleteCommunity(Long userId, Long communityId) {
+        Community community = communityRepository.findById(communityId)
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
+
+        if (!isOwner(community, userId))
+            throw new CustomException(NON_AUTHORIZATION);
+
+        community.setStatus(CommonStatus.DELETED);
+    }
 }
