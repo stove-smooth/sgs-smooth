@@ -22,8 +22,7 @@ class ContainerViewController: BaseViewController, CoordinatorContext {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .red
-        title = "Container ViewController"
+        view.backgroundColor = .messageBarDarkGray
         self.tabBarController?.tabBar.isHidden = true
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(

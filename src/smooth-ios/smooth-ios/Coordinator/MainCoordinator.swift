@@ -16,15 +16,6 @@ class MainCoordinator: NSObject, Coordinator {
     
     let window: UIWindow
     
-    //    init(navigationController: UINavigationController) {
-    //        self.navigationController = navigationController
-    //        self.navigationController.navigationBar.tintColor = .white
-    //
-    //        self.navigationController.navigationBar.barTintColor = UIColor.backgroundDartGray
-    //        self.navigationController.navigationBar.shadowImage = UIImage()
-    //        self.navigationController.navigationBar.isTranslucent = false
-    //    }
-    
     init(window: UIWindow) {
         self.window = window
         
@@ -65,9 +56,13 @@ class MainCoordinator: NSObject, Coordinator {
     }
     
     func goToMain() {
+        print(self.navigationController.viewControllers)
+        
+        coordinatorDidFinish()
+        print(self.navigationController.viewControllers)
+        
         let coordinator = MainTabBarCoordinator(navigationController: navigationController)
         childCoordinators.append(coordinator)
-        
         coordinator.start()
     }
     
