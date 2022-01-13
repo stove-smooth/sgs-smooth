@@ -39,15 +39,27 @@ public class CommunityController {
      */
 
     /**
+     * 사용자가 소속된 커뮤니티 리스트 조회
+     */
+    @GetMapping()
+    public DataResponse<CommunityListResponse> getCommunityList(
+            @RequestHeader(ID) String userId
+    ) {
+        log.info("/community-server/community");
+        CommunityListResponse response = communityService.getCommunityList(Long.parseLong(userId));
+        return responseService.getDataResponse(response);
+    }
+
+    /**
      * 특정 커뮤니티 조회
      */
     @GetMapping("/{communityId}")
-    public DataResponse<CommunityResponse> getCommunity(
+    public DataResponse<CommunityDetailResponse> getCommunity(
             @RequestHeader(ID) String userId,
             @PathVariable Long communityId
     ) {
         log.info("/community-server/community/{}", communityId);
-        CommunityResponse response = communityService.getCommunity(Long.parseLong(userId), communityId);
+        CommunityDetailResponse response = communityService.getCommunity(Long.parseLong(userId), communityId);
         return responseService.getDataResponse(response);
     }
 

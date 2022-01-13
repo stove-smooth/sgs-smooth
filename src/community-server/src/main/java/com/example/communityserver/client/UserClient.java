@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import java.util.List;
 
 
-@FeignClient(name = "UserFeign", url = "http://3.38.10.189:8000/auth-server/auth")
+@FeignClient(name = "UserFeign", url = "http://52.79.229.100:8000/auth-server/auth")
 public interface UserClient {
 
     String AUTHORIZATION = "AUTHORIZATION";
