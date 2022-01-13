@@ -304,4 +304,35 @@ public class CommunityService {
                 .filter(member -> member.isFirstNode())
                 .findAny().orElse(null);
     }
+
+    @Transactional
+    public void locateCommunity(Long userId, LocateCommunityRequest request) {
+        List<CommunityMember> communities = communityMemberRepository.findByUserId(userId).stream()
+                .filter(cm -> cm.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .collect(Collectors.toList());
+
+        CommunityMember target = communities.stream()
+                .filter(cm -> cm.getCommunity().getId().equals(request.getCommunityId()))
+                .findAny().orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
+
+        CommunityMember before;
+        if (request.getNextNode().equals(0L))
+            before = null;
+        else {
+            before = communities.stream()
+                    .filter(cm -> cm.getCommunity().getId().equals(request.getNextNode()))
+                    .findAny().orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
+
+            System.out.println(before.getNextNode());
+
+            if (!Objects.isNull(before.getNextNode())) {
+                if (before.getNextNode().equals(target))
+                    throw new CustomException(ALREADY_LOCATED_COMMUNITY);
+            }
+        }
+
+        CommunityMember first = getFirstNode(userId);
+
+        target.locate(before, first);
+    }
 }

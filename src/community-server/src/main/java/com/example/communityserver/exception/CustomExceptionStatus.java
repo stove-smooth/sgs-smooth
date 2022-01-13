@@ -21,7 +21,8 @@ public enum CustomExceptionStatus {
     NON_VALID_INVITATION(false, 4005, "유효하지 않은 초대장입니다."),
     SUSPENDED_COMMUNITY(false, 4006, "차단된 커뮤니티입니다."),
     EMPTY_MEMBER(false, 4007, "존재하지 않는 회원입니다."),
-    NON_VALID_COMMUNITY_SEQUENCE(false, 4008, "커뮤니티 순서가 올바르지 않습니다.");
+    NON_VALID_COMMUNITY_SEQUENCE(false, 4008, "커뮤니티 순서가 올바르지 않습니다."),
+    ALREADY_LOCATED_COMMUNITY(false, 4009, "이미 해당 위치에 존재하고 있습니다.");
 
     private final boolean isSuccess;
     private final int code;

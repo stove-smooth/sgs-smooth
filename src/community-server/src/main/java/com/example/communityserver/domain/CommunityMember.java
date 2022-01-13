@@ -80,4 +80,28 @@ public class CommunityMember extends BaseTimeEntity {
         communityMember.setStatus(CommunityMemberStatus.NORMAL);
         return communityMember;
     }
+
+    //== 비즈니스 메서드 ==//
+    public void locate(CommunityMember before, CommunityMember first) {
+        CommunityMember originBeforeNode = first;
+        while(!Objects.isNull(originBeforeNode.getNextNode())) {
+            if (originBeforeNode.getNextNode().equals(this))
+                break;
+            else
+                originBeforeNode = originBeforeNode.getNextNode();
+        }
+        if (Objects.isNull(before)) {
+            this.isFirstNode = true;
+            originBeforeNode.setNextNode(this.nextNode);
+            this.nextNode = first;
+            first.setFirstNode(false);
+        } else {
+            CommunityMember originNextNode = before.getNextNode();
+            before.setNextNode(this);
+            if (!Objects.isNull(originNextNode))
+                originNextNode.setNextNode(this.nextNode);
+            this.nextNode = originNextNode;
+            originBeforeNode.setNextNode(before);
+        }
+    }
 }

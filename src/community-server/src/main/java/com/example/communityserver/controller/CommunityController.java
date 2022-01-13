@@ -201,4 +201,17 @@ public class CommunityController {
         communityService.suspendMember(Long.parseLong(userId), communityId, memberId);
         return responseService.getSuccessResponse();
     }
+
+    /**
+     * 커뮤니티 순서 변경
+     */
+    @PatchMapping("/location")
+    public CommonResponse locateCommunity(
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody LocateCommunityRequest request
+    ) {
+        log.info("/community-server/community/location");
+        communityService.locateCommunity(Long.parseLong(userId), request);
+        return responseService.getSuccessResponse();
+    }
 }
