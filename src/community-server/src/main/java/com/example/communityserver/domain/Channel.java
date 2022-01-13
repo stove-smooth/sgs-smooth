@@ -12,6 +12,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "channels")
@@ -43,7 +44,11 @@ public class Channel extends BaseTimeEntity {
 
     private boolean isPublic;
 
-    private Long beforeId;
+    @Column(columnDefinition = "TINYINT(1) DEFAULT TRUE")
+    private boolean isFirstNode;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private Channel nextNode;
 
     private LocalDateTime expiredAt;
 
@@ -72,12 +77,19 @@ public class Channel extends BaseTimeEntity {
         channelMember.setChannel(this);
     }
 
+    public void setNextNode(Channel nextNode) {
+        this.nextNode = nextNode;
+        if (!Objects.isNull(nextNode))
+            nextNode.isFirstNode = false;
+    }
+
     //== 생성 메서드 ==//
     public static Channel createChannel(
             Category category,
             ChannelType type,
             String name,
             boolean isPublic,
+            Channel nextNode,
             ChannelMember... members
     ) {
         Channel channel = new Channel();
@@ -90,7 +102,8 @@ public class Channel extends BaseTimeEntity {
                 channel.addMember(member);
             }
         }
-        channel.setBeforeId(null);
+        channel.setFirstNode(true);
+        channel.setNextNode(nextNode);
         channel.setStatus(ChannelStatus.NORMAL);
         return channel;
     }

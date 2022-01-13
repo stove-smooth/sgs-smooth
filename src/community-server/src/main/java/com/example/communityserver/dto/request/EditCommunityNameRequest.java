@@ -16,7 +16,7 @@ public class EditCommunityNameRequest {
     @NotNull
     private Long communityId;
 
-    @NotEmpty
+    @NotNull
     @Size(min = 1, max = 100, message = "name min 1 max 100")
     private String name;
 }

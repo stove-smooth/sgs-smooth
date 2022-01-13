@@ -9,8 +9,8 @@ import com.example.communityserver.dto.response.*;
 import com.example.communityserver.domain.type.ChannelType;
 import com.example.communityserver.domain.type.CommunityRole;
 import com.example.communityserver.exception.CustomException;
-import com.example.communityserver.repository.ChannelRepository;
 import com.example.communityserver.repository.CommunityInvitationRepository;
+import com.example.communityserver.repository.CommunityMemberRepository;
 import com.example.communityserver.repository.CommunityRepository;
 import com.example.communityserver.util.AmazonS3Connector;
 import com.example.communityserver.util.Base62;
@@ -38,8 +38,8 @@ public class CommunityService {
     public String HOST_ADDRESS;
 
     private final CommunityRepository communityRepository;
+    private final CommunityMemberRepository communityMemberRepository;
     private final CommunityInvitationRepository communityInvitationRepository;
-    private final ChannelRepository channelRepository;
 
     private final AmazonS3Connector amazonS3Connector;
     private final Base62 base62;
@@ -54,8 +54,8 @@ public class CommunityService {
     ) {
         String iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
 
-        Category textCategory = makeDefaultCategory(ChannelType.TEXT);
-        Category voiceCategory = makeDefaultCategory(ChannelType.VOICE);
+        Category voiceCategory = makeDefaultCategory(ChannelType.VOICE, null);
+        Category textCategory = makeDefaultCategory(ChannelType.TEXT, voiceCategory);
 
         Community newCommunity = Community.createCommunity(
                 request.getName(), iconImage, request.isPublic(), textCategory, voiceCategory);
@@ -66,16 +66,18 @@ public class CommunityService {
         String nickname = userInfoFeignResponse.getResult().getName();
         String profileImage = userInfoFeignResponse.getResult().getProfileImage();
 
-        createCommunityMember(userId, newCommunity, nickname, profileImage, CommunityRole.OWNER);
+        CommunityMember firstNode = getFirstNode(userId);
+
+        createCommunityMember(userId, newCommunity, nickname, profileImage, firstNode, CommunityRole.OWNER);
 
         communityRepository.save(newCommunity);
 
         return CreateCommunityResponse.fromEntity(newCommunity);
     }
 
-    private Category makeDefaultCategory(ChannelType channelType) {
-        Category category = createCategory(channelType.getDescription(), true, null);
-        createChannel(category, channelType, CHANNEL_DEFAULT_NAME, true, null);
+    private Category makeDefaultCategory(ChannelType channelType, Category nextNode) {
+        Category category = createCategory(channelType.getDescription(), true, nextNode, null);
+        createChannel(category, channelType, CHANNEL_DEFAULT_NAME, true, null, null);
         return category;
     }
 
@@ -228,12 +230,13 @@ public class CommunityService {
             throw new CustomException(SUSPENDED_COMMUNITY);
 
         if (!isAuthorizedMember(community, userId)) {
+            CommunityMember firstNode = getFirstNode(userId);
             // Todo auth 터졌을 때 예외 처리
             // Todo feign config로 처리하기 controller, servive, userclient
             UserInfoFeignResponse userInfoFeignResponse = userClient.getUserInfo(token);
             String nickname = userInfoFeignResponse.getResult().getName();
             String profileImage = userInfoFeignResponse.getResult().getProfileImage();
-            createCommunityMember(userId, community, nickname, profileImage, CommunityRole.NONE);
+            createCommunityMember(userId, community, nickname, profileImage, firstNode, CommunityRole.NONE);
         }
     }
 
@@ -267,5 +270,81 @@ public class CommunityService {
     public void suspendMember(Long userId, Long communityId, Long memberId) {
         CommunityMember member = getMember(userId, communityId, memberId);
         member.setStatus(CommunityMemberStatus.SUSPENDED);
+    }
+
+    public CommunityDetailResponse getCommunity(Long userId, Long communityId) {
+        Community community = communityRepository.findById(communityId)
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
+
+        if (!isAuthorizedMember(community, userId))
+            throw new CustomException(NON_AUTHORIZATION);
+
+        return CommunityDetailResponse.fromEntity(community);
+    }
+
+    public CommunityListResponse getCommunityList(Long userId) {
+        CommunityMember firstNode = getFirstNode(userId);
+
+        List<CommunityResponse> list = new ArrayList<>();
+        if (Objects.isNull(firstNode))
+            return new CommunityListResponse(list);
+
+        list.add(CommunityResponse.fromEntity(firstNode.getCommunity()));
+        CommunityMember nextNode = firstNode.getNextNode();
+        while (!Objects.isNull(nextNode)) {
+            list.add(CommunityResponse.fromEntity(nextNode.getCommunity()));
+            nextNode = nextNode.getNextNode();
+        }
+        return new CommunityListResponse(list);
+    }
+
+    public CommunityMember getFirstNode(Long userId) {
+        return communityMemberRepository.findByUserId(userId).stream()
+                .filter(member -> member.isFirstNode())
+                .findAny().orElse(null);
+    }
+
+    @Transactional
+    public void locateCommunity(Long userId, LocateCommunityRequest request) {
+        List<CommunityMember> communities = communityMemberRepository.findByUserId(userId).stream()
+                .filter(cm -> cm.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .collect(Collectors.toList());
+
+        CommunityMember target = communities.stream()
+                .filter(cm -> cm.getCommunity().getId().equals(request.getCommunityId()))
+                .findAny().orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
+
+        CommunityMember before;
+        if (request.getNextNode().equals(0L))
+            before = null;
+        else {
+            before = communities.stream()
+                    .filter(cm -> cm.getCommunity().getId().equals(request.getNextNode()))
+                    .findAny().orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
+
+            System.out.println(before.getNextNode());
+
+            if (!Objects.isNull(before.getNextNode())) {
+                if (before.getNextNode().equals(target))
+                    throw new CustomException(ALREADY_LOCATED_COMMUNITY);
+            }
+        }
+
+        CommunityMember first = getFirstNode(userId);
+
+        target.locate(before, first);
+    }
+
+    @Transactional
+    public void deleteCommunity(Long userId, Long communityId) {
+        Community community = communityRepository.findById(communityId)
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
+
+        if (!isOwner(community, userId))
+            throw new CustomException(NON_AUTHORIZATION);
+
+        community.setStatus(CommonStatus.DELETED);
     }
 }

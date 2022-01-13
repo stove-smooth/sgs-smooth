@@ -2,12 +2,11 @@ package com.example.communityserver.domain;
 
 import com.example.communityserver.domain.type.CommunityMemberStatus;
 import com.example.communityserver.domain.type.CommunityRole;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "community_member")
@@ -38,7 +37,11 @@ public class CommunityMember extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private CommunityRole role;
 
-    private Long beforeId;
+    @Column(columnDefinition = "TINYINT(1) DEFAULT TRUE")
+    private boolean isFirstNode;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private CommunityMember nextNode;
 
     @Column(length = 10)
     @Enumerated(EnumType.STRING)
@@ -50,12 +53,19 @@ public class CommunityMember extends BaseTimeEntity {
         community.getMembers().add(this);
     }
 
+    public void setNextNode(CommunityMember nextNode) {
+        this.nextNode = nextNode;
+        if (!Objects.isNull(nextNode))
+            nextNode.isFirstNode = false;
+    }
+
     //== 생성 메서드 ==//
     public static CommunityMember createCommunityMember(
             Long userId,
             Community community,
             String nickname,
             String profileImage,
+            CommunityMember nextNode,
             CommunityRole role
     ) {
         CommunityMember communityMember = new CommunityMember();
@@ -65,8 +75,33 @@ public class CommunityMember extends BaseTimeEntity {
         communityMember.setProfileImage(profileImage);
         communityMember.setMemo(null);
         communityMember.setRole(role);
-        communityMember.setBeforeId(null);
+        communityMember.setFirstNode(true);
+        communityMember.setNextNode(nextNode);
         communityMember.setStatus(CommunityMemberStatus.NORMAL);
         return communityMember;
+    }
+
+    //== 비즈니스 메서드 ==//
+    public void locate(CommunityMember before, CommunityMember first) {
+        CommunityMember originBeforeNode = first;
+        while(!Objects.isNull(originBeforeNode.getNextNode())) {
+            if (originBeforeNode.getNextNode().equals(this))
+                break;
+            else
+                originBeforeNode = originBeforeNode.getNextNode();
+        }
+        if (Objects.isNull(before)) {
+            this.isFirstNode = true;
+            originBeforeNode.setNextNode(this.nextNode);
+            this.nextNode = first;
+            first.setFirstNode(false);
+        } else {
+            CommunityMember originNextNode = before.getNextNode();
+            before.setNextNode(this);
+            if (!Objects.isNull(originNextNode))
+                originNextNode.setNextNode(this.nextNode);
+            this.nextNode = originNextNode;
+            originBeforeNode.setNextNode(before);
+        }
     }
 }

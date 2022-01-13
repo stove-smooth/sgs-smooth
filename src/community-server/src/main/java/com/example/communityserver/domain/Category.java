@@ -10,6 +10,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "category")
@@ -34,7 +35,11 @@ public class Category extends BaseTimeEntity {
     @Column(length = 200)
     private String name;
 
-    private Long beforeId;
+    @Column(columnDefinition = "TINYINT(1) DEFAULT TRUE")
+    private boolean isFirstNode;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private Category nextNode;
 
     private boolean isPublic;
 
@@ -49,10 +54,17 @@ public class Category extends BaseTimeEntity {
         categoryMember.setCategory(this);
     }
 
+    public void setNextNode(Category nextNode) {
+        this.nextNode = nextNode;
+        if (!Objects.isNull(nextNode))
+            nextNode.isFirstNode = false;
+    }
+
     //== 생성 메서드 ==//
     public static Category createCategory(
         String name,
         boolean isPublic,
+        Category nextNode,
         CategoryMember... members
     ) {
         Category category = new Category();
@@ -63,7 +75,8 @@ public class Category extends BaseTimeEntity {
                 category.addMember(member);
             }
         }
-        category.setBeforeId(null);
+        category.setFirstNode(true);
+        category.setNextNode(nextNode);
         category.setStatus(CommonStatus.NORMAL);
         return category;
     }

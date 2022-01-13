@@ -9,7 +9,11 @@ import javax.validation.constraints.NotNull;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class JoinCommunityRequest {
+public class LocateCommunityRequest {
+
     @NotNull
-    private String code;
+    private Long communityId;
+
+    @NotNull
+    private Long nextNode;
 }

@@ -23,29 +23,32 @@ public class CommunityController {
     private final static String AUTHORIZATION = "AUTHORIZATION";
 
     /**
-     * 1. 메인 - 사용자의 커뮤니티 정보 조회하기
-     * 2. 커뮤니티 생성하기
-     * 3. 커뮤니티 이름 수정하기
-     * 4. 커뮤니티 아이콘 이미지 수정하기
-     * 5. 초대장 만들기
-     * 6. 초대장 조회하기
-     * 7. 초대장 삭제하기
-     * 8. 커뮤니티 멤버 조회하기
-     * 9. 초대장으로 커뮤니티 들어오기
-     * 10. 멤버 추방하기
-     * 11. 멤버 차단하기
+     * 사용자가 소속된 커뮤니티 리스트 조회
      */
+    @GetMapping()
+    public DataResponse<CommunityListResponse> getCommunityList(
+            @RequestHeader(ID) String userId
+    ) {
+        log.info("GET /community-server/community");
+        CommunityListResponse response = communityService.getCommunityList(Long.parseLong(userId));
+        return responseService.getDataResponse(response);
+    }
 
     /**
-     * 1. 메인 - 사용자의 커뮤니티 정보 조회하기
+     * 특정 커뮤니티 조회
      */
-//    @GetMapping("/{communityId}/{channelId}")
-//    public void getMainInfo() {
-//
-//    }
+    @GetMapping("/{communityId}")
+    public DataResponse<CommunityDetailResponse> getCommunity(
+            @RequestHeader(ID) String userId,
+            @PathVariable Long communityId
+    ) {
+        log.info("GET /community-server/community/{}", communityId);
+        CommunityDetailResponse response = communityService.getCommunity(Long.parseLong(userId), communityId);
+        return responseService.getDataResponse(response);
+    }
 
     /**
-     * 2. 커뮤니티 생성하기
+     * 커뮤니티 생성하기
      */
     @PostMapping
     public DataResponse<CreateCommunityResponse> createCommunity(
@@ -53,54 +56,54 @@ public class CommunityController {
             @RequestHeader(ID) String userId,
             @Valid @ModelAttribute CreateCommunityRequest request
     ) {
-        log.info("/community-server/community");
+        log.info("POST /community-server/community");
         CreateCommunityResponse createCommunityResponse =
                 communityService.createCommunity(Long.parseLong(userId), request, token);
         return responseService.getDataResponse(createCommunityResponse);
     }
 
     /**
-     * 3. 커뮤니티 이름 수정하기
+     * 커뮤니티 이름 수정하기
      */
     @PatchMapping("/name")
     public CommonResponse editName(
             @RequestHeader(ID) String userId,
             @Valid @RequestBody EditCommunityNameRequest request
     ) {
-        log.info("/community-server/community/name");
+        log.info("PATCH /community-server/community/name");
         communityService.editName(Long.parseLong(userId), request);
         return responseService.getSuccessResponse();
     }
 
     /**
-     * 4. 커뮤니티 아이콘 이미지 수정하기
+     * 커뮤니티 아이콘 이미지 수정하기
      */
     @PatchMapping("/icon")
     public CommonResponse editIcon(
             @RequestHeader(ID) String userId,
             @Valid @ModelAttribute EditCommunityIconRequest request
     ) {
-        log.info("/community-server/community/icon");
+        log.info("PATCH /community-server/community/icon");
         communityService.editIcon(Long.parseLong(userId), request);
         return responseService.getSuccessResponse();
     }
 
     /**
-     * 5. 초대장 만들기
+     * 초대장 만들기
      */
     @PostMapping("/invitation")
     public DataResponse<CreateInvitationResponse> invite(
             @RequestHeader(ID) String userId,
             @Valid @RequestBody CreateInvitationRequest request
     ) {
-        log.info("/community-server/community/invitation");
+        log.info("POST /community-server/community/invitation");
         CreateInvitationResponse createInvitationResponse =
                 communityService.createInvitation(Long.parseLong(userId), request);
         return responseService.getDataResponse(createInvitationResponse);
     }
 
     /**
-     * 6. 초대장 조회하기
+     * 초대장 조회하기
      */
     @GetMapping("/{communityId}/invitation")
     public DataResponse<InvitationListResponse> getInvitations(
@@ -108,26 +111,26 @@ public class CommunityController {
             @RequestHeader(ID) String userId,
             @PathVariable Long communityId
     ) {
-        log.info("/community-server/community/{}/invitation", communityId);
+        log.info("GET /community-server/community/{}/invitation", communityId);
         InvitationListResponse response = communityService.getInvitations(Long.parseLong(userId), communityId, token);
         return responseService.getDataResponse(response);
     }
 
     /**
-     * 7. 초대장 삭제하기
+     * 초대장 삭제하기
      */
     @DeleteMapping("/invitation")
     public CommonResponse deleteInvitations(
             @RequestHeader(ID) String userId,
             @RequestParam(name = "id") Long invitationId
     ) {
-        log.info("/community-server/community/invitation");
+        log.info("DELETE /community-server/community/invitation");
         communityService.deleteInvitation(Long.parseLong(userId), invitationId);
         return responseService.getSuccessResponse();
     }
 
     /**
-     * 8. 커뮤니티 멤버 조회하기
+     * 커뮤니티 멤버 조회하기
      */
     @GetMapping("/{communityId}/member")
     public DataResponse<MemberListResponse> getMembers(
@@ -135,28 +138,28 @@ public class CommunityController {
             @RequestHeader(ID) String userId,
             @PathVariable Long communityId
     ) {
-        log.info("/community-server/community/{}/member", communityId);
+        log.info("GET /community-server/community/{}/member", communityId);
         MemberListResponse response =
                 communityService.getMembers(Long.parseLong(userId), communityId, token);
         return responseService.getDataResponse(response);
     }
 
     /**
-     * 9. 초대장으로 커뮤니티 들어오기
+     * 초대장으로 커뮤니티 들어오기
      */
-    @PostMapping("/invite")
+    @PostMapping("/member")
     public CommonResponse join(
             @RequestHeader(AUTHORIZATION) String token,
             @RequestHeader(ID) String userId,
             @Valid @RequestBody JoinCommunityRequest request
     ) {
-        log.info("/community-server/community/invite");
+        log.info("POST /community-server/community/member");
         communityService.join(Long.parseLong(userId), request, token);
         return responseService.getSuccessResponse();
     }
 
     /**
-     * 10. 멤버 추방하기
+     * 멤버 추방하기
      */
     @DeleteMapping("/{communityId}/member")
     public CommonResponse deleteMember(
@@ -164,22 +167,48 @@ public class CommunityController {
             @PathVariable Long communityId,
             @RequestParam(name = "id") Long memberId
     ) {
-        log.info("/community-server/community/member");
+        log.info("DELETE /community-server/community/member");
         communityService.deleteMember(Long.parseLong(userId), communityId, memberId);
         return responseService.getSuccessResponse();
     }
 
     /**
-     * 11. 멤버 차단하기
+     * 멤버 차단하기
      */
-    @PostMapping("/{communityId}/member/ban")
+    @DeleteMapping("/{communityId}/member/ban")
     public CommonResponse suspendMember(
             @RequestHeader(ID) String userId,
             @PathVariable Long communityId,
             @RequestParam(name = "id") Long memberId
     ) {
-        log.info("/community-server/community/member/ban");
+        log.info("DELETE /community-server/community/member/ban");
         communityService.suspendMember(Long.parseLong(userId), communityId, memberId);
+        return responseService.getSuccessResponse();
+    }
+
+    /**
+     * 커뮤니티 순서 변경
+     */
+    @PatchMapping("/location")
+    public CommonResponse locateCommunity(
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody LocateCommunityRequest request
+    ) {
+        log.info("PATCH /community-server/community/location");
+        communityService.locateCommunity(Long.parseLong(userId), request);
+        return responseService.getSuccessResponse();
+    }
+
+    /**
+     * 커뮤니티 삭제하기
+     */
+    @DeleteMapping("/{communityId}")
+    public CommonResponse deleteCommunity(
+            @RequestHeader(ID) String userId,
+            @PathVariable Long communityId
+    ) {
+        log.info("DELETE /community-server/community/{}", communityId);
+        communityService.deleteCommunity(Long.parseLong(userId), communityId);
         return responseService.getSuccessResponse();
     }
 }

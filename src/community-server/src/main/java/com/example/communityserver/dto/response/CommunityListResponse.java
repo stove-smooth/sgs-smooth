@@ -5,13 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RoomResponse {
-    private Long roomId;
-    private String name;
-    private String iconImage;
-    private int unread;
+public class CommunityListResponse {
+    private List<CommunityResponse> communities;
 }
