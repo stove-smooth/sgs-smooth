@@ -13,7 +13,11 @@ import javax.persistence.Enumerated;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDetailResponse extends UserResponse {
+public class UserDetailResponse {
+    private Long userId;
+    private String nickname;
+    private String code;
+    private String profileImage;
     private String bio;
     private String state;
     @Enumerated(EnumType.STRING)

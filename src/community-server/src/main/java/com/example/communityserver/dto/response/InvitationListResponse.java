@@ -11,9 +11,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommunityMainResponse {
-    private List<RoomResponse> rooms;
-    private List<CommunityResponse> communities;
-    private CommunityDetailResponse community;
-    private ChannelDetailResponse channel;
+public class InvitationListResponse {
+    private List<InvitationResponse> invitations;
 }

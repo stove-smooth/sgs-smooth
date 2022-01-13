@@ -1,5 +1,6 @@
 package com.example.communityserver.dto.response;
 
+import com.example.communityserver.domain.Channel;
 import com.example.communityserver.domain.type.ChannelType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -22,7 +24,15 @@ public class ChannelResponse {
     private boolean isPublic;
     private List<ThreadResponse> threads;
 
-    public void setChannelId(Long channelId) {
-        this.channelId = channelId;
+    public static ChannelResponse fromEntity(Channel channel) {
+        ChannelResponse channelResponse = new ChannelResponse();
+        channelResponse.setChannelId(channel.getId());
+        channelResponse.setName(channel.getName());
+        channelResponse.setType(channel.getType());
+        channelResponse.setPublic(channel.isPublic());
+        channelResponse.setThreads(channel.getThread().stream()
+                .map(ThreadResponse::fromEntity)
+                .collect(Collectors.toList()));
+        return channelResponse;
     }
 }

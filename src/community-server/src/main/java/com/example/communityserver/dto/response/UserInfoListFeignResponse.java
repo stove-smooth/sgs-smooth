@@ -5,13 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.HashMap;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberInfoResponse {
-    private int count;
-    private List<UserDetailResponse> members;
+public class UserInfoListFeignResponse extends CommonResponse {
+
+    private HashMap<Long, UserResponse> result;
 }
