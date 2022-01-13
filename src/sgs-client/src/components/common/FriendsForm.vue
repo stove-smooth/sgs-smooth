@@ -26,7 +26,7 @@
               </div>
               <div class="status-description">
                 <div class="status-subtext">
-                  <slot name="status"> </slot>
+                  <slot name="status"></slot>
                 </div>
               </div>
             </div>

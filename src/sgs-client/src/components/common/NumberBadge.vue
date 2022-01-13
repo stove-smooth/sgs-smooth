@@ -1,9 +1,16 @@
 <template>
-  <div class="number-badge">1</div>
+  <div class="number-badge">{{ alarms }}</div>
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    alarms: {
+      type: Number,
+      required: true,
+    },
+  },
+};
 </script>
 
 <style>

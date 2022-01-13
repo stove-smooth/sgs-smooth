@@ -38,7 +38,9 @@
           @click="MenuSelected('waiting')"
         >
           대기 중
-          <number-badge></number-badge>
+          <number-badge
+            :alarms="$store.state.friendswaitingnumber"
+          ></number-badge>
         </div>
         <div
           class="friends-tab-decorator"

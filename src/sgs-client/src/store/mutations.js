@@ -37,6 +37,7 @@ export default {
   },
   setWaitingFriends(state, friendswaiting) {
     state.friendswaiting = friendswaiting;
+    state.friendswaitingnumber = friendswaiting.length;
   },
   setBlockedFriends(state) {
     state.friendsblocked = "";

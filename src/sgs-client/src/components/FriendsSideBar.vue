@@ -16,7 +16,9 @@
               </div>
             </div>
             <div class="friends-alarm-wrapper">
-              <number-badge></number-badge>
+              <number-badge
+                :alarms="$store.state.friendswaitingnumber"
+              ></number-badge>
             </div>
           </div>
         </div>

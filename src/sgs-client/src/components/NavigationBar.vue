@@ -19,7 +19,11 @@
               <div class="circleIcon-button">
                 <svg class="discord-logo"></svg>
               </div>
-              <div class="lower-badge"><number-badge></number-badge></div>
+              <div class="lower-badge">
+                <number-badge
+                  :alarms="$store.state.friendswaitingnumber"
+                ></number-badge>
+              </div>
             </div>
           </div>
         </div>

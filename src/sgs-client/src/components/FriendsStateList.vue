@@ -18,6 +18,7 @@
       <template v-if="$store.state.friendsstatemenu === 'online'">
         <friends-form :friend="list">
           <template slot="title">온라인-3명</template>
+          <template slot="status"><span>온라인</span></template>
           <template slot="action">
             <div class="action-button" aria-label="메시지 보내기" role="button">
               <svg class="send-message"></svg>
@@ -31,6 +32,7 @@
       <template v-else-if="$store.state.friendsstatemenu === 'all'">
         <friends-form :friend="list">
           <template slot="title">모든친구-3명</template>
+          <template slot="status"><span>온라인</span></template>
           <template slot="action">
             <div class="action-button" aria-label="메시지 보내기" role="button">
               <svg class="send-message"></svg>
@@ -43,7 +45,10 @@
       </template>
       <template v-else-if="$store.state.friendsstatemenu === 'waiting'">
         <friends-form :friend="friendswaiting">
-          <template slot="title">대기중-3명</template>
+          <template slot="title"
+            >대기중-{{ $store.state.friendswaitingnumber }}명</template
+          >
+          <template slot="status"><span>받은 친구 요청</span></template>
           <template slot="action">
             <div class="action-button" aria-label="메시지 보내기" role="button">
               <svg class="done"></svg>
@@ -57,6 +62,7 @@
       <template v-else-if="$store.state.friendsstatemenu === 'blockedlist'">
         <friends-form :friend="list">
           <template slot="title">차단-3명</template>
+          <template slot="status"><span>차단 목록</span></template>
           <template slot="action">
             <div class="action-button" aria-label="메시지 보내기" role="button">
               <svg class="blocked"></svg>

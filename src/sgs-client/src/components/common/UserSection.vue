@@ -11,11 +11,7 @@
         >
           <div class="profile-wrapper" aria-label="칭구1">
             <div class="avatar-wrapper">
-              <img
-                class="avatar"
-                src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=32"
-                alt=" "
-              />
+              <img class="avatar" :src="discordProfile" alt=" " />
               <template aria-label="status-invisible">
                 <div class="status-ring">
                   <div class="status-offline"></div>
@@ -73,10 +69,28 @@
 
 <script>
 export default {
+  data() {
+    return {
+      discordProfile: "",
+    };
+  },
   methods: {
     openSettings() {
       this.$router.push("/settings");
     },
+  },
+  created() {
+    const classify = this.$store.state.code % 4;
+    console.log(classify);
+    if (classify == 0) {
+      this.discordProfile = require("../../assets/discord_blue.png");
+    } else if (classify == 1) {
+      this.discordProfile = require("../../assets/discord_green.png");
+    } else if (classify == 2) {
+      this.discordProfile = require("../../assets/discord_grey.png");
+    } else {
+      this.discordProfile = require("../../assets/discord_red.png");
+    }
   },
 };
 </script>

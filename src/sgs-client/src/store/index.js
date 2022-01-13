@@ -23,6 +23,7 @@ export default new Vuex.Store({
     friendsonline: [],
     friendsall: [],
     friendswaiting: [],
+    friendswaitingnumber: 0,
     friendsblocked: [],
   },
   getters: {
