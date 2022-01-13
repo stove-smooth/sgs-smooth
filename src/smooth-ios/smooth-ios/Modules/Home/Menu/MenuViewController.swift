@@ -43,7 +43,9 @@ extension ChannelSection: AnimatableSectionModelType {
     }
 }
 
-class MenuViewController: BaseViewController {
+class MenuViewController: BaseViewController, CoordinatorContext {
+    
+    weak var coordinator: HomeCoordinator?
     weak var delegate: MenuViewControllerDelegate? // 레거시 코드 확인 필요
     
     typealias channelDataSource = RxTableViewSectionedReloadDataSource<ChannelSection>
@@ -152,6 +154,8 @@ class MenuViewController: BaseViewController {
         super.viewDidLoad()
         view.backgroundColor = .serverListDartGray
         view.addSubview(layout)
+        
+//        self.tabBarController?.tabBar.isHidden = false
         
         // MARK: - setupLayout
         layout.snp.makeConstraints {

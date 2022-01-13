@@ -19,9 +19,9 @@ enum MenuState {
     case closed
 }
 
-class HomeViewController: BaseViewController {
+class HomeViewController: BaseViewController, CoordinatorContext {
     
-    weak var coordinator: MainCoordinator?
+    weak var coordinator: HomeCoordinator?
     var navigationViewController: UINavigationController?
     
     private let menuViewController = MenuViewController.instance()
@@ -73,8 +73,8 @@ extension HomeViewController: ContainerViewControllerDelegate {
     func toggleMenu(completion: (() -> Void)?) {
         switch menuState {
         case .opened:
+            self.tabBarController?.tabBar.isHidden = false
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseOut){
-                
                 self.navigationViewController?.view.frame.origin.x = self.containerViewController.view.frame.size
                     .width-50
             } completion: { [weak self] done in
@@ -84,8 +84,8 @@ extension HomeViewController: ContainerViewControllerDelegate {
             }
             
         case .closed:
+            self.tabBarController?.tabBar.isHidden = true
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseOut){
-                
                 self.navigationViewController?.view.frame.origin.x = 0
             } completion: { [weak self] done in
                 if done {
