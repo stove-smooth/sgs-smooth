@@ -37,6 +37,8 @@ class HomeViewController: BaseViewController, CoordinatorContext {
     override func viewWillAppear(_ animated: Bool) {
         // main nav 숨기기
         self.navigationController?.setNavigationBarHidden(true, animated: animated)
+        
+        
     }
     
     override func viewDidLoad() {
@@ -46,7 +48,7 @@ class HomeViewController: BaseViewController, CoordinatorContext {
     
     private func addChildVCs() {
         // Menu VC
-        menuViewController.delegate = self
+//        menuViewController.delegate = self
         addChild(menuViewController)
         view.addSubview(menuViewController.view)
         menuViewController.didMove(toParent: self)
@@ -97,42 +99,5 @@ extension HomeViewController: ContainerViewControllerDelegate {
             }
             
         }
-    }
-}
-
-extension HomeViewController: MenuViewControllerDelegate {
-    func didSelect(menuItem: MenuViewController.MenuOptions) {
-        toggleMenu(completion: nil)
-        
-        switch menuItem {
-        case .home:
-            self.resetToHome()
-        default:
-            // MARK menuItem(룸 서버) 정보 전달
-            self.addServer()
-        }
-    }
-    
-    func addServer() {
-        let vc = serverViewController
-        
-        containerViewController.addChild(vc)
-        containerViewController.view.addSubview(vc.view)
-        
-        vc.view.frame = view.frame
-        vc.didMove(toParent: containerViewController)
-        containerViewController.title = vc.title
-    }
-    
-    func resetToHome() {
-        // child 삭제
-        serverViewController.willMove(toParent: nil)
-        serverViewController.removeFromParent()
-        serverViewController.view.removeFromSuperview()
-        
-        containerViewController.view.frame = view.frame
-        containerViewController.didMove(toParent: nil)
-        
-        containerViewController.title = "Container ViewController"
     }
 }

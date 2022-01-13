@@ -10,10 +10,6 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 
-protocol MenuViewControllerDelegate: AnyObject {
-    func didSelect(menuItem: MenuViewController.MenuOptions)
-}
-
 struct Channel: Codable, Equatable, IdentifiableType {
     var id: String
     var name: String
@@ -44,9 +40,7 @@ extension ChannelSection: AnimatableSectionModelType {
 }
 
 class MenuViewController: BaseViewController, CoordinatorContext {
-    
     weak var coordinator: HomeCoordinator?
-    weak var delegate: MenuViewControllerDelegate? // 레거시 코드 확인 필요
     
     typealias channelDataSource = RxTableViewSectionedReloadDataSource<ChannelSection>
     
@@ -85,12 +79,6 @@ class MenuViewController: BaseViewController, CoordinatorContext {
     
     let value = PublishSubject<(id: UUID, value: Int)>()
     let selectedChanged = PublishSubject<(id: UUID, selected: Bool)>()
-    
-    enum MenuOptions: String, CaseIterable {
-        case home = "Home"
-        case chat = "chat"
-        case addServer = "add_server"
-    }
     
     static func instance() -> MenuViewController {
         return MenuViewController(nibName: nil, bundle: nil)
@@ -155,18 +143,22 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         view.backgroundColor = .serverListDartGray
         view.addSubview(layout)
         
-//        self.tabBarController?.tabBar.isHidden = false
-        
         // MARK: - setupLayout
         layout.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.bottom.equalTo(view.snp.bottom)
             $0.width.equalTo(view.snp.width).offset(-50)
+            $0.trailing.equalTo(view.snp.trailing).offset(-60)
         }
         
         tableView.snp.makeConstraints {
             $0.width.equalTo(80)
         }
+        
+    }
+    
+    private func goToContainer(channel: Channel) {
+        self.coordinator?.goToContainer()
     }
     
     override func bindViewModel() {
@@ -178,9 +170,10 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             .disposed(by: disposeBag)
         
         channelView.rx.modelSelected(Channel.self)
-            .subscribe(onNext: { model in
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: { model in
                 // TODO: - contentView Bindign
-                print("\(model) was selected")
+                self.goToContainer(channel: model)
             })
             .disposed(by: disposeBag)
         
@@ -188,15 +181,11 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         Observable.just(serverViewModel.data)
             .bind(to: tableView.rx.items) { tableView, row, item in
                 let indexPath = IndexPath.init(item: row, section: 0)
-                
-                let cell = tableView.dequeueReusableCell(withIdentifier: ServerCell.identifier, for: indexPath)
+
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: ServerCell.identifier, for: indexPath) as? ServerCell else { return UITableViewCell() }
                 let data = self.serverViewModel.data
                 
-                cell.layer.cornerRadius = 30
-                cell.layer.masksToBounds = true
-                
-                cell.backgroundColor = .blurple
-                cell.textLabel?.text = data[indexPath.row]
+                cell.ui(data: data[indexPath.row])
                 
                 return cell
             }.disposed(by: disposeBag)
@@ -204,8 +193,6 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         Observable.zip(tableView.rx.itemSelected, tableView.rx.modelSelected(String.self))
             .subscribe(onNext: { [weak self] (indexPath, String) in
                 guard let self = self else { return }
-                
-                self.tableView.deselectRow(at: indexPath, animated: false)
                 
                 self.channelViewModel.input.fetchServer
                     .accept(self.serverViewModel.data[indexPath.row])
@@ -235,3 +222,4 @@ extension MenuViewController: UITableViewDelegate {
         header.textLabel?.textColor = .white
     }
 }
+

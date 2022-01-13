@@ -23,7 +23,7 @@ class ChannelViewModel: BaseViewModel {
     
     struct Output {
 //        let counters: Driver<[Model]>
-        let generator = PublishRelay<[Model]>()
+        let goToContainer = PublishRelay<Void>()
     }
     
     
@@ -36,6 +36,13 @@ class ChannelViewModel: BaseViewModel {
             .asDriver(onErrorJustReturn: "")
             .drive(onNext: { value in
                 print(value)
+            })
+            .disposed(by: disposeBag)
+        
+        self.output.goToContainer
+            .asDriver(onErrorJustReturn: ())
+            .drive(onNext: {
+                print("goToContainer")
             })
             .disposed(by: disposeBag)
     }

@@ -12,4 +12,6 @@ target 'smooth-ios' do
   
   pod 'Moya', '~> 15.0.0'
   pod 'Moya/RxSwift'
+  
+  pod 'Kingfisher'
 end
