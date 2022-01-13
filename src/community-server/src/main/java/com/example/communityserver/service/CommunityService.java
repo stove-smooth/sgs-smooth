@@ -39,7 +39,6 @@ public class CommunityService {
 
     private final CommunityRepository communityRepository;
     private final CommunityInvitationRepository communityInvitationRepository;
-    private final ChannelRepository channelRepository;
 
     private final AmazonS3Connector amazonS3Connector;
     private final Base62 base62;
@@ -267,5 +266,17 @@ public class CommunityService {
     public void suspendMember(Long userId, Long communityId, Long memberId) {
         CommunityMember member = getMember(userId, communityId, memberId);
         member.setStatus(CommunityMemberStatus.SUSPENDED);
+    }
+
+
+    public CommunityResponse getCommunity(Long userId, Long communityId) {
+        Community community = communityRepository.findById(communityId)
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
+
+        if (!isAuthorizedMember(community, userId))
+            throw new CustomException(NON_AUTHORIZATION);
+
+        return CommunityResponse.fromEntity(community);
     }
 }

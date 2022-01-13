@@ -23,29 +23,36 @@ public class CommunityController {
     private final static String AUTHORIZATION = "AUTHORIZATION";
 
     /**
-     * 1. 메인 - 사용자의 커뮤니티 정보 조회하기
-     * 2. 커뮤니티 생성하기
-     * 3. 커뮤니티 이름 수정하기
-     * 4. 커뮤니티 아이콘 이미지 수정하기
-     * 5. 초대장 만들기
-     * 6. 초대장 조회하기
-     * 7. 초대장 삭제하기
-     * 8. 커뮤니티 멤버 조회하기
-     * 9. 초대장으로 커뮤니티 들어오기
-     * 10. 멤버 추방하기
-     * 11. 멤버 차단하기
+     * 1. 사용자가 소속된 커뮤니티 리스트 조회
+     * 2. 특정 커뮤니티 조회
+     * 3. 커뮤니티 생성하기
+     * 4. 커뮤니티 이름 수정하기
+     * 5. 커뮤니티 아이콘 이미지 수정하기
+     * 6. 초대장 만들기
+     * 7. 초대장 조회하기
+     * 8. 초대장 삭제하기
+     * 9. 커뮤니티 멤버 조회하기
+     * 10. 초대장으로 커뮤니티 들어오기
+     * 11. 멤버 추방하기
+     * 12. 멤버 차단하기
+     * 13. 커뮤니티 순서 바꾸기
      */
 
     /**
-     * 1. 메인 - 사용자의 커뮤니티 정보 조회하기
+     * 특정 커뮤니티 조회
      */
-//    @GetMapping("/{communityId}/{channelId}")
-//    public void getMainInfo() {
-//
-//    }
+    @GetMapping("/{communityId}")
+    public DataResponse<CommunityResponse> getCommunity(
+            @RequestHeader(ID) String userId,
+            @PathVariable Long communityId
+    ) {
+        log.info("/community-server/community/{}", communityId);
+        CommunityResponse response = communityService.getCommunity(Long.parseLong(userId), communityId);
+        return responseService.getDataResponse(response);
+    }
 
     /**
-     * 2. 커뮤니티 생성하기
+     * 커뮤니티 생성하기
      */
     @PostMapping
     public DataResponse<CreateCommunityResponse> createCommunity(
@@ -60,7 +67,7 @@ public class CommunityController {
     }
 
     /**
-     * 3. 커뮤니티 이름 수정하기
+     * 커뮤니티 이름 수정하기
      */
     @PatchMapping("/name")
     public CommonResponse editName(
@@ -73,7 +80,7 @@ public class CommunityController {
     }
 
     /**
-     * 4. 커뮤니티 아이콘 이미지 수정하기
+     * 커뮤니티 아이콘 이미지 수정하기
      */
     @PatchMapping("/icon")
     public CommonResponse editIcon(
@@ -86,7 +93,7 @@ public class CommunityController {
     }
 
     /**
-     * 5. 초대장 만들기
+     * 초대장 만들기
      */
     @PostMapping("/invitation")
     public DataResponse<CreateInvitationResponse> invite(
@@ -100,7 +107,7 @@ public class CommunityController {
     }
 
     /**
-     * 6. 초대장 조회하기
+     * 초대장 조회하기
      */
     @GetMapping("/{communityId}/invitation")
     public DataResponse<InvitationListResponse> getInvitations(
@@ -114,7 +121,7 @@ public class CommunityController {
     }
 
     /**
-     * 7. 초대장 삭제하기
+     * 초대장 삭제하기
      */
     @DeleteMapping("/invitation")
     public CommonResponse deleteInvitations(
@@ -127,7 +134,7 @@ public class CommunityController {
     }
 
     /**
-     * 8. 커뮤니티 멤버 조회하기
+     * 커뮤니티 멤버 조회하기
      */
     @GetMapping("/{communityId}/member")
     public DataResponse<MemberListResponse> getMembers(
@@ -142,7 +149,7 @@ public class CommunityController {
     }
 
     /**
-     * 9. 초대장으로 커뮤니티 들어오기
+     * 초대장으로 커뮤니티 들어오기
      */
     @PostMapping("/invite")
     public CommonResponse join(
@@ -156,7 +163,7 @@ public class CommunityController {
     }
 
     /**
-     * 10. 멤버 추방하기
+     * 멤버 추방하기
      */
     @DeleteMapping("/{communityId}/member")
     public CommonResponse deleteMember(
@@ -170,7 +177,7 @@ public class CommunityController {
     }
 
     /**
-     * 11. 멤버 차단하기
+     * 멤버 차단하기
      */
     @PostMapping("/{communityId}/member/ban")
     public CommonResponse suspendMember(
