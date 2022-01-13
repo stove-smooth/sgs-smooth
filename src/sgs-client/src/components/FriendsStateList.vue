@@ -44,15 +44,26 @@
         </friends-form>
       </template>
       <template v-else-if="$store.state.friendsstatemenu === 'waiting'">
-        <friends-form :friend="friendswaiting">
-          <template slot="title"
-            >대기중-{{ $store.state.friendswaitingnumber }}명</template
-          >
+        <friends-form :friend="friendsreceivedwaiting">
+          <template slot="title">
+            대기중-{{
+              $store.state.friendsreceivedwaitingnumber +
+              friendssendwaiting.length
+            }}명
+          </template>
           <template slot="status"><span>받은 친구 요청</span></template>
           <template slot="action">
             <div class="action-button" aria-label="메시지 보내기" role="button">
               <svg class="done"></svg>
             </div>
+            <div class="action-button" aria-label="기타" role="button">
+              <svg class="primary-close"></svg>
+            </div>
+          </template>
+        </friends-form>
+        <friends-form :friend="friendssendwaiting">
+          <template slot="status"><span>보낸 친구 요청</span></template>
+          <template slot="action">
             <div class="action-button" aria-label="기타" role="button">
               <svg class="primary-close"></svg>
             </div>
@@ -99,8 +110,11 @@ export default {
     this.$store.dispatch("FETCH_FRIENDSWAITING");
   },
   computed: {
-    friendswaiting() {
-      return this.$store.state.friendswaiting;
+    friendsreceivedwaiting() {
+      return this.$store.state.friendsreceivedwaiting;
+    },
+    friendssendwaiting() {
+      return this.$store.state.friendssendwaiting;
     },
   },
 };

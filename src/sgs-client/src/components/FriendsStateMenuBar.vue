@@ -39,7 +39,7 @@
         >
           대기 중
           <number-badge
-            :alarms="$store.state.friendswaitingnumber"
+            :alarms="$store.state.friendsreceivedwaitingnumber"
           ></number-badge>
         </div>
         <div

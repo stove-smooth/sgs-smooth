@@ -68,6 +68,7 @@
 </template>
 
 <script>
+import { selectProfile } from "../../utils/common.js";
 export default {
   data() {
     return {
@@ -81,16 +82,8 @@ export default {
   },
   created() {
     const classify = this.$store.state.code % 4;
-    console.log(classify);
-    if (classify == 0) {
-      this.discordProfile = require("../../assets/discord_blue.png");
-    } else if (classify == 1) {
-      this.discordProfile = require("../../assets/discord_green.png");
-    } else if (classify == 2) {
-      this.discordProfile = require("../../assets/discord_grey.png");
-    } else {
-      this.discordProfile = require("../../assets/discord_red.png");
-    }
+    const result = selectProfile(classify);
+    this.discordProfile = require("../../assets/" + result + ".png");
   },
 };
 </script>

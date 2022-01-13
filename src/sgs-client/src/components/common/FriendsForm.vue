@@ -8,11 +8,7 @@
         <div class="friends-list-item-contents">
           <div class="friends-state-info">
             <div class="profile-margin profile-wrapper">
-              <img
-                class="avatar"
-                src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=32"
-                alt=" "
-              />
+              <img class="avatar" :src="getImgUrl(item.code)" alt="image" />
               <template aria-label="status-invisible">
                 <div class="status-ring">
                   <div class="status-offline"></div>
@@ -22,7 +18,7 @@
             <div class="friends-state-text">
               <div class="discord-name-tag">
                 <span class="bold-username">{{ item.name }}</span>
-                <span class="user-code">#5332</span>
+                <span class="user-code">#{{ item.code }}</span>
               </div>
               <div class="status-description">
                 <div class="status-subtext">
@@ -41,11 +37,19 @@
 </template>
 
 <script>
+import { selectProfile } from "../../utils/common.js";
 export default {
   props: {
     friend: {
       type: Array,
       required: true,
+    },
+  },
+  methods: {
+    getImgUrl(code) {
+      const classify = code % 4;
+      const result = selectProfile(classify);
+      return require("../../assets/" + result + ".png");
     },
   },
 };

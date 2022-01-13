@@ -22,8 +22,9 @@ export default new Vuex.Store({
     friendsstatemenu: "online",
     friendsonline: [],
     friendsall: [],
-    friendswaiting: [],
-    friendswaitingnumber: 0,
+    friendsreceivedwaiting: [],
+    friendsreceivedwaitingnumber: 0,
+    friendssendwaiting: [],
     friendsblocked: [],
   },
   getters: {

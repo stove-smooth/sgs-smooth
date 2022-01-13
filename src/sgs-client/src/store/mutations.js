@@ -35,9 +35,12 @@ export default {
   setOnlineFriends(state) {
     state.friendsonline = "";
   },
-  setWaitingFriends(state, friendswaiting) {
-    state.friendswaiting = friendswaiting;
-    state.friendswaitingnumber = friendswaiting.length;
+  setReceivedWaitingFriends(state, friendsreceivedwaiting) {
+    state.friendsreceivedwaiting = friendsreceivedwaiting;
+    state.friendsreceivedwaitingnumber = friendsreceivedwaiting.length;
+  },
+  setSendWaitingFriends(state, friendssendwaiting) {
+    state.friendssendwaiting = friendssendwaiting;
   },
   setBlockedFriends(state) {
     state.friendsblocked = "";

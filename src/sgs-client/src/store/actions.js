@@ -36,6 +36,7 @@ export default {
   async FETCH_FRIENDSWAITING({ commit }) {
     const result = await fetchWaitingFriends();
     console.log(result.data.result);
-    commit("setWaitingFriends", result.data.result.sendToFriend);
+    commit("setReceivedWaitingFriends", result.data.result.receiveFromFriend);
+    commit("setSendWaitingFriends", result.data.result.sendToFriend);
   },
 };
