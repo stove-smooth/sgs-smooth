@@ -163,13 +163,13 @@ public class CommunityController {
     /**
      * 초대장으로 커뮤니티 들어오기
      */
-    @PostMapping("/invite")
+    @PostMapping("/member")
     public CommonResponse join(
             @RequestHeader(AUTHORIZATION) String token,
             @RequestHeader(ID) String userId,
             @Valid @RequestBody JoinCommunityRequest request
     ) {
-        log.info("/community-server/community/invite");
+        log.info("/community-server/community/member");
         communityService.join(Long.parseLong(userId), request, token);
         return responseService.getSuccessResponse();
     }
@@ -191,7 +191,7 @@ public class CommunityController {
     /**
      * 멤버 차단하기
      */
-    @PostMapping("/{communityId}/member/ban")
+    @DeleteMapping("/{communityId}/member/ban")
     public CommonResponse suspendMember(
             @RequestHeader(ID) String userId,
             @PathVariable Long communityId,
