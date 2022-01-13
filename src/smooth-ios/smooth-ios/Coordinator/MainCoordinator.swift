@@ -9,21 +9,40 @@ import UIKit
 import Then
 
 class MainCoordinator: NSObject, Coordinator {
+    var delegate: CoordinatorDelegate?
     
     var childCoordinators = [Coordinator]()
     var navigationController: UINavigationController
     
-    init(navigationController: UINavigationController) {
+    let window: UIWindow
+    
+    //    init(navigationController: UINavigationController) {
+    //        self.navigationController = navigationController
+    //        self.navigationController.navigationBar.tintColor = .white
+    //
+    //        self.navigationController.navigationBar.barTintColor = UIColor.backgroundDartGray
+    //        self.navigationController.navigationBar.shadowImage = UIImage()
+    //        self.navigationController.navigationBar.isTranslucent = false
+    //    }
+    
+    init(window: UIWindow) {
+        self.window = window
+        
+        let navigationController = UINavigationController()
+        navigationController.navigationBar.tintColor = .white
+        navigationController.navigationBar.barTintColor = UIColor.backgroundDartGray
+        navigationController.navigationBar.shadowImage = UIImage()
+        navigationController.navigationBar.isTranslucent = false
+        
+        navigationController.setNavigationBarHidden(true, animated: true)
+        
         self.navigationController = navigationController
-        self.navigationController.navigationBar.tintColor = .white
-        
-        self.navigationController.navigationBar.barTintColor = UIColor.backgroundDartGray
-        self.navigationController.navigationBar.shadowImage = UIImage()
-        self.navigationController.navigationBar.isTranslucent = false
-        
+        self.childCoordinators = []
     }
     
     func start() {
+        window.rootViewController = navigationController
+        
         let token = UserDefaultsUtil.getUserToken()
         
         if token == nil {
@@ -35,6 +54,7 @@ class MainCoordinator: NSObject, Coordinator {
             self.goToMain()
         }
         
+        window.makeKeyAndVisible()
     }
     
     func goToSigIn() {
@@ -45,10 +65,10 @@ class MainCoordinator: NSObject, Coordinator {
     }
     
     func goToMain() {
-        let vc = HomeViewController.instance()
-        vc.coordinator = self
-        navigationController.removeFromParent()
-        navigationController.pushViewController(vc, animated: true)
+        let coordinator = MainTabBarCoordinator(navigationController: navigationController)
+        childCoordinators.append(coordinator)
+        
+        coordinator.start()
     }
     
     func goToSignUp() {
