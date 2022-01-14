@@ -11,7 +11,7 @@ import Moya
 protocol BaseAPI: TargetType {}
 
 extension BaseAPI {
-    var baseURL: URL { URL(string: "http://3.38.10.189:8000")! }
+    var baseURL: URL { URL(string: "http://52.79.229.100:8000")! }
     var method: Moya.Method { .get }
     var sampleData: Data { Data() }
     var task: Task { .requestPlain }

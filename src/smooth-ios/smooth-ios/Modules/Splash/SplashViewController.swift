@@ -31,6 +31,11 @@ class SplashViewConroller: BaseViewController {
         self.viewModel.input.viewDidLoad.onNext(())
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+    
+    
     override func bindViewModel() {
         /*
          self.rx.viewDidLoad
@@ -38,20 +43,34 @@ class SplashViewConroller: BaseViewController {
          print("viewDidLoad 🎉")
          }) */
         
+        // MARK: input
         self.viewModel.input.viewDidLoad
+            .debug()
             .subscribe { _ in
                 self.viewModel.hasToken()
             }
             .disposed(by: disposeBag)
 
+        self.splashView.signInButton.rx.tap
+            .bind(to: self.viewModel.input.tapSignInButton)
+            .disposed(by: disposeBag)
+        
+        self.splashView.signUpButton.rx.tap
+            .bind(to: self.viewModel.input.tapSignUpButton)
+            .disposed(by: disposeBag)
+        
+        // MARK: output
         self.viewModel.output.goToSignIn
-            .debug()
             .observe(on: MainScheduler.instance)
             .bind(onNext: self.goToSignIn)
             .disposed(by: disposeBag)
 
+        self.viewModel.output.goToSignUp
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: self.goToSignUp)
+            .disposed(by: disposeBag)
+        
         self.viewModel.output.goToMain
-            .debug()
             .observe(on: MainScheduler.instance)
             .bind(onNext: self.goToMain)
             .disposed(by: disposeBag)
@@ -67,4 +86,7 @@ class SplashViewConroller: BaseViewController {
         self.coordinator?.goToSigIn()
     }
     
+    func goToSignUp() {
+        self.coordinator?.goToSignUp()
+    }
 }

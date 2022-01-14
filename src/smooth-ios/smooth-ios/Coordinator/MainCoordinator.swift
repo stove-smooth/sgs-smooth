@@ -6,20 +6,46 @@
 //
 
 import UIKit
+import Then
 
 class MainCoordinator: NSObject, Coordinator {
+    var delegate: CoordinatorDelegate?
     
     var childCoordinators = [Coordinator]()
     var navigationController: UINavigationController
     
-    init(navigationController: UINavigationController) {
+    let window: UIWindow
+    
+    init(window: UIWindow) {
+        self.window = window
+        
+        let navigationController = UINavigationController()
+        navigationController.navigationBar.tintColor = .white
+        navigationController.navigationBar.barTintColor = UIColor.backgroundDartGray
+        navigationController.navigationBar.shadowImage = UIImage()
+        navigationController.navigationBar.isTranslucent = false
+        
+        navigationController.setNavigationBarHidden(true, animated: true)
+        
         self.navigationController = navigationController
+        self.childCoordinators = []
     }
     
     func start() {
-        let vc = SplashViewConroller.instance()
-        vc.coordinator = self
-        navigationController.pushViewController(vc, animated: true)
+        window.rootViewController = navigationController
+        
+        let token = UserDefaultsUtil.getUserToken()
+        
+        if token == nil {
+            // 로그인이 안되어 있는 경우
+            let vc = SplashViewConroller.instance()
+            vc.coordinator = self
+            navigationController.pushViewController(vc, animated: true)
+        } else {
+            self.goToMain()
+        }
+        
+        window.makeKeyAndVisible()
     }
     
     func goToSigIn() {
@@ -30,8 +56,33 @@ class MainCoordinator: NSObject, Coordinator {
     }
     
     func goToMain() {
-        let vc = HomeViewController.instance()
+        print(self.navigationController.viewControllers)
+        
+        coordinatorDidFinish()
+        print(self.navigationController.viewControllers)
+        
+        let coordinator = MainTabBarCoordinator(navigationController: navigationController)
+        childCoordinators.append(coordinator)
+        coordinator.start()
+    }
+    
+    func goToSignUp() {
+        let vc = SignUpViewController.instance()
         vc.coordinator = self
+        navigationController.removeFromParent()
+        navigationController.pushViewController(vc, animated: true)
+    }
+    
+    func goToSignUpInfo() {
+        let vc = SignUpInfoViewController.instance()
+        vc.coordinator = self
+        navigationController.pushViewController(vc, animated: true)
+    }
+    
+    func goToVerifyCode() {
+        let vc = VerifyCodeViewController.instance()
+        vc.coordinator = self
+        navigationController.removeFromParent()
         navigationController.pushViewController(vc, animated: true)
     }
     

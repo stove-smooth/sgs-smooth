@@ -6,6 +6,9 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
+import SnapKit
 
 protocol HomeViewControllerDelegate: AnyObject {
     func didTapMenuButton()
@@ -16,12 +19,12 @@ enum MenuState {
     case closed
 }
 
-class HomeViewController: BaseViewController {
+class HomeViewController: BaseViewController, CoordinatorContext {
     
-    weak var coordinator: MainCoordinator?
+    weak var coordinator: HomeCoordinator?
     var navigationViewController: UINavigationController?
     
-    private let menuViewController = MenuViewController()
+    private let menuViewController = MenuViewController.instance()
     private let containerViewController = ContainerViewController()
     lazy var serverViewController = ServerViewController()
     
@@ -31,6 +34,13 @@ class HomeViewController: BaseViewController {
         return HomeViewController(nibName: nil, bundle: nil)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        // main nav 숨기기
+        self.navigationController?.setNavigationBarHidden(true, animated: animated)
+        
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         addChildVCs()
@@ -38,22 +48,25 @@ class HomeViewController: BaseViewController {
     
     private func addChildVCs() {
         // Menu VC
-        menuViewController.delegate = self
+//        menuViewController.delegate = self
         addChild(menuViewController)
         view.addSubview(menuViewController.view)
         menuViewController.didMove(toParent: self)
         
         // Container VC
         containerViewController.delegate = self
+        
         let navVC = UINavigationController(rootViewController: containerViewController)
         addChild(navVC)
         view.addSubview(navVC.view)
         navVC.didMove(toParent: self)
+        
+        navVC.navigationBar.barTintColor = UIColor.backgroundDartGray
         self.navigationViewController = navVC
     }
 }
 
-
+// MARK: - Menu Animation
 extension HomeViewController: ContainerViewControllerDelegate {
     func didTapMenuButton() {
         toggleMenu(completion: nil)
@@ -62,8 +75,8 @@ extension HomeViewController: ContainerViewControllerDelegate {
     func toggleMenu(completion: (() -> Void)?) {
         switch menuState {
         case .opened:
+            self.tabBarController?.tabBar.isHidden = false
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseOut){
-                
                 self.navigationViewController?.view.frame.origin.x = self.containerViewController.view.frame.size
                     .width-50
             } completion: { [weak self] done in
@@ -73,8 +86,8 @@ extension HomeViewController: ContainerViewControllerDelegate {
             }
             
         case .closed:
+            self.tabBarController?.tabBar.isHidden = true
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseOut){
-                
                 self.navigationViewController?.view.frame.origin.x = 0
             } completion: { [weak self] done in
                 if done {
@@ -86,42 +99,5 @@ extension HomeViewController: ContainerViewControllerDelegate {
             }
             
         }
-    }
-}
-
-extension HomeViewController: MenuViewControllerDelegate {
-    func didSelect(menuItem: MenuViewController.MenuOptions) {
-        toggleMenu(completion: nil)
-        
-        switch menuItem {
-        case .home:
-            self.resetToHome()
-        default:
-            // MARK menuItem(룸 서버) 정보 전달
-            self.addServer()
-        }
-    }
-    
-    func addServer() {
-        let vc = serverViewController
-        
-        containerViewController.addChild(vc)
-        containerViewController.view.addSubview(vc.view)
-        
-        vc.view.frame = view.frame
-        vc.didMove(toParent: containerViewController)
-        containerViewController.title = vc.title
-    }
-    
-    func resetToHome() {
-        // child 삭제
-        serverViewController.willMove(toParent: nil)
-        serverViewController.removeFromParent()
-        serverViewController.view.removeFromSuperview()
-        
-        containerViewController.view.frame = view.frame
-        containerViewController.didMove(toParent: nil)
-        
-        containerViewController.title = "Container ViewController"
     }
 }

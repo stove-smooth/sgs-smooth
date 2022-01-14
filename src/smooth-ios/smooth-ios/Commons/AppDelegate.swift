@@ -8,15 +8,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        let navController = UINavigationController()
-        
-        coordinator = MainCoordinator(navigationController: navController)
-        coordinator?.start()
-        
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = navController
-        window?.makeKeyAndVisible()
         
+        coordinator = MainCoordinator(window: window!)
+        coordinator?.start()
         
         return true
     }

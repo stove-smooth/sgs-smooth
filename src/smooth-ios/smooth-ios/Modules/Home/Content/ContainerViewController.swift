@@ -11,14 +11,19 @@ protocol ContainerViewControllerDelegate: AnyObject {
     func didTapMenuButton()
 }
 
-class ContainerViewController: BaseViewController {
+class ContainerViewController: BaseViewController, CoordinatorContext {
     
+    weak var coordinator: HomeCoordinator?
     weak var delegate: ContainerViewControllerDelegate?
+    
+    static func instance() -> ContainerViewController {
+        return ContainerViewController(nibName: nil, bundle: nil)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .red
-        title = "Container ViewController"
+        view.backgroundColor = .messageBarDarkGray
+        self.tabBarController?.tabBar.isHidden = true
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             image: UIImage(systemName: "list.dash"),
@@ -26,6 +31,7 @@ class ContainerViewController: BaseViewController {
             target: self,
             action: #selector(didTapMenuButton)
         )
+//        self.tabBarController?.tabBar.isHidden = true
     }
     
     @objc func didTapMenuButton() {

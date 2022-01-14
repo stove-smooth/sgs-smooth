@@ -20,7 +20,14 @@ struct SignInRequest: Encodable {
     
 }
 
-struct SignInResponse: Decodable {
+struct SignInResponse: Codable {
+    let isSuccess: Bool
+    let code: Int
+    let message: String
+    let result: SignIn
+}
+
+struct SignIn: Codable {
     let id: Int
     let name: String
     let code: String
@@ -28,4 +35,8 @@ struct SignInResponse: Decodable {
     
     let accessToken: String
     let refreshToken: String
+    
+    enum CodingKeys: String, CodingKey {
+            case id, name, code, email, accessToken, refreshToken
+        }
 }
