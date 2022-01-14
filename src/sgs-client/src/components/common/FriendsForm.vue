@@ -128,21 +128,7 @@ export default {
   justify-content: flex-start;
   line-height: 1.1;
 }
-.bold-username {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  color: var(--white-color);
-  font-weight: 600;
-  -webkit-box-flex: 0;
-  display: block;
-  flex: 0 1 auto;
-}
-.user-code {
-  font-size: 14px;
-  line-height: 16px;
-  color: var(--description-primary);
-}
+
 .status-description {
   color: var(--description-primary);
   font-size: 12px;

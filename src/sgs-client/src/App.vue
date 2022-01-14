@@ -37,6 +37,15 @@ export default {
       createServer: false,
     };
   },
+  created() {
+    console.log(window.location.pathname);
+    const currentUrl = window.location.pathname;
+    if (currentUrl == "/settings") {
+      this.navbar = false;
+    } else {
+      this.navbar = true;
+    }
+  },
   watch: {
     // 라우터의 변경을 감시
     $route(to, from) {
