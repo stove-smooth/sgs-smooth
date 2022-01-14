@@ -17,7 +17,7 @@
           role="tab"
           aria-controls="online-tab"
           tabindex="0"
-          @click="MenuSelected('online')"
+          @click="setFriendsStateMenu('online')"
         >
           온라인
         </div>
@@ -26,7 +26,7 @@
           role="tab"
           aria-controls="all-tab"
           tabindex="-1"
-          @click="MenuSelected('all')"
+          @click="setFriendsStateMenu('all')"
         >
           모두
         </div>
@@ -35,25 +35,23 @@
           role="tab"
           aria-controls="pending-tab"
           tabindex="-1"
-          @click="MenuSelected('waiting')"
+          @click="setFriendsStateMenu('waiting')"
         >
           대기 중
-          <number-badge
-            :alarms="$store.state.friendsreceivedwaitingnumber"
-          ></number-badge>
+          <number-badge :alarms="friendsreceivedwaitingnumber"></number-badge>
         </div>
         <div
           class="friends-tab-decorator"
           role="tab"
           aria-controls="blocked-tab"
           tabindex="-1"
-          @click="MenuSelected('blockedlist')"
+          @click="setFriendsStateMenu('blockedlist')"
         >
           차단 목록
         </div>
         <div
           class="friends-tab-decorator add-friends-button"
-          @click="MenuSelected('addfriends')"
+          @click="setFriendsStateMenu('addfriends')"
         >
           <span>친구 추가하기</span>
         </div>
@@ -82,15 +80,17 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from "vuex";
 import NumberBadge from "./common/NumberBadge.vue";
 export default {
   components: {
     NumberBadge,
   },
+  computed: {
+    ...mapState("friends", ["friendsreceivedwaitingnumber"]),
+  },
   methods: {
-    MenuSelected(value) {
-      this.$store.state.friendsstatemenu = value;
-    },
+    ...mapMutations("friends", ["setFriendsStateMenu"]),
   },
 };
 </script>

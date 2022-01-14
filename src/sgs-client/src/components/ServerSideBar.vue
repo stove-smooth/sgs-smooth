@@ -47,7 +47,7 @@
                   <button
                     class="create-channel-button"
                     aria-label="채널 만들기"
-                    @click="createNewChannel"
+                    @click="setCreateChannel(true)"
                   >
                     <svg class="plus-channel-in-this-category"></svg>
                   </button>
@@ -134,6 +134,7 @@
 
 <script>
 import draggable from "vuedraggable";
+import { mapMutations } from "vuex";
 export default {
   components: {
     draggable,
@@ -193,6 +194,7 @@ export default {
     };
   },
   methods: {
+    ...mapMutations("server", ["setCreateChannel"]),
     add: function () {
       this.list.push({ name: "Juan" });
     },
@@ -210,9 +212,9 @@ export default {
     unhover() {
       this.hovered = "";
     },
-    createNewChannel() {
-      this.$store.state.createchannel = true;
-    },
+    /*     createNewChannel() {
+      this.createchannel = true;
+    }, */
   },
 };
 </script>

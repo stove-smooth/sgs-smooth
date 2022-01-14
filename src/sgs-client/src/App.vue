@@ -5,7 +5,7 @@
         <div class="container">
           <navigation-bar
             @create-server="openCreateServer"
-            v-if="$store.getters.isLogin && navbar"
+            v-if="isLogin && navbar"
           ></navigation-bar>
           <router-view></router-view>
         </div>
@@ -16,8 +16,8 @@
       @exit="exitCreateServer"
     ></create-server-modal>
     <create-channel-modal
-      v-if="$store.state.createchannel"
-      @exit-create-channel="exitCreateChannel"
+      v-if="createchannel"
+      @exit-create-channel="setCreateChannel(false)"
     ></create-channel-modal>
   </div>
 </template>
@@ -26,7 +26,7 @@
 import NavigationBar from "./components/NavigationBar.vue";
 import CreateServerModal from "./components/CreateServerModal.vue";
 import CreateChannelModal from "./components/CreateChannelModal.vue";
-
+import { mapGetters, mapState, mapMutations } from "vuex";
 export default {
   name: "App",
   components: { NavigationBar, CreateServerModal, CreateChannelModal },
@@ -40,7 +40,11 @@ export default {
   created() {
     console.log(window.location.pathname);
     const currentUrl = window.location.pathname;
-    if (currentUrl == "/settings") {
+    if (
+      currentUrl == "/settings" ||
+      currentUrl == "/login" ||
+      currentUrl == "/register"
+    ) {
       this.navbar = false;
     } else {
       this.navbar = true;
@@ -58,15 +62,17 @@ export default {
       }
     },
   },
+  computed: {
+    ...mapGetters("auth", ["isLogin"]),
+    ...mapState("server", ["createchannel"]),
+  },
   methods: {
+    ...mapMutations("server", ["setCreateChannel"]),
     openCreateServer() {
       this.createServer = true;
     },
     exitCreateServer() {
       this.createServer = false;
-    },
-    exitCreateChannel() {
-      this.$store.state.createchannel = false;
     },
   },
 };

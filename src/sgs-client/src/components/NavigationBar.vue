@@ -21,7 +21,7 @@
               </div>
               <div class="lower-badge">
                 <number-badge
-                  :alarms="$store.state.friendsreceivedwaitingnumber"
+                  :alarms="friendsreceivedwaitingnumber"
                 ></number-badge>
               </div>
             </div>
@@ -90,6 +90,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import NumberBadge from "./common/NumberBadge.vue";
 const storage = {
   fetch() {
@@ -137,6 +138,9 @@ export default {
       this.$router.push("/channels/@me");
       this.select(index);
     },
+  },
+  computed: {
+    ...mapState("friends", ["friendsreceivedwaitingnumber"]),
   },
   created() {
     this.fetchTodoItems();

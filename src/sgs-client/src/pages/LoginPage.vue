@@ -5,11 +5,15 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import LoginForm from "../components/LoginForm.vue";
 export default {
   components: { LoginForm },
+  computed: {
+    ...mapGetters("auth", ["isLogin"]),
+  },
   created() {
-    if (this.$store.getters.isLogin) {
+    if (this.isLogin) {
       this.$router.push("/channels/@me");
     }
   },

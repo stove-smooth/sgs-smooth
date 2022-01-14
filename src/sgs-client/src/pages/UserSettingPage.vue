@@ -69,13 +69,15 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 export default {
   methods: {
+    ...mapActions("auth", ["LOGOUT"]),
     closeSettings() {
       this.$router.go(-1);
     },
     async logoutUser() {
-      await this.$store.dispatch("LOGOUT");
+      await this.LOGOUT();
       this.$router.push("/");
     },
   },
@@ -157,7 +159,6 @@ export default {
   -webkit-box-align: center;
   align-items: center;
   background-color: #dcddde;
-  background-image: url("https://discord.com/assets/4a1000a95b1aad334e98f9d15b9d0ec4.svg");
 }
 .img-uploader-icon {
   width: 18px;

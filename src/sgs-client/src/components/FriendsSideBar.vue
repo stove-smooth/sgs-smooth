@@ -17,7 +17,7 @@
             </div>
             <div class="friends-alarm-wrapper">
               <number-badge
-                :alarms="$store.state.friendsreceivedwaitingnumber"
+                :alarms="friendsreceivedwaitingnumber"
               ></number-badge>
             </div>
           </div>
@@ -35,10 +35,14 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import NumberBadge from "./common/NumberBadge.vue";
 import DMListForm from "./DMListForm.vue";
 export default {
   components: { DMListForm, NumberBadge },
+  computed: {
+    ...mapState("friends", ["friendsreceivedwaitingnumber"]),
+  },
 };
 </script>
 <style>

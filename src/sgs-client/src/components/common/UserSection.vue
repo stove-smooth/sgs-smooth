@@ -27,9 +27,9 @@
           tabindex="0"
         >
           <div class="myname-container">
-            <div class="myname">{{ $store.state.nickname }}</div>
+            <div class="myname">{{ nickname }}</div>
           </div>
-          <div class="mycode">#{{ $store.state.code }}</div>
+          <div class="mycode">#{{ code }}</div>
         </div>
         <div class="mydevice-controller">
           <button
@@ -69,6 +69,7 @@
 
 <script>
 import { selectProfile } from "../../utils/common.js";
+import { mapState } from "vuex";
 export default {
   data() {
     return {
@@ -80,8 +81,11 @@ export default {
       this.$router.push("/settings");
     },
   },
+  computed: {
+    ...mapState("auth", ["code", "nickname"]),
+  },
   created() {
-    const classify = this.$store.state.code % 4;
+    const classify = this.code % 4;
     const result = selectProfile(classify);
     this.discordProfile = require("../../assets/" + result + ".png");
   },

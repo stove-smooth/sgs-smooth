@@ -250,6 +250,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import { registerUser, sendAuthCode, verifyAuthCode } from "../api/index.js";
 import { validateEmail, validateName } from "../utils/validation.js";
 export default {
@@ -298,6 +299,7 @@ export default {
     },
   },
   methods: {
+    ...mapActions("auth", ["LOGIN"]),
     async submitForm() {
       const userData = {
         email: this.id,
@@ -305,7 +307,7 @@ export default {
         name: this.username,
       };
       await registerUser(userData);
-      await this.$store.dispatch("LOGIN", userData);
+      await this.LOGIN(userData);
       this.$router.push("/channels/@me");
     },
     async verifyEmail() {
@@ -318,15 +320,6 @@ export default {
         this.emailsend = true;
       }
     },
-    /*     async verifyAuthCode() {
-      this.authlogmessage = "";
-      const result = await verifyAuthCode(this.authcode);
-      if (result.data.code === 1000) {
-        this.checked = true;
-      } else {
-        this.authlogmessage = result.data.message;
-      }
-    }, */
     async verifyAuthCode() {
       this.authlogmessage = "";
       try {

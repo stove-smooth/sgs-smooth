@@ -15,7 +15,7 @@
       tabindex="0"
       data-list-id="people"
     >
-      <template v-if="$store.state.friendsstatemenu === 'online'">
+      <template v-if="friendsstatemenu === 'online'">
         <friends-form :friend="list">
           <template slot="title">온라인-3명</template>
           <template slot="status"><span>온라인</span></template>
@@ -29,7 +29,7 @@
           </template>
         </friends-form>
       </template>
-      <template v-else-if="$store.state.friendsstatemenu === 'all'">
+      <template v-else-if="friendsstatemenu === 'all'">
         <friends-form :friend="list">
           <template slot="title">모든친구-3명</template>
           <template slot="status"><span>온라인</span></template>
@@ -43,12 +43,11 @@
           </template>
         </friends-form>
       </template>
-      <template v-else-if="$store.state.friendsstatemenu === 'waiting'">
+      <template v-else-if="friendsstatemenu === 'waiting'">
         <friends-form :friend="friendsreceivedwaiting">
           <template slot="title">
             대기중-{{
-              $store.state.friendsreceivedwaitingnumber +
-              friendssendwaiting.length
+              friendsreceivedwaitingnumber + friendssendwaiting.length
             }}명
           </template>
           <template slot="status"><span>받은 친구 요청</span></template>
@@ -70,7 +69,7 @@
           </template>
         </friends-form>
       </template>
-      <template v-else-if="$store.state.friendsstatemenu === 'blockedlist'">
+      <template v-else-if="friendsstatemenu === 'blockedlist'">
         <friends-form :friend="list">
           <template slot="title">차단-3명</template>
           <template slot="status"><span>차단 목록</span></template>
@@ -86,6 +85,7 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 import FriendsForm from "./common/FriendsForm.vue";
 export default {
   components: { FriendsForm },
@@ -107,15 +107,18 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch("FETCH_FRIENDSWAITING");
+    this.FETCH_FRIENDSWAITING();
   },
   computed: {
-    friendsreceivedwaiting() {
-      return this.$store.state.friendsreceivedwaiting;
-    },
-    friendssendwaiting() {
-      return this.$store.state.friendssendwaiting;
-    },
+    ...mapState("friends", [
+      "friendsreceivedwaiting",
+      "friendssendwaiting",
+      "friendsstatemenu",
+      "friendsreceivedwaitingnumber",
+    ]),
+  },
+  methods: {
+    ...mapActions("friends", ["FETCH_FRIENDSWAITING"]),
   },
 };
 </script>
