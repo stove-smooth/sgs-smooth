@@ -2,6 +2,7 @@ package com.example.authserver.service;
 
 import com.example.authserver.dto.request.ProfileRequest;
 import com.example.authserver.dto.response.AccountInfoResponse;
+import com.example.authserver.dto.response.NameAndPhotoResponse;
 import com.example.authserver.exception.CustomException;
 import com.example.authserver.exception.CustomExceptionStatus;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
@@ -169,5 +170,16 @@ public class UserService extends BaseTimeEntity {
     public void modifyProfile(User account, ProfileRequest profileRequest) {
         account.changeBio(profileRequest.getBio());
         accountRepository.save(account);
+    }
+
+    public NameAndPhotoResponse getNameAndPhoto(Long id) {
+        User user = accountRepository.findById(id)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
+
+        NameAndPhotoResponse result = NameAndPhotoResponse.builder()
+                .name(user.getName())
+                .profileImage(user.getProfileImage()).build();
+
+        return result;
     }
 }

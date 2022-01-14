@@ -42,26 +42,47 @@ public class FriendService {
     }
 
     @Transactional
-    public WaitingResponse getFriendRequest(Long id) {
+    public List<FriendResponse> getFriendRequest(Long id) {
         User account = accountRepository.findById(id).orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
         List<Friend> responseList = account.getResponseList();
         List<Friend> requestList = account.getRequestList();
 
-        List<FriendResponse> receiveFromFriend = responseList.stream().map(
-                f -> new FriendResponse(f.getId(), f.getSender().getName())
+        List<FriendResponse> result = responseList.stream()
+                .filter(f -> !f.getFriendState().equals(FriendState.BAN))
+                .map(
+                f -> convertRequestFriend(f)
         ).collect(Collectors.toList());
 
-        List<FriendResponse> sendToFriend = requestList.stream().map(
-                f -> new FriendResponse(f.getId(), f.getReceiver().getName())
-        ).collect(Collectors.toList());
+        List<FriendResponse> sendToFriend = requestList.stream()
+                .map(f -> convertResponseFriend(f)).collect(Collectors.toList());
 
-        WaitingResponse waitingResponse = WaitingResponse.builder()
-                .receiveFromFriend(receiveFromFriend)
-                .sendToFriend(sendToFriend).build();
+        result.addAll(sendToFriend);
 
-        return waitingResponse;
+        return result;
 
+    }
+
+    private FriendResponse convertRequestFriend(Friend friend) {
+        FriendResponse response = FriendResponse.builder()
+                .id(friend.getId())
+                .name(friend.getSender().getName())
+                .code(friend.getSender().getCode())
+                .profileImage(friend.getSender().getProfileImage())
+                .state(friend.getFriendState().toString().equals("WAIT") ? "REQUEST" : friend.getFriendState().toString()).build();
+
+        return response;
+    }
+
+    private FriendResponse convertResponseFriend(Friend friend) {
+        FriendResponse response = FriendResponse.builder()
+                .id(friend.getId())
+                .name(friend.getReceiver().getName())
+                .code(friend.getReceiver().getCode())
+                .profileImage(friend.getReceiver().getProfileImage())
+                .state(friend.getFriendState().toString()).build();
+
+        return response;
     }
 
     @Transactional

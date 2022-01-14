@@ -1,7 +1,9 @@
 package com.example.chatserver.configuration.message;
 
+import com.example.chatserver.client.UserClient;
 import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.domain.DirectChat;
+import com.example.chatserver.dto.response.UserInfoFeignResponse;
 import com.example.chatserver.repository.ChannelChatRepository;
 import com.example.chatserver.repository.MessageRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,16 +28,16 @@ public class MessageListener {
 
     private final SimpMessagingTemplate template;
     private final MessageRepository messageRepository;
-
+    private final UserClient userClient;
     private final ChannelChatRepository channelChatRepository;
 
     @KafkaListener(topics = topicName, groupId = groupName)
     public void listen(DirectChat directChat) throws JsonProcessingException {
-        log.info("pass");
         messageRepository.save(directChat);
-
+        UserInfoFeignResponse userInfo = userClient.getUserInfo(directChat.getUser_id());
         HashMap<String,String> msg = new HashMap<>();
-        msg.put("name","병찬");
+        msg.put("name",userInfo.getResult().getName());
+        msg.put("profileImage",userInfo.getResult().getProfileImage());
         msg.put("message",directChat.getContent());
         msg.put("time", String.valueOf(directChat.getDateTime()));
 
@@ -50,7 +52,9 @@ public class MessageListener {
 
         channelChatRepository.save(channelMessage);
         HashMap<String,String> msg = new HashMap<>();
-        msg.put("name","병찬");
+        UserInfoFeignResponse userInfo = userClient.getUserInfo(channelMessage.getAccount_id());
+        msg.put("name",userInfo.getResult().getName());
+        msg.put("profileImage",userInfo.getResult().getProfileImage());
         msg.put("message",channelMessage.getContent());
         msg.put("time", String.valueOf(channelMessage.getLocalDateTime()));
 

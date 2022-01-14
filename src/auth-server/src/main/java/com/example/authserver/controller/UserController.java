@@ -105,4 +105,10 @@ public class UserController {
         return responseService.getSuccessResponse();
     }
 
+    @GetMapping("/name")
+    public DataResponse<NameAndPhotoResponse> getNameAndPhotoById(@RequestParam(value = "id") Long id) {
+
+        return responseService.getDataResponse(accountService.getNameAndPhoto(id));
+    }
+
 }
