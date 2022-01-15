@@ -15,7 +15,7 @@
                 <div class="friends-name">친구</div>
               </div>
             </div>
-            <div class="friends-alarm-wrapper">
+            <div class="friends-alarm-wrapper" v-show="friendswaitnumber">
               <number-badge :alarms="friendswaitnumber"></number-badge>
             </div>
           </div>

@@ -5,13 +5,13 @@
         친구 추가하기
       </h2>
       <form autocomplete="off" @submit.prevent="addNewFriends">
-        <div class="large-description">
+        <div class="white-color">
           Discord Tag를 사용하여 친구를 추가할 수 있어요. 대문자, 소문자를
           구별한답니다!
         </div>
         <div
           class="add-friends-input-wrapper"
-          v-bind:class="{ 'positive-border-color': isAdded }"
+          v-bind:class="{ 'positive-border-color': username }"
         >
           <input
             class="add-friends-input-text"
@@ -29,11 +29,12 @@
           </button>
         </div>
         <div
-          v-if="isAdded"
+          v-if="username"
           class="large-description"
           v-bind:style="{ color: '#58f287' }"
         >
-          <strong>밍디#0498</strong>에게 성공적으로 친구 요청을 보냈어요.
+          <strong>{{ this.username }}</strong
+          >에게 성공적으로 친구 요청을 보냈어요.
         </div>
       </form>
     </header>

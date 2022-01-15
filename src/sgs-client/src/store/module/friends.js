@@ -33,7 +33,6 @@ const friends = {
   },
   actions: {
     async FETCH_FRIENDSLIST({ commit }) {
-      console.log("친구받아오기");
       const result = await fetchFriends();
       let friendsrequest = [];
       let friendswait = [];
@@ -54,7 +53,6 @@ const friends = {
       commit("setWaitingFriends", friendswait);
       commit("setAllFriends", friendsaccept);
       commit("setBanFriends", friendsban);
-      console.log(friendsrequest);
     },
   },
 };

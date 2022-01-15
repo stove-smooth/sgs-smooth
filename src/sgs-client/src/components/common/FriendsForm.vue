@@ -34,7 +34,7 @@
             </div>
           </div>
           <div class="action-to-friends">
-            <slot name="action"></slot>
+            <slot name="action" v-bind:id="item.id"></slot>
           </div>
         </div>
       </div>

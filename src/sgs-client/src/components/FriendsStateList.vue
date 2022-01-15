@@ -51,11 +51,16 @@
             대기중-{{ friendswaitnumber + friendsrequest.length }}명
           </template>
           <template slot="status"><span>받은 친구 요청</span></template>
-          <template slot="action">
-            <div class="action-button" aria-label="메시지 보내기" role="button">
+          <template v-slot:action="slotProps">
+            <div
+              class="action-button"
+              aria-label="수락"
+              role="button"
+              @click="accept(slotProps.id)"
+            >
               <svg class="done"></svg>
             </div>
-            <div class="action-button" aria-label="기타" role="button">
+            <div class="action-button" aria-label="거절" role="button">
               <svg class="primary-close"></svg>
             </div>
           </template>
@@ -63,7 +68,7 @@
         <friends-form :friend="friendsrequest">
           <template slot="status"><span>보낸 친구 요청</span></template>
           <template slot="action">
-            <div class="action-button" aria-label="기타" role="button">
+            <div class="action-button" aria-label="취소" role="button">
               <svg class="primary-close"></svg>
             </div>
           </template>
@@ -74,7 +79,7 @@
           <template slot="title">차단-{{ friendsban.length }}명</template>
           <template slot="status"><span>차단 목록</span></template>
           <template slot="action">
-            <div class="action-button" aria-label="메시지 보내기" role="button">
+            <div class="action-button" aria-label="차단해제" role="button">
               <svg class="blocked"></svg>
             </div>
           </template>
@@ -87,6 +92,7 @@
 <script>
 import { mapState, mapActions } from "vuex";
 import FriendsForm from "./common/FriendsForm.vue";
+import { acceptFriend } from "../api/index.js";
 export default {
   components: { FriendsForm },
   data() {
@@ -122,6 +128,14 @@ export default {
   },
   methods: {
     ...mapActions("friends", ["FETCH_FRIENDSLIST"]),
+    async accept(id) {
+      try {
+        await acceptFriend(id);
+        window.location.reload();
+      } catch (err) {
+        console.log(err);
+      }
+    },
   },
 };
 </script>

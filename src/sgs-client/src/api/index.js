@@ -51,6 +51,9 @@ async function changeUserImage(userData) {
     console.log(err);
   }
 }
+function acceptFriend(userId) {
+  return instance.patch("auth-server/auth/friend?id=" + userId);
+}
 export {
   registerUser,
   loginUser,
@@ -60,4 +63,5 @@ export {
   fetchFriends,
   fetchUserInfo,
   changeUserImage,
+  acceptFriend,
 };

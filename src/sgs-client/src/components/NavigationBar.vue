@@ -16,10 +16,16 @@
               <span class="selected-item"></span>
             </div>
             <div class="listItem-wrapper">
-              <div class="circleIcon-button">
+              <div
+                class="circleIcon-button"
+                v-bind:class="{
+                  'circleIcon-button-hovered':
+                    hovered === 'me' || selected === 'me',
+                }"
+              >
                 <svg class="discord-logo"></svg>
               </div>
-              <div class="lower-badge">
+              <div class="lower-badge" v-show="friendswaitnumber">
                 <number-badge :alarms="friendswaitnumber"></number-badge>
               </div>
             </div>
@@ -51,7 +57,8 @@
                       alt="image"
                       class="server-nav-image"
                       v-bind:class="{
-                        'selected-border-radius': hovered === index,
+                        'selected-border-radius':
+                          hovered === index || selected === index,
                       }"
                     />
                   </div>
@@ -59,7 +66,8 @@
                     <div
                       class="server"
                       v-bind:class="{
-                        'selected-border-radius': hovered === index,
+                        'selected-border-radius':
+                          hovered === index || selected === index,
                       }"
                     >
                       {{ item.name }}
@@ -266,7 +274,7 @@ export default {
   background-color: #36393f;
 }
 
-.circleIcon-button:hover {
+.circleIcon-button-hovered {
   border-radius: 30%;
   background-color: var(--discord-primary);
 }
