@@ -1,0 +1,75 @@
+package com.example.communityserver.service;
+
+import com.example.communityserver.domain.Category;
+import com.example.communityserver.domain.CategoryMember;
+import com.example.communityserver.domain.Community;
+import com.example.communityserver.domain.CommunityMember;
+import com.example.communityserver.domain.type.CommonStatus;
+import com.example.communityserver.dto.request.CreateCategoryRequest;
+import com.example.communityserver.exception.CustomException;
+import com.example.communityserver.repository.CategoryRepository;
+import com.example.communityserver.repository.CommunityRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.example.communityserver.exception.CustomExceptionStatus.NON_VALID_COMMUNITY;
+import static com.example.communityserver.exception.CustomExceptionStatus.NON_VALID_USER_ID_IN_COMMUNITY;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class CategoryService {
+
+    private final CommunityRepository communityRepository;
+    private final CategoryRepository categoryRepository;
+
+    @Transactional
+    public void createCategory(Long userId, CreateCategoryRequest request) {
+
+        Community community = communityRepository.findById(request.getCommunityId())
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
+
+        Category firstCategory = getFirstCategory(community);
+
+        List<CategoryMember> members = new ArrayList<>();
+        if (!request.isPublic()) {
+            validateMemberId(community, request.getMembers());
+            members = request.getMembers().stream()
+                    .map(CategoryMember::new)
+                    .collect(Collectors.toList());
+            members.add(new CategoryMember(userId));
+        }
+
+        Category newCategory = Category.createCategory(
+                request.getName(),
+                request.isPublic(),
+                firstCategory,
+                members
+        );
+
+        categoryRepository.save(newCategory);
+    }
+
+    private Category getFirstCategory(Community community) {
+        return community.getCategories().stream()
+                .filter(c -> c.isFirstNode())
+                .findFirst().orElse(null);
+    }
+
+    private void validateMemberId(Community community, List<Long> memberIds) {
+        List<Long> communityMemberUserIds = community.getMembers().stream()
+                .map(CommunityMember::getUserId)
+                .collect(Collectors.toList());
+
+        for (Long memberId: memberIds) {
+            if (!communityMemberUserIds.contains(memberId))
+                throw new CustomException(NON_VALID_USER_ID_IN_COMMUNITY);
+        }
+    }
+}

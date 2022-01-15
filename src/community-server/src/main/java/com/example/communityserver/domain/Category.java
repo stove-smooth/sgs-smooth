@@ -65,14 +65,14 @@ public class Category extends BaseTimeEntity {
         String name,
         boolean isPublic,
         Category nextNode,
-        CategoryMember... members
+        List<CategoryMember> categoryMembers
     ) {
         Category category = new Category();
         category.setName(name);
         category.setPublic(isPublic);
         if (!isPublic) {
-            for (CategoryMember member: members) {
-                category.addMember(member);
+            for (CategoryMember categoryMember: categoryMembers) {
+                category.addMember(categoryMember);
             }
         }
         category.setFirstNode(true);
