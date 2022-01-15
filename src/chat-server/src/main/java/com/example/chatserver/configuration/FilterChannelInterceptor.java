@@ -1,6 +1,8 @@
 package com.example.chatserver.configuration;
 
+import com.example.chatserver.client.PresenceClient;
 import com.example.chatserver.configuration.message.JwtTokenFilter;
+import com.example.chatserver.dto.request.LoginSessionRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
@@ -26,6 +28,7 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
 
     private final JwtTokenFilter jwtTokenFilter;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final PresenceClient presenceClient;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -48,18 +51,25 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
             case CONNECT:
                 String session_id = accessor.getSessionId();
                 String user_id = Objects.requireNonNull(accessor.getFirstNativeHeader("user-id"));
-                String temp = "USER" + user_id;
-                long time = 24 * 60 * 60 * 1000L;
+//                String temp = "USER" + user_id;
+//                long time = 24 * 60 * 60 * 1000L;
+                LoginSessionRequest loginSessionRequest = LoginSessionRequest.builder()
+                                .session_id(session_id).user_id(user_id).build();
+                presenceClient.uploadState(loginSessionRequest);
 
-                redisTemplate.opsForValue().set(temp,"home" ,time, TimeUnit.MILLISECONDS);
-                redisTemplate.opsForValue().set(session_id,user_id,time,TimeUnit.MILLISECONDS);
+//                redisTemplate.opsForValue().set(temp,"home" ,time, TimeUnit.MILLISECONDS);
+//                redisTemplate.opsForValue().set(session_id,user_id,time,TimeUnit.MILLISECONDS);
                 break;
             case DISCONNECT:
                 String sessionId = accessor.getSessionId();
-                String userId = redisTemplate.opsForValue().get(sessionId).toString();
+                LoginSessionRequest logoutSessionRequest = LoginSessionRequest.builder()
+                                .session_id(sessionId).build();
+                presenceClient.deleteState(logoutSessionRequest);
 
-                redisTemplate.delete(sessionId);
-                redisTemplate.delete(userId);
+//                String userId = redisTemplate.opsForValue().get(sessionId).toString();
+//
+//                redisTemplate.delete(sessionId);
+//                redisTemplate.delete(userId);
 
                 break;
             default:
