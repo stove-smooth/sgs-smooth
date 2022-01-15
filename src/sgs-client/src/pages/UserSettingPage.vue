@@ -15,6 +15,11 @@
                     <div class="banner-background"></div>
                     <div class="avatar-uploader">
                       <div class="avatar-uploader-inner">
+                        <img
+                          class="avatar-uploader-image"
+                          :src="userimage ? userimage : discordProfile"
+                          alt=" "
+                        />
                         <div class="avatar-uploader-hint" v-show="false">
                           아바타 변경
                         </div>
@@ -26,14 +31,23 @@
                           type="file"
                           ref="image"
                           accept="image/*"
+                          @change="uploadImage()"
                         />
                       </div>
+                      <button
+                        class="small-button"
+                        v-bind:style="{ marginRight: '12px' }"
+                        @click="changeProfile"
+                      >
+                        프로필 저장
+                      </button>
+                      <button class="small-button">기본 프로필 사용</button>
                     </div>
                     <div class="profile-name-header">
                       <div class="justify-content-space-between">
                         <div class="profile-header-nametag">
-                          <div class="bold-username">밍디</div>
-                          <div class="user-code">#1234</div>
+                          <div class="bold-username">{{ nickname }}</div>
+                          <div class="user-code">#{{ code }}</div>
                         </div>
                         <button class="small-button">수정</button>
                       </div>
@@ -48,7 +62,8 @@
                         <input
                           type="text"
                           class="input-default"
-                          placeholder="내소개"
+                          placeholder="useraboutme"
+                          v-model="useraboutme"
                         />
                       </div>
                     </div>
@@ -69,16 +84,50 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapState, mapActions, mapMutations } from "vuex";
+import { selectProfile } from "../utils/common.js";
+import { converToThumbnail } from "../utils/common.js";
 export default {
+  data() {
+    return {
+      discordProfile: "",
+    };
+  },
+  computed: {
+    ...mapState("auth", ["code", "nickname", "userimage", "useraboutme"]),
+  },
+  async created() {
+    await this.fetchUserInfo();
+    console.log(this.code, this.nickname, this.userimage, this.useraboutme);
+    if (!this.userimage) {
+      const classify = this.code % 4;
+      const result = selectProfile(classify);
+      this.discordProfile = require("../assets/" + result + ".png");
+    }
+  },
   methods: {
-    ...mapActions("auth", ["LOGOUT"]),
+    ...mapActions("auth", ["LOGOUT", "FETCH_USERINFO", "CHANGE_USERPROFILE"]),
+    ...mapMutations("auth", ["setUserImage"]),
     closeSettings() {
       this.$router.go(-1);
+    },
+    async fetchUserInfo() {
+      await this.FETCH_USERINFO();
     },
     async logoutUser() {
       await this.LOGOUT();
       this.$router.push("/");
+    },
+    async uploadImage() {
+      let image = this.$refs["image"].files[0];
+      const thumbnail = await converToThumbnail(image);
+      this.setUserImage(thumbnail);
+    },
+    async changeProfile() {
+      var frm = new FormData();
+      console.log(this.userimage);
+      frm.append("image", this.userimage);
+      await this.CHANGE_USERPROFILE(frm);
     },
   },
 };
@@ -96,7 +145,7 @@ export default {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background-color: cadetblue;
+  background-image: url("../assets/setting-background-img.png");
 }
 .profile-banner-preview {
   position: relative;
@@ -136,7 +185,14 @@ export default {
   background-repeat: no-repeat;
   position: relative;
   flex-shrink: 0;
-  background-image: url("https://cdn.discordapp.com/avatars/405352159685902340/562687167cc9439e0becdebd8eb89ca8.webp?size=80");
+}
+.avatar-uploader-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: 50%;
+  background-repeat: no-repeat;
 }
 .avatar-uploader-hint {
   font-size: 10px;

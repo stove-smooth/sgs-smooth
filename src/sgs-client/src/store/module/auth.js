@@ -1,4 +1,4 @@
-import { loginUser } from "../../api/index.js";
+import { loginUser, fetchUserInfo, changeUserImage } from "../../api/index.js";
 import {
   getAccessAuthToCookie,
   getRefreshAuthToCookie,
@@ -21,6 +21,8 @@ const auth = {
     code: getUserCodeToCookie() || "",
     accesstoken: getAccessAuthToCookie() || "",
     refreshtoken: getRefreshAuthToCookie() || "",
+    userimage: "",
+    useraboutme: "",
   },
   getters: {
     isLogin: (state) => {
@@ -41,7 +43,6 @@ const auth = {
       state.nickname = nickname;
     },
     setCode(state, code) {
-      console.log("setcode");
       state.code = code;
     },
     setAccessToken(state, accessToken) {
@@ -49,6 +50,12 @@ const auth = {
     },
     setRefreshToken(state, refreshToken) {
       state.refreshtoken = refreshToken;
+    },
+    setUserImage(state, userImage) {
+      state.userimage = userImage;
+    },
+    setUserAboutMe(state, userAboutMe) {
+      state.useraboutme = userAboutMe;
     },
     clearEmail(state) {
       state.email = "";
@@ -68,7 +75,6 @@ const auth = {
   },
   actions: {
     async LOGIN({ commit }, userData) {
-      console.log(userData);
       const response = await loginUser(userData);
       commit("setEmail", response.data.result.email);
       commit("setNickname", response.data.result.name);
@@ -82,7 +88,6 @@ const auth = {
       saveUserNickNameToCookie(response.data.result.name);
     },
     LOGOUT({ commit }) {
-      console.log("로그아웃");
       commit("clearEmail");
       commit("clearNickname");
       commit("clearCode");
@@ -93,6 +98,17 @@ const auth = {
       deleteCookie("useremail");
       deleteCookie("usernickname");
       deleteCookie("usercode");
+    },
+    async FETCH_USERINFO({ commit }) {
+      const response = await fetchUserInfo();
+      commit("setUserAboutMe", response.data.result.bio);
+      commit("setUserImage", response.data.result.profileImage);
+    },
+    async CHANGE_USERPROFILE({ commit }, userData) {
+      console.log("왔음", userData);
+      const response = await changeUserImage(userData);
+      console.log(response);
+      console.log(commit);
     },
   },
 };

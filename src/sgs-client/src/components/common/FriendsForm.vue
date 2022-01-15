@@ -8,7 +8,13 @@
         <div class="friends-list-item-contents">
           <div class="friends-state-info">
             <div class="profile-margin profile-wrapper">
-              <img class="avatar" :src="getImgUrl(item.code)" alt="image" />
+              <img
+                class="avatar"
+                :src="
+                  item.profileImage ? item.profileImage : getImgUrl(item.code)
+                "
+                alt="image"
+              />
               <template aria-label="status-invisible">
                 <div class="status-ring">
                   <div class="status-offline"></div>

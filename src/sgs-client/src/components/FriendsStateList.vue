@@ -16,8 +16,8 @@
       data-list-id="people"
     >
       <template v-if="friendsstatemenu === 'online'">
-        <friends-form :friend="list">
-          <template slot="title">온라인-3명</template>
+        <friends-form :friend="friendsonline">
+          <template slot="title">온라인-{{ friendsonline.length }}명</template>
           <template slot="status"><span>온라인</span></template>
           <template slot="action">
             <div class="action-button" aria-label="메시지 보내기" role="button">
@@ -30,8 +30,10 @@
         </friends-form>
       </template>
       <template v-else-if="friendsstatemenu === 'all'">
-        <friends-form :friend="list">
-          <template slot="title">모든친구-3명</template>
+        <friends-form :friend="friendsaccept">
+          <template slot="title"
+            >모든친구-{{ friendsaccept.length }}명</template
+          >
           <template slot="status"><span>온라인</span></template>
           <template slot="action">
             <div class="action-button" aria-label="메시지 보내기" role="button">
@@ -44,11 +46,9 @@
         </friends-form>
       </template>
       <template v-else-if="friendsstatemenu === 'waiting'">
-        <friends-form :friend="friendsreceivedwaiting">
+        <friends-form :friend="friendswait">
           <template slot="title">
-            대기중-{{
-              friendsreceivedwaitingnumber + friendssendwaiting.length
-            }}명
+            대기중-{{ friendswaitnumber + friendsrequest.length }}명
           </template>
           <template slot="status"><span>받은 친구 요청</span></template>
           <template slot="action">
@@ -60,7 +60,7 @@
             </div>
           </template>
         </friends-form>
-        <friends-form :friend="friendssendwaiting">
+        <friends-form :friend="friendsrequest">
           <template slot="status"><span>보낸 친구 요청</span></template>
           <template slot="action">
             <div class="action-button" aria-label="기타" role="button">
@@ -70,8 +70,8 @@
         </friends-form>
       </template>
       <template v-else-if="friendsstatemenu === 'blockedlist'">
-        <friends-form :friend="list">
-          <template slot="title">차단-3명</template>
+        <friends-form :friend="friendsban">
+          <template slot="title">차단-{{ friendsban.length }}명</template>
           <template slot="status"><span>차단 목록</span></template>
           <template slot="action">
             <div class="action-button" aria-label="메시지 보내기" role="button">
@@ -106,19 +106,22 @@ export default {
       ],
     };
   },
-  created() {
-    this.FETCH_FRIENDSWAITING();
+  async created() {
+    await this.FETCH_FRIENDSLIST();
   },
   computed: {
     ...mapState("friends", [
-      "friendsreceivedwaiting",
-      "friendssendwaiting",
       "friendsstatemenu",
-      "friendsreceivedwaitingnumber",
+      "friendsonline",
+      "friendsaccept",
+      "friendswait",
+      "friendswaitnumber",
+      "friendsrequest",
+      "friendsban",
     ]),
   },
   methods: {
-    ...mapActions("friends", ["FETCH_FRIENDSWAITING"]),
+    ...mapActions("friends", ["FETCH_FRIENDSLIST"]),
   },
 };
 </script>

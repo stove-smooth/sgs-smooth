@@ -1,4 +1,5 @@
 import axios from "axios";
+import store from "../store/index";
 import { setInterceptors } from "./common/interceptors";
 
 function createInstance() {
@@ -24,8 +25,31 @@ function verifyAuthCode(authcode) {
 function friendRequest(userData) {
   return instance.post("auth-server/auth/friend", userData);
 }
-function fetchWaitingFriends() {
+function fetchFriends() {
   return instance.get("auth-server/auth/friend");
+}
+function fetchUserInfo() {
+  return instance.get("auth-server/auth/info");
+}
+async function changeUserImage(userData) {
+  try {
+    const accesstoken = await store.getters["auth/getAccessToken"];
+    console.log(accesstoken);
+    const response = await axios.post(
+      "http://52.79.229.100:8000/auth-server/auth/profile",
+      userData,
+      {
+        headers: {
+          AUTHORIZATION: accesstoken,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    console.log(response);
+    return response;
+  } catch (err) {
+    console.log(err);
+  }
 }
 export {
   registerUser,
@@ -33,5 +57,7 @@ export {
   sendAuthCode,
   verifyAuthCode,
   friendRequest,
-  fetchWaitingFriends,
+  fetchFriends,
+  fetchUserInfo,
+  changeUserImage,
 };

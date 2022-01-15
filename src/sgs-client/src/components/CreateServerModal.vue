@@ -123,7 +123,7 @@
 
 <script>
 import CreateServerForm from "../components/common/CreateServerForm.vue";
-
+import { converToThumbnail } from "../utils/common.js";
 const storage = {
   fetch() {
     const serveritems = localStorage.getItem(3) || "[]";
@@ -143,7 +143,6 @@ export default {
   data() {
     return {
       serverName: "밍디님의 서버",
-      images: "",
       progress: "openCreate",
       serverList: [],
       thumbnail: "",
@@ -169,43 +168,15 @@ export default {
     },
     async uploadImage() {
       let image = this.$refs["image"].files[0];
-      this.images = URL.createObjectURL(image);
-      console.log(this.images);
-      var reader = new FileReader();
-      reader.readAsDataURL(image);
-      var dataURI;
-      const that = this;
-      reader.onload = function () {
-        var tempImage = new Image();
-        tempImage.src = reader.result;
-        tempImage.onload = function () {
-          var canvas = document.createElement("canvas");
-          var canvasContext = canvas.getContext("2d");
-
-          canvas.width = 100;
-          canvas.height = 100;
-
-          canvasContext.drawImage(this, 0, 0, 100, 100);
-
-          dataURI = canvas.toDataURL("image/jpeg");
-          console.log(dataURI);
-          that.thumbnail = dataURI;
-          console.log(that.thumbnail);
-        };
-      };
+      this.thumbnail = await converToThumbnail(image);
     },
     createServer() {
       const serverProfile = {
         name: this.serverName,
-        image: this.images,
         thumbnail: this.thumbnail,
       };
       this.serverList.push(serverProfile);
       storage.save(this.serverList);
-      /* localStorage.setItem(
-        value,
-        JSON.stringify({ name: this.serverName, image: this.images })
-      ); */
       window.location.reload();
     },
     exitCreate() {

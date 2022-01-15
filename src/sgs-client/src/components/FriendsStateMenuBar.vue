@@ -38,7 +38,7 @@
           @click="setFriendsStateMenu('waiting')"
         >
           대기 중
-          <number-badge :alarms="friendsreceivedwaitingnumber"></number-badge>
+          <number-badge :alarms="friendswaitnumber"></number-badge>
         </div>
         <div
           class="friends-tab-decorator"
@@ -87,7 +87,7 @@ export default {
     NumberBadge,
   },
   computed: {
-    ...mapState("friends", ["friendsreceivedwaitingnumber"]),
+    ...mapState("friends", ["friendswaitnumber"]),
   },
   methods: {
     ...mapMutations("friends", ["setFriendsStateMenu"]),

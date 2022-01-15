@@ -20,9 +20,7 @@
                 <svg class="discord-logo"></svg>
               </div>
               <div class="lower-badge">
-                <number-badge
-                  :alarms="friendsreceivedwaitingnumber"
-                ></number-badge>
+                <number-badge :alarms="friendswaitnumber"></number-badge>
               </div>
             </div>
           </div>
@@ -140,7 +138,7 @@ export default {
     },
   },
   computed: {
-    ...mapState("friends", ["friendsreceivedwaitingnumber"]),
+    ...mapState("friends", ["friendswaitnumber"]),
   },
   created() {
     this.fetchTodoItems();
