@@ -45,7 +45,6 @@ async function changeUserImage(userData) {
         },
       }
     );
-    console.log(response);
     return response;
   } catch (err) {
     console.log(err);

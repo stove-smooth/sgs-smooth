@@ -1,4 +1,4 @@
-import { loginUser, fetchUserInfo, changeUserImage } from "../../api/index.js";
+import { loginUser, fetchUserInfo } from "../../api/index.js";
 import {
   getAccessAuthToCookie,
   getRefreshAuthToCookie,
@@ -103,12 +103,6 @@ const auth = {
       const response = await fetchUserInfo();
       commit("setUserAboutMe", response.data.result.bio);
       commit("setUserImage", response.data.result.profileImage);
-    },
-    async CHANGE_USERPROFILE({ commit }, userData) {
-      console.log("왔음", userData);
-      const response = await changeUserImage(userData);
-      console.log(response);
-      console.log(commit);
     },
   },
 };

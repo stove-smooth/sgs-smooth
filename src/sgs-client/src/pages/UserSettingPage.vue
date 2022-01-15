@@ -87,6 +87,7 @@
 import { mapState, mapActions, mapMutations } from "vuex";
 import { selectProfile } from "../utils/common.js";
 import { converToThumbnail } from "../utils/common.js";
+import { changeUserImage } from "../api/index.js";
 export default {
   data() {
     return {
@@ -98,7 +99,6 @@ export default {
   },
   async created() {
     await this.fetchUserInfo();
-    console.log(this.code, this.nickname, this.userimage, this.useraboutme);
     if (!this.userimage) {
       const classify = this.code % 4;
       const result = selectProfile(classify);
@@ -106,7 +106,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions("auth", ["LOGOUT", "FETCH_USERINFO", "CHANGE_USERPROFILE"]),
+    ...mapActions("auth", ["LOGOUT", "FETCH_USERINFO"]),
     ...mapMutations("auth", ["setUserImage"]),
     closeSettings() {
       this.$router.go(-1);
@@ -123,11 +123,17 @@ export default {
       const thumbnail = await converToThumbnail(image);
       this.setUserImage(thumbnail);
     },
+    async dataUrlToFile(dataUrl) {
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+      return new File([blob], "newProfileImg", { type: "image/png" });
+    },
     async changeProfile() {
       var frm = new FormData();
-      console.log(this.userimage);
-      frm.append("image", this.userimage);
-      await this.CHANGE_USERPROFILE(frm);
+      const result = await this.dataUrlToFile(this.userimage);
+      frm.append("image", result);
+      await changeUserImage(frm);
+      window.location.reload();
     },
   },
 };
