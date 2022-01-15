@@ -6,6 +6,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @Document(collation = "channel-message")
 @Getter
@@ -26,4 +28,8 @@ public class ChannelMessage {
     private String content;
 
     private LocalDateTime localDateTime;
+
+    private List<Long> ids;
+
+    private Map<Long,Boolean> read;
 }
