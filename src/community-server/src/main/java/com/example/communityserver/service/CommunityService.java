@@ -88,25 +88,30 @@ public class CommunityService {
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
-        if (!isOwner(community, userId))
-            throw new CustomException(NON_AUTHORIZATION);
+        isOwner(community, userId);
 
         community.setName(request.getName());
     }
 
-    private boolean isAuthorizedMember(Community community, Long userId) {
-        return community.getMembers().stream()
+    private void isAuthorizedMember(Community community, Long userId) {
+        boolean isAuthorization = community.getMembers().stream()
                 .filter(communityMember -> communityMember.getStatus().equals(CommunityMemberStatus.NORMAL))
                 .map(CommunityMember::getUserId)
                 .collect(Collectors.toList())
                 .contains(userId);
+
+        if (!isAuthorization)
+            throw new CustomException(NON_AUTHORIZATION);
     }
 
-    private boolean isOwner(Community community, Long userId) {
-        return community.getMembers().stream()
+    private void isOwner(Community community, Long userId) {
+        boolean isAuthorization = community.getMembers().stream()
                 .filter(communityMember -> communityMember.getRole().equals(CommunityRole.OWNER))
                 .collect(Collectors.toList())
                 .contains(userId);
+
+        if (!isAuthorization)
+            throw new CustomException(NON_AUTHORIZATION);
     }
 
     @Transactional
@@ -116,8 +121,7 @@ public class CommunityService {
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
-        if (!isOwner(community, userId))
-            throw new CustomException(NON_AUTHORIZATION);
+        isOwner(community, userId);
 
         String iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
 
@@ -131,9 +135,7 @@ public class CommunityService {
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
-        if (!isAuthorizedMember(community, userId))
-            throw new CustomException(NON_AUTHORIZATION);
-
+        isAuthorizedMember(community, userId);
         CommunityInvitation communityInvitation = community.getInvitations().stream()
                 .filter(i -> i.isActivate())
                 .filter(invitation -> invitation.getUserId().equals(userId))
@@ -157,9 +159,7 @@ public class CommunityService {
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
-        if (!isAuthorizedMember(community, userId))
-            throw new CustomException(NON_AUTHORIZATION);
-
+        isAuthorizedMember(community, userId);
         HashMap<Long, UserResponse> userInfoMap = getUserMap(community, token);
 
         List<InvitationResponse> invitations = community.getInvitations().stream()
@@ -192,8 +192,7 @@ public class CommunityService {
                 .filter(i -> i.isActivate())
                 .orElseThrow(() -> new CustomException(NON_VALID_INVITATION));
 
-        if (!isAuthorizedMember(invitation.getCommunity(), userId))
-            throw new CustomException(NON_AUTHORIZATION);
+        isAuthorizedMember(invitation.getCommunity(), userId);
 
         invitation.setActivate(false);
     }
@@ -204,9 +203,7 @@ public class CommunityService {
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
-        if (!isAuthorizedMember(community, userId))
-            throw new CustomException(NON_AUTHORIZATION);
-
+        isAuthorizedMember(community, userId);
         HashMap<Long, UserResponse> userInfoMap = getUserMap(community, token);
 
         List<MemberResponse> members = community.getMembers().stream()
@@ -229,15 +226,15 @@ public class CommunityService {
         if (isSuspendedMember(community, userId))
             throw new CustomException(SUSPENDED_COMMUNITY);
 
-        if (!isAuthorizedMember(community, userId)) {
-            CommunityMember firstNode = getFirstNode(userId);
-            // Todo auth 터졌을 때 예외 처리
-            // Todo feign config로 처리하기 controller, servive, userclient
-            UserInfoFeignResponse userInfoFeignResponse = userClient.getUserInfo(token);
-            String nickname = userInfoFeignResponse.getResult().getName();
-            String profileImage = userInfoFeignResponse.getResult().getProfileImage();
-            createCommunityMember(userId, community, nickname, profileImage, firstNode, CommunityRole.NONE);
-        }
+        isAuthorizedMember(community, userId);
+
+        CommunityMember firstNode = getFirstNode(userId);
+        // Todo auth 터졌을 때 예외 처리
+        // Todo feign config로 처리하기 controller, servive, userclient
+        UserInfoFeignResponse userInfoFeignResponse = userClient.getUserInfo(token);
+        String nickname = userInfoFeignResponse.getResult().getName();
+        String profileImage = userInfoFeignResponse.getResult().getProfileImage();
+        createCommunityMember(userId, community, nickname, profileImage, firstNode, CommunityRole.NONE);
     }
 
     private boolean isSuspendedMember(Community community, Long userId) {
@@ -258,8 +255,7 @@ public class CommunityService {
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
-        if (!isOwner(community, userId))
-            throw new CustomException(NON_AUTHORIZATION);
+        isOwner(community, userId);
 
         return community.getMembers().stream()
                 .filter(member -> member.getUserId().equals(memberId))
@@ -277,9 +273,7 @@ public class CommunityService {
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
-        if (!isAuthorizedMember(community, userId))
-            throw new CustomException(NON_AUTHORIZATION);
-
+        isAuthorizedMember(community, userId);
         return CommunityDetailResponse.fromEntity(community);
     }
 
@@ -342,8 +336,7 @@ public class CommunityService {
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
-        if (!isOwner(community, userId))
-            throw new CustomException(NON_AUTHORIZATION);
+        isOwner(community, userId);
 
         community.setStatus(CommonStatus.DELETED);
     }
