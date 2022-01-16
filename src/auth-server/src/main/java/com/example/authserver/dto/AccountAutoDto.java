@@ -34,16 +34,10 @@ public class AccountAutoDto {
 
     private String code;
 
-    private String bio;
-
-    private String profileImage;
-
 
     public AccountAutoDto(User account) {
         this.email = account.getEmail();
         this.name = account.getName();
         this.code = account.getCode();
-        this.bio = account.getBio();
-        this.profileImage = account.getProfileImage();
     }
 }

@@ -2,7 +2,6 @@ package com.example.authserver.controller;
 
 import com.example.authserver.dto.response.CommonResponse;
 import com.example.authserver.dto.response.DataResponse;
-import com.example.authserver.dto.response.FriendResponse;
 import com.example.authserver.service.ResponseService;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
 import com.example.authserver.dto.request.FriendRequest;
@@ -15,7 +14,6 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -35,7 +33,7 @@ public class FriendController {
     }
 
     @GetMapping("/auth/friend")
-    public DataResponse<List<FriendResponse>> getFriendRequest(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public DataResponse<WaitingResponse> getFriendRequest(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return responseService.getDataResponse(friendService.getFriendRequest(customUserDetails.getAccount().getId()));
     }
 
@@ -43,12 +41,6 @@ public class FriendController {
     public CommonResponse addToFriend(@RequestParam(value="id") Long id) {
         friendService.addToFriend(id);
 
-        return responseService.getSuccessResponse();
-    }
-
-    @PatchMapping("/auth/ban-friend")
-    public CommonResponse banFriend(@RequestParam(value="id") Long id) {
-        friendService.banFriend(id);
         return responseService.getSuccessResponse();
     }
 

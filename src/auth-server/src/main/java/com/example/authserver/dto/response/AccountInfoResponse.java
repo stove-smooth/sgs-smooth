@@ -13,8 +13,6 @@ public class AccountInfoResponse {
 
     private String name;
 
-    private String code;
-
     private String image;
 
     private String state;

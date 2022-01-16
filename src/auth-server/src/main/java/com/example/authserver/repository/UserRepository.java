@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByEmailAndStatus(String email, Status valid);
     Optional<User> findByNameAndCode(String name, String code);
 
-    @Query(nativeQuery = true,value = "SELECT * FROM user as a WHERE a.user_id in (:ids)")
+    @Query(nativeQuery = true,value = "SELECT * FROM account as a WHERE a.account_id in (:ids)")
     List<User> findById(@Param("ids") List<Long> ids);
 
 

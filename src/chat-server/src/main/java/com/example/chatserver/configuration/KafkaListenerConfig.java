@@ -1,6 +1,5 @@
-package com.example.chatserver.configuration.message;
+package com.example.chatserver.configuration;
 
-import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.domain.DirectChat;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -35,18 +34,6 @@ public class KafkaListenerConfig {
     @Bean
     public ConsumerFactory<String, DirectChat> consumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(), new JsonDeserializer<>(DirectChat.class));
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, ChannelMessage> kafkaListenerContainerFactory2() {
-        ConcurrentKafkaListenerContainerFactory<String,ChannelMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory2());
-        return factory;
-    }
-
-    @Bean
-    public ConsumerFactory<String, ChannelMessage> consumerFactory2() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(), new JsonDeserializer<>(ChannelMessage.class));
     }
 
     @Bean
