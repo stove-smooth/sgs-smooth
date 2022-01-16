@@ -11,7 +11,7 @@
         </div>
       </div>
     </div>
-    <server-popout v-show="false"></server-popout>
+    <server-popout></server-popout>
     <friends-plus-action></friends-plus-action>
     <create-server-modal
       v-if="createServer"

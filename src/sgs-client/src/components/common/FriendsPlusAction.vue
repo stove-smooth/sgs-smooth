@@ -12,7 +12,7 @@
           class="plus-action-label-container"
           @click="setFriendsReadyToDelete(friendsplusmenu)"
         >
-          <div class="plus-action-label">친구 삭제하기</div>
+          <div class="plus-action-label red-color">친구 삭제하기</div>
         </div>
       </div>
     </div>
@@ -70,10 +70,16 @@ export default {
   padding: 6px 8px;
   color: #b9bbbe;
   border-color: #b9bbbe;
+  position: relative;
+  margin: 2px 0;
+  border-radius: 2px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 18px;
+  cursor: pointer;
 }
 .plus-action-label-container:hover {
   background-color: var(--discord-primary);
-  cursor: pointer;
 }
 .plus-action-label {
   -webkit-box-flex: 1;

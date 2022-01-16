@@ -1,6 +1,6 @@
 <template>
   <nav class="server-sidebar-container">
-    <div class="tutorial-container clickable">
+    <div class="tutorial-container clickable" @click="setOpenServerPopout">
       <header class="server-sidebar-header">
         <h1 class="server-name">밍디의 서버</h1>
         <div
@@ -9,7 +9,8 @@
           role="button"
         ></div>
         <div class="sidebar-header-expand-button">
-          <svg class="expand-down-arow-icon"></svg>
+          <svg v-if="openServerPopout" class="small-close"></svg>
+          <svg v-else class="expand-down-arrow-icon"></svg>
         </div>
       </header>
     </div>
@@ -134,7 +135,7 @@
 
 <script>
 import draggable from "vuedraggable";
-import { mapMutations } from "vuex";
+import { mapState, mapMutations } from "vuex";
 export default {
   components: {
     draggable,
@@ -193,8 +194,11 @@ export default {
       ],
     };
   },
+  computed: {
+    ...mapState("server", ["openServerPopout"]),
+  },
   methods: {
-    ...mapMutations("server", ["setCreateChannel"]),
+    ...mapMutations("server", ["setCreateChannel", "setOpenServerPopout"]),
     add: function () {
       this.list.push({ name: "Juan" });
     },
@@ -285,7 +289,7 @@ export default {
   z-index: 4;
 }
 
-.expand-down-arow-icon {
+.expand-down-arrow-icon {
   display: flex;
   background-image: url("../assets/down-arrow.svg");
   width: 12px;
@@ -368,6 +372,11 @@ export default {
   height: 4px;
   margin-right: 5px;
   background-image: url("../assets/small-down-arrow.svg");
+}
+.small-close {
+  width: 12px;
+  height: 12px;
+  background-image: url("../assets/small-close.svg");
 }
 .create-children-wrapper {
   display: flex;
