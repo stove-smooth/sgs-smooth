@@ -133,4 +133,14 @@ public class CategoryService {
 
         target.locate(before, first);
     }
+
+    @Transactional
+    public void deleteCategory(Long userId, Long categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_CATEGORY));
+
+        isAuthorizedMember(category, userId);
+        category.delete();
+    }
 }

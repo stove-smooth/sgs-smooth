@@ -75,6 +75,16 @@ public class CategoryController {
     /**
      * 4. 카테고리 삭제하기
      */
+    @DeleteMapping("/{categoryId}")
+    public CommonResponse deleteCategory(
+            @RequestHeader(ID) String userId,
+            @PathVariable Long categoryId
+    ) {
+        log.info("DELETE /community-server/category/{}", categoryId);
+        categoryService.deleteCategory(Long.parseLong(userId), categoryId);
+        return responseService.getSuccessResponse();
+    }
+
 
     /**
      * 5. 카테고리에 멤버 추가하기
