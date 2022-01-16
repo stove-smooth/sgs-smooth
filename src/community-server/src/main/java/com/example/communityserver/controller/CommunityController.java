@@ -38,12 +38,12 @@ public class CommunityController {
      * 특정 커뮤니티 조회
      */
     @GetMapping("/{communityId}")
-    public DataResponse<CommunityDetailResponse> getCommunity(
+    public DataResponse<CommunityDetailResponse> getCommunityInfo(
             @RequestHeader(ID) String userId,
             @PathVariable Long communityId
     ) {
         log.info("GET /community-server/community/{}", communityId);
-        CommunityDetailResponse response = communityService.getCommunity(Long.parseLong(userId), communityId);
+        CommunityDetailResponse response = communityService.getCommunityInfo(Long.parseLong(userId), communityId);
         return responseService.getDataResponse(response);
     }
 

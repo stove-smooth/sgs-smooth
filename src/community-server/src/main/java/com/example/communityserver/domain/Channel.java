@@ -109,6 +109,11 @@ public class Channel extends BaseTimeEntity {
     }
 
     public void delete() {
+        if (this.isFirstNode) {
+            if (!Objects.isNull(this.getNextNode()))
+                this.getNextNode().isFirstNode = true;
+            this.isFirstNode = false;
+        }
         for (Channel thread: this.getThread()) {
             thread.setStatus(ChannelStatus.DELETED);
         }
