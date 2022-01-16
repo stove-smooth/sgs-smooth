@@ -4,6 +4,7 @@ import com.example.communityserver.domain.*;
 import com.example.communityserver.domain.type.CommonStatus;
 import com.example.communityserver.domain.type.CommunityMemberStatus;
 import com.example.communityserver.dto.request.CreateChannelRequest;
+import com.example.communityserver.dto.request.EditDescRequest;
 import com.example.communityserver.dto.request.EditNameRequest;
 import com.example.communityserver.dto.response.ChannelResponse;
 import com.example.communityserver.exception.CustomException;
@@ -115,5 +116,17 @@ public class ChannelService {
         isAuthorizedMember(channel.getCategory().getCommunity(), userId);
 
         channel.setName(request.getName());
+    }
+
+    @Transactional
+    public void editDescription(Long userId, EditDescRequest request) {
+
+        Channel channel = channelRepository.findById(request.getId())
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
+
+        isAuthorizedMember(channel.getCategory().getCommunity(), userId);
+
+        channel.setDescription(request.getDescription());
     }
 }

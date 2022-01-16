@@ -1,6 +1,7 @@
 package com.example.communityserver.controller;
 
 import com.example.communityserver.dto.request.CreateChannelRequest;
+import com.example.communityserver.dto.request.EditDescRequest;
 import com.example.communityserver.dto.request.EditNameRequest;
 import com.example.communityserver.dto.response.ChannelResponse;
 import com.example.communityserver.dto.response.CommonResponse;
@@ -71,6 +72,15 @@ public class ChannelController {
     /**
      * 채널 소개 편집하기
      */
+    @PatchMapping("/desc")
+    public CommonResponse editDescription(
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody EditDescRequest request
+    ) {
+        log.info("PATCH /community-server/channel/desc");
+        channelService.editDescription(Long.parseLong(userId), request);
+        return responseService.getSuccessResponse();
+    }
 
     /**
      * 카테고리 배치 순서 바꾸기
