@@ -4,6 +4,7 @@ import com.example.communityserver.domain.*;
 import com.example.communityserver.domain.type.CommonStatus;
 import com.example.communityserver.domain.type.CommunityMemberStatus;
 import com.example.communityserver.dto.request.CreateChannelRequest;
+import com.example.communityserver.dto.request.EditNameRequest;
 import com.example.communityserver.dto.response.ChannelResponse;
 import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.CategoryRepository;
@@ -102,5 +103,17 @@ public class ChannelService {
 
         if (!isAuthorization)
             throw new CustomException(NON_AUTHORIZATION);
+    }
+
+    @Transactional
+    public void editName(Long userId, EditNameRequest request) {
+
+        Channel channel = channelRepository.findById(request.getId())
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
+
+        isAuthorizedMember(channel.getCategory().getCommunity(), userId);
+
+        channel.setName(request.getName());
     }
 }

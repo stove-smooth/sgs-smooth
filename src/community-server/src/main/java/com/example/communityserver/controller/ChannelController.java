@@ -1,7 +1,9 @@
 package com.example.communityserver.controller;
 
 import com.example.communityserver.dto.request.CreateChannelRequest;
+import com.example.communityserver.dto.request.EditNameRequest;
 import com.example.communityserver.dto.response.ChannelResponse;
+import com.example.communityserver.dto.response.CommonResponse;
 import com.example.communityserver.dto.response.DataResponse;
 import com.example.communityserver.service.ChannelService;
 import com.example.communityserver.service.ResponseService;
@@ -56,6 +58,15 @@ public class ChannelController {
     /**
      * 채널 이름 수정하기
      */
+    @PatchMapping("/name")
+    public CommonResponse editName(
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody EditNameRequest request
+    ) {
+        log.info("PATCH /community-server/channel/name");
+        channelService.editName(Long.parseLong(userId), request);
+        return responseService.getSuccessResponse();
+    }
 
     /**
      * 채널 소개 편집하기
