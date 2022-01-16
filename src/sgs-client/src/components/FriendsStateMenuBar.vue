@@ -17,7 +17,10 @@
           role="tab"
           aria-controls="online-tab"
           tabindex="0"
-          @click="MenuSelected('online')"
+          @click="setFriendsStateMenu('online')"
+          v-bind:class="{
+            'friends-tab-decorator-clicked': friendsstatemenu === 'online',
+          }"
         >
           온라인
         </div>
@@ -26,7 +29,10 @@
           role="tab"
           aria-controls="all-tab"
           tabindex="-1"
-          @click="MenuSelected('all')"
+          @click="setFriendsStateMenu('all')"
+          v-bind:class="{
+            'friends-tab-decorator-clicked': friendsstatemenu === 'all',
+          }"
         >
           모두
         </div>
@@ -35,11 +41,15 @@
           role="tab"
           aria-controls="pending-tab"
           tabindex="-1"
-          @click="MenuSelected('waiting')"
+          @click="setFriendsStateMenu('waiting')"
+          v-bind:class="{
+            'friends-tab-decorator-clicked': friendsstatemenu === 'waiting',
+          }"
         >
           대기 중
           <number-badge
-            :alarms="$store.state.friendsreceivedwaitingnumber"
+            v-show="friendswaitnumber"
+            :alarms="friendswaitnumber"
           ></number-badge>
         </div>
         <div
@@ -47,13 +57,16 @@
           role="tab"
           aria-controls="blocked-tab"
           tabindex="-1"
-          @click="MenuSelected('blockedlist')"
+          @click="setFriendsStateMenu('blockedlist')"
+          v-bind:class="{
+            'friends-tab-decorator-clicked': friendsstatemenu === 'blockedlist',
+          }"
         >
           차단 목록
         </div>
         <div
           class="friends-tab-decorator add-friends-button"
-          @click="MenuSelected('addfriends')"
+          @click="setFriendsStateMenu('addfriends')"
         >
           <span>친구 추가하기</span>
         </div>
@@ -82,15 +95,17 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from "vuex";
 import NumberBadge from "./common/NumberBadge.vue";
 export default {
   components: {
     NumberBadge,
   },
+  computed: {
+    ...mapState("friends", ["friendswaitnumber", "friendsstatemenu"]),
+  },
   methods: {
-    MenuSelected(value) {
-      this.$store.state.friendsstatemenu = value;
-    },
+    ...mapMutations("friends", ["setFriendsStateMenu"]),
   },
 };
 </script>
@@ -161,12 +176,12 @@ export default {
   flex-shrink: 0;
   font-weight: 500;
 }
-.friends-tab-decorator:hover {
+.friends-tab-decorator-clicked {
   background-color: rgb(47 49 54);
   cursor: default;
   color: var(--white-color);
 }
-.friends-tab-decorator:active {
+/* .friends-tab-decorator:active {
   background-color: rgb(47 49 54);
   cursor: default;
   color: var(--white-color);
@@ -175,7 +190,7 @@ export default {
   background-color: rgb(47 49 54);
   cursor: default;
   color: var(--white-color);
-}
+} */
 .add-friends-button {
   color: hsl(0, calc(var(--saturation-factor, 1) * 0%), 100%);
   background-color: hsl(139, calc(var(--saturation-factor, 1) * 47.3%), 43.9%);

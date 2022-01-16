@@ -66,8 +66,8 @@
                   <span class="need-account"> 계정이 필요한가요? </span>
                   <button class="small-register-link">
                     <router-link to="/register" class="highlight-text contents"
-                      >가입하기</router-link
-                    >
+                      >가입하기
+                    </router-link>
                   </button>
                 </div>
               </form>
@@ -80,6 +80,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import { validateEmail } from "../utils/validation.js";
 export default {
   data() {
@@ -102,13 +103,14 @@ export default {
     },
   },
   methods: {
+    ...mapActions("auth", ["LOGIN"]),
     async submitForm() {
       try {
         const userData = {
           email: this.id,
           password: this.pwd,
         };
-        await this.$store.dispatch("LOGIN", userData);
+        await this.LOGIN(userData);
         this.$router.push("/channels/@me");
       } catch (err) {
         this.logMessage = "로그인에 실패하셨습니다.";

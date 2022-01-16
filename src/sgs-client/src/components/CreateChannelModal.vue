@@ -1,11 +1,11 @@
 <template>
   <div class="modal">
-    <div class="bg" @click="closeModal"></div>
-    <div class="modalBox">
+    <div class="blurred-background" @click="closeModal"></div>
+    <div class="modal-container">
       <CreateServerForm @exit="closeModal">
         <template slot="header">
-          <h3 class="big-title">채팅 채널 만들기</h3>
-          <div class="subtitle">: 개인 공간에 속해있음</div>
+          <h3 class="modal-big-title">채팅 채널 만들기</h3>
+          <div class="modal-subtitle">: 개인 공간에 속해있음</div>
         </template>
         <template slot="content">
           <h5 class="label-id" v-bind:style="{ color: 'black' }">채널 유형</h5>
@@ -24,7 +24,7 @@
               >
                 채팅 채널
               </div>
-              <div class="subtitle">
+              <div class="modal-subtitle">
                 이미지, 스티커, 의견, 농담을 올려보세요.
               </div>
             </div>
@@ -44,7 +44,7 @@
               >
                 음성 채널
               </div>
-              <div class="subtitle">
+              <div class="modal-subtitle">
                 이미지, 스티커, 의견, 농담을 올려보세요.
               </div>
             </div>
@@ -101,34 +101,6 @@ export default {
 </script>
 
 <style scoped>
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  background: none !important;
-  z-index: 1002;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal .bg {
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-}
-
-.modalBox {
-  position: absolute;
-  background-color: var(--white-color);
-  width: 440px;
-  max-height: 720px;
-  min-height: 200px;
-  border-radius: 4px;
-}
-
 .radio_button_checked {
   display: flex;
   width: 24px;

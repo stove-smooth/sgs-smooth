@@ -5,20 +5,23 @@
         <div class="container">
           <navigation-bar
             @create-server="openCreateServer"
-            v-if="$store.getters.isLogin && navbar"
+            v-if="getEmail && navbar"
           ></navigation-bar>
           <router-view></router-view>
         </div>
       </div>
     </div>
+    <server-popout></server-popout>
+    <friends-plus-action></friends-plus-action>
     <create-server-modal
       v-if="createServer"
       @exit="exitCreateServer"
     ></create-server-modal>
     <create-channel-modal
-      v-if="$store.state.createchannel"
-      @exit-create-channel="exitCreateChannel"
+      v-if="createchannel"
+      @exit-create-channel="setCreateChannel(false)"
     ></create-channel-modal>
+    <friends-delete-modal></friends-delete-modal>
   </div>
 </template>
 
@@ -26,16 +29,39 @@
 import NavigationBar from "./components/NavigationBar.vue";
 import CreateServerModal from "./components/CreateServerModal.vue";
 import CreateChannelModal from "./components/CreateChannelModal.vue";
-
+import { mapGetters, mapState, mapMutations } from "vuex";
+import FriendsPlusAction from "./components/common/FriendsPlusAction.vue";
+import FriendsDeleteModal from "./components/FriendsDeleteModal.vue";
+import ServerPopout from "./components/ServerPopout.vue";
 export default {
   name: "App",
-  components: { NavigationBar, CreateServerModal, CreateChannelModal },
+  components: {
+    NavigationBar,
+    CreateServerModal,
+    CreateChannelModal,
+    FriendsPlusAction,
+    FriendsDeleteModal,
+    ServerPopout,
+  },
   data() {
     return {
       createChannel: true,
       navbar: true,
       createServer: false,
     };
+  },
+  created() {
+    console.log(window.location.pathname);
+    const currentUrl = window.location.pathname;
+    if (
+      currentUrl == "/settings" ||
+      currentUrl == "/login" ||
+      currentUrl == "/register"
+    ) {
+      this.navbar = false;
+    } else {
+      this.navbar = true;
+    }
   },
   watch: {
     // 라우터의 변경을 감시
@@ -49,15 +75,17 @@ export default {
       }
     },
   },
+  computed: {
+    ...mapGetters("auth", ["getEmail"]),
+    ...mapState("server", ["createchannel"]),
+  },
   methods: {
+    ...mapMutations("server", ["setCreateChannel"]),
     openCreateServer() {
       this.createServer = true;
     },
     exitCreateServer() {
       this.createServer = false;
-    },
-    exitCreateChannel() {
-      this.$store.state.createchannel = false;
     },
   },
 };
@@ -72,12 +100,9 @@ export default {
   bottom: 0;
   left: 0;
   background-color: var(--dark-grey-color);
-  /*   display: -webkit-box;
-  display: -ms-flexbox; */
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-  /*   -ms-flex-direction: column; */
   flex-direction: column;
 }
 .container {
@@ -87,7 +112,6 @@ export default {
   height: 100%;
   display: flex;
 }
-
 button {
   font-weight: 500;
   border: 0;

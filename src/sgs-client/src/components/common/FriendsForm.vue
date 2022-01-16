@@ -8,7 +8,13 @@
         <div class="friends-list-item-contents">
           <div class="friends-state-info">
             <div class="profile-margin profile-wrapper">
-              <img class="avatar" :src="getImgUrl(item.code)" alt="image" />
+              <img
+                class="avatar"
+                :src="
+                  item.profileImage ? item.profileImage : getImgUrl(item.code)
+                "
+                alt="image"
+              />
               <template aria-label="status-invisible">
                 <div class="status-ring">
                   <div class="status-offline"></div>
@@ -28,7 +34,11 @@
             </div>
           </div>
           <div class="action-to-friends">
-            <slot name="action"></slot>
+            <slot
+              name="action"
+              v-bind:id="item.id"
+              v-bind:username="item.name"
+            ></slot>
           </div>
         </div>
       </div>
@@ -128,21 +138,7 @@ export default {
   justify-content: flex-start;
   line-height: 1.1;
 }
-.bold-username {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  color: var(--white-color);
-  font-weight: 600;
-  -webkit-box-flex: 0;
-  display: block;
-  flex: 0 1 auto;
-}
-.user-code {
-  font-size: 14px;
-  line-height: 16px;
-  color: var(--description-primary);
-}
+
 .status-description {
   color: var(--description-primary);
   font-size: 12px;

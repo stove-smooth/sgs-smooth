@@ -33,13 +33,7 @@
               <section class="now-playing-server-container">
                 <div class="now-playing-server">
                   <div tabindex="-1" role="button">
-                    <div
-                      class="profile-wrapper"
-                      v-bind:style="{
-                        display: 'flex',
-                        justifyContent: 'center',
-                      }"
-                    >
+                    <div class="profile-wrapper justify-content-center">
                       <img
                         class="profile-wrapper"
                         alt="image"

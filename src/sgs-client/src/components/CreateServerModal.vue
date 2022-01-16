@@ -1,12 +1,12 @@
 <template>
-  <div class="create-server-container">
+  <div class="modal">
     <div class="blurred-background" @click="exitCreate"></div>
-    <div class="create-server-form-container">
+    <div class="modal-container">
       <template v-if="progress === 'openCreate'">
         <CreateServerForm @exit="exitCreate">
           <template slot="header">
-            <h3 class="big-title">서버 만들기</h3>
-            <div class="subtitle">
+            <h3 class="modal-big-title">서버 만들기</h3>
+            <div class="modal-subtitle">
               서버는 나와 친구들이 함께 어울리는 공간입니다. 내 서버를 만들고
               대화를 시작해보세요.
             </div>
@@ -31,8 +31,10 @@
       <template v-else-if="progress === 'openSelect'">
         <CreateServerForm @exit="exitCreate">
           <template slot="header">
-            <h3 class="big-title">이 서버에 대해 더 자세히 말해주세요.</h3>
-            <div class="subtitle">
+            <h3 class="modal-big-title">
+              이 서버에 대해 더 자세히 말해주세요.
+            </h3>
+            <div class="modal-subtitle">
               설정을 돕고자 질문을 드려요. 혹시 서버가 친구 몇 명만을 위한
               서버인가요, 아니면 더 큰 커뮤니티를 위한 서버인가요?
             </div>
@@ -61,8 +63,8 @@
       <template v-else>
         <CreateServerForm @exit="exitCreate">
           <template slot="header">
-            <h3 class="big-title">서버 커스터마이징 하기</h3>
-            <div class="subtitle">
+            <h3 class="modal-big-title">서버 커스터마이징 하기</h3>
+            <div class="modal-subtitle">
               새로운 서버에 이름과 아이콘을 부여해 개성을 드러내보세요. 나중에
               언제든 바꿀 수 있어요.
             </div>
@@ -123,7 +125,7 @@
 
 <script>
 import CreateServerForm from "../components/common/CreateServerForm.vue";
-
+import { converToThumbnail } from "../utils/common.js";
 const storage = {
   fetch() {
     const serveritems = localStorage.getItem(3) || "[]";
@@ -143,7 +145,6 @@ export default {
   data() {
     return {
       serverName: "밍디님의 서버",
-      images: "",
       progress: "openCreate",
       serverList: [],
       thumbnail: "",
@@ -169,43 +170,15 @@ export default {
     },
     async uploadImage() {
       let image = this.$refs["image"].files[0];
-      this.images = URL.createObjectURL(image);
-      console.log(this.images);
-      var reader = new FileReader();
-      reader.readAsDataURL(image);
-      var dataURI;
-      const that = this;
-      reader.onload = function () {
-        var tempImage = new Image();
-        tempImage.src = reader.result;
-        tempImage.onload = function () {
-          var canvas = document.createElement("canvas");
-          var canvasContext = canvas.getContext("2d");
-
-          canvas.width = 100;
-          canvas.height = 100;
-
-          canvasContext.drawImage(this, 0, 0, 100, 100);
-
-          dataURI = canvas.toDataURL("image/jpeg");
-          console.log(dataURI);
-          that.thumbnail = dataURI;
-          console.log(that.thumbnail);
-        };
-      };
+      this.thumbnail = await converToThumbnail(image);
     },
     createServer() {
       const serverProfile = {
         name: this.serverName,
-        image: this.images,
         thumbnail: this.thumbnail,
       };
       this.serverList.push(serverProfile);
       storage.save(this.serverList);
-      /* localStorage.setItem(
-        value,
-        JSON.stringify({ name: this.serverName, image: this.images })
-      ); */
       window.location.reload();
     },
     exitCreate() {
@@ -222,48 +195,6 @@ export default {
 </script>
 
 <style>
-.create-server-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  background: none !important;
-  z-index: 1002;
-  justify-content: center;
-  align-items: center;
-}
-
-.blurred-background {
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-}
-
-.create-server-form-container {
-  position: absolute;
-  background-color: var(--white-color);
-  width: 440px;
-  max-height: 720px;
-  min-height: 200px;
-  border-radius: 4px;
-}
-
-.big-title {
-  color: #060607;
-  font-size: 24px;
-  line-height: 30px;
-  text-align: center;
-}
-.subtitle {
-  margin-top: 8px;
-  text-align: center;
-  font-size: 16px;
-  line-height: 20px;
-  color: #4f5660;
-}
-
 .create-server-button {
   border-radius: 8px;
   border: 1px solid rgba(6, 6, 7, 0.08);

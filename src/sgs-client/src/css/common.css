@@ -154,6 +154,14 @@
   display: flex;
   flex-direction: row;
 }
+.justify-content-center {
+  display: flex;
+  justify-content: center;
+}
+.justify-content-space-between {
+  display: flex;
+  justify-content: space-between;
+}
 .primary-text-content {
   white-space: nowrap;
   overflow: hidden;
@@ -206,6 +214,66 @@
   font-weight: 500;
   line-height: 16px;
   padding: 2px 16px;
+}
+.bold-username {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  color: var(--white-color);
+  font-weight: 600;
+  -webkit-box-flex: 0;
+  display: block;
+  flex: 0 1 auto;
+}
+.user-code {
+  font-size: 14px;
+  line-height: 16px;
+  color: var(--description-primary);
+}
+.white-color {
+  color: var(--white-color);
+}
+
+/**modal*/
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  background: none !important;
+  z-index: 1002;
+  justify-content: center;
+  align-items: center;
+}
+
+.blurred-background {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-container {
+  position: absolute;
+  background-color: var(--white-color);
+  width: 440px;
+  max-height: 720px;
+  min-height: 200px;
+  border-radius: 4px;
+}
+.modal-big-title {
+  color: #060607;
+  font-size: 24px;
+  line-height: 30px;
+  text-align: center;
+}
+.modal-subtitle {
+  margin-top: 8px;
+  text-align: center;
+  font-size: 16px;
+  line-height: 20px;
+  color: #4f5660;
 }
 :root {
   --white-color: #fff;

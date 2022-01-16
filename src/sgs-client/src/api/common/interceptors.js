@@ -2,16 +2,19 @@ import store from "../../store/index";
 import axios from "axios";
 
 async function logoutUser() {
-  await this.$store.dispatch("LOGOUT");
-  this.$router.push("/");
+  await store.dispatch("auth/LOGOUT");
+  window.location = "http://localhost:3000/";
 }
 
 export function setInterceptors(instance) {
   // Add a request interceptor
   instance.interceptors.request.use(
     function (config) {
+      const accesstoken = store.getters["auth/getAccessToken"];
       // Do something before request is sent
-      config.headers.Authorization = store.state.accesstoken;
+      if (accesstoken) {
+        config.headers.Authorization = accesstoken;
+      }
       return config;
     },
     function (error) {
@@ -35,11 +38,13 @@ export function setInterceptors(instance) {
         window.location.pathname !== "/login" &&
         window.location.pathname != "/register"
       ) {
+        const accesstoken = store.getters["auth/getAccessToken"];
+        const refreshtoken = store.getters["auth/getRefreshToken"];
         axios
           .post("http://52.79.229.100:8000/auth-server/refresh", {
             headers: {
-              AUTHORIZATION: this.$store.state.accesstoken,
-              "REFRESH-TOKEN": this.$store.state.refreshtoken,
+              AUTHORIZATION: accesstoken,
+              "REFRESH-TOKEN": refreshtoken,
             },
           })
           .then(function (response) {
@@ -47,7 +52,6 @@ export function setInterceptors(instance) {
           })
           .catch((error) => {
             console.log("error : ", error.response);
-            alert("로그아웃이 만료되었습니다.");
             logoutUser();
           });
       }
