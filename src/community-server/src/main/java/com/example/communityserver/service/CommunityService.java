@@ -309,23 +309,23 @@ public class CommunityService {
                 .filter(cm -> cm.getCommunity().getId().equals(request.getCommunityId()))
                 .findAny().orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
-        CommunityMember before;
-        if (request.getNextNode().equals(0L))
-            before = null;
-        else {
+        CommunityMember first = getFirstNode(userId);
+
+        CommunityMember before = null;
+        if (request.getNextNode().equals(0L)) {
+            if (target.equals(first))
+                throw new CustomException(ALREADY_LOCATED);
+        } else {
             before = communities.stream()
                     .filter(cm -> cm.getCommunity().getId().equals(request.getNextNode()))
-                    .findAny().orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
-
-            System.out.println(before.getNextNode());
+                    .filter(cm -> cm.getStatus().equals(CommunityMemberStatus.NORMAL))
+                    .findAny().orElseThrow(() -> new CustomException(NON_VALID_NEXT_NODE));
 
             if (!Objects.isNull(before.getNextNode())) {
                 if (before.getNextNode().equals(target))
-                    throw new CustomException(ALREADY_LOCATED_COMMUNITY);
+                    throw new CustomException(ALREADY_LOCATED);
             }
         }
-
-        CommunityMember first = getFirstNode(userId);
 
         target.locate(before, first);
     }
