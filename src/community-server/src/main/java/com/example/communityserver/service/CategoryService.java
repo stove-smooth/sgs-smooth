@@ -44,9 +44,11 @@ public class CategoryService {
         List<CategoryMember> members = new ArrayList<>();
         if (!request.isPublic()) {
             validateMemberId(community, request.getMembers());
-            members = request.getMembers().stream()
-                    .map(CategoryMember::new)
-                    .collect(Collectors.toList());
+            if (!Objects.isNull(request.getMembers())) {
+                members = request.getMembers().stream()
+                        .map(CategoryMember::new)
+                        .collect(Collectors.toList());
+            }
             members.add(new CategoryMember(userId));
         }
 
@@ -67,14 +69,16 @@ public class CategoryService {
     }
 
     private void validateMemberId(Community community, List<Long> memberIds) {
-        List<Long> communityMemberUserIds = community.getMembers().stream()
-                .filter(communityMember -> communityMember.getStatus().equals(CommunityMemberStatus.NORMAL))
-                .map(CommunityMember::getUserId)
-                .collect(Collectors.toList());
+        if (!Objects.isNull(memberIds)) {
+            List<Long> communityMemberUserIds = community.getMembers().stream()
+                    .filter(communityMember -> communityMember.getStatus().equals(CommunityMemberStatus.NORMAL))
+                    .map(CommunityMember::getUserId)
+                    .collect(Collectors.toList());
 
-        for (Long memberId: memberIds) {
-            if (!communityMemberUserIds.contains(memberId))
-                throw new CustomException(NON_VALID_USER_ID_IN_COMMUNITY);
+            for (Long memberId: memberIds) {
+                if (!communityMemberUserIds.contains(memberId))
+                    throw new CustomException(NON_VALID_USER_ID_IN_COMMUNITY);
+            }
         }
     }
 

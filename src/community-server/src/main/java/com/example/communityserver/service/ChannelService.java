@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.example.communityserver.exception.CustomExceptionStatus.*;
@@ -36,7 +37,7 @@ public class ChannelService {
                 .orElseThrow(() -> new CustomException(NON_VALID_CATEGORY));
 
         Community community = category.getCommunity();
-        if (community.getStatus().equals(CommonStatus.NORMAL))
+        if (!community.getStatus().equals(CommonStatus.NORMAL))
             throw new CustomException(NON_VALID_COMMUNITY);
 
         isAuthorizedMember(community, userId);
@@ -47,11 +48,14 @@ public class ChannelService {
         Channel firstChannel = getFirstChannel(category);
 
         List<ChannelMember> members = new ArrayList<>();
+
         if (!request.isPublic()) {
             validateMemberId(category, request.getMembers());
-            members = request.getMembers().stream()
-                    .map(ChannelMember::new)
-                    .collect(Collectors.toList());
+            if (!Objects.isNull(request.getMembers())) {
+                members = request.getMembers().stream()
+                        .map(ChannelMember::new)
+                        .collect(Collectors.toList());
+            }
             members.add(new ChannelMember(userId));
         }
 
@@ -76,14 +80,16 @@ public class ChannelService {
     }
 
     private void validateMemberId(Category category, List<Long> members) {
-        List<Long> categoryMemberUserIds = category.getMembers().stream()
-                .filter(categoryMember -> categoryMember.isStatus())
-                .map(CategoryMember::getUserId)
-                .collect(Collectors.toList());
+        if (!Objects.isNull(members)) {
+            List<Long> categoryMemberUserIds = category.getMembers().stream()
+                    .filter(categoryMember -> categoryMember.isStatus())
+                    .map(CategoryMember::getUserId)
+                    .collect(Collectors.toList());
 
-        for (Long memberId: members) {
-            if (!categoryMemberUserIds.contains(memberId))
-                throw new CustomException(NON_VALID_USER_ID_IN_COMMUNITY);
+            for (Long memberId: members) {
+                if (!categoryMemberUserIds.contains(memberId))
+                    throw new CustomException(NON_VALID_USER_ID_IN_COMMUNITY);
+            }
         }
     }
 
