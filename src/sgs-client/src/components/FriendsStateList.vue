@@ -67,15 +67,25 @@
             >
               <svg class="done"></svg>
             </div>
-            <div class="action-button" aria-label="거절" role="button">
+            <div
+              class="action-button"
+              aria-label="거절"
+              role="button"
+              @click="rejectFriend(slotProps.id)"
+            >
               <svg class="primary-close"></svg>
             </div>
           </template>
         </friends-form>
         <friends-form :friend="friendsrequest">
           <template slot="status"><span>보낸 친구 요청</span></template>
-          <template slot="action">
-            <div class="action-button" aria-label="취소" role="button">
+          <template v-slot:action="slotProps">
+            <div
+              class="action-button"
+              aria-label="취소"
+              role="button"
+              @click="rejectFriend(slotProps.id)"
+            >
               <svg class="primary-close"></svg>
             </div>
           </template>
@@ -99,7 +109,7 @@
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
 import FriendsForm from "./common/FriendsForm.vue";
-import { acceptFriend } from "../api/index.js";
+import { acceptFriend, deleteFriend } from "../api/index.js";
 export default {
   components: { FriendsForm },
   data() {
@@ -152,6 +162,10 @@ export default {
       if (!e.target.parentNode.dataset.key) {
         this.setFriendsPlusMenu(null);
       }
+    },
+    async rejectFriend(id) {
+      await deleteFriend(id);
+      window.location.reload();
     },
   },
 };

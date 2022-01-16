@@ -11,6 +11,7 @@
         </div>
       </div>
     </div>
+    <server-popout v-show="false"></server-popout>
     <friends-plus-action></friends-plus-action>
     <create-server-modal
       v-if="createServer"
@@ -31,6 +32,7 @@ import CreateChannelModal from "./components/CreateChannelModal.vue";
 import { mapGetters, mapState, mapMutations } from "vuex";
 import FriendsPlusAction from "./components/common/FriendsPlusAction.vue";
 import FriendsDeleteModal from "./components/FriendsDeleteModal.vue";
+import ServerPopout from "./components/ServerPopout.vue";
 export default {
   name: "App",
   components: {
@@ -39,6 +41,7 @@ export default {
     CreateChannelModal,
     FriendsPlusAction,
     FriendsDeleteModal,
+    ServerPopout,
   },
   data() {
     return {

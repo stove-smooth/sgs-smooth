@@ -101,7 +101,6 @@ const auth = {
     },
     async FETCH_USERINFO({ commit }) {
       const response = await fetchUserInfo();
-      console.log("스토어 이미지", response.data.result.profileImage);
       commit("setUserAboutMe", response.data.result.bio);
       commit("setUserImage", response.data.result.profileImage);
     },

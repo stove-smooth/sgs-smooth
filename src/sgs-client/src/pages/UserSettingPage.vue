@@ -88,7 +88,7 @@
 import { mapState, mapActions, mapMutations } from "vuex";
 import { selectProfile } from "../utils/common.js";
 import { converToThumbnail } from "../utils/common.js";
-import { changeUserImage } from "../api/index.js";
+import { changeUserImage, deleteProfileImage } from "../api/index.js";
 export default {
   data() {
     return {
@@ -141,7 +141,7 @@ export default {
     },
     async changeProfile() {
       if (!this.userimage) {
-        await changeUserImage();
+        await deleteProfileImage();
       } else {
         var frm = new FormData();
         const result = await this.dataUrlToFile(this.userimage);
