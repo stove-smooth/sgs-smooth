@@ -18,6 +18,8 @@ public class KafkaTopicConfig {
 
     private final String topicName = "chat-server-topic";
 
+    private final String topicName2 = "channel-server-topic";
+
     @Bean
     public KafkaAdmin kafkaAdmin() {
         Map<String,Object> configs = new HashMap<>();
@@ -27,6 +29,11 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic newTopic() {
-        return new NewTopic(topicName,3, (short) 3);
+        return new NewTopic(topicName,1, (short) 1);
+    }
+
+    @Bean
+    public NewTopic newTopic2() {
+        return new NewTopic(topicName2,1, (short) 1);
     }
 }
