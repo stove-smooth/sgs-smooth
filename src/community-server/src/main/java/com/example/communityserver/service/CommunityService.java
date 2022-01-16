@@ -227,6 +227,7 @@ public class CommunityService {
             throw new CustomException(SUSPENDED_COMMUNITY);
 
         isAuthorizedMember(community, userId);
+        isContains(community, userId);
 
         CommunityMember firstNode = getFirstNode(userId);
         // Todo auth 터졌을 때 예외 처리
@@ -235,6 +236,15 @@ public class CommunityService {
         String nickname = userInfoFeignResponse.getResult().getName();
         String profileImage = userInfoFeignResponse.getResult().getProfileImage();
         createCommunityMember(userId, community, nickname, profileImage, firstNode, CommunityRole.NONE);
+    }
+
+    private void isContains(Community community, Long userId) {
+        boolean isContains = community.getMembers().stream()
+                .map(CommunityMember::getUserId)
+                .collect(Collectors.toList())
+                .contains(userId);
+        if (isContains)
+            throw new CustomException(ALREADY_INVITED);
     }
 
     private boolean isSuspendedMember(Community community, Long userId) {
