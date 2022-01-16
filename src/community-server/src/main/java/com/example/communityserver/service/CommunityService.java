@@ -194,7 +194,7 @@ public class CommunityService {
                 .filter(i -> i.isActivate())
                 .orElseThrow(() -> new CustomException(NON_VALID_INVITATION));
 
-        isAuthorizedMember(invitation.getCommunity(), userId);
+        isOwner(invitation.getCommunity(), userId);
 
         invitation.setActivate(false);
     }

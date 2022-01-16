@@ -4,6 +4,7 @@ import com.example.communityserver.domain.*;
 import com.example.communityserver.domain.type.ChannelStatus;
 import com.example.communityserver.domain.type.CommonStatus;
 import com.example.communityserver.domain.type.CommunityMemberStatus;
+import com.example.communityserver.domain.type.CommunityRole;
 import com.example.communityserver.dto.request.CreateChannelRequest;
 import com.example.communityserver.dto.request.EditDescRequest;
 import com.example.communityserver.dto.request.EditNameRequest;
@@ -138,8 +139,18 @@ public class ChannelService {
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
 
-        isAuthorizedMember(channel.getCategory().getCommunity(), userId);
+        isOwner(channel.getCategory().getCommunity(), userId);
 
         channel.delete();
+    }
+
+    private void isOwner(Community community, Long userId) {
+        Long ownerUserId = community.getMembers().stream()
+                .filter(cm -> cm.getRole().equals(CommunityRole.OWNER))
+                .findFirst().orElseThrow(() -> new CustomException(NON_EXIST_OWNER))
+                .getUserId();
+
+        if (!ownerUserId.equals(userId))
+            throw new CustomException(NON_AUTHORIZATION);
     }
 }

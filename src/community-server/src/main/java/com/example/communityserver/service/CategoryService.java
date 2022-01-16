@@ -6,6 +6,7 @@ import com.example.communityserver.domain.Community;
 import com.example.communityserver.domain.CommunityMember;
 import com.example.communityserver.domain.type.CommonStatus;
 import com.example.communityserver.domain.type.CommunityMemberStatus;
+import com.example.communityserver.domain.type.CommunityRole;
 import com.example.communityserver.dto.request.*;
 import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.CategoryRepository;
@@ -195,7 +196,7 @@ public class CategoryService {
         if (category.isPublic())
             throw new CustomException(ALREADY_PUBLIC_STATE);
 
-        isAuthorizedMember(category, userId);
+        isOwner(category, userId);
 
         CategoryMember deleteMember = category.getMembers().stream()
                 .filter(member -> member.getUserId().equals(memberId))
@@ -203,5 +204,15 @@ public class CategoryService {
                 .findAny().orElseThrow(() -> new CustomException(EMPTY_MEMBER));
 
         deleteMember.setStatus(false);
+    }
+
+    private void isOwner(Category category, Long userId) {
+        Long ownerUserId = category.getCommunity().getMembers().stream()
+                .filter(cm -> cm.getRole().equals(CommunityRole.OWNER))
+                .findFirst().orElseThrow(() -> new CustomException(NON_EXIST_OWNER))
+                .getUserId();
+
+        if (!ownerUserId.equals(userId))
+            throw new CustomException(NON_AUTHORIZATION);
     }
 }
