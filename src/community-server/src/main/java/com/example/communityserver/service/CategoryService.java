@@ -61,7 +61,7 @@ public class CategoryService {
 
     private Category getFirstCategory(Community community) {
         return community.getCategories().stream()
-                .filter(c -> c.isFirstNode())
+                .filter(c -> c.isFirstNode() && c.getStatus().equals(CommonStatus.NORMAL))
                 .findFirst().orElse(null);
     }
 

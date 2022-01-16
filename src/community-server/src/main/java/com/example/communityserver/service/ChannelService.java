@@ -1,6 +1,7 @@
 package com.example.communityserver.service;
 
 import com.example.communityserver.domain.*;
+import com.example.communityserver.domain.type.ChannelStatus;
 import com.example.communityserver.domain.type.CommonStatus;
 import com.example.communityserver.domain.type.CommunityMemberStatus;
 import com.example.communityserver.dto.request.CreateChannelRequest;
@@ -77,7 +78,7 @@ public class ChannelService {
 
     private Channel getFirstChannel(Category category) {
         return category.getChannels().stream()
-                .filter(c -> c.isFirstNode())
+                .filter(c -> c.isFirstNode() && c.getStatus().equals(ChannelStatus.NORMAL))
                 .findFirst().orElse(null);
     }
 
@@ -128,5 +129,17 @@ public class ChannelService {
         isAuthorizedMember(channel.getCategory().getCommunity(), userId);
 
         channel.setDescription(request.getDescription());
+    }
+
+    @Transactional
+    public void deleteChannel(Long userId, Long channelId) {
+
+        Channel channel = channelRepository.findById(channelId)
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
+
+        isAuthorizedMember(channel.getCategory().getCommunity(), userId);
+
+        channel.delete();
     }
 }

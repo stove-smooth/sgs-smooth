@@ -341,7 +341,7 @@ public class CommunityService {
 
     public CommunityMember getFirstNode(Long userId) {
         return communityMemberRepository.findByUserId(userId).stream()
-                .filter(member -> member.isFirstNode())
+                .filter(member -> member.isFirstNode() && member.getStatus().equals(CommunityMemberStatus.NORMAL))
                 .findAny().orElse(null);
     }
 

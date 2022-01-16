@@ -89,6 +89,15 @@ public class ChannelController {
     /**
      * 채널 삭제하기
      */
+    @DeleteMapping("/{channelId}")
+    public CommonResponse deleteChannel(
+            @RequestHeader(ID) String userId,
+            @PathVariable Long channelId
+    ) {
+        log.info("DELETE /community-server/channel/{}", channelId);
+        channelService.deleteChannel(Long.parseLong(userId), channelId);
+        return responseService.getSuccessResponse();
+    }
 
     /**
      * 채널에 초대하기
