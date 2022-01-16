@@ -3,6 +3,7 @@ package com.example.communityserver.controller;
 import com.example.communityserver.dto.request.CreateChannelRequest;
 import com.example.communityserver.dto.request.EditDescRequest;
 import com.example.communityserver.dto.request.EditNameRequest;
+import com.example.communityserver.dto.request.InviteMemberRequest;
 import com.example.communityserver.dto.response.ChannelResponse;
 import com.example.communityserver.dto.response.CommonResponse;
 import com.example.communityserver.dto.response.DataResponse;
@@ -100,8 +101,18 @@ public class ChannelController {
     }
 
     /**
-     * 채널에 초대하기
+     * 채널에 멤버 추가하기
      */
+    @PostMapping("/member")
+    public CommonResponse inviteMember(
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody InviteMemberRequest request
+    ) {
+        log.info("POST /community-server/channel/member");
+        channelService.inviteMember(Long.parseLong(userId), request);
+        return responseService.getSuccessResponse();
+    }
+
 
     /**
      * 채널에서 추방하기

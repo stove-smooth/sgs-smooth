@@ -8,6 +8,7 @@ import com.example.communityserver.domain.type.CommunityRole;
 import com.example.communityserver.dto.request.CreateChannelRequest;
 import com.example.communityserver.dto.request.EditDescRequest;
 import com.example.communityserver.dto.request.EditNameRequest;
+import com.example.communityserver.dto.request.InviteMemberRequest;
 import com.example.communityserver.dto.response.ChannelResponse;
 import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.CategoryRepository;
@@ -153,4 +154,48 @@ public class ChannelService {
         if (!ownerUserId.equals(userId))
             throw new CustomException(NON_AUTHORIZATION);
     }
+
+    public void inviteMember(Long userId, InviteMemberRequest request) {
+
+        Channel channel = channelRepository.findById(request.getId())
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
+
+        Community community = channel.getCategory().getCommunity();
+
+        isAuthorizedMember(community, userId);
+
+        if (channel.isPublic())
+            throw new CustomException(ALREADY_PUBLIC_STATE);
+
+        for (Long memberId: request.getMembers()) {
+            isMemberInCommunity(community, memberId);
+            isContains(channel, memberId);
+            channel.addMember(new ChannelMember(memberId));
+        }
+    }
+
+    private void isContains(Channel channel, Long memberId) {
+        boolean isContains = channel.getMembers().stream()
+                .filter(member -> member.isStatus())
+                .map(ChannelMember::getUserId)
+                .collect(Collectors.toList())
+                .contains(memberId);
+        if (isContains)
+            throw new CustomException(ALREADY_INVITED);
+    }
+
+    private void isMemberInCommunity(Community community, Long memberId) {
+        boolean isMember = community.getMembers().stream()
+                .filter(member -> member.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .map(CommunityMember::getUserId)
+                .collect(Collectors.toList())
+                .contains(memberId);
+        if (!isMember)
+            throw new CustomException(NON_VALID_USER_ID_IN_COMMUNITY);
+    }
+
+
+
+
 }

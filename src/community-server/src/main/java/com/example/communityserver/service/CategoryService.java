@@ -151,8 +151,8 @@ public class CategoryService {
     }
 
     @Transactional
-    public void inviteMember(Long userId, InviteCategoryRequest request) {
-        Category category = categoryRepository.findById(request.getCategoryId())
+    public void inviteMember(Long userId, InviteMemberRequest request) {
+        Category category = categoryRepository.findById(request.getId())
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CATEGORY));
 
@@ -161,10 +161,11 @@ public class CategoryService {
         if (category.isPublic())
             throw new CustomException(ALREADY_PUBLIC_STATE);
 
-        isMemberInCommunity(category.getCommunity(), request.getMemberId());
-        isContains(category, request.getMemberId());
-
-        category.addMember(new CategoryMember(request.getMemberId()));
+        for (Long memberId: request.getMembers()) {
+            isMemberInCommunity(category.getCommunity(), memberId);
+            isContains(category, memberId);
+            category.addMember(new CategoryMember(memberId));
+        }
     }
 
     private void isMemberInCommunity(Community community, Long memberId) {

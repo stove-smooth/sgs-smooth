@@ -84,7 +84,7 @@ public class CategoryController {
     @PostMapping("/member")
     public CommonResponse inviteMember(
             @RequestHeader(ID) String userId,
-            @Valid @RequestBody InviteCategoryRequest request
+            @Valid @RequestBody InviteMemberRequest request
     ) {
         log.info("POST /community-server/category/member");
         categoryService.inviteMember(Long.parseLong(userId), request);
