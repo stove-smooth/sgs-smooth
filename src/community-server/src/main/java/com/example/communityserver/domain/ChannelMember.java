@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Table(name = "channel_member")
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class ChannelMember extends BaseTimeEntity{
 
     @Id
@@ -26,4 +26,9 @@ public class ChannelMember extends BaseTimeEntity{
     private Long userId;
 
     private boolean status;
+
+    public ChannelMember(Long userId) {
+        this.userId = userId;
+        this.status = true;
+    }
 }

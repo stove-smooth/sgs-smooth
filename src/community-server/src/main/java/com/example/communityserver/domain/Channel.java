@@ -90,7 +90,7 @@ public class Channel extends BaseTimeEntity {
             String name,
             boolean isPublic,
             Channel nextNode,
-            ChannelMember... members
+            List<ChannelMember> channelMembers
     ) {
         Channel channel = new Channel();
         channel.setCategory(category);
@@ -98,7 +98,7 @@ public class Channel extends BaseTimeEntity {
         channel.setName(name);
         channel.setPublic(isPublic);
         if (!isPublic) {
-            for (ChannelMember member: members) {
+            for (ChannelMember member: channelMembers) {
                 channel.addMember(member);
             }
         }
