@@ -16,13 +16,17 @@ public enum CustomExceptionStatus {
     FILE_CONVERT_ERROR(false, 4000, "파일 변환 중 에러가 발생했습니다."),
     FILE_EXTENSION_ERROR(false, 4001, "파일의 확장자가 유효하지 않습니다."),
     NON_VALID_COMMUNITY(false, 4002, "유효하지 않는 커뮤니티입니다."),
-    NON_VALID_CATEGORY(false, 4003, "유효하지 않은 채널입니다."),
+    NON_VALID_CATEGORY(false, 4003, "유효하지 않은 카테고리입니다."),
     NON_VALID_CHANNEL(false, 4004, "커뮤니티에 속한 채널이 아닙니다."),
     NON_VALID_INVITATION(false, 4005, "유효하지 않은 초대장입니다."),
     SUSPENDED_COMMUNITY(false, 4006, "차단된 커뮤니티입니다."),
     EMPTY_MEMBER(false, 4007, "존재하지 않는 회원입니다."),
     NON_VALID_COMMUNITY_SEQUENCE(false, 4008, "커뮤니티 순서가 올바르지 않습니다."),
-    ALREADY_LOCATED_COMMUNITY(false, 4009, "이미 해당 위치에 존재하고 있습니다.");
+    ALREADY_LOCATED(false, 4009, "이미 해당 위치에 존재하고 있습니다."),
+    NON_VALID_USER_ID_IN_COMMUNITY(false, 4010, "커뮤니티에 존재하지 않는 회원입니다."),
+    NON_VALID_NEXT_NODE(false, 4011, "변경될 위치가 유효하지 않습니다."),
+    ALREADY_PUBLIC_STATE(false, 4012, "공개된 채널입니다."),
+    ALREADY_INVITED(false, 4013, "이미 초대되어 있습니다.");
 
     private final boolean isSuccess;
     private final int code;

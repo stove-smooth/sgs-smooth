@@ -65,19 +65,59 @@ public class Category extends BaseTimeEntity {
         String name,
         boolean isPublic,
         Category nextNode,
-        CategoryMember... members
+        List<CategoryMember> categoryMembers
     ) {
         Category category = new Category();
         category.setName(name);
         category.setPublic(isPublic);
         if (!isPublic) {
-            for (CategoryMember member: members) {
-                category.addMember(member);
+            for (CategoryMember categoryMember: categoryMembers) {
+                category.addMember(categoryMember);
             }
         }
         category.setFirstNode(true);
         category.setNextNode(nextNode);
         category.setStatus(CommonStatus.NORMAL);
         return category;
+    }
+
+    public void locate(Category before, Category first) {
+        Category originBeforeNode = first;
+        
+        if (first.equals(this)) {
+            this.isFirstNode = false;
+            Category originNextNode = before.getNextNode();
+            before.setNextNode(this);
+            this.getNextNode().setFirstNode(true);
+            this.setNextNode(originNextNode);
+        } else {
+            while (!Objects.isNull(originBeforeNode.getNextNode())) {
+                if (originBeforeNode.getNextNode().equals(this))
+                    break;
+                else
+                    originBeforeNode = originBeforeNode.getNextNode();
+            }
+
+            if (Objects.isNull(before)) {
+                this.isFirstNode = true;
+                originBeforeNode.setNextNode(this.nextNode);
+                this.nextNode = first;
+                first.setFirstNode(false);
+            } else {
+                Category originNextNode = before.getNextNode();
+                before.setNextNode(this);
+                if (!Objects.isNull(originNextNode))
+                    originNextNode.setNextNode(this.nextNode);
+                this.nextNode = originNextNode;
+                originBeforeNode.setNextNode(before);
+            }
+        }
+    }
+
+    public void delete() {
+        for (Channel channel: this.getChannels()) {
+            channel.delete();
+        }
+        this.setStatus(CommonStatus.DELETED);
     }
 }

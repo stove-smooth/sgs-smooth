@@ -19,8 +19,8 @@ public class CommunityController {
     private final CommunityService communityService;
     private final ResponseService responseService;
 
-    private final static String ID = "id";
-    private final static String AUTHORIZATION = "AUTHORIZATION";
+    public final static String ID = "id";
+    public final static String AUTHORIZATION = "AUTHORIZATION";
 
     /**
      * 사용자가 소속된 커뮤니티 리스트 조회
@@ -167,7 +167,7 @@ public class CommunityController {
             @PathVariable Long communityId,
             @RequestParam(name = "id") Long memberId
     ) {
-        log.info("DELETE /community-server/community/member");
+        log.info("DELETE /community-server/community/{}/member", communityId);
         communityService.deleteMember(Long.parseLong(userId), communityId, memberId);
         return responseService.getSuccessResponse();
     }
