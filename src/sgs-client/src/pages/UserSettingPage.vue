@@ -100,6 +100,7 @@ export default {
   },
   async created() {
     await this.fetchUserInfo();
+    console.log(this.userimage);
     if (!this.userimage) {
       const classify = this.code % 4;
       const result = selectProfile(classify);
@@ -136,8 +137,8 @@ export default {
     async dataUrlToFile(dataUrl) {
       const response = await fetch(dataUrl);
       const blob = await response.blob();
-      console.log("dataUrl", dataUrl);
-      return new File([blob], "dataUrl", { type: "image/png" });
+      const time = new Date().getTime();
+      return new File([blob], time, { type: "image/png" });
     },
     async changeProfile() {
       if (!this.userimage) {
