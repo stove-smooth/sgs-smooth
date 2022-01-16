@@ -1,9 +1,6 @@
 package com.example.communityserver.controller;
 
-import com.example.communityserver.dto.request.CreateCategoryRequest;
-import com.example.communityserver.dto.request.EditCategoryNameRequest;
-import com.example.communityserver.dto.request.InviteCategoryRequest;
-import com.example.communityserver.dto.request.LocateCategoryRequest;
+import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.CommonResponse;
 import com.example.communityserver.service.CategoryService;
 import com.example.communityserver.service.ResponseService;
@@ -47,7 +44,7 @@ public class CategoryController {
     @PatchMapping("/name")
     public CommonResponse editName(
             @RequestHeader(ID) String userId,
-            @Valid @RequestBody EditCategoryNameRequest request
+            @Valid @RequestBody EditNameRequest request
     ) {
         log.info("PATCH /community-server/category/name");
         categoryService.editName(Long.parseLong(userId), request);

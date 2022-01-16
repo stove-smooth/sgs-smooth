@@ -68,7 +68,7 @@ public class CommunityController {
     @PatchMapping("/name")
     public CommonResponse editName(
             @RequestHeader(ID) String userId,
-            @Valid @RequestBody EditCommunityNameRequest request
+            @Valid @RequestBody EditNameRequest request
     ) {
         log.info("PATCH /community-server/community/name");
         communityService.editName(Long.parseLong(userId), request);

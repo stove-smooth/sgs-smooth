@@ -6,10 +6,7 @@ import com.example.communityserver.domain.Community;
 import com.example.communityserver.domain.CommunityMember;
 import com.example.communityserver.domain.type.CommonStatus;
 import com.example.communityserver.domain.type.CommunityMemberStatus;
-import com.example.communityserver.dto.request.CreateCategoryRequest;
-import com.example.communityserver.dto.request.EditCategoryNameRequest;
-import com.example.communityserver.dto.request.InviteCategoryRequest;
-import com.example.communityserver.dto.request.LocateCategoryRequest;
+import com.example.communityserver.dto.request.*;
 import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.CategoryRepository;
 import com.example.communityserver.repository.CommunityRepository;
@@ -83,9 +80,9 @@ public class CategoryService {
     }
 
     @Transactional
-    public void editName(Long userId, EditCategoryNameRequest request) {
+    public void editName(Long userId, EditNameRequest request) {
 
-        Category category = categoryRepository.findById(request.getCategoryId())
+        Category category = categoryRepository.findById(request.getId())
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CATEGORY));
 
