@@ -1,7 +1,7 @@
 package com.example.communityserver.controller;
 
 import com.example.communityserver.dto.request.CreateCategoryRequest;
-import com.example.communityserver.dto.request.CreateCommunityRequest;
+import com.example.communityserver.dto.request.EditCategoryNameRequest;
 import com.example.communityserver.dto.response.CommonResponse;
 import com.example.communityserver.service.CategoryService;
 import com.example.communityserver.service.ResponseService;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.example.communityserver.controller.CommunityController.AUTHORIZATION;
 import static com.example.communityserver.controller.CommunityController.ID;
 
 @Slf4j
@@ -49,6 +48,15 @@ public class CategoryController {
     /**
      * 2. 카테고리 이름 수정하기
      */
+    @PatchMapping("/name")
+    public CommonResponse editName(
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody EditCategoryNameRequest request
+    ) {
+        log.info("PATCH /community-server/category/name");
+        categoryService.editName(Long.parseLong(userId), request);
+        return responseService.getSuccessResponse();
+    }
 
     /**
      * 3. 카테고리 배치 순서 바꾸기

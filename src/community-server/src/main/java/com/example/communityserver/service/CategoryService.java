@@ -6,6 +6,7 @@ import com.example.communityserver.domain.Community;
 import com.example.communityserver.domain.CommunityMember;
 import com.example.communityserver.domain.type.CommonStatus;
 import com.example.communityserver.dto.request.CreateCategoryRequest;
+import com.example.communityserver.dto.request.EditCategoryNameRequest;
 import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.CategoryRepository;
 import com.example.communityserver.repository.CommunityRepository;
@@ -17,8 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.communityserver.exception.CustomExceptionStatus.NON_VALID_COMMUNITY;
-import static com.example.communityserver.exception.CustomExceptionStatus.NON_VALID_USER_ID_IN_COMMUNITY;
+import static com.example.communityserver.exception.CustomExceptionStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -70,6 +70,30 @@ public class CategoryService {
         for (Long memberId: memberIds) {
             if (!communityMemberUserIds.contains(memberId))
                 throw new CustomException(NON_VALID_USER_ID_IN_COMMUNITY);
+        }
+    }
+
+    @Transactional
+    public void editName(Long userId, EditCategoryNameRequest request) {
+
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_CATEGORY));
+
+        isAuthorizedMember(category, userId);
+
+        category.setName(request.getName());
+    }
+
+    private void isAuthorizedMember(Category category, Long userId) {
+        if (!category.isPublic()) {
+            boolean isAuthorized = category.getMembers().stream()
+                    .map(CategoryMember::getUserId)
+                    .collect(Collectors.toList())
+                    .contains(userId);
+
+            if (!isAuthorized)
+                throw new CustomException(NON_AUTHORIZATION);
         }
     }
 }
