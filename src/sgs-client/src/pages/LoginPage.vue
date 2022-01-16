@@ -10,10 +10,10 @@ import LoginForm from "../components/LoginForm.vue";
 export default {
   components: { LoginForm },
   computed: {
-    ...mapGetters("auth", ["isLogin"]),
+    ...mapGetters("auth", ["getEmail"]),
   },
   created() {
-    if (this.isLogin) {
+    if (this.getEmail) {
       this.$router.push("/channels/@me");
     }
   },

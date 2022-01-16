@@ -12,7 +12,9 @@ export function setInterceptors(instance) {
     function (config) {
       const accesstoken = store.getters["auth/getAccessToken"];
       // Do something before request is sent
-      config.headers.Authorization = accesstoken;
+      if (accesstoken) {
+        config.headers.Authorization = accesstoken;
+      }
       return config;
     },
     function (error) {

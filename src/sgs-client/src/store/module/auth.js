@@ -1,43 +1,60 @@
 import { loginUser, fetchUserInfo } from "../../api/index.js";
-import {
-  getAccessAuthToCookie,
-  getRefreshAuthToCookie,
-  getUserEmailToCookie,
-  getUserNickNameToCookie,
-  getUserCodeToCookie,
-  saveAccessAuthToCookie,
-  saveRefreshAuthToCookie,
-  saveUserEmailToCookie,
-  saveUserNickNameToCookie,
-  saveUserCodeToCookie,
-  deleteCookie,
-} from "../../utils/cookies";
-
 const auth = {
   namespaced: true,
   state: {
-    email: getUserEmailToCookie() || "",
-    nickname: getUserNickNameToCookie() || "",
-    code: getUserCodeToCookie() || "",
-    accesstoken: getAccessAuthToCookie() || "",
-    refreshtoken: getRefreshAuthToCookie() || "",
+    email: "",
+    nickname: "",
+    code: "",
+    accesstoken: "",
+    refreshtoken: "",
     userimage: "",
     useraboutme: "",
   },
   getters: {
-    isLogin: (state) => {
-      return state.email !== "";
+    getEmail: (state) => {
+      if (!state.email) {
+        try {
+          const token = localStorage.getItem("email");
+          if (token) {
+            state.email = JSON.parse(token);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      return state.email;
     },
     getAccessToken: (state) => {
+      if (!state.accesstoken) {
+        try {
+          const token = localStorage.getItem("accesstoken");
+          if (token) {
+            state.accesstoken = JSON.parse(token);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
       return state.accesstoken;
     },
     getRefreshToken: (state) => {
+      if (!state.refreshtoken) {
+        try {
+          const token = localStorage.getItem("refreshtoken");
+          if (token) {
+            state.refreshtoken = JSON.parse(token);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
       return state.refreshtoken;
     },
   },
   mutations: {
     setEmail(state, email) {
       state.email = email;
+      localStorage.setItem("email", JSON.stringify(email));
     },
     setNickname(state, nickname) {
       state.nickname = nickname;
@@ -47,9 +64,11 @@ const auth = {
     },
     setAccessToken(state, accessToken) {
       state.accesstoken = accessToken;
+      localStorage.setItem("accesstoken", JSON.stringify(accessToken));
     },
     setRefreshToken(state, refreshToken) {
       state.refreshtoken = refreshToken;
+      localStorage.setItem("refreshtoken", JSON.stringify(refreshToken));
     },
     setUserImage(state, userImage) {
       state.userimage = userImage;
@@ -59,12 +78,6 @@ const auth = {
     },
     clearEmail(state) {
       state.email = "";
-    },
-    clearNickname(state) {
-      state.nickname = "";
-    },
-    clearCode(state) {
-      state.code = "";
     },
     clearAccessToken(state) {
       state.accesstoken = "";
@@ -77,30 +90,21 @@ const auth = {
     async LOGIN({ commit }, userData) {
       const response = await loginUser(userData);
       commit("setEmail", response.data.result.email);
-      commit("setNickname", response.data.result.name);
-      commit("setCode", response.data.result.code);
       commit("setAccessToken", response.data.result.accessToken);
       commit("setRefreshToken", response.data.result.refreshToken);
-      saveAccessAuthToCookie(response.data.result.accessToken);
-      saveRefreshAuthToCookie(response.data.result.refreshToken);
-      saveUserCodeToCookie(response.data.result.code);
-      saveUserEmailToCookie(response.data.result.email);
-      saveUserNickNameToCookie(response.data.result.name);
     },
     LOGOUT({ commit }) {
+      localStorage.removeItem("email");
+      localStorage.removeItem("accesstoken");
+      localStorage.removeItem("refreshtoken");
       commit("clearEmail");
-      commit("clearNickname");
-      commit("clearCode");
       commit("clearAccessToken");
       commit("clearRefreshToken");
-      deleteCookie("accessauth");
-      deleteCookie("refreshauth");
-      deleteCookie("useremail");
-      deleteCookie("usernickname");
-      deleteCookie("usercode");
     },
     async FETCH_USERINFO({ commit }) {
       const response = await fetchUserInfo();
+      commit("setNickname", response.data.result.name);
+      commit("setCode", response.data.result.code);
       commit("setUserAboutMe", response.data.result.bio);
       commit("setUserImage", response.data.result.profileImage);
     },

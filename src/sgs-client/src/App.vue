@@ -5,7 +5,7 @@
         <div class="container">
           <navigation-bar
             @create-server="openCreateServer"
-            v-if="isLogin && navbar"
+            v-if="getEmail && navbar"
           ></navigation-bar>
           <router-view></router-view>
         </div>
@@ -76,7 +76,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters("auth", ["isLogin"]),
+    ...mapGetters("auth", ["getEmail"]),
     ...mapState("server", ["createchannel"]),
   },
   methods: {
