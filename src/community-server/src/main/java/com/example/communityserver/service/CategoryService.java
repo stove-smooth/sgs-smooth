@@ -5,6 +5,7 @@ import com.example.communityserver.domain.CategoryMember;
 import com.example.communityserver.domain.Community;
 import com.example.communityserver.domain.CommunityMember;
 import com.example.communityserver.domain.type.CommonStatus;
+import com.example.communityserver.domain.type.CommunityMemberStatus;
 import com.example.communityserver.dto.request.CreateCategoryRequest;
 import com.example.communityserver.dto.request.EditCategoryNameRequest;
 import com.example.communityserver.dto.request.InviteCategoryRequest;
@@ -67,6 +68,7 @@ public class CategoryService {
 
     private void validateMemberId(Community community, List<Long> memberIds) {
         List<Long> communityMemberUserIds = community.getMembers().stream()
+                .filter(communityMember -> communityMember.getStatus().equals(CommunityMemberStatus.NORMAL))
                 .map(CommunityMember::getUserId)
                 .collect(Collectors.toList());
 
@@ -91,6 +93,7 @@ public class CategoryService {
     private void isAuthorizedMember(Category category, Long userId) {
         if (!category.isPublic()) {
             boolean isAuthorized = category.getMembers().stream()
+                    .filter(member -> member.isStatus())
                     .map(CategoryMember::getUserId)
                     .collect(Collectors.toList())
                     .contains(userId);
@@ -164,6 +167,7 @@ public class CategoryService {
 
     private void isMemberInCommunity(Community community, Long memberId) {
         boolean isMember = community.getMembers().stream()
+                .filter(member -> member.getStatus().equals(CommunityMemberStatus.NORMAL))
                 .map(CommunityMember::getUserId)
                 .collect(Collectors.toList())
                 .contains(memberId);
@@ -173,10 +177,30 @@ public class CategoryService {
 
     private void isContains(Category category, Long memberId) {
         boolean isContains = category.getMembers().stream()
+                .filter(member -> member.isStatus())
                 .map(CategoryMember::getUserId)
                 .collect(Collectors.toList())
                 .contains(memberId);
         if (isContains)
             throw new CustomException(ALREADY_INVITED);
+    }
+
+    @Transactional
+    public void deleteMember(Long userId, Long categoryId, Long memberId) {
+        Category category = categoryRepository.findById(categoryId)
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_CATEGORY));
+
+        if (category.isPublic())
+            throw new CustomException(ALREADY_PUBLIC_STATE);
+
+        isAuthorizedMember(category, userId);
+
+        CategoryMember deleteMember = category.getMembers().stream()
+                .filter(member -> member.getUserId().equals(memberId))
+                .filter(member -> member.isStatus())
+                .findAny().orElseThrow(() -> new CustomException(EMPTY_MEMBER));
+
+        deleteMember.setStatus(false);
     }
 }

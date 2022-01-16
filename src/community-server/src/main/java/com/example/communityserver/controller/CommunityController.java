@@ -167,7 +167,7 @@ public class CommunityController {
             @PathVariable Long communityId,
             @RequestParam(name = "id") Long memberId
     ) {
-        log.info("DELETE /community-server/community/member");
+        log.info("DELETE /community-server/community/{}/member", communityId);
         communityService.deleteMember(Long.parseLong(userId), communityId, memberId);
         return responseService.getSuccessResponse();
     }

@@ -24,4 +24,6 @@ public class ChannelMember extends BaseTimeEntity{
     private Channel channel;
 
     private Long userId;
+
+    private boolean status;
 }

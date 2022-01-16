@@ -103,6 +103,16 @@ public class CategoryController {
     /**
      * 6. 카테고리에서 추방하기
      */
+    @DeleteMapping("/{categoryId}/member")
+    public CommonResponse deleteMember(
+            @RequestHeader(ID) String userId,
+            @PathVariable Long categoryId,
+            @RequestParam(name = "id") Long memberId
+    ) {
+        log.info("DELETE /community-server/category/{}/member", categoryId);
+        categoryService.deleteMember(Long.parseLong(userId), categoryId, memberId);
+        return responseService.getSuccessResponse();
+    }
 
     /**
      * 7. 카테고리 내 메세지 읽음 처리 (Optional)

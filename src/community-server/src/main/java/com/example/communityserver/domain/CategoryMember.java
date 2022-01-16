@@ -25,7 +25,10 @@ public class CategoryMember {
 
     private Long userId;
 
+    private boolean status;
+
     public CategoryMember(Long userId) {
         this.userId = userId;
+        this.status = true;
     }
 }
