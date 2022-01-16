@@ -34,14 +34,14 @@
                           @change="uploadImage()"
                         />
                       </div>
+                      <button class="small-button">기본 프로필 사용</button>
                       <button
                         class="small-button"
-                        v-bind:style="{ marginRight: '12px' }"
+                        v-bind:style="{ marginLeft: '12px' }"
                         @click="changeProfile"
                       >
                         프로필 저장
                       </button>
-                      <button class="small-button">기본 프로필 사용</button>
                     </div>
                     <div class="profile-name-header">
                       <div class="justify-content-space-between">
@@ -49,7 +49,6 @@
                           <div class="bold-username">{{ nickname }}</div>
                           <div class="user-code">#{{ code }}</div>
                         </div>
-                        <button class="small-button">수정</button>
                       </div>
                     </div>
                     <div class="profile-info">

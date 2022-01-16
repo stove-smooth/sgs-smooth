@@ -35,11 +35,18 @@
             >모든친구-{{ friendsaccept.length }}명</template
           >
           <template slot="status"><span>온라인</span></template>
-          <template slot="action">
+          <template v-slot:action="slotProps">
             <div class="action-button" aria-label="메시지 보내기" role="button">
               <svg class="send-message"></svg>
             </div>
-            <div class="action-button" aria-label="기타" role="button">
+            <div
+              :data-key="slotProps.id"
+              ref="plusAction"
+              class="action-button"
+              aria-label="기타"
+              role="button"
+              @click="clickPlusAction($event, slotProps.id)"
+            >
               <svg class="plus-action"></svg>
             </div>
           </template>
@@ -90,30 +97,21 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions, mapMutations } from "vuex";
 import FriendsForm from "./common/FriendsForm.vue";
 import { acceptFriend } from "../api/index.js";
 export default {
   components: { FriendsForm },
   data() {
     return {
-      list: [
-        { id: 0, name: "두리짱" },
-        { id: 1, name: "병각" },
-        { id: 2, name: "히동" },
-        { id: 3, name: "두리짱" },
-        { id: 4, name: "병각" },
-        { id: 5, name: "히동" },
-        { id: 6, name: "두리짱" },
-        { id: 7, name: "병각" },
-        { id: 8, name: "히동" },
-        { id: 9, name: "두리짱" },
-        { id: 10, name: "병각" },
-      ],
+      //plusID: 0,
     };
   },
   async created() {
     await this.FETCH_FRIENDSLIST();
+  },
+  mounted() {
+    window.addEventListener("click", this.onClick);
   },
   computed: {
     ...mapState("friends", [
@@ -124,16 +122,31 @@ export default {
       "friendswaitnumber",
       "friendsrequest",
       "friendsban",
+      "friendsplusmenu",
     ]),
   },
   methods: {
     ...mapActions("friends", ["FETCH_FRIENDSLIST"]),
+    ...mapMutations("utils", ["setClientX", "setClientY"]),
+    ...mapMutations("friends", ["setFriendsPlusMenu"]),
     async accept(id) {
       try {
         await acceptFriend(id);
         window.location.reload();
       } catch (err) {
         console.log(err);
+      }
+    },
+    clickPlusAction(event, index) {
+      const x = event.clientX;
+      const y = event.clientY;
+      this.setClientX(x);
+      this.setClientY(y);
+      this.setFriendsPlusMenu(index);
+    },
+    onClick(e) {
+      if (!e.target.parentNode.dataset.key) {
+        this.setFriendsPlusMenu(null);
       }
     },
   },

@@ -11,6 +11,7 @@
         </div>
       </div>
     </div>
+    <friends-plus-action></friends-plus-action>
     <create-server-modal
       v-if="createServer"
       @exit="exitCreateServer"
@@ -27,9 +28,15 @@ import NavigationBar from "./components/NavigationBar.vue";
 import CreateServerModal from "./components/CreateServerModal.vue";
 import CreateChannelModal from "./components/CreateChannelModal.vue";
 import { mapGetters, mapState, mapMutations } from "vuex";
+import FriendsPlusAction from "./components/common/FriendsPlusAction.vue";
 export default {
   name: "App",
-  components: { NavigationBar, CreateServerModal, CreateChannelModal },
+  components: {
+    NavigationBar,
+    CreateServerModal,
+    CreateChannelModal,
+    FriendsPlusAction,
+  },
   data() {
     return {
       createChannel: true,
@@ -87,12 +94,9 @@ export default {
   bottom: 0;
   left: 0;
   background-color: var(--dark-grey-color);
-  /*   display: -webkit-box;
-  display: -ms-flexbox; */
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-  /*   -ms-flex-direction: column; */
   flex-direction: column;
 }
 .container {
@@ -102,7 +106,6 @@ export default {
   height: 100%;
   display: flex;
 }
-
 button {
   font-weight: 500;
   border: 0;
