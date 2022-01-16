@@ -2,6 +2,7 @@ package com.example.communityserver.controller;
 
 import com.example.communityserver.dto.request.CreateCategoryRequest;
 import com.example.communityserver.dto.request.EditCategoryNameRequest;
+import com.example.communityserver.dto.request.LocateCategoryRequest;
 import com.example.communityserver.dto.response.CommonResponse;
 import com.example.communityserver.service.CategoryService;
 import com.example.communityserver.service.ResponseService;
@@ -61,13 +62,22 @@ public class CategoryController {
     /**
      * 3. 카테고리 배치 순서 바꾸기
      */
+    @PatchMapping("/location")
+    public CommonResponse locateCategory(
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody LocateCategoryRequest request
+    ) {
+        log.info("PATCH /community-server/category/location");
+        categoryService.locateCategory(Long.parseLong(userId), request);
+        return responseService.getSuccessResponse();
+    }
 
     /**
      * 4. 카테고리 삭제하기
      */
 
     /**
-     * 5. 카테고리에 초대하기
+     * 5. 카테고리에 멤버 추가하기
      */
 
     /**

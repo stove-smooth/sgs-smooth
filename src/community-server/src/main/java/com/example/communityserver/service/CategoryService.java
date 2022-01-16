@@ -7,6 +7,7 @@ import com.example.communityserver.domain.CommunityMember;
 import com.example.communityserver.domain.type.CommonStatus;
 import com.example.communityserver.dto.request.CreateCategoryRequest;
 import com.example.communityserver.dto.request.EditCategoryNameRequest;
+import com.example.communityserver.dto.request.LocateCategoryRequest;
 import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.CategoryRepository;
 import com.example.communityserver.repository.CommunityRepository;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.example.communityserver.exception.CustomExceptionStatus.*;
@@ -95,5 +97,40 @@ public class CategoryService {
             if (!isAuthorized)
                 throw new CustomException(NON_AUTHORIZATION);
         }
+    }
+
+    @Transactional
+    public void locateCategory(Long userId, LocateCategoryRequest request) {
+
+        Category target = categoryRepository.findById(request.getCategoryId())
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_CATEGORY));
+
+        isAuthorizedMember(target, userId);
+
+        Community community = target.getCommunity();
+        List<Category> categories = community.getCategories().stream()
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .collect(Collectors.toList());
+
+        Category first = getFirstCategory(community);
+
+        Category before = null;
+        if (request.getNextNode().equals(0L)) {
+            if (target.equals(first))
+                throw new CustomException(ALREADY_LOCATED);
+        } else {
+            before = categories.stream()
+                    .filter(c -> c.getId().equals(request.getNextNode()))
+                    .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                    .findAny().orElseThrow(() -> new CustomException(NON_VALID_NEXT_NODE));
+
+            if (!Objects.isNull(before.getNextNode())) {
+                if (before.getNextNode().equals(target))
+                    throw new CustomException(ALREADY_LOCATED);
+            }
+        }
+
+        target.locate(before, first);
     }
 }
