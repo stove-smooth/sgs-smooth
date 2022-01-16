@@ -18,10 +18,4 @@ public class FriendResponse {
 
     private String name;
 
-    private String code;
-
-    private String profileImage;
-
-    private String state;
-
 }

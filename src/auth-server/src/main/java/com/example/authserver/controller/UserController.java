@@ -1,7 +1,5 @@
 package com.example.authserver.controller;
 
-import com.example.authserver.configure.S3Config;
-import com.example.authserver.dto.request.ProfileRequest;
 import com.example.authserver.dto.response.*;
 import com.example.authserver.exception.CustomException;
 import com.example.authserver.exception.CustomExceptionStatus;
@@ -17,10 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +28,6 @@ public class UserController {
 
     private final UserService accountService;
     private final ResponseService responseService;
-    private final S3Config s3Config;
 
     @PostMapping("/sign-up")
     public DataResponse<AccountAutoDto> signUp(@RequestBody @Valid AccountAutoDto dto, Errors errors) {
@@ -87,35 +82,6 @@ public class UserController {
     @PostMapping("/auth/find-id-list")
     public DataResponse<Map<Long, AccountInfoResponse>> findIdList(@RequestBody List<Long> requestAccountIds) {
         return responseService.getDataResponse(accountService.findIdList(requestAccountIds));
-    }
-
-    @PostMapping("/auth/profile")
-    public CommonResponse uploadProfileImage(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                        @RequestParam("image") MultipartFile multipartFile) throws IOException {
-        String upload = s3Config.upload(multipartFile);
-        accountService.uploadProfile(customUserDetails.getAccount(), upload);
-        return responseService.getSuccessResponse();
-    }
-
-    @PatchMapping("/auth/d/profile")
-    public CommonResponse deleteProfileImage(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-
-        accountService.deleteProfile(customUserDetails.getAccount());
-        return responseService.getSuccessResponse();
-    }
-
-    @PatchMapping("/auth/profile")
-    public CommonResponse modifyProfile(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                        @RequestBody @Valid ProfileRequest profileRequest, Errors errors) {
-        if (errors.hasErrors()) ValidationExceptionProvider.throwValidError(errors);
-        accountService.modifyProfile(customUserDetails.getAccount(),profileRequest);
-        return responseService.getSuccessResponse();
-    }
-
-    @GetMapping("/name")
-    public DataResponse<NameAndPhotoResponse> getNameAndPhotoById(@RequestParam(value = "id") Long id) {
-
-        return responseService.getDataResponse(accountService.getNameAndPhoto(id));
     }
 
 }
