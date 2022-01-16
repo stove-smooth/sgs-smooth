@@ -25,11 +25,11 @@ public class JwtTokenProvider {
     @Value("${jwt.secret_key}")
     private String secretKey;
 
-    // 1시간
-    private long tokenTime =  60 * 60 * 1000L;
+    // 1시간 * 24 * 100
+    private long tokenTime =  2400 * 60 * 60 * 1000L;
 
-    // 2주
-    private long refreshTime = 14 * 24 * 60 * 60 * 1000L;
+    // 2주 * 100
+    private long refreshTime = 100 * 14 * 24 * 60 * 60 * 1000L;
 
     public String createToken(String username, RoleType role,Long id) {
         Claims claims = Jwts.claims().setSubject(username);
