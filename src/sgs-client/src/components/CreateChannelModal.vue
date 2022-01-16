@@ -55,10 +55,7 @@
               <h5 class="label-id" v-bind:style="{ color: 'black' }">
                 채널 이름
               </h5>
-              <div
-                class="server-name-input"
-                v-bind:style="{ display: 'flex', flexDirection: 'row' }"
-              >
+              <div class="server-name-input flex-direction-row">
                 <svg class="voice-channel"></svg>
                 <input
                   width="100%"

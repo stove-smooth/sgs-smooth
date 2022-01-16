@@ -19,6 +19,11 @@
               <div class="circleIcon-button">
                 <svg class="discord-logo"></svg>
               </div>
+              <div class="lower-badge">
+                <number-badge
+                  :alarms="$store.state.friendsreceivedwaitingnumber"
+                ></number-badge>
+              </div>
             </div>
           </div>
         </div>
@@ -47,10 +52,20 @@
                       :src="item.thumbnail"
                       alt="image"
                       class="server-nav-image"
+                      v-bind:class="{
+                        'selected-border-radius': hovered === index,
+                      }"
                     />
                   </div>
                   <div class="server-wrapper" v-else>
-                    <div class="server">{{ item.name }}</div>
+                    <div
+                      class="server"
+                      v-bind:class="{
+                        'selected-border-radius': hovered === index,
+                      }"
+                    >
+                      {{ item.name }}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -75,6 +90,7 @@
 </template>
 
 <script>
+import NumberBadge from "./common/NumberBadge.vue";
 const storage = {
   fetch() {
     const serveritems = localStorage.getItem(3) || "[]";
@@ -83,6 +99,7 @@ const storage = {
   },
 };
 export default {
+  components: { NumberBadge },
   data() {
     return {
       hovered: "",
@@ -246,6 +263,12 @@ export default {
   border-radius: 50%;
   background-color: #36393f;
 }
+
+.circleIcon-button:hover {
+  border-radius: 30%;
+  background-color: var(--discord-primary);
+}
+
 .plus-icon {
   display: flex;
   width: 16px;
@@ -259,6 +282,19 @@ export default {
   height: 48px;
   border-radius: 50%;
   position: relative;
+}
+
+.lower-badge {
+  opacity: 1;
+  transform: translate(0px, 0px);
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+.selected-border-radius {
+  border-radius: 30%;
 }
 ol,
 ul {

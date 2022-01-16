@@ -36,7 +36,7 @@ export function setInterceptors(instance) {
         window.location.pathname != "/register"
       ) {
         axios
-          .post("http://3.38.10.189:8000/auth-server/refresh", {
+          .post("http://52.79.229.100:8000/auth-server/refresh", {
             headers: {
               AUTHORIZATION: this.$store.state.accesstoken,
               "REFRESH-TOKEN": this.$store.state.refreshtoken,

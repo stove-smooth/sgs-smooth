@@ -150,7 +150,10 @@
   display: flex;
   flex-direction: column;
 }
-
+.flex-direction-row {
+  display: flex;
+  flex-direction: row;
+}
 .primary-text-content {
   white-space: nowrap;
   overflow: hidden;
@@ -175,6 +178,34 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+.primary-description {
+  color: #b9bbbe;
+  cursor: default;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+}
+.middle-button {
+  background-color: var(--discord-primary) !important;
+  color: #fff;
+  height: 32px;
+  min-width: 60px;
+  min-height: 32px;
+  position: relative;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  box-sizing: border-box;
+  background: none;
+  border: none;
+  border-radius: 3px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 16px;
+  padding: 2px 16px;
 }
 :root {
   --white-color: #fff;

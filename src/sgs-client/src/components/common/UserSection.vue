@@ -11,11 +11,7 @@
         >
           <div class="profile-wrapper" aria-label="칭구1">
             <div class="avatar-wrapper">
-              <img
-                class="avatar"
-                src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=32"
-                alt=" "
-              />
+              <img class="avatar" :src="discordProfile" alt=" " />
               <template aria-label="status-invisible">
                 <div class="status-ring">
                   <div class="status-offline"></div>
@@ -72,11 +68,22 @@
 </template>
 
 <script>
+import { selectProfile } from "../../utils/common.js";
 export default {
+  data() {
+    return {
+      discordProfile: "",
+    };
+  },
   methods: {
     openSettings() {
       this.$router.push("/settings");
     },
+  },
+  created() {
+    const classify = this.$store.state.code % 4;
+    const result = selectProfile(classify);
+    this.discordProfile = require("../../assets/" + result + ".png");
   },
 };
 </script>

@@ -1,19 +1,14 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import mutations from "./mutations.js";
+import actions from "./actions.js";
 import {
-  saveAccessAuthToCookie,
-  saveRefreshAuthToCookie,
-  saveUserEmailToCookie,
-  saveUserNickNameToCookie,
-  saveUserCodeToCookie,
   getAccessAuthToCookie,
   getRefreshAuthToCookie,
   getUserEmailToCookie,
   getUserNickNameToCookie,
   getUserCodeToCookie,
-  deleteCookie,
 } from "../utils/cookies";
-import { loginUser } from "../api/index.js";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -24,69 +19,19 @@ export default new Vuex.Store({
     accesstoken: getAccessAuthToCookie() || "",
     refreshtoken: getRefreshAuthToCookie() || "",
     createchannel: false,
+    friendsstatemenu: "online",
+    friendsonline: [],
+    friendsall: [],
+    friendsreceivedwaiting: [],
+    friendsreceivedwaitingnumber: 0,
+    friendssendwaiting: [],
+    friendsblocked: [],
   },
   getters: {
     isLogin(state) {
       return state.email !== "";
     },
   },
-  mutations: {
-    setEmail(state, email) {
-      state.email = email;
-    },
-    setNickname(state, nickname) {
-      state.nickname = nickname;
-    },
-    setCode(state, code) {
-      state.code = code;
-    },
-    setAccessToken(state, accessToken) {
-      state.accesstoken = accessToken;
-    },
-    setRefreshToken(state, refreshToken) {
-      state.refreshtoken = refreshToken;
-    },
-    clearEmail(state) {
-      state.email = "";
-    },
-    clearNickname(state) {
-      state.nickname = "";
-    },
-    clearCode(state) {
-      state.code = "";
-    },
-    clearAccessToken(state) {
-      state.accesstoken = "";
-    },
-    clearRefreshToken(state) {
-      state.refreshtoken = "";
-    },
-  },
-  actions: {
-    async LOGIN({ commit }, userData) {
-      const response = await loginUser(userData);
-      commit("setEmail", response.data.result.email);
-      commit("setNickname", response.data.result.name);
-      commit("setCode", response.data.result.code);
-      commit("setAccessToken", response.data.result.accessToken);
-      commit("setRefreshToken", response.data.result.refreshToken);
-      saveAccessAuthToCookie(response.data.result.accessToken);
-      saveRefreshAuthToCookie(response.data.result.refreshToken);
-      saveUserCodeToCookie(response.data.result.code);
-      saveUserEmailToCookie(response.data.result.email);
-      saveUserNickNameToCookie(response.data.result.name);
-    },
-    LOGOUT({ commit }) {
-      commit("clearEmail");
-      commit("clearNickname");
-      commit("clearCode");
-      commit("clearAccessToken");
-      commit("clearRefreshToken");
-      deleteCookie("accessauth");
-      deleteCookie("refreshauth");
-      deleteCookie("useremail");
-      deleteCookie("usernickname");
-      deleteCookie("usercode");
-    },
-  },
+  mutations,
+  actions,
 });

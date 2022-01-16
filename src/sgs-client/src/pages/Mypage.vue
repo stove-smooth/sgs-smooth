@@ -8,7 +8,12 @@
       <div class="friends-state-container">
         <friends-state-menu-bar></friends-state-menu-bar>
         <div class="friends-state-container2">
-          <friends-state-list></friends-state-list>
+          <template v-if="$store.state.friendsstatemenu === 'addfriends'">
+            <friends-new-add></friends-new-add>
+          </template>
+          <template v-else>
+            <friends-state-list></friends-state-list>
+          </template>
           <friends-now-playing-list></friends-now-playing-list>
         </div>
       </div>
@@ -22,6 +27,7 @@ import FriendsStateList from "../components/FriendsStateList.vue";
 import FriendsStateMenuBar from "../components/FriendsStateMenuBar.vue";
 import UserSection from "../components/common/UserSection.vue";
 import FriendsNowPlayingList from "../components/FriendsNowPlayingList.vue";
+import FriendsNewAdd from "../components/FriendsNewAdd.vue";
 export default {
   components: {
     FriendsSideBar,
@@ -29,6 +35,7 @@ export default {
     FriendsStateMenuBar,
     FriendsStateList,
     FriendsNowPlayingList,
+    FriendsNewAdd,
   },
 };
 </script>

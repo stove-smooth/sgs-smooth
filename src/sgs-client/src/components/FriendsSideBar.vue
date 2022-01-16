@@ -15,6 +15,11 @@
                 <div class="friends-name">친구</div>
               </div>
             </div>
+            <div class="friends-alarm-wrapper">
+              <number-badge
+                :alarms="$store.state.friendsreceivedwaitingnumber"
+              ></number-badge>
+            </div>
           </div>
         </div>
         <h2 class="private-channels-header-container small-title-text">
@@ -30,12 +35,12 @@
 </template>
 
 <script>
+import NumberBadge from "./common/NumberBadge.vue";
 import DMListForm from "./DMListForm.vue";
 export default {
-  components: { DMListForm },
+  components: { DMListForm, NumberBadge },
 };
 </script>
-
 <style>
 .private-channels {
   /*   -webkit-box-sizing: border-box; */
@@ -220,5 +225,10 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+.friends-alarm-wrapper {
+  -webkit-box-flex: 0;
+  flex: 0 0 auto;
+  margin-left: 8px;
 }
 </style>
