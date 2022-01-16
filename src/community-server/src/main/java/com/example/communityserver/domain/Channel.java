@@ -107,4 +107,11 @@ public class Channel extends BaseTimeEntity {
         channel.setStatus(ChannelStatus.NORMAL);
         return channel;
     }
+
+    public void delete() {
+        for (Channel thread: this.getThread()) {
+            thread.setStatus(ChannelStatus.DELETED);
+        }
+        this.setStatus(ChannelStatus.DELETED);
+    }
 }

@@ -338,6 +338,6 @@ public class CommunityService {
 
         isOwner(community, userId);
 
-        community.setStatus(CommonStatus.DELETED);
+        community.delete();
     }
 }

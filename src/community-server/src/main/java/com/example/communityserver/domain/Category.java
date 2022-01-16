@@ -81,7 +81,6 @@ public class Category extends BaseTimeEntity {
         return category;
     }
 
-    //== 비즈니스 메서드 ==//
     public void locate(Category before, Category first) {
         Category originBeforeNode = first;
         
@@ -113,5 +112,12 @@ public class Category extends BaseTimeEntity {
                 originBeforeNode.setNextNode(before);
             }
         }
+    }
+
+    public void delete() {
+        for (Channel channel: this.getChannels()) {
+            channel.delete();
+        }
+        this.setStatus(CommonStatus.DELETED);
     }
 }
