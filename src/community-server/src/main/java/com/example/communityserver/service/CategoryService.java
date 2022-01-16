@@ -7,6 +7,7 @@ import com.example.communityserver.domain.CommunityMember;
 import com.example.communityserver.domain.type.CommonStatus;
 import com.example.communityserver.dto.request.CreateCategoryRequest;
 import com.example.communityserver.dto.request.EditCategoryNameRequest;
+import com.example.communityserver.dto.request.InviteCategoryRequest;
 import com.example.communityserver.dto.request.LocateCategoryRequest;
 import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.CategoryRepository;
@@ -142,5 +143,40 @@ public class CategoryService {
 
         isAuthorizedMember(category, userId);
         category.delete();
+    }
+
+    @Transactional
+    public void inviteMember(Long userId, InviteCategoryRequest request) {
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_CATEGORY));
+
+        isAuthorizedMember(category, userId);
+
+        if (category.isPublic())
+            throw new CustomException(ALREADY_PUBLIC_STATE);
+
+        isMemberInCommunity(category.getCommunity(), request.getMemberId());
+        isContains(category, request.getMemberId());
+
+        category.addMember(new CategoryMember(request.getMemberId()));
+    }
+
+    private void isMemberInCommunity(Community community, Long memberId) {
+        boolean isMember = community.getMembers().stream()
+                .map(CommunityMember::getUserId)
+                .collect(Collectors.toList())
+                .contains(memberId);
+        if (!isMember)
+            throw new CustomException(NON_VALID_USER_ID_IN_COMMUNITY);
+    }
+
+    private void isContains(Category category, Long memberId) {
+        boolean isContains = category.getMembers().stream()
+                .map(CategoryMember::getUserId)
+                .collect(Collectors.toList())
+                .contains(memberId);
+        if (isContains)
+            throw new CustomException(ALREADY_INVITED);
     }
 }

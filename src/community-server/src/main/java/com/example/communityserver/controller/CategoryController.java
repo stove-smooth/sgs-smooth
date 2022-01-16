@@ -2,6 +2,7 @@ package com.example.communityserver.controller;
 
 import com.example.communityserver.dto.request.CreateCategoryRequest;
 import com.example.communityserver.dto.request.EditCategoryNameRequest;
+import com.example.communityserver.dto.request.InviteCategoryRequest;
 import com.example.communityserver.dto.request.LocateCategoryRequest;
 import com.example.communityserver.dto.response.CommonResponse;
 import com.example.communityserver.service.CategoryService;
@@ -89,6 +90,15 @@ public class CategoryController {
     /**
      * 5. 카테고리에 멤버 추가하기
      */
+    @PostMapping("/member")
+    public CommonResponse inviteMember(
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody InviteCategoryRequest request
+    ) {
+        log.info("POST /community-server/category/member");
+        categoryService.inviteMember(Long.parseLong(userId), request);
+        return responseService.getSuccessResponse();
+    }
 
     /**
      * 6. 카테고리에서 추방하기
