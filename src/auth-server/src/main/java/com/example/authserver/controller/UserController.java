@@ -97,6 +97,13 @@ public class UserController {
         return responseService.getSuccessResponse();
     }
 
+    @PatchMapping("/auth/d/profile")
+    public CommonResponse deleteProfileImage(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        accountService.deleteProfile(customUserDetails.getAccount());
+        return responseService.getSuccessResponse();
+    }
+
     @PatchMapping("/auth/profile")
     public CommonResponse modifyProfile(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                         @RequestBody @Valid ProfileRequest profileRequest, Errors errors) {

@@ -5,11 +5,13 @@ import com.example.presenceserver.dto.response.CommonResponse;
 import com.example.presenceserver.service.PresenceService;
 import com.example.presenceserver.service.ResponseService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/presence-server")
@@ -20,7 +22,6 @@ public class PresenceController {
 
     @PostMapping("login-state")
     public CommonResponse uploadState(@RequestBody LoginSessionRequest loginSessionRequest) {
-
         presenceService.uploadState(loginSessionRequest);
 
         return responseService.getSuccessResponse();

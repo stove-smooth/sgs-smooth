@@ -36,7 +36,7 @@ public class FriendService {
         Friend friend = Friend.builder()
                 .receiver(requestAccount)
                 .sender(account)
-                .friendState(FriendState.WAIT).build();
+                .friendState(FriendState.REQUEST).build();
 
         friendRepository.save(friend);
     }
@@ -97,5 +97,12 @@ public class FriendService {
         Friend friend = friendRepository.findById(id)
                 .orElseThrow(() -> new CustomException(CustomExceptionStatus.FRIEND_NOT_FOUND));
         friend.changeFriendState(FriendState.ACCEPT);
+    }
+
+    @Transactional
+    public void banFriend(Long id) {
+        Friend friend = friendRepository.findById(id)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.FRIEND_NOT_FOUND));
+        friend.changeFriendState(FriendState.BAN);
     }
 }

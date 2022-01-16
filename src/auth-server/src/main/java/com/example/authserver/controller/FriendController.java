@@ -46,6 +46,12 @@ public class FriendController {
         return responseService.getSuccessResponse();
     }
 
+    @PatchMapping("/auth/ban-friend")
+    public CommonResponse banFriend(@RequestParam(value="id") Long id) {
+        friendService.banFriend(id);
+        return responseService.getSuccessResponse();
+    }
+
     @DeleteMapping("/auth/friend")
     public CommonResponse refuseFriend(@RequestParam(value = "id") Long id) {
         friendService.refuseFriend(id);

@@ -167,6 +167,12 @@ public class UserService extends BaseTimeEntity {
     }
 
     @Transactional
+    public void deleteProfile(User account) {
+        account.changeProfileImage(null);
+        accountRepository.save(account);
+    }
+
+    @Transactional
     public void modifyProfile(User account, ProfileRequest profileRequest) {
         account.changeBio(profileRequest.getBio());
         accountRepository.save(account);
