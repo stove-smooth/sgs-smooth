@@ -34,7 +34,6 @@ function fetchUserInfo() {
 async function changeUserImage(userData) {
   try {
     const accesstoken = await store.getters["auth/getAccessToken"];
-    console.log(accesstoken);
     const response = await axios.post(
       "http://52.79.229.100:8000/auth-server/auth/profile",
       userData,
@@ -53,6 +52,9 @@ async function changeUserImage(userData) {
 function acceptFriend(userId) {
   return instance.patch("auth-server/auth/friend?id=" + userId);
 }
+function deleteFriend(userId) {
+  return instance.delete("auth-server/auth/friend?id=" + userId);
+}
 export {
   registerUser,
   loginUser,
@@ -63,4 +65,5 @@ export {
   fetchUserInfo,
   changeUserImage,
   acceptFriend,
+  deleteFriend,
 };

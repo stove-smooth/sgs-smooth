@@ -20,6 +20,7 @@
       v-if="createchannel"
       @exit-create-channel="setCreateChannel(false)"
     ></create-channel-modal>
+    <friends-delete-modal></friends-delete-modal>
   </div>
 </template>
 
@@ -29,6 +30,7 @@ import CreateServerModal from "./components/CreateServerModal.vue";
 import CreateChannelModal from "./components/CreateChannelModal.vue";
 import { mapGetters, mapState, mapMutations } from "vuex";
 import FriendsPlusAction from "./components/common/FriendsPlusAction.vue";
+import FriendsDeleteModal from "./components/FriendsDeleteModal.vue";
 export default {
   name: "App",
   components: {
@@ -36,6 +38,7 @@ export default {
     CreateServerModal,
     CreateChannelModal,
     FriendsPlusAction,
+    FriendsDeleteModal,
   },
   data() {
     return {

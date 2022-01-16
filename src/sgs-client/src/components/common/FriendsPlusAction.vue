@@ -8,8 +8,11 @@
         <div class="plus-action-label-container">
           <div class="plus-action-label">음성 통화 시작하기</div>
         </div>
-        <div class="plus-action-label-container">
-          <div class="plus-action-label">친구하기</div>
+        <div
+          class="plus-action-label-container"
+          @click="setFriendsReadyToDelete(friendsplusmenu)"
+        >
+          <div class="plus-action-label">친구 삭제하기</div>
         </div>
       </div>
     </div>
@@ -17,7 +20,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 export default {
   computed: {
     ...mapState("utils", ["clientX", "clientY"]),
@@ -28,6 +31,9 @@ export default {
         "--ypoint": this.clientY + "px",
       };
     },
+  },
+  methods: {
+    ...mapMutations("friends", ["setFriendsReadyToDelete"]),
   },
 };
 </script>
@@ -64,6 +70,10 @@ export default {
   padding: 6px 8px;
   color: #b9bbbe;
   border-color: #b9bbbe;
+}
+.plus-action-label-container:hover {
+  background-color: var(--discord-primary);
+  cursor: pointer;
 }
 .plus-action-label {
   -webkit-box-flex: 1;

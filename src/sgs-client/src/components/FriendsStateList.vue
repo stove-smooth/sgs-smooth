@@ -45,7 +45,7 @@
               class="action-button"
               aria-label="기타"
               role="button"
-              @click="clickPlusAction($event, slotProps.id)"
+              @click="clickPlusAction($event, slotProps.id, slotProps.username)"
             >
               <svg class="plus-action"></svg>
             </div>
@@ -137,12 +137,16 @@ export default {
         console.log(err);
       }
     },
-    clickPlusAction(event, index) {
+    clickPlusAction(event, index, name) {
       const x = event.clientX;
       const y = event.clientY;
       this.setClientX(x);
       this.setClientY(y);
-      this.setFriendsPlusMenu(index);
+      const selectedfriends = {
+        id: index,
+        username: name,
+      };
+      this.setFriendsPlusMenu(selectedfriends);
     },
     onClick(e) {
       if (!e.target.parentNode.dataset.key) {

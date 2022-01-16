@@ -85,9 +85,6 @@ export default {
     openSettings() {
       this.$router.push("/settings");
     },
-    /* async fetchUserInfo() {
-      await this.FETCH_USERINFO();
-    }, */
   },
   computed: {
     ...mapState("auth", ["code", "nickname", "userimage"]),

@@ -34,7 +34,9 @@
                           @change="uploadImage()"
                         />
                       </div>
-                      <button class="small-button">기본 프로필 사용</button>
+                      <button class="small-button" @click="resetImage">
+                        기본 프로필 사용
+                      </button>
                       <button
                         class="small-button"
                         v-bind:style="{ marginLeft: '12px' }"
@@ -104,6 +106,15 @@ export default {
       this.discordProfile = require("../assets/" + result + ".png");
     }
   },
+  watch: {
+    userimage(newVal, oldVal) {
+      if (newVal !== oldVal && !newVal) {
+        const classify = this.code % 4;
+        const result = selectProfile(classify);
+        this.discordProfile = require("../assets/" + result + ".png");
+      }
+    },
+  },
   methods: {
     ...mapActions("auth", ["LOGOUT", "FETCH_USERINFO"]),
     ...mapMutations("auth", ["setUserImage"]),
@@ -125,14 +136,22 @@ export default {
     async dataUrlToFile(dataUrl) {
       const response = await fetch(dataUrl);
       const blob = await response.blob();
-      return new File([blob], "newProfileImg", { type: "image/png" });
+      console.log("dataUrl", dataUrl);
+      return new File([blob], "dataUrl", { type: "image/png" });
     },
     async changeProfile() {
-      var frm = new FormData();
-      const result = await this.dataUrlToFile(this.userimage);
-      frm.append("image", result);
-      await changeUserImage(frm);
-      window.location.reload();
+      if (!this.userimage) {
+        await changeUserImage();
+      } else {
+        var frm = new FormData();
+        const result = await this.dataUrlToFile(this.userimage);
+        frm.append("image", result);
+        await changeUserImage(frm);
+        window.location.reload();
+      }
+    },
+    resetImage() {
+      this.setUserImage("");
     },
   },
 };

@@ -10,6 +10,7 @@ const friends = {
     friendsrequest: [],
     friendsban: [],
     friendsplusmenu: null,
+    friendsreadytodelete: null,
   },
   mutations: {
     setAllFriends(state, friendsaccept) {
@@ -33,6 +34,9 @@ const friends = {
     },
     setFriendsPlusMenu(state, friendsplusmenu) {
       state.friendsplusmenu = friendsplusmenu;
+    },
+    setFriendsReadyToDelete(state, friendsreadytodelete) {
+      state.friendsreadytodelete = friendsreadytodelete;
     },
   },
   actions: {
