@@ -116,6 +116,16 @@ public class ChannelController {
     /**
      * 채널에서 추방하기
      */
+    @DeleteMapping("/{channelId}/member")
+    public CommonResponse deleteMember(
+            @RequestHeader(ID) String userId,
+            @PathVariable Long channelId,
+            @RequestParam(name = "id") Long memberId
+    ) {
+        log.info("DELETE /community-server/channel/member");
+        channelService.deleteMember(Long.parseLong(userId), channelId, memberId);
+        return responseService.getSuccessResponse();
+    }
 
 
     /**

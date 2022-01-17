@@ -140,13 +140,13 @@ public class ChannelService {
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
 
-        isOwner(channel.getCategory().getCommunity(), userId);
+        isOwner(channel, userId);
 
         channel.delete();
     }
 
-    private void isOwner(Community community, Long userId) {
-        Long ownerUserId = community.getMembers().stream()
+    private void isOwner(Channel channel, Long userId) {
+        Long ownerUserId = channel.getCategory().getCommunity().getMembers().stream()
                 .filter(cm -> cm.getRole().equals(CommunityRole.OWNER))
                 .findFirst().orElseThrow(() -> new CustomException(NON_EXIST_OWNER))
                 .getUserId();
@@ -195,7 +195,24 @@ public class ChannelService {
             throw new CustomException(NON_VALID_USER_ID_IN_COMMUNITY);
     }
 
+    @Transactional
+    public void deleteMember(Long userId, Long channelId, Long memberId) {
 
+        Channel channel = channelRepository.findById(channelId)
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
 
+        if (channel.isPublic())
+            throw new CustomException(ALREADY_PUBLIC_STATE);
 
+        if (!userId.equals(memberId))
+            isOwner(channel, userId);
+
+        ChannelMember member = channel.getMembers().stream()
+                .filter(m -> m.getUserId().equals(memberId))
+                .filter(m -> m.isStatus())
+                .findAny().orElseThrow(() -> new CustomException(EMPTY_MEMBER));
+
+        member.delete();
+    }
 }
