@@ -3,7 +3,7 @@
     <div class="blurred-background" @click="exitCreate"></div>
     <div class="modal-container">
       <template v-if="progress === 'openCreate'">
-        <CreateServerForm @exit="exitCreate">
+        <modal @exit="exitCreate">
           <template slot="header">
             <h3 class="modal-big-title">서버 만들기</h3>
             <div class="modal-subtitle">
@@ -26,10 +26,10 @@
               </button>
             </div>
           </template>
-        </CreateServerForm>
+        </modal>
       </template>
       <template v-else-if="progress === 'openSelect'">
-        <CreateServerForm @exit="exitCreate">
+        <modal @exit="exitCreate">
           <template slot="header">
             <h3 class="modal-big-title">
               이 서버에 대해 더 자세히 말해주세요.
@@ -58,10 +58,10 @@
               </button>
             </div>
           </template>
-        </CreateServerForm>
+        </modal>
       </template>
       <template v-else>
-        <CreateServerForm @exit="exitCreate">
+        <modal @exit="exitCreate">
           <template slot="header">
             <h3 class="modal-big-title">서버 커스터마이징 하기</h3>
             <div class="modal-subtitle">
@@ -117,14 +117,14 @@
               </button>
             </div>
           </template>
-        </CreateServerForm>
+        </modal>
       </template>
     </div>
   </div>
 </template>
 
 <script>
-import CreateServerForm from "../components/common/CreateServerForm.vue";
+import Modal from "../components/common/Modal.vue";
 import { converToThumbnail } from "../utils/common.js";
 const storage = {
   fetch() {
@@ -140,7 +140,7 @@ const storage = {
 };
 export default {
   components: {
-    CreateServerForm,
+    Modal,
   },
   data() {
     return {

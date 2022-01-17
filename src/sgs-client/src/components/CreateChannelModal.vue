@@ -2,7 +2,7 @@
   <div class="modal">
     <div class="blurred-background" @click="closeModal"></div>
     <div class="modal-container">
-      <CreateServerForm @exit="closeModal">
+      <modal @exit="closeModal">
         <template slot="header">
           <h3 class="modal-big-title">채팅 채널 만들기</h3>
           <div class="modal-subtitle">: 개인 공간에 속해있음</div>
@@ -76,16 +76,16 @@
             </button>
           </div>
         </template>
-      </CreateServerForm>
+      </modal>
     </div>
   </div>
 </template>
 
 <script>
-import CreateServerForm from "../components/common/CreateServerForm.vue";
+import Modal from "../components/common/Modal.vue";
 export default {
   components: {
-    CreateServerForm,
+    Modal,
   },
   data() {
     return {

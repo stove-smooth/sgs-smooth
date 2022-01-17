@@ -2,7 +2,7 @@
   <div class="modal" v-if="friendsreadytodelete">
     <div class="blurred-background"></div>
     <div class="modal-container">
-      <create-server-form @exit="exitModal">
+      <modal @exit="exitModal">
         <template slot="header">
           <h3 class="modal-big-title">
             {{ friendsreadytodelete.username }}님을 제거하기
@@ -25,17 +25,17 @@
             <button class="back-button" @click="exitModal">취소</button>
           </div>
         </template>
-      </create-server-form>
+      </modal>
     </div>
   </div>
 </template>
 
 <script>
-import CreateServerForm from "./common/CreateServerForm.vue";
+import Modal from "./common/Modal.vue";
 import { mapState, mapMutations } from "vuex";
 import { deleteFriend } from "../api/index.js";
 export default {
-  components: { CreateServerForm },
+  components: { Modal },
   computed: {
     ...mapState("friends", ["friendsreadytodelete"]),
   },

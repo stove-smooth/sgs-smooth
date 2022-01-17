@@ -1,6 +1,10 @@
 <template>
   <nav class="server-sidebar-container">
-    <div class="tutorial-container clickable" @click="setOpenServerPopout">
+    <div
+      class="tutorial-container clickable"
+      @click="setOpenServerPopout"
+      :data-container="true"
+    >
       <header class="server-sidebar-header">
         <h1 class="server-name">밍디의 서버</h1>
         <div
@@ -216,9 +220,22 @@ export default {
     unhover() {
       this.hovered = "";
     },
-    /*     createNewChannel() {
-      this.createchannel = true;
-    }, */
+    onClick(e) {
+      var temp = e.target.parentNode.childNodes[0]._prevClass;
+      if (
+        temp !== "server-name" &&
+        temp !== "server-sidebar-header" &&
+        temp !== "expand-down-arrow-icon"
+      ) {
+        if (this.openServerPopout) {
+          console.log(this.openServerPopout);
+          this.setOpenServerPopout();
+        }
+      }
+    },
+  },
+  mounted() {
+    window.addEventListener("click", this.onClick);
   },
 };
 </script>
