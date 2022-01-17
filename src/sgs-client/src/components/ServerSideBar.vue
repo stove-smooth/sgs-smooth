@@ -221,14 +221,13 @@ export default {
       this.hovered = "";
     },
     onClick(e) {
-      var temp = e.target.parentNode.childNodes[0]._prevClass;
-      if (
-        temp !== "server-name" &&
-        temp !== "server-sidebar-header" &&
-        temp !== "expand-down-arrow-icon"
-      ) {
-        if (this.openServerPopout) {
-          console.log(this.openServerPopout);
+      if (this.openServerPopout) {
+        var temp = e.target.parentNode.childNodes[0]._prevClass;
+        if (
+          temp !== "server-name" &&
+          temp !== "server-sidebar-header" &&
+          temp !== "expand-down-arrow-icon"
+        ) {
           this.setOpenServerPopout();
         }
       }

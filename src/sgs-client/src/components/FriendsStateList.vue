@@ -95,8 +95,13 @@
         <friends-form :friend="friendsban">
           <template slot="title">차단-{{ friendsban.length }}명</template>
           <template slot="status"><span>차단 목록</span></template>
-          <template slot="action">
-            <div class="action-button" aria-label="차단해제" role="button">
+          <template v-slot:action="slotProps">
+            <div
+              class="action-button"
+              aria-label="차단해제"
+              role="button"
+              @click="rejectFriend(slotProps.id)"
+            >
               <svg class="blocked"></svg>
             </div>
           </template>

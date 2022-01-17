@@ -1,16 +1,16 @@
 <template>
-  <div class="modal" v-if="friendsreadytodelete">
+  <div class="modal" v-if="friendsreadytoblock">
     <div class="blurred-background" @click="exitModal"></div>
     <div class="modal-container">
       <modal @exit="exitModal">
         <template slot="header">
           <h3 class="modal-big-title">
-            {{ friendsreadytodelete.username }}님을 제거하기
+            {{ friendsreadytoblock.username }}님을 차단하기
           </h3>
         </template>
         <template slot="content">
           <div class="modal-subtitle">
-            친구 {{ friendsreadytodelete.username }}님을 삭제하시겠어요?
+            친구 {{ friendsreadytoblock.username }}님을 차단하시겠어요?
           </div>
         </template>
         <template slot="footer">
@@ -18,9 +18,9 @@
             <button
               type="button"
               class="medium-submit-button"
-              @click="deleteFriends(friendsreadytodelete.id)"
+              @click="blockFriends(friendsreadytoblock.id)"
             >
-              <div>친구 삭제하기</div>
+              <div>친구 차단하기</div>
             </button>
             <button class="back-button" @click="exitModal">취소</button>
           </div>
@@ -33,21 +33,20 @@
 <script>
 import Modal from "./common/Modal.vue";
 import { mapState, mapMutations } from "vuex";
-import { deleteFriend } from "../api/index.js";
+import { blockFriend } from "../api/index.js";
 export default {
   components: { Modal },
   computed: {
-    ...mapState("friends", ["friendsreadytodelete"]),
+    ...mapState("friends", ["friendsreadytoblock"]),
   },
   methods: {
-    ...mapMutations("friends", ["setFriendsReadyToDelete"]),
+    ...mapMutations("friends", ["setFriendsReadyToBlock"]),
     exitModal() {
-      this.setFriendsReadyToDelete(null);
+      this.setFriendsReadyToBlock(null);
     },
-    async deleteFriends(userId) {
-      await deleteFriend(userId);
-      window.location.reload();
-      this.setFriendsReadyToDelete(null);
+    async blockFriends(userId) {
+      const result = await blockFriend(userId);
+      console.log(result);
     },
   },
 };

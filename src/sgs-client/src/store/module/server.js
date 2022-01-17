@@ -1,10 +1,14 @@
 const server = {
   namespaced: true,
   state: {
+    createserver: false,
     createchannel: false,
     openServerPopout: false,
   },
   mutations: {
+    setCreateServer(state, createserver) {
+      state.createserver = createserver;
+    },
     setCreateChannel(state, createchannel) {
       state.createchannel = createchannel;
     },

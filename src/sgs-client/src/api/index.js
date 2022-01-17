@@ -55,6 +55,9 @@ function acceptFriend(userId) {
 function deleteFriend(userId) {
   return instance.delete("auth-server/auth/friend?id=" + userId);
 }
+function blockFriend(userId) {
+  return instance.patch("auth-server/auth/ban-friend?id=" + userId);
+}
 function deleteProfileImage() {
   return instance.patch("auth-server/auth/d/profile");
 }
@@ -69,5 +72,6 @@ export {
   changeUserImage,
   acceptFriend,
   deleteFriend,
+  blockFriend,
   deleteProfileImage,
 };

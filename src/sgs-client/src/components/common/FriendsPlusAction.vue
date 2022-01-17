@@ -2,17 +2,52 @@
   <div :style="cssProps" v-show="friendsplusmenu">
     <div class="plus-action-container">
       <div class="plus-action-wrapper">
-        <div class="plus-action-label-container">
+        <div class="plus-action-label-container" @mouseover="hover('profile')">
+          <div class="plus-action-label">프로필</div>
+        </div>
+        <div class="plus-action-label-container" @mouseover="hover('call')">
           <div class="plus-action-label">영상 통화 시작하기</div>
         </div>
-        <div class="plus-action-label-container">
+        <div class="plus-action-label-container" @mouseover="hover('call')">
           <div class="plus-action-label">음성 통화 시작하기</div>
+        </div>
+        <div class="plus-action-label-container" @mouseover="hover('invite')">
+          <div class="plus-action-label">서버에 초대하기</div>
+          <svg class="small-right-arrow"></svg>
         </div>
         <div
           class="plus-action-label-container"
           @click="setFriendsReadyToDelete(friendsplusmenu)"
+          @mouseover="hover('remove')"
         >
           <div class="plus-action-label red-color">친구 삭제하기</div>
+        </div>
+        <div
+          class="plus-action-label-container"
+          @click="setFriendsReadyToBlock(friendsplusmenu)"
+          @mouseover="hover('block')"
+        >
+          <div class="plus-action-label red-color">차단하기</div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="plus-action-invite-server-container"
+      v-show="readytoinvite === 'invite'"
+      @mouseleave="hover('')"
+    >
+      <div class="plus-action-wrapper">
+        <div class="plus-action-label-container">
+          <div class="plus-action-label">서버1</div>
+        </div>
+        <div class="plus-action-label-container">
+          <div class="plus-action-label">서버2</div>
+        </div>
+        <div class="plus-action-label-container">
+          <div class="plus-action-label">서버3</div>
+        </div>
+        <div class="plus-action-label-container">
+          <div class="plus-action-label">서버4</div>
         </div>
       </div>
     </div>
@@ -22,6 +57,11 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 export default {
+  data() {
+    return {
+      readytoinvite: "",
+    };
+  },
   computed: {
     ...mapState("utils", ["clientX", "clientY"]),
     ...mapState("friends", ["friendsplusmenu"]),
@@ -29,16 +69,29 @@ export default {
       return {
         "--xpoint": this.clientX + "px",
         "--ypoint": this.clientY + "px",
+        "--plus--xpoint": this.clientX + 190 + "px",
+        "--plus--ypoint": this.clientY + 96 + "px",
       };
     },
   },
   methods: {
-    ...mapMutations("friends", ["setFriendsReadyToDelete"]),
+    ...mapMutations("friends", [
+      "setFriendsReadyToDelete",
+      "setFriendsReadyToBlock",
+    ]),
+    hover(element) {
+      this.readytoinvite = element;
+    },
   },
 };
 </script>
 
 <style>
+.plus-action-invite-server-container {
+  position: absolute;
+  top: var(--plus--ypoint);
+  left: var(--plus--xpoint);
+}
 .plus-action-container {
   position: absolute;
   top: var(--ypoint);
@@ -87,5 +140,10 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.small-right-arrow {
+  width: 12px;
+  height: 12px;
+  background-image: url("../../assets/small-right-arrow.svg");
 }
 </style>

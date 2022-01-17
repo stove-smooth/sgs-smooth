@@ -1,5 +1,5 @@
 <template>
-  <div class="modal">
+  <div v-show="createserver" class="modal">
     <div class="blurred-background" @click="exitCreate"></div>
     <div class="modal-container">
       <template v-if="progress === 'openCreate'">
@@ -126,6 +126,7 @@
 <script>
 import Modal from "../components/common/Modal.vue";
 import { converToThumbnail } from "../utils/common.js";
+import { mapState, mapMutations } from "vuex";
 const storage = {
   fetch() {
     const serveritems = localStorage.getItem(3) || "[]";
@@ -144,6 +145,7 @@ export default {
   },
   data() {
     return {
+      isPublic: "",
       serverName: "밍디님의 서버",
       progress: "openCreate",
       serverList: [],
@@ -155,7 +157,11 @@ export default {
       console.log(newVal, oldVal);
     },
   },
+  computed: {
+    ...mapState("server", ["createserver"]),
+  },
   methods: {
+    ...mapMutations("server", ["setCreateServer"]),
     openSelectServer() {
       this.progress = "openSelect";
     },
@@ -182,7 +188,7 @@ export default {
       window.location.reload();
     },
     exitCreate() {
-      this.$emit("exit");
+      this.setCreateServer(false);
     },
     fetchTodoItems() {
       this.serverList = storage.fetch();

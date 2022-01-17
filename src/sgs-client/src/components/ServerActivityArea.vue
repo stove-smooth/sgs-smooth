@@ -474,6 +474,7 @@ export default {};
   min-height: 44px;
   color: #dcddde;
   position: relative;
+  height: auto;
 }
 .channel-message-input-placeholder {
   padding-bottom: 11px;

@@ -79,7 +79,7 @@
           </div>
         </div>
         <div class="tutorial-container">
-          <div class="listItem" @click="openCreate">
+          <div class="listItem" @click="setCreateServer(true)">
             <div claass="listItem-wrapper">
               <div class="circleIcon-button">
                 <svg class="plus-icon"></svg>
@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 import NumberBadge from "./common/NumberBadge.vue";
 const storage = {
   fetch() {
@@ -116,9 +116,7 @@ export default {
     };
   },
   methods: {
-    openCreate() {
-      this.$emit("create-server");
-    },
+    ...mapMutations("server", ["setCreateServer"]),
     fetchTodoItems() {
       this.serverlist = storage.fetch();
     },

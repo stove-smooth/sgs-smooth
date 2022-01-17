@@ -3,25 +3,20 @@
     <div class="wrapper2">
       <div class="wrapper">
         <div class="container">
-          <navigation-bar
-            @create-server="openCreateServer"
-            v-if="getEmail && navbar"
-          ></navigation-bar>
+          <navigation-bar v-if="getEmail && navbar"></navigation-bar>
           <router-view></router-view>
         </div>
       </div>
     </div>
     <server-popout></server-popout>
     <friends-plus-action></friends-plus-action>
-    <create-server-modal
-      v-if="createServer"
-      @exit="exitCreateServer"
-    ></create-server-modal>
+    <create-server-modal></create-server-modal>
     <create-channel-modal
       v-if="createchannel"
       @exit-create-channel="setCreateChannel(false)"
     ></create-channel-modal>
     <friends-delete-modal></friends-delete-modal>
+    <friends-block-modal></friends-block-modal>
   </div>
 </template>
 
@@ -33,6 +28,7 @@ import { mapGetters, mapState, mapMutations } from "vuex";
 import FriendsPlusAction from "./components/common/FriendsPlusAction.vue";
 import FriendsDeleteModal from "./components/FriendsDeleteModal.vue";
 import ServerPopout from "./components/ServerPopout.vue";
+import FriendsBlockModal from "./components/FriendsBlockModal.vue";
 export default {
   name: "App",
   components: {
@@ -42,12 +38,12 @@ export default {
     FriendsPlusAction,
     FriendsDeleteModal,
     ServerPopout,
+    FriendsBlockModal,
   },
   data() {
     return {
       createChannel: true,
       navbar: true,
-      createServer: false,
     };
   },
   created() {
@@ -81,12 +77,6 @@ export default {
   },
   methods: {
     ...mapMutations("server", ["setCreateChannel"]),
-    openCreateServer() {
-      this.createServer = true;
-    },
-    exitCreateServer() {
-      this.createServer = false;
-    },
   },
 };
 </script>
