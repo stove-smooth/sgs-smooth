@@ -68,7 +68,12 @@
                 class="friends-state-text"
                 v-bind:style="{ position: 'relative' }"
               >
-                <svg class="voice-channel channel-input-prefix"></svg>
+                <svg
+                  v-if="isChatType"
+                  class="hashtag-icon channel-input-prefix"
+                ></svg>
+                <svg v-else class="voice-channel channel-input-prefix"></svg>
+
                 <input
                   width="100%"
                   type="text"

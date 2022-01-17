@@ -6,6 +6,7 @@
           class="primary-member-layout"
           @mouseover="hold(index)"
           @mouseleave="unhold"
+          @click="routePrivateDM(index)"
         >
           <div class="avatar-container">
             <div class="profile-wrapper" aria-label="칭구1">
@@ -52,6 +53,9 @@ export default {
     },
     unhold() {
       this.upHere = "";
+    },
+    routePrivateDM(index) {
+      this.$router.push("/channels/@me/" + index);
     },
   },
 };

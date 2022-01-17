@@ -6,6 +6,8 @@ import MyPage from "../pages/Mypage.vue";
 import NotFoundPage from "../pages/NotFoundPage.vue";
 import UserSettingPage from "../pages/UserSettingPage.vue";
 import ServerPage from "../pages/ServerPage.vue";
+import ServerWelcomePage from "../pages/ServerWelcomePage.vue";
+import PrivateDMPage from "../pages/PrivateDMPage.vue";
 import store from "../store/index";
 Vue.use(VueRouter);
 
@@ -35,6 +37,12 @@ export const router = new VueRouter({
       component: RegisterPage,
     },
     {
+      path: "/channels/@me/:id",
+      name: "PrivateDMPage",
+      component: PrivateDMPage,
+      meta: { auth: true },
+    },
+    {
       path: "/channels/@me",
       name: "MyPage",
       component: MyPage,
@@ -47,9 +55,14 @@ export const router = new VueRouter({
       meta: { auth: true },
     },
     {
-      path: "/channels/:id",
+      path: "/channels/:serverid/:channelid",
       name: "ServerPage",
       component: ServerPage,
+    },
+    {
+      path: "/channels/:id",
+      name: "ServerWelcomePage",
+      component: ServerWelcomePage,
     },
     {
       path: "*",
