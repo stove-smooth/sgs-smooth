@@ -49,12 +49,12 @@ public class FriendService {
         List<Friend> requestList = account.getRequestList();
 
         List<FriendResponse> result = responseList.stream()
-                .filter(f -> !f.getFriendState().equals(FriendState.BAN))
                 .map(
                 f -> convertRequestFriend(f)
         ).collect(Collectors.toList());
 
         List<FriendResponse> sendToFriend = requestList.stream()
+                .filter(f -> !f.getFriendState().equals(FriendState.BAN))
                 .map(f -> convertResponseFriend(f)).collect(Collectors.toList());
 
         result.addAll(sendToFriend);
@@ -69,7 +69,7 @@ public class FriendService {
                 .name(friend.getSender().getName())
                 .code(friend.getSender().getCode())
                 .profileImage(friend.getSender().getProfileImage())
-                .state(friend.getFriendState().toString().equals("WAIT") ? "REQUEST" : friend.getFriendState().toString()).build();
+                .state(friend.getFriendState().toString().equals("REQUEST") ? "WAIT" : friend.getFriendState().toString()).build();
 
         return response;
     }
