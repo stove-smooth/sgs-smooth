@@ -192,7 +192,7 @@ public class CommunityController {
     @PatchMapping("/location")
     public CommonResponse locateCommunity(
             @RequestHeader(ID) String userId,
-            @Valid @RequestBody LocateCommunityRequest request
+            @Valid @RequestBody LocateRequest request
     ) {
         log.info("PATCH /community-server/community/location");
         communityService.locateCommunity(Long.parseLong(userId), request);

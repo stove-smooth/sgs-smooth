@@ -9,9 +9,9 @@ import javax.validation.constraints.NotNull;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LocateCategoryRequest {
+public class LocateRequest {
     @NotNull
-    private Long categoryId;
+    private Long id;
     @NotNull
-    private Long nextNode;
+    private Long next;
 }

@@ -106,9 +106,9 @@ public class CategoryService {
     }
 
     @Transactional
-    public void locateCategory(Long userId, LocateCategoryRequest request) {
+    public void locateCategory(Long userId, LocateRequest request) {
 
-        Category target = categoryRepository.findById(request.getCategoryId())
+        Category target = categoryRepository.findById(request.getId())
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CATEGORY));
 
@@ -122,12 +122,12 @@ public class CategoryService {
         Category first = getFirstCategory(community);
 
         Category before = null;
-        if (request.getNextNode().equals(0L)) {
+        if (request.getNext().equals(0L)) {
             if (target.equals(first))
                 throw new CustomException(ALREADY_LOCATED);
         } else {
             before = categories.stream()
-                    .filter(c -> c.getId().equals(request.getNextNode()))
+                    .filter(c -> c.getId().equals(request.getNext()))
                     .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                     .findAny().orElseThrow(() -> new CustomException(NON_VALID_NEXT_NODE));
 

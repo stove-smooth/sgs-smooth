@@ -57,7 +57,7 @@ public class CategoryController {
     @PatchMapping("/location")
     public CommonResponse locateCategory(
             @RequestHeader(ID) String userId,
-            @Valid @RequestBody LocateCategoryRequest request
+            @Valid @RequestBody LocateRequest request
     ) {
         log.info("PATCH /community-server/category/location");
         categoryService.locateCategory(Long.parseLong(userId), request);

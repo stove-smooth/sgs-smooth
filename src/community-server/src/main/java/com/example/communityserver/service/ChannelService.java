@@ -243,4 +243,39 @@ public class ChannelService {
 
         return ChannelResponse.fromEntity(newChannel);
     }
+
+    @Transactional
+    public void locateChannel(Long userId, LocateRequest request) {
+
+        Channel target = channelRepository.findById(request.getId())
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
+
+        Category category = target.getCategory();
+        isAuthorizedMember(category.getCommunity(), userId);
+
+        List<Channel> channels = category.getChannels().stream()
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .collect(Collectors.toList());
+
+        Channel first = getFirstChannel(category);
+
+        Channel before = null;
+        if (request.getNext().equals(0L)) {
+            if (target.equals(first))
+                throw new CustomException(ALREADY_LOCATED);
+        } else {
+            before = channels.stream()
+                    .filter(c -> c.getId().equals(request.getNext()))
+                    .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                    .findAny().orElseThrow(() -> new CustomException(NON_VALID_NEXT_NODE));
+
+            if (!Objects.isNull(before.getNextNode())) {
+                if (before.getNextNode().equals(target))
+                    throw new CustomException(ALREADY_LOCATED);
+            }
+        }
+
+        target.locate(before, first);
+    }
 }

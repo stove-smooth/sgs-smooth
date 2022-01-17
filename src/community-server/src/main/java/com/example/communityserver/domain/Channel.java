@@ -108,6 +108,39 @@ public class Channel extends BaseTimeEntity {
         return channel;
     }
 
+    public void locate(Channel before, Channel first) {
+        Channel originBeforeNode = first;
+
+        if (first.equals(this)) {
+            this.isFirstNode = false;
+            Channel originNextNode = before.getNextNode();
+            before.setNextNode(this);
+            this.getNextNode().setFirstNode(true);
+            this.setNextNode(originNextNode);
+        } else {
+            while (!Objects.isNull(originBeforeNode.getNextNode())) {
+                if (originBeforeNode.getNextNode().equals(this))
+                    break;
+                else
+                    originBeforeNode = originBeforeNode.getNextNode();
+            }
+
+            if (Objects.isNull(before)) {
+                this.isFirstNode = true;
+                originBeforeNode.setNextNode(this.nextNode);
+                this.nextNode = first;
+                first.setFirstNode(false);
+            } else {
+                Channel originNextNode = before.getNextNode();
+                before.setNextNode(this);
+                if (!Objects.isNull(originNextNode))
+                    originNextNode.setNextNode(this.nextNode);
+                this.nextNode = originNextNode;
+                originBeforeNode.setNextNode(before);
+            }
+        }
+    }
+
     public void delete() {
         if (this.isFirstNode) {
             if (!Objects.isNull(this.getNextNode()))

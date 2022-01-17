@@ -24,16 +24,10 @@ public class ChannelController {
     private final ResponseService responseService;
 
     /**
-     * 0. 채널 정보 조회하기
-     * 1. 채널 생성하기
-     * 2. 채널 이름 수정하기
-     * 3. 채널 소개 편집하기
-     * 4. 카테고리 배치 순서 바꾸기
-     * 5. 채널 삭제하기
-     * 6. 채널에 초대하기
-     * 7. 채널에서 추방하기
-     * 8. 채널 복제하기
-     * 9. 채널 내 메세지 읽음 처리 (Optional)
+     * Todo
+     * - 채널 정보 조회하기
+     * - 쓰레드 만들기
+     * - 채널 내 메세지 읽음 처리 (Optional)
      */
 
     /**
@@ -83,6 +77,15 @@ public class ChannelController {
     /**
      * 카테고리 배치 순서 바꾸기
      */
+    @PatchMapping("/location")
+    public CommonResponse locateChannel(
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody LocateRequest request
+    ) {
+        log.info("PATCH /community-server/channel/location");
+        channelService.locateChannel(Long.parseLong(userId), request);
+        return responseService.getSuccessResponse();
+    }
 
     /**
      * 채널 삭제하기
