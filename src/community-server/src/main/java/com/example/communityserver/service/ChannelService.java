@@ -74,7 +74,6 @@ public class ChannelService {
 
     @Transactional
     public ChannelResponse createChannel(Long userId, CreateChannelRequest request) {
-
         Category category = categoryRepository.findById(request.getCategoryId())
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CATEGORY));
@@ -109,7 +108,6 @@ public class ChannelService {
                 firstChannel,
                 members
         );
-
         channelRepository.save(newChannel);
 
         return ChannelResponse.fromEntity(newChannel);
@@ -144,6 +142,37 @@ public class ChannelService {
 
         if (!isAuthorization)
             throw new CustomException(NON_AUTHORIZATION);
+    }
+
+    @Transactional
+    public ChannelResponse createThread(Long userId, CreateThreadRequest request, String token) {
+        Channel channel = channelRepository.findById(request.getChannelId())
+                .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
+
+        isAuthorizedMember(channel.getCategory().getCommunity(), userId);
+
+        UserInfoFeignResponse userInfoFeignResponse = userClient.getUserInfo(token);
+        String nickname = userInfoFeignResponse.getResult().getName();
+
+        List<ChannelMember> members = new ArrayList<>();
+        if (!channel.isPublic()) {
+            members = channel.getMembers().stream()
+                    .map(ChannelMember::getUserId)
+                    .map(ChannelMember::new)
+                    .collect(Collectors.toList());
+        }
+
+        Channel newThread = Channel.createThread(
+                nickname,
+                request.getMessageId(),
+                channel,
+                request.getName(),
+                members
+        );
+        channelRepository.save(newThread);
+
+        return ChannelResponse.fromEntity(newThread);
     }
 
     @Transactional

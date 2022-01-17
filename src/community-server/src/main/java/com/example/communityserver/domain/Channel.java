@@ -31,7 +31,7 @@ public class Channel extends BaseTimeEntity {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    private Long userId;
+    private String username;
 
     @Column(length = 200)
     private String name;
@@ -51,6 +51,8 @@ public class Channel extends BaseTimeEntity {
     private Channel nextNode;
 
     private LocalDateTime expiredAt;
+
+    private Long messageId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
@@ -83,6 +85,11 @@ public class Channel extends BaseTimeEntity {
             nextNode.isFirstNode = false;
     }
 
+    public void setParent(Channel parent) {
+        this.parent = parent;
+        parent.getThread().add(this);
+    }
+
     //== 생성 메서드 ==//
     public static Channel createChannel(
             Category category,
@@ -93,6 +100,7 @@ public class Channel extends BaseTimeEntity {
             List<ChannelMember> channelMembers
     ) {
         Channel channel = new Channel();
+        channel.setUsername(null);
         channel.setCategory(category);
         channel.setType(type);
         channel.setName(name);
@@ -106,6 +114,27 @@ public class Channel extends BaseTimeEntity {
         channel.setNextNode(nextNode);
         channel.setStatus(ChannelStatus.NORMAL);
         return channel;
+    }
+
+    public static Channel createThread(
+            String username,
+            Long messageId,
+            Channel parent,
+            String name,
+            List<ChannelMember> channelMembers
+    ) {
+        Channel thread = new Channel();
+        thread.setUsername(username);
+        thread.setMessageId(messageId);
+        thread.setParent(parent);
+        thread.setName(name);
+        thread.setType(ChannelType.TEXT);
+        thread.setPublic(parent.isPublic());
+        thread.setMembers(channelMembers);
+        thread.isFirstNode = false;
+        thread.setExpiredAt(LocalDateTime.now().plusHours(24));
+        thread.setStatus(ChannelStatus.NORMAL);
+        return thread;
     }
 
     public void locate(Channel before, Channel first) {

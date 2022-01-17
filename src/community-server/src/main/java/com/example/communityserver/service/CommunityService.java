@@ -69,7 +69,6 @@ public class CommunityService {
         CommunityMember firstNode = getFirstNode(userId);
 
         createCommunityMember(userId, newCommunity, nickname, profileImage, firstNode, CommunityRole.OWNER);
-
         communityRepository.save(newCommunity);
 
         return CreateCommunityResponse.fromEntity(newCommunity);

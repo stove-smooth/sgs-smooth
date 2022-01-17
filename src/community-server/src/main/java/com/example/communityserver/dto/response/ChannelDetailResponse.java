@@ -14,6 +14,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.example.communityserver.dto.response.MemberResponse.fromEntity;
@@ -24,6 +25,7 @@ import static com.example.communityserver.dto.response.MemberResponse.fromEntity
 @AllArgsConstructor
 public class ChannelDetailResponse {
     private Long channelId;
+    private String username;
     private String name;
     @Enumerated(EnumType.STRING)
     private ChannelType type;
@@ -35,9 +37,12 @@ public class ChannelDetailResponse {
     public static ChannelDetailResponse fromEntity(Channel channel) {
         ChannelDetailResponse channelResponse = new ChannelDetailResponse();
         channelResponse.setChannelId(channel.getId());
+        channelResponse.setUsername(channel.getUsername());
         channelResponse.setName(channel.getName());
         channelResponse.setType(channel.getType());
         channelResponse.setPublic(channel.isPublic());
+        if (!Objects.isNull(channel.getParent()))
+            channelResponse.setParent(ThreadResponse.fromEntity(channel.getParent()));
         channelResponse.setThreads(channel.getThread().stream()
                 .map(ThreadResponse::fromEntity)
                 .collect(Collectors.toList()));

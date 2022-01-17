@@ -60,9 +60,19 @@ public class ChannelController {
     }
 
     /**
-     * 쓰레드 만들기
+     * 스레드 만들기
      */
-
+    @PostMapping("/thread")
+    public DataResponse<ChannelResponse> createThread(
+            @RequestHeader(AUTHORIZATION) String token,
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody CreateThreadRequest request
+    ) {
+        log.info("POST /community-server/channel/thread");
+        ChannelResponse response =
+                channelService.createThread(Long.parseLong(userId), request, token);
+        return responseService.getDataResponse(response);
+    }
 
     /**
      * 채널 이름 수정하기
