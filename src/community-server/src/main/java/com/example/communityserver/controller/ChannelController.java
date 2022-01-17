@@ -1,6 +1,7 @@
 package com.example.communityserver.controller;
 
 import com.example.communityserver.dto.request.*;
+import com.example.communityserver.dto.response.ChannelDetailResponse;
 import com.example.communityserver.dto.response.ChannelResponse;
 import com.example.communityserver.dto.response.CommonResponse;
 import com.example.communityserver.dto.response.DataResponse;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import static com.example.communityserver.controller.CommunityController.AUTHORIZATION;
 import static com.example.communityserver.controller.CommunityController.ID;
 
 @Slf4j
@@ -25,14 +27,23 @@ public class ChannelController {
 
     /**
      * Todo
-     * - 채널 정보 조회하기
-     * - 쓰레드 만들기
      * - 채널 내 메세지 읽음 처리 (Optional)
      */
 
     /**
      * 채널 정보 조회하기
      */
+    @GetMapping("{channelId}")
+    public DataResponse<ChannelDetailResponse> getChannelDetail(
+            @RequestHeader(AUTHORIZATION) String token,
+            @RequestHeader(ID) String userId,
+            @PathVariable Long channelId
+    ) {
+        log.info("/community-server/channel/{}", channelId);
+        ChannelDetailResponse response =
+                channelService.getChannelDetail(Long.parseLong(userId), channelId, token);
+        return responseService.getDataResponse(response);
+    }
 
     /**
      * 채널 생성하기
@@ -47,6 +58,11 @@ public class ChannelController {
                 channelService.createChannel(Long.parseLong(userId), request);
         return responseService.getDataResponse(response);
     }
+
+    /**
+     * 쓰레드 만들기
+     */
+
 
     /**
      * 채널 이름 수정하기

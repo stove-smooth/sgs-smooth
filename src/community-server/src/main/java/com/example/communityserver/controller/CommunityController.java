@@ -38,7 +38,7 @@ public class CommunityController {
      * 특정 커뮤니티 조회
      */
     @GetMapping("/{communityId}")
-    public DataResponse<CommunityDetailResponse> getCommunityInfo(
+    public DataResponse<CommunityDetailResponse> getCommunityDetail(
             @RequestHeader(ID) String userId,
             @PathVariable Long communityId
     ) {

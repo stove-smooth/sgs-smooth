@@ -22,6 +22,7 @@ public class MemberResponse {
     private String code;
     @Enumerated(EnumType.STRING)
     private CommunityRole role;
+    private String status;
 
     public static MemberResponse fromEntity(CommunityMember member, UserResponse user) {
         MemberResponse memberResponse = new MemberResponse();
@@ -31,6 +32,7 @@ public class MemberResponse {
         memberResponse.setUsername(user.getName());
         memberResponse.setCode(user.getCode());
         memberResponse.setRole(member.getRole());
+        memberResponse.setStatus("online");
         return memberResponse;
     }
 }

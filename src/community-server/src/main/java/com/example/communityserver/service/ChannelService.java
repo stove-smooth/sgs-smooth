@@ -1,12 +1,13 @@
 package com.example.communityserver.service;
 
+import com.example.communityserver.client.UserClient;
 import com.example.communityserver.domain.*;
 import com.example.communityserver.domain.type.ChannelStatus;
 import com.example.communityserver.domain.type.CommonStatus;
 import com.example.communityserver.domain.type.CommunityMemberStatus;
 import com.example.communityserver.domain.type.CommunityRole;
 import com.example.communityserver.dto.request.*;
-import com.example.communityserver.dto.response.ChannelResponse;
+import com.example.communityserver.dto.response.*;
 import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.CategoryRepository;
 import com.example.communityserver.repository.ChannelRepository;
@@ -14,11 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.example.communityserver.dto.response.MemberResponse.fromEntity;
 import static com.example.communityserver.exception.CustomExceptionStatus.*;
 
 @Service
@@ -30,6 +30,47 @@ public class ChannelService {
     private final ChannelRepository channelRepository;
 
     public static final String CHANNEL_DEFAULT_NAME = "일반";
+
+    private final UserClient userClient;
+
+    public ChannelDetailResponse getChannelDetail(Long userId, Long channelId, String token) {
+
+        Channel channel = channelRepository.findById(channelId)
+                .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
+
+        isAuthorizedMember(channel.getCategory().getCommunity(), userId);
+
+        ChannelDetailResponse response = ChannelDetailResponse.fromEntity(channel);
+
+        List<Long> ids = null;
+        if (channel.isPublic()) {
+            ids = channel.getCategory().getCommunity().getMembers().stream()
+                    .filter(m -> m.getStatus().equals(CommunityMemberStatus.NORMAL))
+                    .map(m -> m.getUserId())
+                    .collect(Collectors.toList());
+        } else {
+            ids = channel.getMembers().stream()
+                    .filter(m -> m.isStatus())
+                    .map(m -> m.getUserId())
+                    .collect(Collectors.toList());
+        }
+        HashMap<Long, UserResponse> userMap = getUserMap(ids, token);
+
+        Community community = channel.getCategory().getCommunity();
+        response.setMembers(ChannelDetailResponse.fromMember(community, ids, userMap));
+
+        return response;
+    }
+
+    private HashMap<Long, UserResponse> getUserMap(List<Long> ids, String token) {
+        Set<Long> set = new HashSet<>(ids);
+        ids = new ArrayList<>(set);
+
+        // Todo auth 터졌을 때 예외 처리
+        UserInfoListFeignResponse response = userClient.getUserInfoList(token, ids);
+        return response.getResult();
+    }
 
     @Transactional
     public ChannelResponse createChannel(Long userId, CreateChannelRequest request) {
@@ -109,7 +150,7 @@ public class ChannelService {
     public void editName(Long userId, EditNameRequest request) {
 
         Channel channel = channelRepository.findById(request.getId())
-                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
 
         isAuthorizedMember(channel.getCategory().getCommunity(), userId);
@@ -121,7 +162,7 @@ public class ChannelService {
     public void editDescription(Long userId, EditDescRequest request) {
 
         Channel channel = channelRepository.findById(request.getId())
-                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
 
         isAuthorizedMember(channel.getCategory().getCommunity(), userId);
@@ -133,7 +174,7 @@ public class ChannelService {
     public void deleteChannel(Long userId, Long channelId) {
 
         Channel channel = channelRepository.findById(channelId)
-                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
 
         isOwner(channel, userId);
@@ -154,7 +195,7 @@ public class ChannelService {
     public void inviteMember(Long userId, InviteMemberRequest request) {
 
         Channel channel = channelRepository.findById(request.getId())
-                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
 
         Community community = channel.getCategory().getCommunity();
@@ -195,7 +236,7 @@ public class ChannelService {
     public void deleteMember(Long userId, Long channelId, Long memberId) {
 
         Channel channel = channelRepository.findById(channelId)
-                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
 
         if (channel.isPublic())
@@ -216,7 +257,7 @@ public class ChannelService {
     public ChannelResponse copy(Long userId, CopyChannelRequest request) {
 
         Channel channel = channelRepository.findById(request.getId())
-                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
 
         isAuthorizedMember(channel.getCategory().getCommunity(), userId);
@@ -248,14 +289,14 @@ public class ChannelService {
     public void locateChannel(Long userId, LocateRequest request) {
 
         Channel target = channelRepository.findById(request.getId())
-                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
 
         Category category = target.getCategory();
         isAuthorizedMember(category.getCommunity(), userId);
 
         List<Channel> channels = category.getChannels().stream()
-                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                 .collect(Collectors.toList());
 
         Channel first = getFirstChannel(category);
@@ -267,7 +308,7 @@ public class ChannelService {
         } else {
             before = channels.stream()
                     .filter(c -> c.getId().equals(request.getNext()))
-                    .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                    .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                     .findAny().orElseThrow(() -> new CustomException(NON_VALID_NEXT_NODE));
 
             if (!Objects.isNull(before.getNextNode())) {
