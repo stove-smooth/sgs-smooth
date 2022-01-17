@@ -18,10 +18,6 @@ import static com.example.communityserver.controller.CommunityController.ID;
 @RequestMapping("/community-server/category")
 public class CategoryController {
 
-    /**
-     * Todo 카테고리 내 메세지 읽음 처리 (Optional)
-     */
-
     private final CategoryService categoryService;
     private final ResponseService responseService;
 
@@ -104,8 +100,4 @@ public class CategoryController {
         categoryService.deleteMember(Long.parseLong(userId), categoryId, memberId);
         return responseService.getSuccessResponse();
     }
-
-    /**
-     * 7. 카테고리 내 메세지 읽음 처리 (Optional)
-     */
 }

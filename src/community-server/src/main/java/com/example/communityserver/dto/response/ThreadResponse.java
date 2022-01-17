@@ -11,12 +11,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ThreadResponse {
-    private Long channelId;
+    private Long id;
     private String name;
 
     public static ThreadResponse fromEntity(Channel channel) {
         ThreadResponse threadResponse = new ThreadResponse();
-        threadResponse.setChannelId(channel.getId());
+        threadResponse.setId(channel.getId());
         threadResponse.setName(channel.getName());
         return threadResponse;
     }

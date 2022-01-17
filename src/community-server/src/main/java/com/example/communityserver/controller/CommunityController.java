@@ -152,18 +152,18 @@ public class CommunityController {
      * 초대장으로 커뮤니티 들어오기
      */
     @PostMapping("/member")
-    public CommonResponse join(
+    public DataResponse<CommunityResponse> join(
             @RequestHeader(AUTHORIZATION) String token,
             @RequestHeader(ID) String userId,
             @Valid @RequestBody JoinCommunityRequest request
     ) {
         log.info("POST /community-server/community/member");
-        communityService.join(Long.parseLong(userId), request, token);
-        return responseService.getSuccessResponse();
+        CommunityResponse response = communityService.join(Long.parseLong(userId), request, token);
+        return responseService.getDataResponse(response);
     }
 
     /**
-     * 멤버 추방하기
+     * 커뮤니티 나가기(멤버 추방하기)
      */
     @DeleteMapping("/{communityId}/member")
     public CommonResponse deleteMember(
