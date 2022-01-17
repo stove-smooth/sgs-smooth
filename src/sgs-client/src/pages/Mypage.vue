@@ -8,7 +8,7 @@
       <div class="friends-state-container">
         <friends-state-menu-bar></friends-state-menu-bar>
         <div class="friends-state-container2">
-          <template v-if="friendsstatemenu === 'addfriends'">
+          <template v-if="friendsStateMenu === 'addfriends'">
             <friends-new-add></friends-new-add>
           </template>
           <template v-else>
@@ -39,7 +39,7 @@ export default {
     FriendsNewAdd,
   },
   computed: {
-    ...mapState("friends", ["friendsstatemenu"]),
+    ...mapState("friends", ["friendsStateMenu"]),
   },
 };
 </script>

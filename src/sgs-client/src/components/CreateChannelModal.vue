@@ -1,5 +1,5 @@
 <template>
-  <div class="modal" v-if="createchannel">
+  <div class="modal" v-if="createChannel">
     <div class="blurred-background" @click="closeModal"></div>
     <div class="modal-container">
       <modal @exit="closeModal">
@@ -112,7 +112,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("server", ["createchannel", "categoryInfo"]),
+    ...mapState("server", ["createChannel", "categoryInfo"]),
   },
   methods: {
     ...mapMutations("server", ["setCreateChannel"]),

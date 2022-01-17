@@ -1,16 +1,16 @@
 <template>
-  <div class="modal" v-if="friendsreadytoblock">
+  <div class="modal" v-if="friendsReadyToBlock">
     <div class="blurred-background" @click="exitModal"></div>
     <div class="modal-container">
       <modal @exit="exitModal">
         <template slot="header">
           <h3 class="modal-big-title">
-            {{ friendsreadytoblock.username }}님을 차단하기
+            {{ friendsReadyToBlock.username }}님을 차단하기
           </h3>
         </template>
         <template slot="content">
           <div class="modal-subtitle">
-            친구 {{ friendsreadytoblock.username }}님을 차단하시겠어요?
+            친구 {{ friendsReadyToBlock.username }}님을 차단하시겠어요?
           </div>
         </template>
         <template slot="footer">
@@ -18,7 +18,7 @@
             <button
               type="button"
               class="medium-submit-button"
-              @click="blockFriends(friendsreadytoblock.id)"
+              @click="blockFriends(friendsReadyToBlock.id)"
             >
               <div>친구 차단하기</div>
             </button>
@@ -37,7 +37,7 @@ import { blockFriend } from "../api/index.js";
 export default {
   components: { Modal },
   computed: {
-    ...mapState("friends", ["friendsreadytoblock"]),
+    ...mapState("friends", ["friendsReadyToBlock"]),
   },
   methods: {
     ...mapMutations("friends", ["setFriendsReadyToBlock"]),

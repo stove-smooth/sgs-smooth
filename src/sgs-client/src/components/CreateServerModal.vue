@@ -1,5 +1,5 @@
 <template>
-  <div v-show="createserver" class="modal">
+  <div v-show="createServer" class="modal">
     <div class="blurred-background" @click="exitCreate"></div>
     <div class="modal-container">
       <template v-if="progress === 'openCreate'">
@@ -111,7 +111,7 @@
                 :disabled="!serverName"
                 type="button"
                 class="medium-submit-button"
-                @click="createServer"
+                @click="createNewServer"
               >
                 <div>만들기</div>
               </button>
@@ -149,7 +149,7 @@ export default {
     },
   },
   computed: {
-    ...mapState("server", ["createserver"]),
+    ...mapState("server", ["createServer"]),
   },
   methods: {
     ...mapMutations("server", ["setCreateServer"]),
@@ -170,7 +170,7 @@ export default {
       let image = this.$refs["image"].files[0];
       this.thumbnail = await converToThumbnail(image);
     },
-    async createServer() {
+    async createNewServer() {
       console.log(this.thumbnail);
       var frm = new FormData();
       if (!this.thumbnail) {

@@ -25,8 +25,8 @@
               >
                 <svg class="discord-logo"></svg>
               </div>
-              <div class="lower-badge" v-show="friendswaitnumber">
-                <number-badge :alarms="friendswaitnumber"></number-badge>
+              <div class="lower-badge" v-show="friendsWaitNumber">
+                <number-badge :alarms="friendsWaitNumber"></number-badge>
               </div>
             </div>
           </div>
@@ -135,7 +135,7 @@ export default {
     },
   },
   computed: {
-    ...mapState("friends", ["friendswaitnumber"]),
+    ...mapState("friends", ["friendsWaitNumber"]),
   },
   async created() {
     const result = await fetchCommunityList();

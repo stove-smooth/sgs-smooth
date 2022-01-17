@@ -11,7 +11,9 @@
         </div>
         <div
           class="add-friends-input-wrapper"
-          v-bind:class="{ 'positive-border-color': username }"
+          v-bind:class="{
+            'positive-border-color': isAddedSuccess === 'success',
+          }"
         >
           <input
             class="add-friends-input-text"
@@ -29,12 +31,18 @@
           </button>
         </div>
         <div
-          v-if="username"
+          v-if="isAddedSuccess === 'success'"
           class="large-description"
           v-bind:style="{ color: '#58f287' }"
         >
           <strong>{{ this.username }}</strong
           >에게 성공적으로 친구 요청을 보냈어요.
+        </div>
+        <div
+          v-if="isAddedSuccess === 'fail'"
+          class="large-description red-color"
+        >
+          친구 추가에 실패하였습니다.
         </div>
       </form>
     </header>
@@ -58,6 +66,7 @@ export default {
       userinfo: "",
       username: "",
       usercode: "",
+      isAddedSuccess: "",
     };
   },
   computed: {
@@ -72,16 +81,24 @@ export default {
   },
   methods: {
     async addNewFriends() {
-      var user = this.userinfo.split("#");
-      this.username = user[0];
-      this.usercode = user[1];
-      console.log(this.username, this.usercode);
-      const userData = {
-        name: this.username,
-        code: this.usercode,
-      };
-      const result = await friendRequest(userData);
-      console.log("result", result);
+      try {
+        var user = this.userinfo.split("#");
+        this.username = user[0];
+        this.usercode = user[1];
+        console.log(this.username, this.usercode);
+        const userData = {
+          name: this.username,
+          code: this.usercode,
+        };
+        const result = await friendRequest(userData);
+        if (result.data.isSuccess) {
+          this.isAddedSuccess = "success";
+        }
+      } catch (err) {
+        this.isAddedSuccess = "fail";
+        console.log(err);
+        console.log("실패");
+      }
     },
   },
 };

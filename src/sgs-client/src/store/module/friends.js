@@ -2,70 +2,70 @@ import { fetchFriends } from "../../api/index.js";
 const friends = {
   namespaced: true,
   state: {
-    friendsstatemenu: "online",
-    friendsonline: [],
-    friendsaccept: [],
-    friendswait: [],
-    friendswaitnumber: 0,
-    friendsrequest: [],
-    friendsban: [],
-    friendsplusmenu: null,
-    friendsreadytodelete: null,
-    friendsreadytoblock: null,
+    friendsStateMenu: "online",
+    friendsOnline: [],
+    friendsAccept: [],
+    friendsWait: [],
+    friendsWaitNumber: 0,
+    friendsRequest: [],
+    friendsBan: [],
+    friendsPlusMenu: null,
+    friendsReadyToDelete: null,
+    friendsReadyToBlock: null,
   },
   mutations: {
-    setAllFriends(state, friendsaccept) {
-      state.friendsaccept = friendsaccept;
+    setAllFriends(state, friendsAccept) {
+      state.friendsAccept = friendsAccept;
     },
     setOnlineFriends(state) {
-      state.friendsonline = "";
+      state.friendsOnline = "";
     },
-    setWaitingFriends(state, friendswait) {
-      state.friendswait = friendswait;
-      state.friendswaitnumber = friendswait.length;
+    setWaitingFriends(state, friendsWait) {
+      state.friendsWait = friendsWait;
+      state.friendsWaitNumber = friendsWait.length;
     },
-    setRequestFriends(state, friendsrequest) {
-      state.friendsrequest = friendsrequest;
+    setRequestFriends(state, friendsRequest) {
+      state.friendsRequest = friendsRequest;
     },
-    setBanFriends(state, friendsban) {
-      state.friendsban = friendsban;
+    setBanFriends(state, friendsBan) {
+      state.friendsBan = friendsBan;
     },
-    setFriendsStateMenu(state, friendsstatemenu) {
-      state.friendsstatemenu = friendsstatemenu;
+    setFriendsStateMenu(state, friendsStateMenu) {
+      state.friendsStateMenu = friendsStateMenu;
     },
-    setFriendsPlusMenu(state, friendsplusmenu) {
-      state.friendsplusmenu = friendsplusmenu;
+    setFriendsPlusMenu(state, friendsPlusMenu) {
+      state.friendsPlusMenu = friendsPlusMenu;
     },
-    setFriendsReadyToDelete(state, friendsreadytodelete) {
-      state.friendsreadytodelete = friendsreadytodelete;
+    setFriendsReadyToDelete(state, friendsReadyToDelete) {
+      state.friendsReadyToDelete = friendsReadyToDelete;
     },
-    setFriendsReadyToBlock(state, friendsreadytoblock) {
-      state.friendsreadytoblock = friendsreadytoblock;
+    setFriendsReadyToBlock(state, friendsReadyToBlock) {
+      state.friendsReadyToBlock = friendsReadyToBlock;
     },
   },
   actions: {
     async FETCH_FRIENDSLIST({ commit }) {
       const result = await fetchFriends();
-      let friendsrequest = [];
-      let friendswait = [];
-      let friendsaccept = [];
-      let friendsban = [];
+      let friendsRequest = [];
+      let friendsWait = [];
+      let friendsAccept = [];
+      let friendsBan = [];
       console.log(result.data.result);
       for (var i = 0; i < result.data.result.length; i++) {
         if (result.data.result[i].state == "REQUEST") {
-          friendsrequest.push(result.data.result[i]);
+          friendsRequest.push(result.data.result[i]);
         } else if (result.data.result[i].state == "WAIT") {
-          friendswait.push(result.data.result[i]);
+          friendsWait.push(result.data.result[i]);
         } else if (result.data.result[i].state == "ACCEPT") {
-          friendsaccept.push(result.data.result[i]);
+          friendsAccept.push(result.data.result[i]);
         } else if (result.data.result[i].state == "BAN") {
-          friendsban.push(result.data.result[i]);
+          friendsBan.push(result.data.result[i]);
         }
       }
-      commit("setRequestFriends", friendsrequest);
-      commit("setWaitingFriends", friendswait);
-      commit("setAllFriends", friendsaccept);
-      commit("setBanFriends", friendsban);
+      commit("setRequestFriends", friendsRequest);
+      commit("setWaitingFriends", friendsWait);
+      commit("setAllFriends", friendsAccept);
+      commit("setBanFriends", friendsBan);
     },
   },
 };

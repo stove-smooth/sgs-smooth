@@ -1,5 +1,5 @@
 <template>
-  <div :style="cssProps" v-show="friendsplusmenu">
+  <div :style="cssProps" v-show="friendsPlusMenu">
     <div class="plus-action-container">
       <div class="plus-action-wrapper">
         <div class="plus-action-label-container" @mouseover="hover('profile')">
@@ -17,14 +17,14 @@
         </div>
         <div
           class="plus-action-label-container"
-          @click="setFriendsReadyToDelete(friendsplusmenu)"
+          @click="setFriendsReadyToDelete(friendsPlusMenu)"
           @mouseover="hover('remove')"
         >
           <div class="plus-action-label red-color">친구 삭제하기</div>
         </div>
         <div
           class="plus-action-label-container"
-          @click="setFriendsReadyToBlock(friendsplusmenu)"
+          @click="setFriendsReadyToBlock(friendsPlusMenu)"
           @mouseover="hover('block')"
         >
           <div class="plus-action-label red-color">차단하기</div>
@@ -64,7 +64,7 @@ export default {
   },
   computed: {
     ...mapState("utils", ["clientX", "clientY"]),
-    ...mapState("friends", ["friendsplusmenu"]),
+    ...mapState("friends", ["friendsPlusMenu"]),
     cssProps() {
       return {
         "--xpoint": this.clientX + "px",
