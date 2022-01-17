@@ -7,7 +7,10 @@
       </div>
       <div class="server-activity-container">
         <server-chatting-menu-bar></server-chatting-menu-bar>
-        <server-activity-area></server-activity-area>
+        <div class="server-activity-container1">
+          <server-activity-area></server-activity-area>
+          <server-member-list></server-member-list>
+        </div>
       </div>
     </div>
   </div>
@@ -18,12 +21,14 @@ import ServerSideBar from "../components/ServerSideBar.vue";
 import UserSection from "../components/common/UserSection.vue";
 import ServerChattingMenuBar from "../components/ServerChattingMenuBar.vue";
 import ServerActivityArea from "../components/ServerActivityArea.vue";
+import ServerMemberList from "../components/ServerMemberList.vue";
 export default {
   components: {
     ServerSideBar,
     UserSection,
     ServerChattingMenuBar,
     ServerActivityArea,
+    ServerMemberList,
   },
 };
 </script>
@@ -59,5 +64,26 @@ export default {
   position: relative;
   overflow: hidden;
   background: #36393f;
+}
+.server-activity-container1 {
+  min-width: 0;
+  min-height: 0;
+  -webkit-box-flex: 1;
+  /*  -ms-flex: 1 1 auto; */
+  flex: 1 1 auto;
+  /* display: -webkit-box;
+  display: -ms-flexbox; */
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  /* -ms-flex-direction: row; */
+  flex-direction: row;
+  /* -webkit-box-pack: stretch; */
+  /* -ms-flex-pack: stretch; */
+  justify-content: stretch;
+  -webkit-box-align: stretch;
+  /* -ms-flex-align: stretch; */
+  align-items: stretch;
+  position: relative;
 }
 </style>

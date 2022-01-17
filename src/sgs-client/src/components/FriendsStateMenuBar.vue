@@ -1,7 +1,7 @@
 <template>
   <section class="primary-header">
     <div class="header-children-wrapper">
-      <div class="primary-icon-wrapper">
+      <div class="primary-icon-wrapper align-items-center">
         <svg class="friends-icon"></svg>
       </div>
       <h3 class="friends-section-title">친구</h3>
@@ -84,7 +84,7 @@
         <div class="divider"></div>
       </div>
       <div
-        class="primary-icon-wrapper clickable"
+        class="primary-icon-wrapper clickable align-items-center"
         role="button"
         aria-label="받은 편지함"
       >
@@ -212,8 +212,8 @@ export default {
 }
 .mail-box {
   display: flex;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   background-image: url("../assets/mail-box.svg");
 }
 </style>

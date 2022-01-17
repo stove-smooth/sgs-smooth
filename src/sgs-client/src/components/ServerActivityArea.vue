@@ -1,163 +1,93 @@
 <template>
-  <div class="server-activity-container1">
-    <div class="server-chatting-container">
-      <div class="message-container">
-        <div class="thin-scrollbar server-chat-scroller">
-          <div class="scroller-content">
-            <ol class="scroller-inner">
-              <li class="chat-message-wrapper">
-                <div class="chat-message-wrapper2">
-                  <div class="chat-message-content">
-                    <img
-                      src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=80"
-                      class="chat-avatar clickable"
-                      alt="image"
-                    />
-                    <h2 class="chat-avatar-header">
-                      <span class="chat-user-name">user0</span>
-                      <span class="chat-time-stamp">어제 오후 11:56</span>
-                    </h2>
-                    <div class="message-content">안녕~^^</div>
-                  </div>
+  <div class="server-chatting-container">
+    <div class="message-container">
+      <div class="thin-scrollbar server-chat-scroller">
+        <div class="scroller-content">
+          <ol class="scroller-inner">
+            <li class="chat-message-wrapper">
+              <div class="chat-message-wrapper2">
+                <div class="chat-message-content">
+                  <img
+                    src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=80"
+                    class="chat-avatar clickable"
+                    alt="image"
+                  />
+                  <h2 class="chat-avatar-header">
+                    <span class="chat-user-name">user0</span>
+                    <span class="chat-time-stamp">어제 오후 11:56</span>
+                  </h2>
+                  <div class="message-content">안녕~^^</div>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <form class="channel-message-input-form">
+      <div class="channel-message-area">
+        <div class="channel-message-scrollbar-container">
+          <div v-show="false">
+            <!--ul에 scrollbar추가필요.-->
+            <ul
+              class="channel-attachment-area"
+              role="list"
+              data-list-id="attachments"
+            >
+              <li
+                class="upload-attachments"
+                role="listitem"
+                data-list-item-id="attachments-upload"
+                tabindex="-1"
+              >
+                <div class="message-upload-container">
+                  <div class="message-upload-image-container"></div>
+                  <div class="message-upload-filename-container"></div>
+                  <div class="message-upload-actionbar-container"></div>
                 </div>
               </li>
-            </ol>
+            </ul>
+          </div>
+          <div class="message-attachment-divider"></div>
+          <div class="channel-message-form-inner-button">
+            <div class="message-upload-input">
+              <input
+                class="file-input"
+                type="file"
+                tabindex="-1"
+                multiple
+                aria-hidden="true"
+              />
+            </div>
+            <div class="message-attach-button-wrapper">
+              <button
+                class="message-attach-button"
+                aria-label="파일을 업로드하거나 초대를 보내세요"
+              >
+                <div class="attach-button-inner">
+                  <svg class="attach-button"></svg>
+                </div>
+              </button>
+            </div>
+            <div class="channel-message-input-area">
+              <div class="channel-message-input-placeholder">
+                #잡담에 메시지 보내기
+              </div>
+              <div
+                id="input-text-wrapper"
+                aria-autocomplete="list"
+                class="channel-message-input-wrapper"
+                aria-haspopup="listbox"
+                aria-label="#잡담에서 메시지보내기"
+                aria-multiline="true"
+                contenteditable="true"
+                role="textbox"
+              ></div>
+            </div>
           </div>
         </div>
       </div>
-      <form class="channel-message-input-form">
-        <div class="channel-message-area">
-          <div class="channel-message-scrollbar-container">
-            <div v-show="false">
-              <!--ul에 scrollbar추가필요.-->
-              <ul
-                class="channel-attachment-area"
-                role="list"
-                data-list-id="attachments"
-              >
-                <li
-                  class="upload-attachments"
-                  role="listitem"
-                  data-list-item-id="attachments-upload"
-                  tabindex="-1"
-                >
-                  <div class="message-upload-container">
-                    <div class="message-upload-image-container"></div>
-                    <div class="message-upload-filename-container"></div>
-                    <div class="message-upload-actionbar-container"></div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="message-attachment-divider"></div>
-            <div class="channel-message-form-inner-button">
-              <div class="message-upload-input">
-                <input
-                  class="file-input"
-                  type="file"
-                  tabindex="-1"
-                  multiple
-                  aria-hidden="true"
-                />
-              </div>
-              <div class="message-attach-button-wrapper">
-                <button
-                  class="message-attach-button"
-                  aria-label="파일을 업로드하거나 초대를 보내세요"
-                >
-                  <div class="attach-button-inner">
-                    <svg class="attach-button"></svg>
-                  </div>
-                </button>
-              </div>
-              <div class="channel-message-input-area">
-                <div class="channel-message-input-placeholder">
-                  #잡담에 메시지 보내기
-                </div>
-                <div
-                  class="channel-message-input-wrapper"
-                  aria-haspopup="listbox"
-                  aria-label="#잡담에서 메시지보내기"
-                  aria-multiline="true"
-                  contenteditable="true"
-                  role="textbox"
-                ></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-    <div class="server-member-container">
-      <aside class="server-member-list-wrapper">
-        <div class="thin-scrollbar dm-scroller server-members" tabinex="0">
-          <div role="list" aria-label="멤버" class="server-member-list">
-            <h2 class="members-group-container" aria-label="온라인">
-              온라인 - 5
-            </h2>
-            <div v-for="(item, index) in 5" :key="index">
-              <div class="primary-member-container clickable" role="listitem">
-                <div class="primary-member-layout">
-                  <div class="avatar-container">
-                    <div class="profile-wrapper" aria-label="칭구1">
-                      <div class="avatar-wrapper">
-                        <img
-                          class="avatar"
-                          src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=32"
-                          alt=" "
-                        />
-                        <template aria-label="status-invisible">
-                          <div class="status-ring">
-                            <div class="status-online"></div>
-                          </div>
-                        </template>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="friends-contents">
-                    <div class="friends-name-decorator">
-                      <div class="friends-name">user{{ index }}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div role="list" aria-label="멤버" class="server-member-list">
-            <h2 class="members-group-container" aria-label="온라인">
-              오프라인 - 3
-            </h2>
-            <div v-for="(item, index) in 3" :key="index">
-              <div class="primary-member-container clickable" role="listitem">
-                <div class="primary-member-layout">
-                  <div class="avatar-container">
-                    <div class="profile-wrapper" aria-label="칭구1">
-                      <div class="avatar-wrapper">
-                        <img
-                          class="avatar"
-                          src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=32"
-                          alt=" "
-                        />
-                        <template aria-label="status-invisible">
-                          <div class="status-ring">
-                            <div class="status-offline"></div>
-                          </div>
-                        </template>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="friends-contents">
-                    <div class="friends-name-decorator">
-                      <div class="friends-name">user{{ index + 5 }}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </aside>
-    </div>
+    </form>
   </div>
 </template>
 
@@ -166,27 +96,6 @@ export default {};
 </script>
 
 <style>
-.server-activity-container1 {
-  min-width: 0;
-  min-height: 0;
-  -webkit-box-flex: 1;
-  /*  -ms-flex: 1 1 auto; */
-  flex: 1 1 auto;
-  /* display: -webkit-box;
-  display: -ms-flexbox; */
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-  /* -ms-flex-direction: row; */
-  flex-direction: row;
-  /* -webkit-box-pack: stretch; */
-  /* -ms-flex-pack: stretch; */
-  justify-content: stretch;
-  -webkit-box-align: stretch;
-  /* -ms-flex-align: stretch; */
-  align-items: stretch;
-  position: relative;
-}
 .server-chatting-container {
   position: relative;
   /* display: -webkit-box;
@@ -203,15 +112,6 @@ export default {};
   /* -ms-flex: 1 1 auto; */
   flex: 1 1 auto;
 }
-.server-member-container {
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  /* -ms-flex-direction: column; */
-  flex-direction: column;
-  background: #2f3136;
-  height: 100%;
-}
 .message-container {
   display: flex;
   position: relative;
@@ -224,6 +124,7 @@ export default {};
 .server-chat-scroller {
   overflow: hidden scroll;
   padding-right: 0px;
+  width: 100%;
 }
 .scroller-content {
   overflow-anchor: none;
@@ -241,6 +142,7 @@ export default {};
 .scroller-inner {
   min-height: 0;
   list-style: none;
+  padding: 0px;
 }
 .chat-message-wrapper {
   outline: none;
@@ -508,42 +410,5 @@ export default {};
   user-select: text;
   color: #dcddde;
   font-weight: 400;
-}
-.server-member-list-wrapper {
-  -webkit-box-pack: center;
-  justify-content: center;
-  min-width: 240px;
-  position: relative;
-  max-height: 100%;
-  display: flex;
-}
-.server-members {
-  width: 240px;
-  padding: 0 0 20px;
-  -webkit-box-flex: 0;
-  flex: 0 0 auto;
-  height: auto;
-}
-.server-member-list {
-  background-color: #2f3136;
-  position: relative;
-  height: auto;
-}
-.members-group-container {
-  padding: 24px 8px 0 16px;
-  height: 40px;
-  box-sizing: border-box;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  text-transform: uppercase;
-  font-size: 12px;
-  line-height: 16px;
-  letter-spacing: 0.25px;
-  font-weight: 600;
-  -webkit-box-flex: 1;
-  -ms-flex: 1 1 auto;
-  flex: 1 1 auto;
-  color: #8e9297;
 }
 </style>

@@ -162,6 +162,10 @@
   display: flex;
   justify-content: space-between;
 }
+.align-items-center {
+  display: flex;
+  align-items: center;
+}
 .primary-text-content {
   white-space: nowrap;
   overflow: hidden;
