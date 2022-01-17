@@ -5,10 +5,7 @@ import com.example.communityserver.domain.type.ChannelStatus;
 import com.example.communityserver.domain.type.CommonStatus;
 import com.example.communityserver.domain.type.CommunityMemberStatus;
 import com.example.communityserver.domain.type.CommunityRole;
-import com.example.communityserver.dto.request.CreateChannelRequest;
-import com.example.communityserver.dto.request.EditDescRequest;
-import com.example.communityserver.dto.request.EditNameRequest;
-import com.example.communityserver.dto.request.InviteMemberRequest;
+import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.ChannelResponse;
 import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.CategoryRepository;
@@ -53,7 +50,6 @@ public class ChannelService {
         Channel firstChannel = getFirstChannel(category);
 
         List<ChannelMember> members = new ArrayList<>();
-
         if (!request.isPublic()) {
             validateMemberId(category, request.getMembers());
             if (!Objects.isNull(request.getMembers())) {
@@ -214,5 +210,37 @@ public class ChannelService {
                 .findAny().orElseThrow(() -> new CustomException(EMPTY_MEMBER));
 
         member.delete();
+    }
+
+    @Transactional
+    public ChannelResponse copy(Long userId, CopyChannelRequest request) {
+
+        Channel channel = channelRepository.findById(request.getId())
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
+
+        isAuthorizedMember(channel.getCategory().getCommunity(), userId);
+
+        Channel firstChannel = getFirstChannel(channel.getCategory());
+
+        List<ChannelMember> members = new ArrayList<>();
+        if (!channel.isPublic()) {
+            members = channel.getMembers().stream()
+                    .map(ChannelMember::getUserId)
+                    .map(ChannelMember::new)
+                    .collect(Collectors.toList());
+        }
+
+        Channel newChannel = Channel.createChannel(
+                channel.getCategory(),
+                channel.getType(),
+                request.getName(),
+                channel.isPublic(),
+                firstChannel,
+                members
+        );
+        channelRepository.save(newChannel);
+
+        return ChannelResponse.fromEntity(newChannel);
     }
 }

@@ -1,9 +1,6 @@
 package com.example.communityserver.controller;
 
-import com.example.communityserver.dto.request.CreateChannelRequest;
-import com.example.communityserver.dto.request.EditDescRequest;
-import com.example.communityserver.dto.request.EditNameRequest;
-import com.example.communityserver.dto.request.InviteMemberRequest;
+import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.ChannelResponse;
 import com.example.communityserver.dto.response.CommonResponse;
 import com.example.communityserver.dto.response.DataResponse;
@@ -127,10 +124,18 @@ public class ChannelController {
         return responseService.getSuccessResponse();
     }
 
-
     /**
      * 채널 복제하기
      */
+    @PostMapping("/copy")
+    public DataResponse<ChannelResponse> copy(
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody CopyChannelRequest request
+    ) {
+        log.info("POST  /community-server/channel/copy");
+        ChannelResponse response = channelService.copy(Long.parseLong(userId), request);
+        return responseService.getDataResponse(response);
+    }
 
     /**
      * 채널 내 메세지 읽음 처리 (Optional)
