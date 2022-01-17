@@ -84,24 +84,51 @@ public class CommunityMember extends BaseTimeEntity {
     //== 비즈니스 메서드 ==//
     public void locate(CommunityMember before, CommunityMember first) {
         CommunityMember originBeforeNode = first;
-        while(!Objects.isNull(originBeforeNode.getNextNode())) {
-            if (originBeforeNode.getNextNode().equals(this))
-                break;
-            else
-                originBeforeNode = originBeforeNode.getNextNode();
-        }
-        if (Objects.isNull(before)) {
-            this.isFirstNode = true;
-            originBeforeNode.setNextNode(this.nextNode);
-            this.nextNode = first;
-            first.setFirstNode(false);
-        } else {
+
+        if (first.equals(this)) {
+            this.isFirstNode = false;
             CommunityMember originNextNode = before.getNextNode();
             before.setNextNode(this);
-            if (!Objects.isNull(originNextNode))
-                originNextNode.setNextNode(this.nextNode);
-            this.nextNode = originNextNode;
-            originBeforeNode.setNextNode(before);
+            this.getNextNode().setFirstNode(true);
+            this.setNextNode(originNextNode);
+        } else {
+            while(!Objects.isNull(originBeforeNode.getNextNode())) {
+                if (originBeforeNode.getNextNode().equals(this))
+                    break;
+                else
+                    originBeforeNode = originBeforeNode.getNextNode();
+            }
+            if (Objects.isNull(before)) {
+                this.isFirstNode = true;
+                originBeforeNode.setNextNode(this.nextNode);
+                this.nextNode = first;
+                first.setFirstNode(false);
+            } else {
+                CommunityMember originNextNode = before.getNextNode();
+                before.setNextNode(this);
+                if (!Objects.isNull(originNextNode))
+                    originNextNode.setNextNode(this.nextNode);
+                this.nextNode = originNextNode;
+                originBeforeNode.setNextNode(before);
+            }
         }
+    }
+
+    public void delete() {
+        if (this.isFirstNode) {
+            if (!Objects.isNull(this.getNextNode()))
+                this.getNextNode().isFirstNode = true;
+            this.isFirstNode = false;
+        }
+        this.setStatus(CommunityMemberStatus.DELETED);
+    }
+
+    public void suspend() {
+        if (this.isFirstNode) {
+            if (!Objects.isNull(this.getNextNode()))
+                this.getNextNode().isFirstNode = true;
+            this.isFirstNode = false;
+        }
+        this.setStatus(CommunityMemberStatus.SUSPENDED);
     }
 }

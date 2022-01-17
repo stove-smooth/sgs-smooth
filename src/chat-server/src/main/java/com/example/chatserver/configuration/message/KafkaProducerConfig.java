@@ -1,5 +1,6 @@
-package com.example.chatserver.configuration;
+package com.example.chatserver.configuration.message;
 
+import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.domain.DirectChat;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -26,6 +27,10 @@ public class KafkaProducerConfig {
         return new DefaultKafkaProducerFactory<>(producerConfigurations());
     }
 
+    public ProducerFactory<String, ChannelMessage> producerFactory2() {
+        return new DefaultKafkaProducerFactory<>(producerConfigurations());
+    }
+
     @Bean
     public Map<String,Object> producerConfigurations() {
         Map<String,Object> configurations = new HashMap<>();
@@ -38,5 +43,10 @@ public class KafkaProducerConfig {
     @Bean
     public KafkaTemplate<String, DirectChat> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
+    }
+
+    @Bean
+    public KafkaTemplate<String, ChannelMessage> kafkaTemplate2() {
+        return new KafkaTemplate<>(producerFactory2());
     }
 }

@@ -19,8 +19,8 @@ public class CommunityController {
     private final CommunityService communityService;
     private final ResponseService responseService;
 
-    private final static String ID = "id";
-    private final static String AUTHORIZATION = "AUTHORIZATION";
+    public final static String ID = "id";
+    public final static String AUTHORIZATION = "AUTHORIZATION";
 
     /**
      * 사용자가 소속된 커뮤니티 리스트 조회
@@ -38,12 +38,12 @@ public class CommunityController {
      * 특정 커뮤니티 조회
      */
     @GetMapping("/{communityId}")
-    public DataResponse<CommunityDetailResponse> getCommunity(
+    public DataResponse<CommunityDetailResponse> getCommunityDetail(
             @RequestHeader(ID) String userId,
             @PathVariable Long communityId
     ) {
         log.info("GET /community-server/community/{}", communityId);
-        CommunityDetailResponse response = communityService.getCommunity(Long.parseLong(userId), communityId);
+        CommunityDetailResponse response = communityService.getCommunityInfo(Long.parseLong(userId), communityId);
         return responseService.getDataResponse(response);
     }
 
@@ -68,7 +68,7 @@ public class CommunityController {
     @PatchMapping("/name")
     public CommonResponse editName(
             @RequestHeader(ID) String userId,
-            @Valid @RequestBody EditCommunityNameRequest request
+            @Valid @RequestBody EditNameRequest request
     ) {
         log.info("PATCH /community-server/community/name");
         communityService.editName(Long.parseLong(userId), request);
@@ -167,7 +167,7 @@ public class CommunityController {
             @PathVariable Long communityId,
             @RequestParam(name = "id") Long memberId
     ) {
-        log.info("DELETE /community-server/community/member");
+        log.info("DELETE /community-server/community/{}/member", communityId);
         communityService.deleteMember(Long.parseLong(userId), communityId, memberId);
         return responseService.getSuccessResponse();
     }
@@ -192,7 +192,7 @@ public class CommunityController {
     @PatchMapping("/location")
     public CommonResponse locateCommunity(
             @RequestHeader(ID) String userId,
-            @Valid @RequestBody LocateCommunityRequest request
+            @Valid @RequestBody LocateRequest request
     ) {
         log.info("PATCH /community-server/community/location");
         communityService.locateCommunity(Long.parseLong(userId), request);

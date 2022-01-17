@@ -1,6 +1,8 @@
 package com.example.authserver.service;
 
+import com.example.authserver.dto.request.ProfileRequest;
 import com.example.authserver.dto.response.AccountInfoResponse;
+import com.example.authserver.dto.response.NameAndPhotoResponse;
 import com.example.authserver.exception.CustomException;
 import com.example.authserver.exception.CustomExceptionStatus;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
@@ -149,12 +151,41 @@ public class UserService extends BaseTimeEntity {
         List<User> accountList = accountRepository.findById(requestAccountIds);
 
         List<AccountInfoResponse> collect = accountList.stream().map(
-                a -> new AccountInfoResponse(a.getId(), a.getName(), a.getProfileImage(), a.getState().getName())
+                a -> new AccountInfoResponse(a.getId(), a.getName(), a.getCode(), a.getProfileImage(), a.getState().getName())
         ).collect(Collectors.toList());
 
         Map<Long,AccountInfoResponse> map = collect.stream()
                 .collect(Collectors.toMap(AccountInfoResponse::getId, Function.identity()));
 
         return map;
+    }
+
+    @Transactional
+    public void uploadProfile(User account, String upload) {
+        account.changeProfileImage(upload);
+        accountRepository.save(account);
+    }
+
+    @Transactional
+    public void deleteProfile(User account) {
+        account.changeProfileImage(null);
+        accountRepository.save(account);
+    }
+
+    @Transactional
+    public void modifyProfile(User account, ProfileRequest profileRequest) {
+        account.changeBio(profileRequest.getBio());
+        accountRepository.save(account);
+    }
+
+    public NameAndPhotoResponse getNameAndPhoto(Long id) {
+        User user = accountRepository.findById(id)
+                .orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
+
+        NameAndPhotoResponse result = NameAndPhotoResponse.builder()
+                .name(user.getName())
+                .profileImage(user.getProfileImage()).build();
+
+        return result;
     }
 }

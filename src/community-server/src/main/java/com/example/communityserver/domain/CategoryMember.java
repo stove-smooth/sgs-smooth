@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Table(name = "category_member")
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class CategoryMember {
 
     @Id
@@ -24,4 +24,15 @@ public class CategoryMember {
     private Category category;
 
     private Long userId;
+
+    private boolean status;
+
+    public CategoryMember(Long userId) {
+        this.userId = userId;
+        this.status = true;
+    }
+
+    public void delete() {
+        this.status = false;
+    }
 }

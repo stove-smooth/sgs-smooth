@@ -1,6 +1,7 @@
 package com.example.communityserver.domain;
 
 import com.example.communityserver.domain.type.CommonStatus;
+import com.example.communityserver.domain.type.CommunityMemberStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -60,5 +61,18 @@ public class Community extends BaseTimeEntity {
         }
         community.setStatus(CommonStatus.NORMAL);
         return community;
+    }
+
+    public void delete() {
+        for (CommunityMember member: this.getMembers()) {
+            member.delete();
+        }
+        for (Category category: this.categories) {
+            category.delete();
+        }
+        for (CommunityInvitation invitation: this.getInvitations()) {
+            invitation.setActivate(false);
+        }
+        this.status = CommonStatus.DELETED;
     }
 }
