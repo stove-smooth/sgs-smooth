@@ -61,6 +61,31 @@ function blockFriend(userId) {
 function deleteProfileImage() {
   return instance.patch("auth-server/auth/d/profile");
 }
+/* async function createNewCommunity(userData) {
+  try {
+    const accesstoken = await store.getters["auth/getAccessToken"];
+    const response = await axios.post(
+      "http://52.79.229.100:8000/community-server/community",
+      userData,
+      {
+        headers: {
+          AUTHORIZATION: accesstoken,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response;
+  } catch (err) {
+    console.log(err);
+  }
+  //return instance.post("community-server/community", userData);
+} */
+function createNewCommunity(userData) {
+  return instance.post("community-server/community", userData);
+}
+function fetchCommunityList() {
+  return instance.get("community-server/community");
+}
 export {
   registerUser,
   loginUser,
@@ -74,4 +99,6 @@ export {
   deleteFriend,
   blockFriend,
   deleteProfileImage,
+  createNewCommunity,
+  fetchCommunityList,
 };

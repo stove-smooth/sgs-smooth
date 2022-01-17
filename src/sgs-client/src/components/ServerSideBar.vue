@@ -52,7 +52,7 @@
                   <button
                     class="create-channel-button"
                     aria-label="채널 만들기"
-                    @click="setCreateChannel(true)"
+                    @click="createChannel(element.name, element.id)"
                   >
                     <svg class="plus-channel-in-this-category"></svg>
                   </button>
@@ -202,7 +202,11 @@ export default {
     ...mapState("server", ["openServerPopout"]),
   },
   methods: {
-    ...mapMutations("server", ["setCreateChannel", "setOpenServerPopout"]),
+    ...mapMutations("server", [
+      "setCreateChannel",
+      "setOpenServerPopout",
+      "setCategoryInfo",
+    ]),
     add: function () {
       this.list.push({ name: "Juan" });
     },
@@ -219,6 +223,15 @@ export default {
     },
     unhover() {
       this.hovered = "";
+    },
+    createChannel(categoryName, categoryId) {
+      console.log(categoryName, categoryId);
+      const categoryInfo = {
+        categoryNmae: categoryName,
+        categoryId: categoryId,
+      };
+      this.setCategoryInfo(categoryInfo);
+      this.setCreateChannel(true);
     },
     onClick(e) {
       if (this.openServerPopout) {

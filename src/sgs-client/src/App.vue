@@ -11,10 +11,7 @@
     <server-popout></server-popout>
     <friends-plus-action></friends-plus-action>
     <create-server-modal></create-server-modal>
-    <create-channel-modal
-      v-if="createchannel"
-      @exit-create-channel="setCreateChannel(false)"
-    ></create-channel-modal>
+    <create-channel-modal></create-channel-modal>
     <friends-delete-modal></friends-delete-modal>
     <friends-block-modal></friends-block-modal>
   </div>
@@ -24,7 +21,7 @@
 import NavigationBar from "./components/NavigationBar.vue";
 import CreateServerModal from "./components/CreateServerModal.vue";
 import CreateChannelModal from "./components/CreateChannelModal.vue";
-import { mapGetters, mapState, mapMutations } from "vuex";
+import { mapGetters } from "vuex";
 import FriendsPlusAction from "./components/common/FriendsPlusAction.vue";
 import FriendsDeleteModal from "./components/FriendsDeleteModal.vue";
 import ServerPopout from "./components/ServerPopout.vue";
@@ -42,7 +39,6 @@ export default {
   },
   data() {
     return {
-      createChannel: true,
       navbar: true,
     };
   },
@@ -73,10 +69,6 @@ export default {
   },
   computed: {
     ...mapGetters("auth", ["getEmail"]),
-    ...mapState("server", ["createchannel"]),
-  },
-  methods: {
-    ...mapMutations("server", ["setCreateChannel"]),
   },
 };
 </script>

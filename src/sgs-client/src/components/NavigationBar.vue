@@ -98,13 +98,7 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 import NumberBadge from "./common/NumberBadge.vue";
-const storage = {
-  fetch() {
-    const serveritems = localStorage.getItem(3) || "[]";
-    const result = JSON.parse(serveritems);
-    return result;
-  },
-};
+import { fetchCommunityList } from "../api/index";
 export default {
   components: { NumberBadge },
   data() {
@@ -117,9 +111,6 @@ export default {
   },
   methods: {
     ...mapMutations("server", ["setCreateServer"]),
-    fetchTodoItems() {
-      this.serverlist = storage.fetch();
-    },
     hover(index) {
       this.hovered = index;
     },
@@ -146,8 +137,9 @@ export default {
   computed: {
     ...mapState("friends", ["friendswaitnumber"]),
   },
-  created() {
-    this.fetchTodoItems();
+  async created() {
+    const result = await fetchCommunityList();
+    console.log("커뮤니티리스트", result);
   },
 };
 </script>

@@ -45,8 +45,8 @@ export default {
       this.setFriendsReadyToBlock(null);
     },
     async blockFriends(userId) {
-      const result = await blockFriend(userId);
-      console.log(result);
+      await blockFriend(userId);
+      window.location.reload();
     },
   },
 };

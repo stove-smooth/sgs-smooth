@@ -4,6 +4,7 @@ const server = {
     createserver: false,
     createchannel: false,
     openServerPopout: false,
+    categoryInfo: {},
   },
   mutations: {
     setCreateServer(state, createserver) {
@@ -14,6 +15,9 @@ const server = {
     },
     setOpenServerPopout(state) {
       state.openServerPopout = !state.openServerPopout;
+    },
+    setCategoryInfo(state, categoryInfo) {
+      state.categoryInfo = categoryInfo;
     },
   },
 };

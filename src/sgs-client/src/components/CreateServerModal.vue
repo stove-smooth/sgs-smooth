@@ -40,12 +40,15 @@
             </div>
           </template>
           <template slot="content">
-            <button class="create-server-button" @click="openFinalSelect">
+            <button
+              class="create-server-button"
+              @click="openFinalSelect(false)"
+            >
               <svg class="private-server"></svg>
               <div class="action-title">나와 친구들을 위한 서버</div>
               <svg class="right-arrow"></svg>
             </button>
-            <button class="create-server-button" @click="openFinalSelect">
+            <button class="create-server-button" @click="openFinalSelect(true)">
               <svg class="public-server"></svg>
               <div class="action-title">클럽 혹은 파티용 서버</div>
               <svg class="right-arrow"></svg>
@@ -125,30 +128,18 @@
 
 <script>
 import Modal from "../components/common/Modal.vue";
-import { converToThumbnail } from "../utils/common.js";
+import { converToThumbnail, dataUrlToFile } from "../utils/common.js";
 import { mapState, mapMutations } from "vuex";
-const storage = {
-  fetch() {
-    const serveritems = localStorage.getItem(3) || "[]";
-    const result = JSON.parse(serveritems);
-    return result;
-  },
-
-  save(value) {
-    const parsed = JSON.stringify(value);
-    localStorage.setItem(3, parsed);
-  },
-};
+import { createNewCommunity } from "../api/index.js";
 export default {
   components: {
     Modal,
   },
   data() {
     return {
-      isPublic: "",
+      isPublic: false,
       serverName: "밍디님의 서버",
       progress: "openCreate",
-      serverList: [],
       thumbnail: "",
     };
   },
@@ -171,31 +162,40 @@ export default {
     goBackSelect() {
       this.progress = "openSelect";
     },
-    openFinalSelect() {
+    openFinalSelect(isPublic) {
       this.progress = "finalSelect";
+      this.isPublic = isPublic;
     },
     async uploadImage() {
       let image = this.$refs["image"].files[0];
       this.thumbnail = await converToThumbnail(image);
     },
-    createServer() {
-      const serverProfile = {
-        name: this.serverName,
-        thumbnail: this.thumbnail,
-      };
-      this.serverList.push(serverProfile);
-      storage.save(this.serverList);
-      window.location.reload();
+    async createServer() {
+      console.log(this.thumbnail);
+      var frm = new FormData();
+      if (!this.thumbnail) {
+        frm.append("name", this.serverName);
+        frm.append("public", this.isPublic);
+        console.log(frm);
+        const result = await createNewCommunity(frm);
+        console.log(result);
+      } else {
+        const file = dataUrlToFile(this.thumbnail);
+        frm.append("icon", file);
+        frm.append("name", this.serverName);
+        frm.append("public", this.isPublic);
+        console.log(frm);
+        const result = await createNewCommunity(frm);
+        console.log(result);
+      }
     },
     exitCreate() {
       this.setCreateServer(false);
+      this.thumbnail = "";
+      this.progress = "openCreate";
+      this.isPublic = false;
+      this.serverName = "밍디님의 서버";
     },
-    fetchTodoItems() {
-      this.serverList = storage.fetch();
-    },
-  },
-  created() {
-    this.fetchTodoItems();
   },
 };
 </script>
