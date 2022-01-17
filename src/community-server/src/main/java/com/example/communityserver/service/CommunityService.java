@@ -47,12 +47,14 @@ public class CommunityService {
     private final UserClient userClient;
 
     @Transactional
-    public CreateCommunityResponse createCommunity(
+    public CommunityResponse createCommunity(
             Long userId,
             CreateCommunityRequest request,
             String token
     ) {
-        String iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
+        String iconImage = null;
+        if (!Objects.isNull(request.getIcon()))
+            iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
 
         Category voiceCategory = makeDefaultCategory(ChannelType.VOICE, null);
         Category textCategory = makeDefaultCategory(ChannelType.TEXT, voiceCategory);
@@ -71,7 +73,7 @@ public class CommunityService {
         createCommunityMember(userId, newCommunity, nickname, profileImage, firstNode, CommunityRole.OWNER);
         communityRepository.save(newCommunity);
 
-        return CreateCommunityResponse.fromEntity(newCommunity);
+        return CommunityResponse.fromEntity(newCommunity);
     }
 
     private Category makeDefaultCategory(ChannelType channelType, Category nextNode) {

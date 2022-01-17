@@ -23,6 +23,10 @@ public class CommunityController {
     public final static String AUTHORIZATION = "AUTHORIZATION";
 
     /**
+     * Todo 커뮤니티 내 메세지 읽음 처리 (Optional)
+     */
+
+    /**
      * 사용자가 소속된 커뮤니티 리스트 조회
      */
     @GetMapping()
@@ -51,15 +55,15 @@ public class CommunityController {
      * 커뮤니티 생성하기
      */
     @PostMapping
-    public DataResponse<CreateCommunityResponse> createCommunity(
+    public DataResponse<CommunityResponse> createCommunity(
             @RequestHeader(AUTHORIZATION) String token,
             @RequestHeader(ID) String userId,
             @Valid @ModelAttribute CreateCommunityRequest request
     ) {
         log.info("POST /community-server/community");
-        CreateCommunityResponse createCommunityResponse =
+        CommunityResponse response =
                 communityService.createCommunity(Long.parseLong(userId), request, token);
-        return responseService.getDataResponse(createCommunityResponse);
+        return responseService.getDataResponse(response);
     }
 
     /**

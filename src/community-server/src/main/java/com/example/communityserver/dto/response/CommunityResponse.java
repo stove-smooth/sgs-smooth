@@ -11,15 +11,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommunityResponse {
-    private Long communityId;
+    private Long id;
     private String name;
-    private String iconImage;
+    private String icon;
 
     public static CommunityResponse fromEntity(Community community) {
         CommunityResponse communityResponse = new CommunityResponse();
-        communityResponse.setCommunityId(community.getId());
+        communityResponse.setId(community.getId());
         communityResponse.setName(community.getName());
-        communityResponse.setIconImage(community.getIconImage());
+        communityResponse.setIcon(community.getIconImage());
         return communityResponse;
     }
 }
