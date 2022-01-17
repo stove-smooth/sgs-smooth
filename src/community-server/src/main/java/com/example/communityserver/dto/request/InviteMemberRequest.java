@@ -5,13 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LocateCategoryRequest {
+public class InviteMemberRequest {
     @NotNull
-    private Long categoryId;
+    private Long id;
     @NotNull
-    private Long nextNode;
+    private List<Long> members;
 }

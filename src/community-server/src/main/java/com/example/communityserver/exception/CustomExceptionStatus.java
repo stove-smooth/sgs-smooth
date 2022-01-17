@@ -26,7 +26,10 @@ public enum CustomExceptionStatus {
     NON_VALID_USER_ID_IN_COMMUNITY(false, 4010, "커뮤니티에 존재하지 않는 회원입니다."),
     NON_VALID_NEXT_NODE(false, 4011, "변경될 위치가 유효하지 않습니다."),
     ALREADY_PUBLIC_STATE(false, 4012, "공개된 채널입니다."),
-    ALREADY_INVITED(false, 4013, "이미 초대되어 있습니다.");
+    ALREADY_INVITED(false, 4013, "이미 초대되어 있습니다."),
+    CANT_SUSPEND_YOURSELF(false, 4014, "스스로를 추방할 수 없습니다."),
+    NON_EXIST_OWNER(false, 4015, "커뮤니티의 소유주가 없습니다."),
+    NON_SERVE_IN_THREAD(false, 4016, "스레드에서 제공하지 않는 기능입니다.");
 
     private final boolean isSuccess;
     private final int code;

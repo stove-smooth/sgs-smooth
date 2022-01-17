@@ -38,12 +38,12 @@ public class CommunityController {
      * 특정 커뮤니티 조회
      */
     @GetMapping("/{communityId}")
-    public DataResponse<CommunityDetailResponse> getCommunity(
+    public DataResponse<CommunityDetailResponse> getCommunityDetail(
             @RequestHeader(ID) String userId,
             @PathVariable Long communityId
     ) {
         log.info("GET /community-server/community/{}", communityId);
-        CommunityDetailResponse response = communityService.getCommunity(Long.parseLong(userId), communityId);
+        CommunityDetailResponse response = communityService.getCommunityInfo(Long.parseLong(userId), communityId);
         return responseService.getDataResponse(response);
     }
 
@@ -68,7 +68,7 @@ public class CommunityController {
     @PatchMapping("/name")
     public CommonResponse editName(
             @RequestHeader(ID) String userId,
-            @Valid @RequestBody EditCommunityNameRequest request
+            @Valid @RequestBody EditNameRequest request
     ) {
         log.info("PATCH /community-server/community/name");
         communityService.editName(Long.parseLong(userId), request);
@@ -192,7 +192,7 @@ public class CommunityController {
     @PatchMapping("/location")
     public CommonResponse locateCommunity(
             @RequestHeader(ID) String userId,
-            @Valid @RequestBody LocateCommunityRequest request
+            @Valid @RequestBody LocateRequest request
     ) {
         log.info("PATCH /community-server/community/location");
         communityService.locateCommunity(Long.parseLong(userId), request);

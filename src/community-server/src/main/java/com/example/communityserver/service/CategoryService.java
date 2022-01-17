@@ -6,10 +6,8 @@ import com.example.communityserver.domain.Community;
 import com.example.communityserver.domain.CommunityMember;
 import com.example.communityserver.domain.type.CommonStatus;
 import com.example.communityserver.domain.type.CommunityMemberStatus;
-import com.example.communityserver.dto.request.CreateCategoryRequest;
-import com.example.communityserver.dto.request.EditCategoryNameRequest;
-import com.example.communityserver.dto.request.InviteCategoryRequest;
-import com.example.communityserver.dto.request.LocateCategoryRequest;
+import com.example.communityserver.domain.type.CommunityRole;
+import com.example.communityserver.dto.request.*;
 import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.CategoryRepository;
 import com.example.communityserver.repository.CommunityRepository;
@@ -44,9 +42,11 @@ public class CategoryService {
         List<CategoryMember> members = new ArrayList<>();
         if (!request.isPublic()) {
             validateMemberId(community, request.getMembers());
-            members = request.getMembers().stream()
-                    .map(CategoryMember::new)
-                    .collect(Collectors.toList());
+            if (!Objects.isNull(request.getMembers())) {
+                members = request.getMembers().stream()
+                        .map(CategoryMember::new)
+                        .collect(Collectors.toList());
+            }
             members.add(new CategoryMember(userId));
         }
 
@@ -62,26 +62,28 @@ public class CategoryService {
 
     private Category getFirstCategory(Community community) {
         return community.getCategories().stream()
-                .filter(c -> c.isFirstNode())
+                .filter(c -> c.isFirstNode() && c.getStatus().equals(CommonStatus.NORMAL))
                 .findFirst().orElse(null);
     }
 
     private void validateMemberId(Community community, List<Long> memberIds) {
-        List<Long> communityMemberUserIds = community.getMembers().stream()
-                .filter(communityMember -> communityMember.getStatus().equals(CommunityMemberStatus.NORMAL))
-                .map(CommunityMember::getUserId)
-                .collect(Collectors.toList());
+        if (!Objects.isNull(memberIds)) {
+            List<Long> communityMemberUserIds = community.getMembers().stream()
+                    .filter(communityMember -> communityMember.getStatus().equals(CommunityMemberStatus.NORMAL))
+                    .map(CommunityMember::getUserId)
+                    .collect(Collectors.toList());
 
-        for (Long memberId: memberIds) {
-            if (!communityMemberUserIds.contains(memberId))
-                throw new CustomException(NON_VALID_USER_ID_IN_COMMUNITY);
+            for (Long memberId: memberIds) {
+                if (!communityMemberUserIds.contains(memberId))
+                    throw new CustomException(NON_VALID_USER_ID_IN_COMMUNITY);
+            }
         }
     }
 
     @Transactional
-    public void editName(Long userId, EditCategoryNameRequest request) {
+    public void editName(Long userId, EditNameRequest request) {
 
-        Category category = categoryRepository.findById(request.getCategoryId())
+        Category category = categoryRepository.findById(request.getId())
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CATEGORY));
 
@@ -104,9 +106,9 @@ public class CategoryService {
     }
 
     @Transactional
-    public void locateCategory(Long userId, LocateCategoryRequest request) {
+    public void locateCategory(Long userId, LocateRequest request) {
 
-        Category target = categoryRepository.findById(request.getCategoryId())
+        Category target = categoryRepository.findById(request.getId())
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CATEGORY));
 
@@ -120,12 +122,12 @@ public class CategoryService {
         Category first = getFirstCategory(community);
 
         Category before = null;
-        if (request.getNextNode().equals(0L)) {
+        if (request.getNext().equals(0L)) {
             if (target.equals(first))
                 throw new CustomException(ALREADY_LOCATED);
         } else {
             before = categories.stream()
-                    .filter(c -> c.getId().equals(request.getNextNode()))
+                    .filter(c -> c.getId().equals(request.getNext()))
                     .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                     .findAny().orElseThrow(() -> new CustomException(NON_VALID_NEXT_NODE));
 
@@ -149,8 +151,8 @@ public class CategoryService {
     }
 
     @Transactional
-    public void inviteMember(Long userId, InviteCategoryRequest request) {
-        Category category = categoryRepository.findById(request.getCategoryId())
+    public void inviteMember(Long userId, InviteMemberRequest request) {
+        Category category = categoryRepository.findById(request.getId())
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CATEGORY));
 
@@ -159,10 +161,11 @@ public class CategoryService {
         if (category.isPublic())
             throw new CustomException(ALREADY_PUBLIC_STATE);
 
-        isMemberInCommunity(category.getCommunity(), request.getMemberId());
-        isContains(category, request.getMemberId());
-
-        category.addMember(new CategoryMember(request.getMemberId()));
+        for (Long memberId: request.getMembers()) {
+            isMemberInCommunity(category.getCommunity(), memberId);
+            isContains(category, memberId);
+            category.addMember(new CategoryMember(memberId));
+        }
     }
 
     private void isMemberInCommunity(Community community, Long memberId) {
@@ -194,13 +197,24 @@ public class CategoryService {
         if (category.isPublic())
             throw new CustomException(ALREADY_PUBLIC_STATE);
 
-        isAuthorizedMember(category, userId);
+        if (!userId.equals(memberId))
+            isOwner(category, userId);
 
         CategoryMember deleteMember = category.getMembers().stream()
                 .filter(member -> member.getUserId().equals(memberId))
                 .filter(member -> member.isStatus())
                 .findAny().orElseThrow(() -> new CustomException(EMPTY_MEMBER));
 
-        deleteMember.setStatus(false);
+        deleteMember.delete();
+    }
+
+    private void isOwner(Category category, Long userId) {
+        Long ownerUserId = category.getCommunity().getMembers().stream()
+                .filter(cm -> cm.getRole().equals(CommunityRole.OWNER))
+                .findFirst().orElseThrow(() -> new CustomException(NON_EXIST_OWNER))
+                .getUserId();
+
+        if (!ownerUserId.equals(userId))
+            throw new CustomException(NON_AUTHORIZATION);
     }
 }

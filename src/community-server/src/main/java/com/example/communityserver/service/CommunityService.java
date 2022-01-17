@@ -69,7 +69,6 @@ public class CommunityService {
         CommunityMember firstNode = getFirstNode(userId);
 
         createCommunityMember(userId, newCommunity, nickname, profileImage, firstNode, CommunityRole.OWNER);
-
         communityRepository.save(newCommunity);
 
         return CreateCommunityResponse.fromEntity(newCommunity);
@@ -82,9 +81,9 @@ public class CommunityService {
     }
 
     @Transactional
-    public void editName(Long userId, EditCommunityNameRequest request) {
+    public void editName(Long userId, EditNameRequest request) {
 
-        Community community = communityRepository.findById(request.getCommunityId())
+        Community community = communityRepository.findById(request.getId())
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
@@ -105,13 +104,15 @@ public class CommunityService {
     }
 
     private void isOwner(Community community, Long userId) {
-        boolean isAuthorization = community.getMembers().stream()
-                .filter(communityMember -> communityMember.getRole().equals(CommunityRole.OWNER))
-                .collect(Collectors.toList())
-                .contains(userId);
-
-        if (!isAuthorization)
+        if (!getOwnerUserId(community).equals(userId))
             throw new CustomException(NON_AUTHORIZATION);
+    }
+
+    private Long getOwnerUserId(Community community) {
+        return community.getMembers().stream()
+                .filter(cm -> cm.getRole().equals(CommunityRole.OWNER))
+                .findFirst().orElseThrow(() -> new CustomException(NON_EXIST_OWNER))
+                .getUserId();
     }
 
     @Transactional
@@ -192,7 +193,7 @@ public class CommunityService {
                 .filter(i -> i.isActivate())
                 .orElseThrow(() -> new CustomException(NON_VALID_INVITATION));
 
-        isAuthorizedMember(invitation.getCommunity(), userId);
+        isOwner(invitation.getCommunity(), userId);
 
         invitation.setActivate(false);
     }
@@ -256,29 +257,53 @@ public class CommunityService {
 
     @Transactional
     public void deleteMember(Long userId, Long communityId, Long memberId) {
-        CommunityMember member = getMember(userId, communityId, memberId);
-        member.setStatus(CommunityMemberStatus.DELETED);
+
+        Community community = communityRepository.findById(communityId)
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
+
+        if (getOwnerUserId(community).equals(userId)) {
+            CommunityMember otherMember = community.getMembers().stream()
+                    .filter(cm -> !cm.getUserId().equals(memberId))
+                    .findFirst().orElse(null);
+            if (Objects.isNull(otherMember)) {
+                community.delete();
+                return;
+            }
+            otherMember.setRole(CommunityRole.OWNER);
+        } else {
+            if (userId != memberId)
+                throw new CustomException(NON_AUTHORIZATION);
+        }
+
+        CommunityMember member = community.getMembers().stream()
+                .filter(m -> m.getUserId().equals(memberId))
+                .filter(m -> m.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .findAny().orElseThrow(() -> new CustomException(EMPTY_MEMBER));
+
+        member.delete();
     }
 
-    private CommunityMember getMember(Long userId, Long communityId, Long memberId) {
+    public void suspendMember(Long userId, Long communityId, Long memberId) {
+
+        if (userId == memberId)
+            throw new CustomException(CANT_SUSPEND_YOURSELF);
+
         Community community = communityRepository.findById(communityId)
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
         isOwner(community, userId);
 
-        return community.getMembers().stream()
-                .filter(member -> member.getUserId().equals(memberId))
-                .filter(member -> member.getStatus().equals(CommunityMemberStatus.NORMAL))
+        CommunityMember member = community.getMembers().stream()
+                .filter(m -> m.getUserId().equals(memberId))
+                .filter(m -> m.getStatus().equals(CommunityMemberStatus.NORMAL))
                 .findAny().orElseThrow(() -> new CustomException(EMPTY_MEMBER));
+
+        member.suspend();
     }
 
-    public void suspendMember(Long userId, Long communityId, Long memberId) {
-        CommunityMember member = getMember(userId, communityId, memberId);
-        member.setStatus(CommunityMemberStatus.SUSPENDED);
-    }
-
-    public CommunityDetailResponse getCommunity(Long userId, Long communityId) {
+    public CommunityDetailResponse getCommunityInfo(Long userId, Long communityId) {
         Community community = communityRepository.findById(communityId)
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
@@ -290,44 +315,54 @@ public class CommunityService {
     public CommunityListResponse getCommunityList(Long userId) {
         CommunityMember firstNode = getFirstNode(userId);
 
-        List<CommunityResponse> list = new ArrayList<>();
+        List<Community> communities = new ArrayList<>();
         if (Objects.isNull(firstNode))
-            return new CommunityListResponse(list);
+            return new CommunityListResponse(
+                    communities.stream()
+                            .map(CommunityResponse::fromEntity)
+                            .collect(Collectors.toList())
+            );
 
-        list.add(CommunityResponse.fromEntity(firstNode.getCommunity()));
+        communities.add(firstNode.getCommunity());
         CommunityMember nextNode = firstNode.getNextNode();
         while (!Objects.isNull(nextNode)) {
-            list.add(CommunityResponse.fromEntity(nextNode.getCommunity()));
+            communities.add(nextNode.getCommunity());
             nextNode = nextNode.getNextNode();
         }
-        return new CommunityListResponse(list);
+
+        List<CommunityResponse> responses = communities.stream()
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .map(CommunityResponse::fromEntity)
+                .collect(Collectors.toList());
+
+        return new CommunityListResponse(responses);
     }
 
     public CommunityMember getFirstNode(Long userId) {
         return communityMemberRepository.findByUserId(userId).stream()
-                .filter(member -> member.isFirstNode())
+                .filter(member -> member.isFirstNode() && member.getStatus().equals(CommunityMemberStatus.NORMAL))
                 .findAny().orElse(null);
     }
 
     @Transactional
-    public void locateCommunity(Long userId, LocateCommunityRequest request) {
+    public void locateCommunity(Long userId, LocateRequest request) {
         List<CommunityMember> communities = communityMemberRepository.findByUserId(userId).stream()
                 .filter(cm -> cm.getStatus().equals(CommunityMemberStatus.NORMAL))
                 .collect(Collectors.toList());
 
         CommunityMember target = communities.stream()
-                .filter(cm -> cm.getCommunity().getId().equals(request.getCommunityId()))
+                .filter(cm -> cm.getCommunity().getId().equals(request.getId()))
                 .findAny().orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
         CommunityMember first = getFirstNode(userId);
 
         CommunityMember before = null;
-        if (request.getNextNode().equals(0L)) {
+        if (request.getNext().equals(0L)) {
             if (target.equals(first))
                 throw new CustomException(ALREADY_LOCATED);
         } else {
             before = communities.stream()
-                    .filter(cm -> cm.getCommunity().getId().equals(request.getNextNode()))
+                    .filter(cm -> cm.getCommunity().getId().equals(request.getNext()))
                     .filter(cm -> cm.getStatus().equals(CommunityMemberStatus.NORMAL))
                     .findAny().orElseThrow(() -> new CustomException(NON_VALID_NEXT_NODE));
 

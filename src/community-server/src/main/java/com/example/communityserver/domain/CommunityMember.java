@@ -113,4 +113,22 @@ public class CommunityMember extends BaseTimeEntity {
             }
         }
     }
+
+    public void delete() {
+        if (this.isFirstNode) {
+            if (!Objects.isNull(this.getNextNode()))
+                this.getNextNode().isFirstNode = true;
+            this.isFirstNode = false;
+        }
+        this.setStatus(CommunityMemberStatus.DELETED);
+    }
+
+    public void suspend() {
+        if (this.isFirstNode) {
+            if (!Objects.isNull(this.getNextNode()))
+                this.getNextNode().isFirstNode = true;
+            this.isFirstNode = false;
+        }
+        this.setStatus(CommunityMemberStatus.SUSPENDED);
+    }
 }

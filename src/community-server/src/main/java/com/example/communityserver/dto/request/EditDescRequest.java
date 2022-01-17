@@ -5,17 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EditCategoryNameRequest {
-
+public class EditDescRequest {
     @NotNull
-    private Long categoryId;
-
+    private Long id;
     @NotNull
-    @Size(min = 1, max = 100, message = "name min 1 max 100")
-    private String name;
+    private String description;
 }

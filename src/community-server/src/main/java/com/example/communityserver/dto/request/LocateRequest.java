@@ -9,11 +9,9 @@ import javax.validation.constraints.NotNull;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LocateCommunityRequest {
-
+public class LocateRequest {
     @NotNull
-    private Long communityId;
-
+    private Long id;
     @NotNull
-    private Long nextNode;
+    private Long next;
 }

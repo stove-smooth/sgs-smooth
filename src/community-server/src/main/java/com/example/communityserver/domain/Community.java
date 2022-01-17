@@ -64,9 +64,9 @@ public class Community extends BaseTimeEntity {
     }
 
     public void delete() {
-//        for (CommunityMember member: this.getMembers()) {
-//            member.setStatus(CommunityMemberStatus.DELETED);
-//        }
+        for (CommunityMember member: this.getMembers()) {
+            member.delete();
+        }
         for (Category category: this.categories) {
             category.delete();
         }

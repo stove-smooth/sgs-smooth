@@ -31,7 +31,7 @@ public class Channel extends BaseTimeEntity {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    private Long userId;
+    private String username;
 
     @Column(length = 200)
     private String name;
@@ -51,6 +51,8 @@ public class Channel extends BaseTimeEntity {
     private Channel nextNode;
 
     private LocalDateTime expiredAt;
+
+    private Long messageId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
@@ -83,6 +85,11 @@ public class Channel extends BaseTimeEntity {
             nextNode.isFirstNode = false;
     }
 
+    public void setParent(Channel parent) {
+        this.parent = parent;
+        parent.getThread().add(this);
+    }
+
     //== 생성 메서드 ==//
     public static Channel createChannel(
             Category category,
@@ -90,15 +97,16 @@ public class Channel extends BaseTimeEntity {
             String name,
             boolean isPublic,
             Channel nextNode,
-            ChannelMember... members
+            List<ChannelMember> channelMembers
     ) {
         Channel channel = new Channel();
+        channel.setUsername(null);
         channel.setCategory(category);
         channel.setType(type);
         channel.setName(name);
         channel.setPublic(isPublic);
         if (!isPublic) {
-            for (ChannelMember member: members) {
+            for (ChannelMember member: channelMembers) {
                 channel.addMember(member);
             }
         }
@@ -108,9 +116,71 @@ public class Channel extends BaseTimeEntity {
         return channel;
     }
 
+    public static Channel createThread(
+            String username,
+            Long messageId,
+            Channel parent,
+            String name,
+            List<ChannelMember> channelMembers
+    ) {
+        Channel thread = new Channel();
+        thread.setUsername(username);
+        thread.setMessageId(messageId);
+        thread.setParent(parent);
+        thread.setName(name);
+        thread.setType(ChannelType.TEXT);
+        thread.setPublic(parent.isPublic());
+        thread.setMembers(channelMembers);
+        thread.isFirstNode = false;
+        thread.setExpiredAt(LocalDateTime.now().plusHours(24));
+        thread.setStatus(ChannelStatus.NORMAL);
+        return thread;
+    }
+
+    public void locate(Channel before, Channel first) {
+        Channel originBeforeNode = first;
+
+        if (first.equals(this)) {
+            this.isFirstNode = false;
+            Channel originNextNode = before.getNextNode();
+            before.setNextNode(this);
+            this.getNextNode().setFirstNode(true);
+            this.setNextNode(originNextNode);
+        } else {
+            while (!Objects.isNull(originBeforeNode.getNextNode())) {
+                if (originBeforeNode.getNextNode().equals(this))
+                    break;
+                else
+                    originBeforeNode = originBeforeNode.getNextNode();
+            }
+
+            if (Objects.isNull(before)) {
+                this.isFirstNode = true;
+                originBeforeNode.setNextNode(this.nextNode);
+                this.nextNode = first;
+                first.setFirstNode(false);
+            } else {
+                Channel originNextNode = before.getNextNode();
+                before.setNextNode(this);
+                if (!Objects.isNull(originNextNode))
+                    originNextNode.setNextNode(this.nextNode);
+                this.nextNode = originNextNode;
+                originBeforeNode.setNextNode(before);
+            }
+        }
+    }
+
     public void delete() {
+        if (this.isFirstNode) {
+            if (!Objects.isNull(this.getNextNode()))
+                this.getNextNode().isFirstNode = true;
+            this.isFirstNode = false;
+        }
         for (Channel thread: this.getThread()) {
             thread.setStatus(ChannelStatus.DELETED);
+        }
+        for (ChannelMember member: this.getMembers()) {
+            member.delete();
         }
         this.setStatus(ChannelStatus.DELETED);
     }
