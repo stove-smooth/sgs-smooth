@@ -86,8 +86,11 @@
 
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
-import { selectProfile } from "../utils/common.js";
-import { converToThumbnail } from "../utils/common.js";
+import {
+  selectProfile,
+  converToThumbnail,
+  dataUrlToFile,
+} from "../utils/common.js";
 import { changeUserImage, deleteProfileImage } from "../api/index.js";
 export default {
   data() {
@@ -134,18 +137,12 @@ export default {
       const thumbnail = await converToThumbnail(image);
       this.setUserImage(thumbnail);
     },
-    async dataUrlToFile(dataUrl) {
-      const response = await fetch(dataUrl);
-      const blob = await response.blob();
-      const time = new Date().getTime();
-      return new File([blob], time, { type: "image/png" });
-    },
     async changeProfile() {
       if (!this.userimage) {
         await deleteProfileImage();
       } else {
         var frm = new FormData();
-        const result = await this.dataUrlToFile(this.userimage);
+        const result = await dataUrlToFile(this.userimage);
         frm.append("image", result);
         await changeUserImage(frm);
         window.location.reload();
