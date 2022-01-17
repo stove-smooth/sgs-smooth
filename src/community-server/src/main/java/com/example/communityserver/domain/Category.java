@@ -123,6 +123,9 @@ public class Category extends BaseTimeEntity {
         for (Channel channel: this.getChannels()) {
             channel.delete();
         }
+        for (CategoryMember member: this.getMembers()) {
+            member.delete();
+        }
         this.setStatus(CommonStatus.DELETED);
     }
 }

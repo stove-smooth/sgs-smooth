@@ -117,6 +117,9 @@ public class Channel extends BaseTimeEntity {
         for (Channel thread: this.getThread()) {
             thread.setStatus(ChannelStatus.DELETED);
         }
+        for (ChannelMember member: this.getMembers()) {
+            member.delete();
+        }
         this.setStatus(ChannelStatus.DELETED);
     }
 }

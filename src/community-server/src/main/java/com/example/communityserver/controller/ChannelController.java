@@ -113,10 +113,10 @@ public class ChannelController {
         return responseService.getSuccessResponse();
     }
 
-
     /**
      * 채널에서 추방하기
      */
+
 
     /**
      * 채널 복제하기

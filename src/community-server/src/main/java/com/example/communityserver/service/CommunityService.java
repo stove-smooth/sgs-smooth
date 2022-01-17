@@ -263,11 +263,6 @@ public class CommunityService {
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
-        CommunityMember member = community.getMembers().stream()
-                .filter(m -> m.getUserId().equals(memberId))
-                .filter(m -> m.getStatus().equals(CommunityMemberStatus.NORMAL))
-                .findAny().orElseThrow(() -> new CustomException(EMPTY_MEMBER));
-
         if (getOwnerUserId(community).equals(userId)) {
             CommunityMember otherMember = community.getMembers().stream()
                     .filter(cm -> !cm.getUserId().equals(memberId))
@@ -281,6 +276,11 @@ public class CommunityService {
             if (userId != memberId)
                 throw new CustomException(NON_AUTHORIZATION);
         }
+
+        CommunityMember member = community.getMembers().stream()
+                .filter(m -> m.getUserId().equals(memberId))
+                .filter(m -> m.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .findAny().orElseThrow(() -> new CustomException(EMPTY_MEMBER));
 
         member.delete();
     }

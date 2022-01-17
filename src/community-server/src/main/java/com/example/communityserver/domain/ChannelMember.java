@@ -31,4 +31,8 @@ public class ChannelMember extends BaseTimeEntity{
         this.userId = userId;
         this.status = true;
     }
+
+    public void delete() {
+        this.status = false;
+    }
 }

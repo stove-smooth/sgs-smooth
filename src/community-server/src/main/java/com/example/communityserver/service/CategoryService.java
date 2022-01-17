@@ -197,14 +197,15 @@ public class CategoryService {
         if (category.isPublic())
             throw new CustomException(ALREADY_PUBLIC_STATE);
 
-        isOwner(category, userId);
+        if (!userId.equals(memberId))
+            isOwner(category, userId);
 
         CategoryMember deleteMember = category.getMembers().stream()
                 .filter(member -> member.getUserId().equals(memberId))
                 .filter(member -> member.isStatus())
                 .findAny().orElseThrow(() -> new CustomException(EMPTY_MEMBER));
 
-        deleteMember.setStatus(false);
+        deleteMember.delete();
     }
 
     private void isOwner(Category category, Long userId) {
