@@ -28,7 +28,8 @@ public enum CustomExceptionStatus {
     ALREADY_PUBLIC_STATE(false, 4012, "공개된 채널입니다."),
     ALREADY_INVITED(false, 4013, "이미 초대되어 있습니다."),
     CANT_SUSPEND_YOURSELF(false, 4014, "스스로를 추방할 수 없습니다."),
-    NON_EXIST_OWNER(false, 4015, "커뮤니티의 소유주가 없습니다.");
+    NON_EXIST_OWNER(false, 4015, "커뮤니티의 소유주가 없습니다."),
+    NON_SERVE_IN_THREAD(false, 4016, "스레드에서 제공하지 않는 기능입니다.");
 
     private final boolean isSuccess;
     private final int code;

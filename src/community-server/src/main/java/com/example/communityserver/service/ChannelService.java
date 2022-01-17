@@ -34,18 +34,20 @@ public class ChannelService {
     private final UserClient userClient;
 
     public ChannelDetailResponse getChannelDetail(Long userId, Long channelId, String token) {
-
         Channel channel = channelRepository.findById(channelId)
                 .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
 
-        isAuthorizedMember(channel.getCategory().getCommunity(), userId);
+        Community community = !Objects.isNull(channel.getCategory()) ?
+                channel.getCategory().getCommunity() :
+                channel.getParent().getCategory().getCommunity();
+        isAuthorizedMember(community, userId);
 
         ChannelDetailResponse response = ChannelDetailResponse.fromEntity(channel);
 
         List<Long> ids = null;
         if (channel.isPublic()) {
-            ids = channel.getCategory().getCommunity().getMembers().stream()
+            ids = community.getMembers().stream()
                     .filter(m -> m.getStatus().equals(CommunityMemberStatus.NORMAL))
                     .map(m -> m.getUserId())
                     .collect(Collectors.toList());
@@ -57,7 +59,6 @@ public class ChannelService {
         }
         HashMap<Long, UserResponse> userMap = getUserMap(ids, token);
 
-        Community community = channel.getCategory().getCommunity();
         response.setMembers(ChannelDetailResponse.fromMember(community, ids, userMap));
 
         return response;
@@ -150,7 +151,8 @@ public class ChannelService {
                 .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
 
-        isAuthorizedMember(channel.getCategory().getCommunity(), userId);
+        Community community = channel.getCategory().getCommunity();
+        isAuthorizedMember(community, userId);
 
         UserInfoFeignResponse userInfoFeignResponse = userClient.getUserInfo(token);
         String nickname = userInfoFeignResponse.getResult().getName();
@@ -182,7 +184,10 @@ public class ChannelService {
                 .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
 
-        isAuthorizedMember(channel.getCategory().getCommunity(), userId);
+        Community community = !Objects.isNull(channel.getCategory()) ?
+                channel.getCategory().getCommunity() :
+                channel.getParent().getCategory().getCommunity();
+        isAuthorizedMember(community, userId);
 
         channel.setName(request.getName());
     }
@@ -194,7 +199,10 @@ public class ChannelService {
                 .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
 
-        isAuthorizedMember(channel.getCategory().getCommunity(), userId);
+        Community community = !Objects.isNull(channel.getCategory()) ?
+                channel.getCategory().getCommunity() :
+                channel.getParent().getCategory().getCommunity();
+        isAuthorizedMember(community, userId);
 
         channel.setDescription(request.getDescription());
     }
@@ -227,8 +235,10 @@ public class ChannelService {
                 .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
 
-        Community community = channel.getCategory().getCommunity();
+        if (!Objects.isNull(channel.getParent()))
+            throw new CustomException(NON_SERVE_IN_THREAD);
 
+        Community community = channel.getCategory().getCommunity();
         isAuthorizedMember(community, userId);
 
         if (channel.isPublic())
@@ -268,6 +278,9 @@ public class ChannelService {
                 .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
 
+        if (!Objects.isNull(channel.getParent()))
+            throw new CustomException(NON_SERVE_IN_THREAD);
+
         if (channel.isPublic())
             throw new CustomException(ALREADY_PUBLIC_STATE);
 
@@ -288,6 +301,9 @@ public class ChannelService {
         Channel channel = channelRepository.findById(request.getId())
                 .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
+
+        if (!Objects.isNull(channel.getParent()))
+            throw new CustomException(NON_SERVE_IN_THREAD);
 
         isAuthorizedMember(channel.getCategory().getCommunity(), userId);
 
@@ -320,6 +336,9 @@ public class ChannelService {
         Channel target = channelRepository.findById(request.getId())
                 .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
+
+        if (!Objects.isNull(target.getParent()))
+            throw new CustomException(NON_SERVE_IN_THREAD);
 
         Category category = target.getCategory();
         isAuthorizedMember(category.getCommunity(), userId);
