@@ -55,7 +55,9 @@ export default {
       this.upHere = "";
     },
     routePrivateDM(index) {
-      this.$router.push("/channels/@me/" + index);
+      if (this.$route.path !== "/channels/@me/" + index) {
+        this.$router.push("/channels/@me/" + index);
+      }
     },
   },
 };

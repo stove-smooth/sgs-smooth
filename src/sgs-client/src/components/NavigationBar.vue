@@ -123,9 +123,9 @@ export default {
       this.selected = "";
     },
     enterServer(index) {
-      this.$router.push("/channels/" + index).catch((err) => {
-        console.log(err);
-      });
+      if (this.$route.path !== "/channels/" + index) {
+        this.$router.push("/channels/" + index);
+      }
       this.select(index);
     },
     enterMe(index) {
