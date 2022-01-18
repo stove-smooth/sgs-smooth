@@ -25,10 +25,14 @@
         </div>
       </div>
     </div>
-    <div class="thin-scrollbar dm-scroller">
+    <div class="thin-scrollbar dm-scroller height-100">
       <div class="side-content">
-        <draggable :list="all" @change="log" group="category">
-          <div v-for="element in all" :key="element.id">
+        <draggable
+          :list="communityInfo.categories"
+          @change="log"
+          group="category"
+        >
+          <div v-for="element in communityInfo.categories" :key="element.id">
             <div
               class="channel-default-container"
               data-dnd-name="element.name"
@@ -75,7 +79,7 @@
                   >
                     <div class="channel-main-content">
                       <div
-                        v-if="el.type === 'chat'"
+                        v-if="el.type === 'TEXT'"
                         class="channel-classification-wrapper"
                         aria-label="텍스트"
                       >
@@ -199,7 +203,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("server", ["openServerPopout"]),
+    ...mapState("server", ["openServerPopout", "communityInfo"]),
   },
   methods: {
     ...mapMutations("server", [
@@ -610,5 +614,8 @@ export default {
   margin-left: 0;
   margin-right: 2px;
   background-image: url("../assets/private-channel-plus.svg");
+}
+.height-100 {
+  height: 100%;
 }
 </style>

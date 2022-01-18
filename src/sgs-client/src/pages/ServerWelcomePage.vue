@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { mapActions, mapState } from "vuex";
 import ServerSideBar from "../components/ServerSideBar.vue";
 import UserSection from "../components/common/UserSection.vue";
 import ServerChattingMenuBar from "../components/ServerChattingMenuBar.vue";
@@ -29,6 +30,35 @@ export default {
     ServerChattingMenuBar,
     ServerMemberList,
     ServerWelcome,
+  },
+  methods: {
+    ...mapActions("server", ["FETCH_COMMUNITYINFO"]),
+    async fetchCommunityInfo() {
+      console.log(this.$route.params.serverid);
+      await this.FETCH_COMMUNITYINFO(this.$route.params.serverid);
+    },
+  },
+  computed: {
+    ...mapState("server", ["communityInfo"]),
+  },
+  watch: {
+    // 라우터의 변경을 감시
+    /*     $route(to, from) {
+      if (to.path != from.path) {
+        console.log(to.path, from.path);
+        this.fetchCommunityInfo();
+        console.log("있나?", this.communityInfo);
+      }
+    }, */
+  },
+  async created() {
+    await this.fetchCommunityInfo();
+    const firstchannel = this.communityInfo.categories[0].channels[0].id;
+    if (firstchannel) {
+      this.$router.push(
+        "/channels/" + this.$route.params.serverid + "/" + firstchannel
+      );
+    }
   },
 };
 </script>

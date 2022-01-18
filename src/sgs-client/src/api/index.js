@@ -91,6 +91,9 @@ function fetchCommunityList() {
   console.log("룰루?", userId);
   return instance.post("auth-server/auth/find-id-list", [userId]);
 } */
+function fetchCommunityInfo(communityId) {
+  return instance.get("community-server/community/" + communityId);
+}
 export {
   registerUser,
   loginUser,
@@ -106,5 +109,6 @@ export {
   deleteProfileImage,
   createNewCommunity,
   fetchCommunityList,
+  fetchCommunityInfo,
   //getFriendsProfile,
 };

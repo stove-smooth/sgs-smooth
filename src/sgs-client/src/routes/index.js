@@ -60,7 +60,7 @@ export const router = new VueRouter({
       component: ServerPage,
     },
     {
-      path: "/channels/:id",
+      path: "/channels/:serverid",
       name: "ServerWelcomePage",
       component: ServerWelcomePage,
     },

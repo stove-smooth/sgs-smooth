@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import ServerSideBar from "../components/ServerSideBar.vue";
 import UserSection from "../components/common/UserSection.vue";
 import ServerChattingMenuBar from "../components/ServerChattingMenuBar.vue";
@@ -29,6 +30,16 @@ export default {
     ServerChattingMenuBar,
     ServerActivityArea,
     ServerMemberList,
+  },
+  methods: {
+    ...mapActions("server", ["FETCH_COMMUNITYINFO"]),
+    async fetchCommunityInfo() {
+      console.log(this.$route.params.serverid);
+      await this.FETCH_COMMUNITYINFO(this.$route.params.serverid);
+    },
+  },
+  async created() {
+    await this.fetchCommunityInfo();
   },
 };
 </script>

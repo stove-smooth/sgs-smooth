@@ -1,4 +1,4 @@
-import { fetchCommunityList } from "../../api/index.js";
+import { fetchCommunityList, fetchCommunityInfo } from "../../api/index.js";
 const server = {
   namespaced: true,
   state: {
@@ -7,6 +7,7 @@ const server = {
     openServerPopout: false,
     categoryInfo: {},
     communityList: [],
+    communityInfo: null,
   },
   mutations: {
     setCreateServer(state, createServer) {
@@ -24,11 +25,19 @@ const server = {
     setCommunityList(state, communityList) {
       state.communityList = communityList;
     },
+    setCommunityInfo(state, communityInfo) {
+      state.communityInfo = communityInfo;
+    },
   },
   actions: {
     async FETCH_COMMUNITYLIST({ commit }) {
       const result = await fetchCommunityList();
       commit("setCommunityList", result.data.result.communities);
+    },
+    async FETCH_COMMUNITYINFO({ commit }, serverid) {
+      const result = await fetchCommunityInfo(serverid);
+      console.log(result.data.result);
+      commit("setCommunityInfo", result.data.result);
     },
   },
 };
