@@ -1,5 +1,6 @@
 package com.example.chatserver.configuration;
 
+import com.example.chatserver.dto.request.LoginSessionRequest;
 import org.springframework.integration.annotation.MessagingGateway;
 import org.springframework.stereotype.Component;
 
@@ -7,6 +8,6 @@ import org.springframework.stereotype.Component;
 @MessagingGateway(defaultRequestChannel = "outboundChannel")
 public interface TcpClientGateway {
 
-    byte[] send(byte[] message);
+    String send(String message);
 
 }

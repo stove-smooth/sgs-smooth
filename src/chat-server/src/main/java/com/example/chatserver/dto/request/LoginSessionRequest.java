@@ -14,4 +14,5 @@ import java.io.Serializable;
 public class LoginSessionRequest implements Serializable {
     private String session_id;
     private String user_id;
+
 }

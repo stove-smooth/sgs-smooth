@@ -1,5 +1,6 @@
 package com.example.chatserver.configuration.message;
 
+import com.example.chatserver.client.PresenceClient;
 import com.example.chatserver.client.UserClient;
 import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.domain.DirectChat;
@@ -34,19 +35,12 @@ public class MessageListener {
     private final UserClient userClient;
     private final ChannelChatRepository channelChatRepository;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final PresenceClient presenceClient;
 
     @KafkaListener(topics = topicName, groupId = groupName)
     public void listen(DirectChat directChat) throws JsonProcessingException {
-        List<Long> ids = directChat.getIds();
-        Map<Long,Boolean> check = new HashMap<>();
-        for (Long i : ids) {
-            if (redisTemplate.opsForValue().get(String.valueOf(i)) == null) {
-                check.put(i,false);
-            } else {
-                check.put(i,true);
-            }
-        }
-        directChat.setRead(check);
+        Map<Long, Boolean> read = presenceClient.read(directChat.getIds());
+        directChat.setRead(read);
         messageRepository.save(directChat);
         UserInfoFeignResponse userInfo = userClient.getUserInfo(directChat.getUser_id());
         HashMap<String,String> msg = new HashMap<>();
@@ -63,17 +57,8 @@ public class MessageListener {
 
     @KafkaListener(topics = topicName2, groupId = groupName)
     public void listen2(ChannelMessage channelMessage) throws JsonProcessingException {
-
-        List<Long> ids = channelMessage.getIds();
-        Map<Long,Boolean> check = new HashMap<>();
-        for (Long i : ids) {
-            if (redisTemplate.opsForValue().get(String.valueOf(i)) == null) {
-                check.put(i,false);
-            } else {
-                check.put(i,true);
-            }
-        }
-        channelMessage.setRead(check);
+        Map<Long, Boolean> read = presenceClient.read(channelMessage.getIds());
+        channelMessage.setRead(read);
         channelChatRepository.save(channelMessage);
         HashMap<String,String> msg = new HashMap<>();
         UserInfoFeignResponse userInfo = userClient.getUserInfo(channelMessage.getAccount_id());

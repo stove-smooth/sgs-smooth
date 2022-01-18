@@ -7,10 +7,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class TcpService {
 
-    public byte[] processMessage(byte[] message) {
-        String messageContent = new String(message);
-        log.info("Receive message: {}", messageContent);
-        String responseContent = String.format("Message \"%s\" is processed", messageContent);
-        return responseContent.getBytes();
+    public String processMessage(String message) {
+        log.info("Receive message: {}", message);
+        return "반환메세지";
+    }
+
+    public String processMessage2(String message, String type) {
+        log.info(message);
+        log.info(type);
+        return "dd";
     }
 }

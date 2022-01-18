@@ -7,6 +7,7 @@ import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.ip.tcp.TcpInboundGateway;
 import org.springframework.integration.ip.tcp.connection.AbstractServerConnectionFactory;
 import org.springframework.integration.ip.tcp.connection.TcpNioServerConnectionFactory;
+import org.springframework.integration.ip.tcp.serializer.ByteArrayCrLfSerializer;
 import org.springframework.messaging.MessageChannel;
 
 @Configuration
@@ -17,13 +18,20 @@ public class TcpServerConfig {
 
     @Bean
     public AbstractServerConnectionFactory serverConnectionFactory() {
-        TcpNioServerConnectionFactory serverConnectionFactory = new TcpNioServerConnectionFactory(port);
-        serverConnectionFactory.setUsingDirectBuffers(true);
-        return serverConnectionFactory;
+        TcpNioServerConnectionFactory tcpNioServerConnectionFactory = new TcpNioServerConnectionFactory(port);
+        tcpNioServerConnectionFactory.setUsingDirectBuffers(true);
+        tcpNioServerConnectionFactory.setSerializer(codec());
+        tcpNioServerConnectionFactory.setDeserializer(codec());
+        return tcpNioServerConnectionFactory;
     }
 
     @Bean
     public MessageChannel inboundChannel() {
+        return new DirectChannel();
+    }
+
+    @Bean
+    public MessageChannel replyChannel() {
         return new DirectChannel();
     }
 
@@ -33,7 +41,14 @@ public class TcpServerConfig {
         TcpInboundGateway tcpInboundGateway = new TcpInboundGateway();
         tcpInboundGateway.setConnectionFactory(serverConnectionFactory);
         tcpInboundGateway.setRequestChannel(inboundChannel);
+        tcpInboundGateway.setReplyChannel(replyChannel());
         return tcpInboundGateway;
+    }
+
+    public ByteArrayCrLfSerializer codec() {
+        ByteArrayCrLfSerializer crLfSerializer = new ByteArrayCrLfSerializer();
+        crLfSerializer.setMaxMessageSize(204800000);
+        return crLfSerializer;
     }
 
 }

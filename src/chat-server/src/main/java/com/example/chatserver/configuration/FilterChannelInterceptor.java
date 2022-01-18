@@ -55,23 +55,14 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
 //                long time = 24 * 60 * 60 * 1000L;
                 LoginSessionRequest loginSessionRequest = LoginSessionRequest.builder()
                                 .session_id(session_id).user_id(user_id).build();
-                tcpClientGateway.send(session_id.getBytes());
-//                presenceClient.uploadState(loginSessionRequest);
-
-//                redisTemplate.opsForValue().set(temp,"home" ,time, TimeUnit.MILLISECONDS);
-//                redisTemplate.opsForValue().set(session_id,user_id,time,TimeUnit.MILLISECONDS);
+//                String send = tcpClientGateway.send(session_id);
+                presenceClient.uploadState(loginSessionRequest);
                 break;
             case DISCONNECT:
                 String sessionId = accessor.getSessionId();
-
-//                LoginSessionRequest logoutSessionRequest = LoginSessionRequest.builder()
-//                                .session_id(sessionId).build();
-//                presenceClient.deleteState(logoutSessionRequest);
-
-//                String userId = redisTemplate.opsForValue().get(sessionId).toString();
-//
-//                redisTemplate.delete(sessionId);
-//                redisTemplate.delete(userId);
+                LoginSessionRequest logoutSessionRequest = LoginSessionRequest.builder()
+                                .session_id(sessionId).build();
+                presenceClient.deleteState(logoutSessionRequest);
                 break;
             default:
                 break;

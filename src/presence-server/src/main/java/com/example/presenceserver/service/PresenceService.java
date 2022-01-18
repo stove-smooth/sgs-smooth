@@ -2,11 +2,16 @@ package com.example.presenceserver.service;
 
 import com.example.presenceserver.dto.request.LoginSessionRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PresenceService {
@@ -26,5 +31,17 @@ public class PresenceService {
 
         redisTemplate.delete(session_id);
         redisTemplate.delete(user_Id);
+    }
+
+    public Map<Long,Boolean> findRead(List<Long> requestAccountIds) {
+        Map<Long,Boolean> check = new HashMap<>();
+        for (Long i : requestAccountIds) {
+            if (redisTemplate.opsForValue().get("USER" + i) == null) {
+                check.put(i,false);
+            } else {
+                check.put(i,true);
+            }
+        }
+        return check;
     }
 }

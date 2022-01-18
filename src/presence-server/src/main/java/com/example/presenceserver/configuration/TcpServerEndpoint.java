@@ -11,10 +11,10 @@ public class TcpServerEndpoint {
 
     private final TcpService tcpService;
 
-
-    @ServiceActivator(inputChannel = "inboundChannel")
-    public byte[] process(byte[] message) {
+    @ServiceActivator(inputChannel = "inboundChannel", async = "true")
+    public String process(String message) {
         return tcpService.processMessage(message);
     }
+
 
 }

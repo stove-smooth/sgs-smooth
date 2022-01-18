@@ -26,9 +26,4 @@ public class ChannelChatController {
         channelMessage.setLocalDateTime(LocalDateTime.now());
         messageSender.send2(topicName, channelMessage);
     }
-
-    @MessageMapping("/read")
-    public void readChat(@Payload ChannelMessage channelMessage) {
-
-    }
 }

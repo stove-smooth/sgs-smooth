@@ -66,6 +66,7 @@ public class FriendService {
     private FriendResponse convertRequestFriend(Friend friend) {
         FriendResponse response = FriendResponse.builder()
                 .id(friend.getId())
+                .userId(friend.getSender().getId())
                 .name(friend.getSender().getName())
                 .code(friend.getSender().getCode())
                 .profileImage(friend.getSender().getProfileImage())
@@ -77,6 +78,7 @@ public class FriendService {
     private FriendResponse convertResponseFriend(Friend friend) {
         FriendResponse response = FriendResponse.builder()
                 .id(friend.getId())
+                .userId(friend.getReceiver().getId())
                 .name(friend.getReceiver().getName())
                 .code(friend.getReceiver().getCode())
                 .profileImage(friend.getReceiver().getProfileImage())
