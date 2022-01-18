@@ -87,6 +87,10 @@ async function createNewCommunity(userData) {
 function fetchCommunityList() {
   return instance.get("community-server/community");
 }
+/* function getFriendsProfile(userId) {
+  console.log("룰루?", userId);
+  return instance.post("auth-server/auth/find-id-list", [userId]);
+} */
 export {
   registerUser,
   loginUser,
@@ -102,4 +106,5 @@ export {
   deleteProfileImage,
   createNewCommunity,
   fetchCommunityList,
+  //getFriendsProfile,
 };

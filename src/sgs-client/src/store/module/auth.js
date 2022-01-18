@@ -107,6 +107,7 @@ const auth = {
       commit("setCode", response.data.result.code);
       commit("setUserAboutMe", response.data.result.bio);
       commit("setUserImage", response.data.result.profileImage);
+      console.log("fetch-user");
     },
   },
 };

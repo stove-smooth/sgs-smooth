@@ -12,6 +12,7 @@ const friends = {
     friendsPlusMenu: null,
     friendsReadyToDelete: null,
     friendsReadyToBlock: null,
+    friendsProfileModal: null,
   },
   mutations: {
     setAllFriends(state, friendsAccept) {
@@ -41,6 +42,9 @@ const friends = {
     },
     setFriendsReadyToBlock(state, friendsReadyToBlock) {
       state.friendsReadyToBlock = friendsReadyToBlock;
+    },
+    setFriendsProfileModal(state, friendsProfileModal) {
+      state.friendsProfileModal = friendsProfileModal;
     },
   },
   actions: {

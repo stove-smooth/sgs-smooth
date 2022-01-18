@@ -36,8 +36,11 @@
           <div class="action-to-friends">
             <slot
               name="action"
+              v-bind:code="item.code"
               v-bind:id="item.id"
               v-bind:username="item.name"
+              v-bind:profileImage="item.profileImage"
+              v-bind:userId="item.userId"
             ></slot>
           </div>
         </div>

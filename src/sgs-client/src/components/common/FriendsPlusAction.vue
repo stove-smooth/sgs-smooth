@@ -2,7 +2,11 @@
   <div :style="cssProps" v-show="friendsPlusMenu">
     <div class="plus-action-container">
       <div class="plus-action-wrapper">
-        <div class="plus-action-label-container" @mouseover="hover('profile')">
+        <div
+          class="plus-action-label-container"
+          @mouseover="hover('profile')"
+          @click="setFriendsProfileModal(friendsPlusMenu)"
+        >
           <div class="plus-action-label">프로필</div>
         </div>
         <div class="plus-action-label-container" @mouseover="hover('call')">
@@ -78,6 +82,7 @@ export default {
     ...mapMutations("friends", [
       "setFriendsReadyToDelete",
       "setFriendsReadyToBlock",
+      "setFriendsProfileModal",
     ]),
     hover(element) {
       this.readytoinvite = element;
