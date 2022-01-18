@@ -26,8 +26,7 @@ public class ChannelController {
     private final ResponseService responseService;
 
     /**
-     * Todo
-     * - 채널 내 메세지 읽음 처리 (Optional)
+     * Todo 채널 내 메세지 읽음 처리 (Optional)
      */
 
     /**
@@ -39,7 +38,7 @@ public class ChannelController {
             @RequestHeader(ID) String userId,
             @PathVariable Long channelId
     ) {
-        log.info("/community-server/channel/{}", channelId);
+        log.info("GET /community-server/channel/{}", channelId);
         ChannelDetailResponse response =
                 channelService.getChannelDetail(Long.parseLong(userId), channelId, token);
         return responseService.getDataResponse(response);
@@ -101,7 +100,7 @@ public class ChannelController {
     }
 
     /**
-     * 카테고리 배치 순서 바꾸기
+     * 채널 배치 순서 바꾸기
      */
     @PatchMapping("/location")
     public CommonResponse locateChannel(
@@ -161,7 +160,7 @@ public class ChannelController {
             @RequestHeader(ID) String userId,
             @Valid @RequestBody CopyChannelRequest request
     ) {
-        log.info("POST  /community-server/channel/copy");
+        log.info("POST /community-server/channel/copy");
         ChannelResponse response = channelService.copy(Long.parseLong(userId), request);
         return responseService.getDataResponse(response);
     }

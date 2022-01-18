@@ -12,6 +12,6 @@ import javax.validation.constraints.NotNull;
 public class CreateInvitationRequest {
 
     @NotNull
-    private Long communityId;
+    private Long id;
 
 }

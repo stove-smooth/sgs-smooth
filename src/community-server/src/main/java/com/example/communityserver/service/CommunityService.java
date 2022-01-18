@@ -47,12 +47,14 @@ public class CommunityService {
     private final UserClient userClient;
 
     @Transactional
-    public CreateCommunityResponse createCommunity(
+    public CommunityResponse createCommunity(
             Long userId,
             CreateCommunityRequest request,
             String token
     ) {
-        String iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
+        String iconImage = null;
+        if (!Objects.isNull(request.getIcon()))
+            iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
 
         Category voiceCategory = makeDefaultCategory(ChannelType.VOICE, null);
         Category textCategory = makeDefaultCategory(ChannelType.TEXT, voiceCategory);
@@ -71,7 +73,7 @@ public class CommunityService {
         createCommunityMember(userId, newCommunity, nickname, profileImage, firstNode, CommunityRole.OWNER);
         communityRepository.save(newCommunity);
 
-        return CreateCommunityResponse.fromEntity(newCommunity);
+        return CommunityResponse.fromEntity(newCommunity);
     }
 
     private Category makeDefaultCategory(ChannelType channelType, Category nextNode) {
@@ -131,8 +133,7 @@ public class CommunityService {
 
     @Transactional
     public CreateInvitationResponse createInvitation(Long userId, CreateInvitationRequest request) {
-
-        Community community = communityRepository.findById(request.getCommunityId())
+        Community community = communityRepository.findById(request.getId())
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
@@ -161,7 +162,12 @@ public class CommunityService {
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
         isAuthorizedMember(community, userId);
-        HashMap<Long, UserResponse> userInfoMap = getUserMap(community, token);
+
+        List<Long> ids = community.getInvitations().stream()
+                .filter(i -> i.isActivate())
+                .map(invitation -> invitation.getUserId())
+                .collect(Collectors.toList());
+        HashMap<Long, UserResponse> userInfoMap = getUserMap(ids, token);
 
         List<InvitationResponse> invitations = community.getInvitations().stream()
                 .filter(i -> i.isActivate())
@@ -172,12 +178,7 @@ public class CommunityService {
         return new InvitationListResponse(invitations);
     }
 
-    private HashMap<Long, UserResponse> getUserMap(Community community, String token) {
-        List<Long> ids = community.getInvitations().stream()
-                .filter(i -> i.isActivate())
-                .map(invitation -> invitation.getUserId())
-                .collect(Collectors.toList());
-
+    private HashMap<Long, UserResponse> getUserMap(List<Long> ids, String token) {
         Set<Long> set = new HashSet<>(ids);
         ids = new ArrayList<>(set);
 
@@ -199,13 +200,17 @@ public class CommunityService {
     }
 
     public MemberListResponse getMembers(Long userId, Long communityId, String token) {
-
         Community community = communityRepository.findById(communityId)
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
         isAuthorizedMember(community, userId);
-        HashMap<Long, UserResponse> userInfoMap = getUserMap(community, token);
+
+        List<Long> ids = community.getMembers().stream()
+                .filter(m -> m.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .map(CommunityMember::getUserId)
+                .collect(Collectors.toList());
+        HashMap<Long, UserResponse> userInfoMap = getUserMap(ids, token);
 
         List<MemberResponse> members = community.getMembers().stream()
                 .filter(member -> member.getStatus().equals(CommunityMemberStatus.NORMAL))
@@ -216,7 +221,7 @@ public class CommunityService {
     }
 
     @Transactional
-    public void join(Long userId, JoinCommunityRequest request, String token) {
+    public CommunityResponse join(Long userId, JoinCommunityRequest request, String token) {
 
         CommunityInvitation invitation = communityInvitationRepository.findByCode(request.getCode())
                 .filter(i -> i.isActivate())
@@ -227,7 +232,6 @@ public class CommunityService {
         if (isSuspendedMember(community, userId))
             throw new CustomException(SUSPENDED_COMMUNITY);
 
-        isAuthorizedMember(community, userId);
         isContains(community, userId);
 
         CommunityMember firstNode = getFirstNode(userId);
@@ -237,6 +241,8 @@ public class CommunityService {
         String nickname = userInfoFeignResponse.getResult().getName();
         String profileImage = userInfoFeignResponse.getResult().getProfileImage();
         createCommunityMember(userId, community, nickname, profileImage, firstNode, CommunityRole.NONE);
+
+        return CommunityResponse.fromEntity(community);
     }
 
     private void isContains(Community community, Long userId) {

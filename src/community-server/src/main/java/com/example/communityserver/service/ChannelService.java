@@ -75,7 +75,7 @@ public class ChannelService {
 
     @Transactional
     public ChannelResponse createChannel(Long userId, CreateChannelRequest request) {
-        Category category = categoryRepository.findById(request.getCategoryId())
+        Category category = categoryRepository.findById(request.getId())
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CATEGORY));
 
@@ -103,7 +103,7 @@ public class ChannelService {
 
         Channel newChannel = Channel.createChannel(
                 category,
-                request.getChannelType(),
+                request.getType(),
                 request.getName(),
                 request.isPublic(),
                 firstChannel,

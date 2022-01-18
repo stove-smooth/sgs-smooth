@@ -18,15 +18,11 @@ import static com.example.communityserver.controller.CommunityController.ID;
 @RequestMapping("/community-server/category")
 public class CategoryController {
 
-    /**
-     * Todo 카테고리 내 메세지 읽음 처리 (Optional)
-     */
-
     private final CategoryService categoryService;
     private final ResponseService responseService;
 
     /**
-     * 1. 카테고리 생성하기
+     * 카테고리 생성하기
      */
     @PostMapping
     public CommonResponse createCategory(
@@ -39,7 +35,7 @@ public class CategoryController {
     }
 
     /**
-     * 2. 카테고리 이름 수정하기
+     * 카테고리 이름 수정하기
      */
     @PatchMapping("/name")
     public CommonResponse editName(
@@ -52,7 +48,7 @@ public class CategoryController {
     }
 
     /**
-     * 3. 카테고리 배치 순서 바꾸기
+     * 카테고리 배치 순서 바꾸기
      */
     @PatchMapping("/location")
     public CommonResponse locateCategory(
@@ -65,7 +61,7 @@ public class CategoryController {
     }
 
     /**
-     * 4. 카테고리 삭제하기
+     * 카테고리 삭제하기
      */
     @DeleteMapping("/{categoryId}")
     public CommonResponse deleteCategory(
@@ -77,9 +73,8 @@ public class CategoryController {
         return responseService.getSuccessResponse();
     }
 
-
     /**
-     * 5. 카테고리에 멤버 추가하기
+     * 카테고리에 멤버 추가하기
      */
     @PostMapping("/member")
     public CommonResponse inviteMember(
@@ -92,7 +87,7 @@ public class CategoryController {
     }
 
     /**
-     * 6. 카테고리에서 추방하기
+     * 카테고리에서 나가기(멤버 추방하기)
      */
     @DeleteMapping("/{categoryId}/member")
     public CommonResponse deleteMember(
@@ -104,8 +99,4 @@ public class CategoryController {
         categoryService.deleteMember(Long.parseLong(userId), categoryId, memberId);
         return responseService.getSuccessResponse();
     }
-
-    /**
-     * 7. 카테고리 내 메세지 읽음 처리 (Optional)
-     */
 }

@@ -1,12 +1,17 @@
 package com.example.communityserver.dto.response;
 
 import com.example.communityserver.domain.Category;
+import com.example.communityserver.domain.Channel;
+import com.example.communityserver.domain.type.ChannelStatus;
+import com.example.communityserver.domain.type.CommonStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Getter
@@ -14,17 +19,30 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CategoryResponse {
-    private Long categoryId;
+    private Long id;
     private String name;
     private List<ChannelResponse> channels;
 
     public static CategoryResponse fromEntity(Category category) {
         CategoryResponse categoryResponse = new CategoryResponse();
-        categoryResponse.setCategoryId(category.getId());
+        categoryResponse.setId(category.getId());
         categoryResponse.setName(category.getName());
-        categoryResponse.setChannels(category.getChannels().stream()
-                .map(ChannelResponse::fromEntity)
-                .collect(Collectors.toList()));
+
+        Channel firstChannel = category.getChannels().stream()
+                .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
+                .filter(c -> c.isFirstNode())
+                .findFirst().orElse(null);
+        if (Objects.isNull(firstChannel))
+            return categoryResponse;
+
+        List<ChannelResponse> channels = new ArrayList<>();
+        channels.add(ChannelResponse.fromEntity(firstChannel));
+        Channel nextNode = firstChannel.getNextNode();
+        while (!Objects.isNull(nextNode)) {
+            channels.add(ChannelResponse.fromEntity(nextNode));
+            nextNode = nextNode.getNextNode();
+        }
+        categoryResponse.setChannels(channels);
         return categoryResponse;
     }
 }
