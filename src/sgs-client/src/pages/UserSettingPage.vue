@@ -99,11 +99,10 @@ export default {
     };
   },
   computed: {
-    ...mapState("auth", ["code", "nickname", "userimage", "useraboutme"]),
+    ...mapState("user", ["code", "nickname", "userimage", "useraboutme"]),
   },
   async created() {
     await this.fetchUserInfo();
-    console.log(this.userimage);
     if (!this.userimage) {
       const classify = this.code % 4;
       const result = selectProfile(classify);
@@ -120,8 +119,8 @@ export default {
     },
   },
   methods: {
-    ...mapActions("auth", ["LOGOUT", "FETCH_USERINFO"]),
-    ...mapMutations("auth", ["setUserImage"]),
+    ...mapActions("user", ["LOGOUT", "FETCH_USERINFO"]),
+    ...mapMutations("user", ["setUserImage"]),
     closeSettings() {
       this.$router.go(-1);
     },

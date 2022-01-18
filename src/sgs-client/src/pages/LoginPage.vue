@@ -10,7 +10,7 @@ import LoginForm from "../components/LoginForm.vue";
 export default {
   components: { LoginForm },
   computed: {
-    ...mapGetters("auth", ["getEmail"]),
+    ...mapGetters("user", ["getEmail"]),
   },
   created() {
     if (this.getEmail) {

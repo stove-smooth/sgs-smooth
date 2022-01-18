@@ -33,7 +33,7 @@ function fetchUserInfo() {
 }
 async function changeUserImage(userData) {
   try {
-    const accesstoken = await store.getters["auth/getAccessToken"];
+    const accesstoken = await store.getters["user/getAccessToken"];
     const response = await axios.post(
       "http://52.79.229.100:8000/auth-server/auth/profile",
       userData,
@@ -68,7 +68,7 @@ async function createNewCommunity(userData) {
     console.log(pair[0] + ", " + pair[1]);
   }
   try {
-    const accesstoken = await store.getters["auth/getAccessToken"];
+    const accesstoken = await store.getters["user/getAccessToken"];
     const response = await axios.post(
       "http://52.79.229.100:8000/community-server/community",
       userData,

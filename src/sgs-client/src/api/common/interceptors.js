@@ -2,7 +2,7 @@ import store from "../../store/index";
 import axios from "axios";
 
 async function logoutUser() {
-  await store.dispatch("auth/LOGOUT");
+  await store.dispatch("user/LOGOUT");
   window.location = "http://localhost:3000/";
 }
 
@@ -10,7 +10,7 @@ export function setInterceptors(instance) {
   // Add a request interceptor
   instance.interceptors.request.use(
     function (config) {
-      const accesstoken = store.getters["auth/getAccessToken"];
+      const accesstoken = store.getters["user/getAccessToken"];
       // Do something before request is sent
       if (accesstoken) {
         config.headers.Authorization = accesstoken;
@@ -38,8 +38,8 @@ export function setInterceptors(instance) {
         window.location.pathname !== "/login" &&
         window.location.pathname != "/register"
       ) {
-        const accesstoken = store.getters["auth/getAccessToken"];
-        const refreshtoken = store.getters["auth/getRefreshToken"];
+        const accesstoken = store.getters["user/getAccessToken"];
+        const refreshtoken = store.getters["user/getRefreshToken"];
         axios
           .post("http://52.79.229.100:8000/auth-server/refresh", {
             headers: {

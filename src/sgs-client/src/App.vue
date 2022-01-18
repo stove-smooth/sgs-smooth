@@ -71,7 +71,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters("auth", ["getEmail"]),
+    ...mapGetters("user", ["getEmail"]),
   },
 };
 </script>

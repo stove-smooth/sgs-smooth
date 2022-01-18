@@ -299,7 +299,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions("auth", ["LOGIN"]),
+    ...mapActions("user", ["LOGIN"]),
     async submitForm() {
       const userData = {
         email: this.id,

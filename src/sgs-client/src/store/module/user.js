@@ -1,5 +1,5 @@
 import { loginUser, fetchUserInfo } from "../../api/index.js";
-const auth = {
+const user = {
   namespaced: true,
   state: {
     email: "",
@@ -111,4 +111,4 @@ const auth = {
     },
   },
 };
-export default auth;
+export default user;
