@@ -94,6 +94,9 @@ function fetchCommunityList() {
 function fetchCommunityInfo(communityId) {
   return instance.get("community-server/community/" + communityId);
 }
+function fetchCommunityMemberList(communityId) {
+  return instance.get(`community-server/community/${communityId}/member`);
+}
 export {
   registerUser,
   loginUser,
@@ -110,5 +113,6 @@ export {
   createNewCommunity,
   fetchCommunityList,
   fetchCommunityInfo,
+  fetchCommunityMemberList,
   //getFriendsProfile,
 };

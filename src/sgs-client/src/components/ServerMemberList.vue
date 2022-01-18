@@ -2,11 +2,19 @@
   <div class="server-member-container">
     <aside class="server-member-list-wrapper">
       <div class="thin-scrollbar dm-scroller server-members" tabinex="0">
-        <div role="list" aria-label="멤버" class="server-member-list">
+        <div
+          role="list"
+          aria-label="멤버"
+          class="server-member-list"
+          v-show="
+            communityOnlineMemberList !== undefined &&
+            communityOnlineMemberList.length > 0
+          "
+        >
           <h2 class="members-group-container" aria-label="온라인">
             온라인 - 5
           </h2>
-          <div v-for="(item, index) in 5" :key="index">
+          <div v-for="item in communityOnlineMemberList" :key="item.id">
             <div class="primary-member-container clickable" role="listitem">
               <div class="primary-member-layout">
                 <div class="avatar-container">
@@ -14,7 +22,11 @@
                     <div class="avatar-wrapper">
                       <img
                         class="avatar"
-                        src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=32"
+                        :src="
+                          item.profileImage
+                            ? item.profileImage
+                            : discordProfile(item.code)
+                        "
                         alt=" "
                       />
                       <template aria-label="status-invisible">
@@ -27,18 +39,29 @@
                 </div>
                 <div class="friends-contents">
                   <div class="friends-name-decorator">
-                    <div class="friends-name">user{{ index }}</div>
+                    <div class="friends-name">
+                      {{ item.nickname
+                      }}<svg v-show="item.role == 'OWNER'" class="crown"></svg>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div role="list" aria-label="멤버" class="server-member-list">
-          <h2 class="members-group-container" aria-label="온라인">
+        <div
+          role="list"
+          aria-label="멤버"
+          class="server-member-list"
+          v-show="
+            communityOfflineMemberList !== undefined &&
+            communityOfflineMemberList.length > 0
+          "
+        >
+          <h2 class="members-group-container" aria-label="오프라인">
             오프라인 - 3
           </h2>
-          <div v-for="(item, index) in 3" :key="index">
+          <div v-for="item in communityOfflineMemberList" :key="item.id">
             <div class="primary-member-container clickable" role="listitem">
               <div class="primary-member-layout">
                 <div class="avatar-container">
@@ -59,7 +82,10 @@
                 </div>
                 <div class="friends-contents">
                   <div class="friends-name-decorator">
-                    <div class="friends-name">user{{ index + 5 }}</div>
+                    <div class="friends-name">
+                      {{ item.nickname
+                      }}<svg v-show="item.role == 'OWNER'" class="crown"></svg>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -72,7 +98,23 @@
 </template>
 
 <script>
-export default {};
+import { mapState } from "vuex";
+import { selectProfile } from "../utils/common.js";
+export default {
+  computed: {
+    ...mapState("server", [
+      "communityOnlineMemberList",
+      "communityOfflineMemberList",
+    ]),
+  },
+  methods: {
+    discordProfile(code) {
+      const classify = code % 4;
+      const result = selectProfile(classify);
+      return require("../assets/" + result + ".png");
+    },
+  },
+};
 </script>
 
 <style>
@@ -121,5 +163,10 @@ export default {};
   -ms-flex: 1 1 auto;
   flex: 1 1 auto;
   color: #8e9297;
+}
+.crown {
+  width: 14px;
+  height: 14px;
+  background-image: url("../assets/crown.svg");
 }
 </style>

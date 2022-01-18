@@ -1,4 +1,8 @@
-import { fetchCommunityList, fetchCommunityInfo } from "../../api/index.js";
+import {
+  fetchCommunityList,
+  fetchCommunityInfo,
+  fetchCommunityMemberList,
+} from "../../api/index.js";
 const server = {
   namespaced: true,
   state: {
@@ -8,6 +12,8 @@ const server = {
     categoryInfo: {},
     communityList: [],
     communityInfo: null,
+    communityOnlineMemberList: [],
+    communityOfflineMemberList: [],
   },
   mutations: {
     setCreateServer(state, createServer) {
@@ -28,6 +34,12 @@ const server = {
     setCommunityInfo(state, communityInfo) {
       state.communityInfo = communityInfo;
     },
+    setCommunityOnlineMemberList(state, communityOnlineMemberList) {
+      state.communityOnlineMemberList = communityOnlineMemberList;
+    },
+    setCommunityOfflineMemberList(state, communityOfflineMemberList) {
+      state.communityOfflineMemberList = communityOfflineMemberList;
+    },
   },
   actions: {
     async FETCH_COMMUNITYLIST({ commit }) {
@@ -38,6 +50,21 @@ const server = {
       const result = await fetchCommunityInfo(serverid);
       console.log(result.data.result);
       commit("setCommunityInfo", result.data.result);
+    },
+    async FETCH_COMMUNITYMEMBERLIST({ commit }, serverid) {
+      const result = await fetchCommunityMemberList(serverid);
+      console.log(result.data.result.members);
+      let onlineMembers = [];
+      let offlineMembers = [];
+      for (var i = 0; i < result.data.result.members.length; i++) {
+        if (result.data.result.members[i].status === "online") {
+          onlineMembers.push(result.data.result.members[i]);
+        } else {
+          offlineMembers.push(result.data.result.members[i]);
+        }
+      }
+      await commit("setCommunityOnlineMemberList", onlineMembers);
+      await commit("setCommunityOfflineMemberList", offlineMembers);
     },
   },
 };
