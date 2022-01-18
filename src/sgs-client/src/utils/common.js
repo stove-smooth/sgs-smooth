@@ -51,6 +51,6 @@ async function dataUrlToFile(dataUrl) {
   const response = await fetch(dataUrl);
   const blob = await response.blob();
   const time = new Date().getTime();
-  return new File([blob], time, { type: "image/png" });
+  return new File([blob], time, { type: "image/*" });
 }
 export { selectProfile, converToThumbnail, dataUrlToFile };

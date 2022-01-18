@@ -61,7 +61,12 @@ function blockFriend(userId) {
 function deleteProfileImage() {
   return instance.patch("auth-server/auth/d/profile");
 }
-/* async function createNewCommunity(userData) {
+async function createNewCommunity(userData) {
+  console.log("userDATa", userData);
+  // FormData의 값 확인
+  for (var pair of userData) {
+    console.log(pair[0] + ", " + pair[1]);
+  }
   try {
     const accesstoken = await store.getters["auth/getAccessToken"];
     const response = await axios.post(
@@ -76,12 +81,8 @@ function deleteProfileImage() {
     );
     return response;
   } catch (err) {
-    console.log(err);
+    console.log(err.response);
   }
-  //return instance.post("community-server/community", userData);
-} */
-function createNewCommunity(userData) {
-  return instance.post("community-server/community", userData);
 }
 function fetchCommunityList() {
   return instance.get("community-server/community");

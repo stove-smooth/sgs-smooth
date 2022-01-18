@@ -164,8 +164,10 @@ export default {
       this.setFriendsPlusMenu(selectedfriends);
     },
     onClick(e) {
-      if (!e.target.parentNode.dataset.key) {
-        this.setFriendsPlusMenu(null);
+      if (this.friendsPlusMenu) {
+        if (!e.target.parentNode.dataset.key) {
+          this.setFriendsPlusMenu(null);
+        }
       }
     },
     async rejectFriend(id) {

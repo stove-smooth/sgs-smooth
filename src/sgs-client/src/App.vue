@@ -14,6 +14,7 @@
     <create-channel-modal></create-channel-modal>
     <friends-delete-modal></friends-delete-modal>
     <friends-block-modal></friends-block-modal>
+    <user-profile-modal></user-profile-modal>
   </div>
 </template>
 
@@ -26,6 +27,7 @@ import FriendsPlusAction from "./components/common/FriendsPlusAction.vue";
 import FriendsDeleteModal from "./components/FriendsDeleteModal.vue";
 import ServerPopout from "./components/ServerPopout.vue";
 import FriendsBlockModal from "./components/FriendsBlockModal.vue";
+import UserProfileModal from "./components/UserProfileModal.vue";
 export default {
   name: "App",
   components: {
@@ -36,6 +38,7 @@ export default {
     FriendsDeleteModal,
     ServerPopout,
     FriendsBlockModal,
+    UserProfileModal,
   },
   data() {
     return {

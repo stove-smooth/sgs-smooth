@@ -138,7 +138,7 @@ export default {
   data() {
     return {
       isPublic: false,
-      serverName: "밍디님의 서버",
+      serverName: "새로운 서버",
       progress: "openCreate",
       thumbnail: "",
     };
@@ -171,23 +171,20 @@ export default {
       this.thumbnail = await converToThumbnail(image);
     },
     async createNewServer() {
-      console.log(this.thumbnail);
-      var frm = new FormData();
       if (!this.thumbnail) {
+        let frm = new FormData();
         frm.append("name", this.serverName);
         frm.append("public", this.isPublic);
-        console.log(frm);
-        const result = await createNewCommunity(frm);
-        console.log(result);
+        await createNewCommunity(frm);
       } else {
-        const file = dataUrlToFile(this.thumbnail);
+        const file = await dataUrlToFile(this.thumbnail);
+        let frm = new FormData();
         frm.append("icon", file);
         frm.append("name", this.serverName);
         frm.append("public", this.isPublic);
-        console.log(frm);
-        const result = await createNewCommunity(frm);
-        console.log(result);
+        await createNewCommunity(frm);
       }
+      window.location.reload();
     },
     exitCreate() {
       this.setCreateServer(false);

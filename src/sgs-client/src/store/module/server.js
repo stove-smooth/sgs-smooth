@@ -1,3 +1,4 @@
+import { fetchCommunityList } from "../../api/index.js";
 const server = {
   namespaced: true,
   state: {
@@ -5,6 +6,7 @@ const server = {
     createChannel: false,
     openServerPopout: false,
     categoryInfo: {},
+    communityList: [],
   },
   mutations: {
     setCreateServer(state, createServer) {
@@ -18,6 +20,15 @@ const server = {
     },
     setCategoryInfo(state, categoryInfo) {
       state.categoryInfo = categoryInfo;
+    },
+    setCommunityList(state, communityList) {
+      state.communityList = communityList;
+    },
+  },
+  actions: {
+    async FETCH_COMMUNITYLIST({ commit }) {
+      const result = await fetchCommunityList();
+      commit("setCommunityList", result.data.result.communities);
     },
   },
 };
