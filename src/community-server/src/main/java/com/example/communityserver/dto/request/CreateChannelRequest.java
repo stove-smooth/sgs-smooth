@@ -19,7 +19,7 @@ import java.util.List;
 public class CreateChannelRequest {
 
     @NotNull
-    private Long categoryId;
+    private Long id;
 
     @NotNull
     @Size(min = 1, max = 100, message = "name min 1 max 100")
@@ -30,7 +30,7 @@ public class CreateChannelRequest {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private ChannelType channelType;
+    private ChannelType type;
 
     private List<Long> members;
 }

@@ -56,6 +56,7 @@ public class ExceptionAdvice {
         CustomExceptionStatus status = CustomExceptionStatus.INTERNAL_SERVER_ERROR;
         log.error("code: {}, message: {}",
                 status.getCode(), e.getMessage());
+        e.printStackTrace();
         return responseService.getExceptionResponse(status);
     }
 }

@@ -24,7 +24,7 @@ import static com.example.communityserver.dto.response.MemberResponse.fromEntity
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChannelDetailResponse {
-    private Long channelId;
+    private Long id;
     private String username;
     private String name;
     @Enumerated(EnumType.STRING)
@@ -36,7 +36,7 @@ public class ChannelDetailResponse {
 
     public static ChannelDetailResponse fromEntity(Channel channel) {
         ChannelDetailResponse channelResponse = new ChannelDetailResponse();
-        channelResponse.setChannelId(channel.getId());
+        channelResponse.setId(channel.getId());
         channelResponse.setUsername(channel.getUsername());
         channelResponse.setName(channel.getName());
         channelResponse.setType(channel.getType());
