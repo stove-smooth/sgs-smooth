@@ -11,7 +11,6 @@ const server = {
     createCategory: false,
     categorySettingModal: false,
     openServerPopout: false,
-    categoryInfo: {},
     categoryReadyToDelete: false,
     communityList: [],
     communityInfo: null,
@@ -27,9 +26,6 @@ const server = {
     },
     setOpenServerPopout(state) {
       state.openServerPopout = !state.openServerPopout;
-    },
-    setCategoryInfo(state, categoryInfo) {
-      state.categoryInfo = categoryInfo;
     },
     setCommunityList(state, communityList) {
       state.communityList = communityList;

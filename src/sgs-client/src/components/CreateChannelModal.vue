@@ -6,17 +6,20 @@
         <template slot="header">
           <h3 class="modal-big-title no-margin-bottom">채팅 채널 만들기</h3>
           <div class="subtext text-align-center">
-            : {{ categoryInfo.categoryNmae }}에 속해있음
+            : {{ createChannel.categoryName }}에 속해있음
           </div>
         </template>
         <template slot="content">
           <h5 class="label-id" v-bind:style="{ color: 'black' }">채널 유형</h5>
           <button
             class="select-channel-type-button"
-            @click="selectChatType(true)"
+            @click="selectChatType('TEXT')"
           >
             <div v-bind:style="{ width: '24px', padding: '10px' }">
-              <svg v-if="isChatType" class="radio_button_checked"></svg>
+              <svg
+                v-if="isChatType === 'TEXT'"
+                class="radio_button_checked"
+              ></svg>
               <svg v-else class="radio_button_unchecked"></svg>
             </div>
             <svg class="big-hashtag-icon"></svg>
@@ -37,10 +40,13 @@
           </button>
           <button
             class="select-channel-type-button"
-            @click="selectChatType(false)"
+            @click="selectChatType('VOICE')"
           >
             <div v-bind:style="{ width: '24px', padding: '10px' }">
-              <svg v-if="!isChatType" class="radio_button_checked"></svg>
+              <svg
+                v-if="isChatType === 'VOICE'"
+                class="radio_button_checked"
+              ></svg>
               <svg v-else class="radio_button_unchecked"></svg>
             </div>
             <svg class="big-voice-channel"></svg>
@@ -69,7 +75,7 @@
                 v-bind:style="{ position: 'relative' }"
               >
                 <svg
-                  v-if="isChatType"
+                  v-if="isChatType === 'TEXT'"
                   class="hashtag-icon channel-input-prefix"
                 ></svg>
                 <svg v-else class="voice-channel channel-input-prefix"></svg>
@@ -77,7 +83,7 @@
                 <input
                   width="100%"
                   type="text"
-                  placeholder="channelName"
+                  placeholder="새로운 채널"
                   maxlength="100"
                   v-model="channelName"
                   class="channel-name-input"
@@ -92,6 +98,7 @@
               :disabled="!channelName"
               type="button"
               class="medium-submit-button"
+              @click="createNewChannel(createChannel)"
             >
               <div>채널 만들기</div>
             </button>
@@ -104,6 +111,7 @@
 </template>
 
 <script>
+import { createNewChannel } from "../api/index.js";
 import { mapState, mapMutations } from "vuex";
 import Modal from "../components/common/Modal.vue";
 export default {
@@ -112,12 +120,12 @@ export default {
   },
   data() {
     return {
-      isChatType: true,
+      isChatType: "TEXT",
       channelName: "새로운 채널",
     };
   },
   computed: {
-    ...mapState("server", ["createChannel", "categoryInfo"]),
+    ...mapState("server", ["createChannel"]),
   },
   methods: {
     ...mapMutations("server", ["setCreateChannel"]),
@@ -126,6 +134,16 @@ export default {
     },
     selectChatType(chatType) {
       this.isChatType = chatType;
+    },
+    async createNewChannel(categoryInfo) {
+      const newChannelData = {
+        id: categoryInfo.categoryId,
+        name: categoryInfo.categoryName,
+        type: this.isChatType,
+        public: true,
+      };
+      await createNewChannel(newChannelData);
+      window.location.reload();
     },
   },
 };

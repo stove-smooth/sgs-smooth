@@ -223,7 +223,6 @@ export default {
     ...mapMutations("server", [
       "setCreateChannel",
       "setOpenServerPopout",
-      "setCategoryInfo",
       "setCategorySettingModal",
     ]),
     add: function () {
@@ -250,13 +249,11 @@ export default {
       this.categoryhovered = "";
     },
     createChannel(categoryName, categoryId) {
-      console.log(categoryName, categoryId);
-      const categoryInfo = {
-        categoryNmae: categoryName,
+      const categoryData = {
+        categoryName: categoryName,
         categoryId: categoryId,
       };
-      this.setCategoryInfo(categoryInfo);
-      this.setCreateChannel(true);
+      this.setCreateChannel(categoryData);
     },
     openCategorySetting(categoryId, categoryName) {
       const categoryData = {
