@@ -73,6 +73,9 @@
                   >
                     <svg class="small-settings"></svg>
                   </div>
+                  <div v-show="categoryhovered != element.id">
+                    <div class="none-settings"></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -642,5 +645,9 @@ export default {
 }
 .height-100 {
   height: 100%;
+}
+.none-settings {
+  width: 16px;
+  height: 12px;
 }
 </style>

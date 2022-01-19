@@ -16,8 +16,9 @@
     <friends-block-modal></friends-block-modal>
     <friends-profile-modal></friends-profile-modal>
     <create-category-modal></create-category-modal>
-    <category-setting></category-setting>
+    <category-setting-modal></category-setting-modal>
     <category-delete-modal></category-delete-modal>
+    <server-setting-modal></server-setting-modal>
   </div>
 </template>
 
@@ -32,8 +33,9 @@ import ServerPopout from "./components/ServerPopout.vue";
 import FriendsBlockModal from "./components/FriendsBlockModal.vue";
 import FriendsProfileModal from "./components/FriendsProfileModal.vue";
 import CreateCategoryModal from "./components/CreateCategoryModal.vue";
-import CategorySetting from "./components/CategorySetting.vue";
+import CategorySettingModal from "./components/CategorySettingModal.vue";
 import CategoryDeleteModal from "./components/CategoryDeleteModal.vue";
+import ServerSettingModal from "./components/ServerSettingModal.vue";
 
 export default {
   name: "App",
@@ -47,8 +49,9 @@ export default {
     FriendsBlockModal,
     FriendsProfileModal,
     CreateCategoryModal,
-    CategorySetting,
+    CategorySettingModal,
     CategoryDeleteModal,
+    ServerSettingModal,
   },
   data() {
     return {
