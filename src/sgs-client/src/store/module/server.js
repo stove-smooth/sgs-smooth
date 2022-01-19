@@ -12,6 +12,7 @@ const server = {
     categorySettingModal: false,
     openServerPopout: false,
     categoryInfo: {},
+    categoryReadyToDelete: false,
     communityList: [],
     communityInfo: null,
     communityOnlineMemberList: [],
@@ -47,6 +48,9 @@ const server = {
     },
     setCategorySettingModal(state, categorySettingModal) {
       state.categorySettingModal = categorySettingModal;
+    },
+    setCategoryReadyToDelete(state, categoryReadyToDelete) {
+      state.categoryReadyToDelete = categoryReadyToDelete;
     },
   },
   actions: {

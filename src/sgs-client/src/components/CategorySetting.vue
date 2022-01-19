@@ -25,7 +25,11 @@
             </div>
           </div>
           <div class="channel-content-wrapper" role="listitem">
-            <div class="channel-content" v-bind:style="{ marginRight: '8px' }">
+            <div
+              class="channel-content"
+              v-bind:style="{ marginRight: '8px' }"
+              @click="setCategoryReadyToDelete(categorySettingModal)"
+            >
               <div class="channel-main-content">
                 <div class="channel-name-wrapper">
                   <div class="primary-text-content red-color text-align-center">
@@ -53,7 +57,7 @@
 </template>
 
 <script>
-import SettingModal from "../components/common/SettingModal.vue";
+import SettingModal from "./common/SettingModal.vue";
 import { mapState, mapMutations } from "vuex";
 export default {
   components: {
@@ -63,7 +67,10 @@ export default {
     ...mapState("server", ["categorySettingModal"]),
   },
   methods: {
-    ...mapMutations("server", ["setCategorySettingModal"]),
+    ...mapMutations("server", [
+      "setCategorySettingModal",
+      "setCategoryReadyToDelete",
+    ]),
   },
 };
 </script>

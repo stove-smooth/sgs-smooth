@@ -69,7 +69,7 @@
                     tabindex="0"
                     role="button"
                     v-show="categoryhovered === element.id"
-                    @click="openCategorySetting(element.id)"
+                    @click="openCategorySetting(element.id, element.name)"
                   >
                     <svg class="small-settings"></svg>
                   </div>
@@ -258,8 +258,12 @@ export default {
       this.setCategoryInfo(categoryInfo);
       this.setCreateChannel(true);
     },
-    openCategorySetting(categoryId) {
-      this.setCategorySettingModal(categoryId);
+    openCategorySetting(categoryId, categoryName) {
+      const categoryData = {
+        categoryId: categoryId,
+        categoryName: categoryName,
+      };
+      this.setCategorySettingModal(categoryData);
     },
     onClick(e) {
       if (this.openServerPopout) {
