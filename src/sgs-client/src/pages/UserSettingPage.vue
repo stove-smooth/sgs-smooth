@@ -55,7 +55,7 @@
                     </div>
                     <div class="profile-info">
                       <div class="profile-divider" />
-                      <div class="profile-about-me-section">
+                      <div class="margin-bottom-16px">
                         <div class="justify-content-space-between">
                           <div class="subtext">내 소개</div>
                           <button class="small-button">수정</button>
@@ -86,8 +86,11 @@
 
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
-import { selectProfile } from "../utils/common.js";
-import { converToThumbnail } from "../utils/common.js";
+import {
+  selectProfile,
+  converToThumbnail,
+  dataUrlToFile,
+} from "../utils/common.js";
 import { changeUserImage, deleteProfileImage } from "../api/index.js";
 export default {
   data() {
@@ -96,11 +99,10 @@ export default {
     };
   },
   computed: {
-    ...mapState("auth", ["code", "nickname", "userimage", "useraboutme"]),
+    ...mapState("user", ["code", "nickname", "userimage", "useraboutme"]),
   },
   async created() {
     await this.fetchUserInfo();
-    console.log(this.userimage);
     if (!this.userimage) {
       const classify = this.code % 4;
       const result = selectProfile(classify);
@@ -117,8 +119,8 @@ export default {
     },
   },
   methods: {
-    ...mapActions("auth", ["LOGOUT", "FETCH_USERINFO"]),
-    ...mapMutations("auth", ["setUserImage"]),
+    ...mapActions("user", ["LOGOUT", "FETCH_USERINFO"]),
+    ...mapMutations("user", ["setUserImage"]),
     closeSettings() {
       this.$router.go(-1);
     },
@@ -134,18 +136,12 @@ export default {
       const thumbnail = await converToThumbnail(image);
       this.setUserImage(thumbnail);
     },
-    async dataUrlToFile(dataUrl) {
-      const response = await fetch(dataUrl);
-      const blob = await response.blob();
-      const time = new Date().getTime();
-      return new File([blob], time, { type: "image/png" });
-    },
     async changeProfile() {
       if (!this.userimage) {
         await deleteProfileImage();
       } else {
         var frm = new FormData();
-        const result = await this.dataUrlToFile(this.userimage);
+        const result = await dataUrlToFile(this.userimage);
         frm.append("image", result);
         await changeUserImage(frm);
         window.location.reload();
@@ -279,8 +275,5 @@ export default {
   height: 1px;
   background-color: hsla(0, 0%, 100%, 0.06);
   margin-bottom: 12px;
-}
-.profile-about-me-section {
-  margin-bottom: 16px;
 }
 </style>

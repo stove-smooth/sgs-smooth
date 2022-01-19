@@ -81,13 +81,13 @@ export default {
     };
   },
   methods: {
-    ...mapActions("auth", ["FETCH_USERINFO"]),
+    ...mapActions("user", ["FETCH_USERINFO"]),
     openSettings() {
       this.$router.push("/settings");
     },
   },
   computed: {
-    ...mapState("auth", ["code", "nickname", "userimage"]),
+    ...mapState("user", ["code", "nickname", "userimage"]),
   },
   async created() {
     await this.FETCH_USERINFO();

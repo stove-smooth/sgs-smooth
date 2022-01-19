@@ -6,6 +6,7 @@
           class="primary-member-layout"
           @mouseover="hold(index)"
           @mouseleave="unhold"
+          @click="routePrivateDM(index)"
         >
           <div class="avatar-container">
             <div class="profile-wrapper" aria-label="칭구1">
@@ -43,7 +44,47 @@ export default {
   data() {
     return {
       upHere: "",
-      friends: [{ name: "두리짱" }, { name: "병각" }, { name: "히동" }],
+      friends: [
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+        { name: "두리짱" },
+        { name: "병각" },
+        { name: "히동" },
+      ],
     };
   },
   methods: {
@@ -52,6 +93,11 @@ export default {
     },
     unhold() {
       this.upHere = "";
+    },
+    routePrivateDM(index) {
+      if (this.$route.path !== "/channels/@me/" + index) {
+        this.$router.push("/channels/@me/" + index);
+      }
     },
   },
 };

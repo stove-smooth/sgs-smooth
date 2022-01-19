@@ -1,9 +1,9 @@
 <template>
-  <div class="modal">
+  <div v-show="createServer" class="modal">
     <div class="blurred-background" @click="exitCreate"></div>
     <div class="modal-container">
       <template v-if="progress === 'openCreate'">
-        <CreateServerForm @exit="exitCreate">
+        <modal @exit="exitCreate">
           <template slot="header">
             <h3 class="modal-big-title">서버 만들기</h3>
             <div class="modal-subtitle">
@@ -26,10 +26,10 @@
               </button>
             </div>
           </template>
-        </CreateServerForm>
+        </modal>
       </template>
       <template v-else-if="progress === 'openSelect'">
-        <CreateServerForm @exit="exitCreate">
+        <modal @exit="exitCreate">
           <template slot="header">
             <h3 class="modal-big-title">
               이 서버에 대해 더 자세히 말해주세요.
@@ -40,12 +40,15 @@
             </div>
           </template>
           <template slot="content">
-            <button class="create-server-button" @click="openFinalSelect">
+            <button
+              class="create-server-button"
+              @click="openFinalSelect(false)"
+            >
               <svg class="private-server"></svg>
               <div class="action-title">나와 친구들을 위한 서버</div>
               <svg class="right-arrow"></svg>
             </button>
-            <button class="create-server-button" @click="openFinalSelect">
+            <button class="create-server-button" @click="openFinalSelect(true)">
               <svg class="public-server"></svg>
               <div class="action-title">클럽 혹은 파티용 서버</div>
               <svg class="right-arrow"></svg>
@@ -58,10 +61,10 @@
               </button>
             </div>
           </template>
-        </CreateServerForm>
+        </modal>
       </template>
       <template v-else>
-        <CreateServerForm @exit="exitCreate">
+        <modal @exit="exitCreate">
           <template slot="header">
             <h3 class="modal-big-title">서버 커스터마이징 하기</h3>
             <div class="modal-subtitle">
@@ -108,7 +111,7 @@
                 :disabled="!serverName"
                 type="button"
                 class="medium-submit-button"
-                @click="createServer"
+                @click="createNewServer"
               >
                 <div>만들기</div>
               </button>
@@ -117,36 +120,26 @@
               </button>
             </div>
           </template>
-        </CreateServerForm>
+        </modal>
       </template>
     </div>
   </div>
 </template>
 
 <script>
-import CreateServerForm from "../components/common/CreateServerForm.vue";
-import { converToThumbnail } from "../utils/common.js";
-const storage = {
-  fetch() {
-    const serveritems = localStorage.getItem(3) || "[]";
-    const result = JSON.parse(serveritems);
-    return result;
-  },
-
-  save(value) {
-    const parsed = JSON.stringify(value);
-    localStorage.setItem(3, parsed);
-  },
-};
+import Modal from "../components/common/Modal.vue";
+import { converToThumbnail, dataUrlToFile } from "../utils/common.js";
+import { mapState, mapMutations } from "vuex";
+import { createNewCommunity } from "../api/index.js";
 export default {
   components: {
-    CreateServerForm,
+    Modal,
   },
   data() {
     return {
-      serverName: "밍디님의 서버",
+      isPublic: false,
+      serverName: "새로운 서버",
       progress: "openCreate",
-      serverList: [],
       thumbnail: "",
     };
   },
@@ -155,7 +148,11 @@ export default {
       console.log(newVal, oldVal);
     },
   },
+  computed: {
+    ...mapState("server", ["createServer"]),
+  },
   methods: {
+    ...mapMutations("server", ["setCreateServer"]),
     openSelectServer() {
       this.progress = "openSelect";
     },
@@ -165,31 +162,37 @@ export default {
     goBackSelect() {
       this.progress = "openSelect";
     },
-    openFinalSelect() {
+    openFinalSelect(isPublic) {
       this.progress = "finalSelect";
+      this.isPublic = isPublic;
     },
     async uploadImage() {
       let image = this.$refs["image"].files[0];
       this.thumbnail = await converToThumbnail(image);
     },
-    createServer() {
-      const serverProfile = {
-        name: this.serverName,
-        thumbnail: this.thumbnail,
-      };
-      this.serverList.push(serverProfile);
-      storage.save(this.serverList);
+    async createNewServer() {
+      if (!this.thumbnail) {
+        let frm = new FormData();
+        frm.append("name", this.serverName);
+        frm.append("public", this.isPublic);
+        await createNewCommunity(frm);
+      } else {
+        const file = await dataUrlToFile(this.thumbnail);
+        let frm = new FormData();
+        frm.append("icon", file);
+        frm.append("name", this.serverName);
+        frm.append("public", this.isPublic);
+        await createNewCommunity(frm);
+      }
       window.location.reload();
     },
     exitCreate() {
-      this.$emit("exit");
+      this.setCreateServer(false);
+      this.thumbnail = "";
+      this.progress = "openCreate";
+      this.isPublic = false;
+      this.serverName = "밍디님의 서버";
     },
-    fetchTodoItems() {
-      this.serverList = storage.fetch();
-    },
-  },
-  created() {
-    this.fetchTodoItems();
   },
 };
 </script>

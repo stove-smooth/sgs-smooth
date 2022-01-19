@@ -6,6 +6,8 @@ import MyPage from "../pages/Mypage.vue";
 import NotFoundPage from "../pages/NotFoundPage.vue";
 import UserSettingPage from "../pages/UserSettingPage.vue";
 import ServerPage from "../pages/ServerPage.vue";
+import ServerWelcomePage from "../pages/ServerWelcomePage.vue";
+import PrivateDMPage from "../pages/PrivateDMPage.vue";
 import store from "../store/index";
 Vue.use(VueRouter);
 
@@ -15,7 +17,7 @@ export const router = new VueRouter({
     {
       path: "/",
       redirect: () => {
-        const isLogin = store.getters["auth/getEmail"];
+        const isLogin = store.getters["user/getEmail"];
         console.log("로그인했나요?", isLogin);
         if (!isLogin) {
           return "/login";
@@ -35,6 +37,12 @@ export const router = new VueRouter({
       component: RegisterPage,
     },
     {
+      path: "/channels/@me/:id",
+      name: "PrivateDMPage",
+      component: PrivateDMPage,
+      meta: { auth: true },
+    },
+    {
       path: "/channels/@me",
       name: "MyPage",
       component: MyPage,
@@ -47,9 +55,14 @@ export const router = new VueRouter({
       meta: { auth: true },
     },
     {
-      path: "/channels/:id",
+      path: "/channels/:serverid/:channelid",
       name: "ServerPage",
       component: ServerPage,
+    },
+    {
+      path: "/channels/:serverid",
+      name: "ServerWelcomePage",
+      component: ServerWelcomePage,
     },
     {
       path: "*",
@@ -59,7 +72,7 @@ export const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const isLogin = store.getters["auth/getEmail"];
+  const isLogin = store.getters["user/getEmail"];
   console.log("로그인했는가", isLogin);
   if (to.meta.auth && !isLogin) {
     alert("인증이 필요합니다.");

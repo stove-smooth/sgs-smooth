@@ -25,8 +25,8 @@
               >
                 <svg class="discord-logo"></svg>
               </div>
-              <div class="lower-badge" v-show="friendswaitnumber">
-                <number-badge :alarms="friendswaitnumber"></number-badge>
+              <div class="lower-badge" v-show="friendsWaitNumber">
+                <number-badge :alarms="friendsWaitNumber"></number-badge>
               </div>
             </div>
           </div>
@@ -36,29 +36,29 @@
         </div>
         <div aria-label="서버">
           <!--서버 개수만큼 만들기.-->
-          <div v-for="(item, index) in serverlist" :key="index">
+          <div v-for="community in communityList" :key="community.id">
             <div
               class="listItem"
-              @mouseover="hover(index)"
+              @mouseover="hover(community.id)"
               @mouseleave="unhover"
-              @click="enterServer(index)"
+              @click="enterServer(community.id)"
             >
               <div
                 class="selected-wrapper"
-                v-show="hovered === index || selected === index"
+                v-show="hovered === community.id || selected === community.id"
               >
                 <span class="selected-item"></span>
               </div>
               <div draggable="true">
                 <div class="listItem-wrapper">
-                  <div class="server-wrapper" v-if="item.thumbnail">
+                  <div class="server-wrapper" v-if="community.icon">
                     <img
-                      :src="item.thumbnail"
+                      :src="community.icon"
                       alt="image"
                       class="server-nav-image"
                       v-bind:class="{
                         'selected-border-radius':
-                          hovered === index || selected === index,
+                          hovered === community.id || selected === community.id,
                       }"
                     />
                   </div>
@@ -67,10 +67,10 @@
                       class="server"
                       v-bind:class="{
                         'selected-border-radius':
-                          hovered === index || selected === index,
+                          hovered === community.id || selected === community.id,
                       }"
                     >
-                      {{ item.name }}
+                      {{ community.name }}
                     </div>
                   </div>
                 </div>
@@ -79,7 +79,7 @@
           </div>
         </div>
         <div class="tutorial-container">
-          <div class="listItem" @click="openCreate">
+          <div class="listItem" @click="setCreateServer(true)">
             <div claass="listItem-wrapper">
               <div class="circleIcon-button">
                 <svg class="plus-icon"></svg>
@@ -96,15 +96,8 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 import NumberBadge from "./common/NumberBadge.vue";
-const storage = {
-  fetch() {
-    const serveritems = localStorage.getItem(3) || "[]";
-    const result = JSON.parse(serveritems);
-    return result;
-  },
-};
 export default {
   components: { NumberBadge },
   data() {
@@ -112,16 +105,11 @@ export default {
       hovered: "",
       selected: "me",
       images: "",
-      serverlist: [],
     };
   },
   methods: {
-    openCreate() {
-      this.$emit("create-server");
-    },
-    fetchTodoItems() {
-      this.serverlist = storage.fetch();
-    },
+    ...mapActions("server", ["LOGOUT", "FETCH_COMMUNITYLIST"]),
+    ...mapMutations("server", ["setCreateServer"]),
     hover(index) {
       this.hovered = index;
     },
@@ -135,9 +123,9 @@ export default {
       this.selected = "";
     },
     enterServer(index) {
-      this.$router.push("/channels/" + index).catch((err) => {
-        console.log(err);
-      });
+      if (this.$route.path !== "/channels/" + index) {
+        this.$router.push("/channels/" + index);
+      }
       this.select(index);
     },
     enterMe(index) {
@@ -146,10 +134,11 @@ export default {
     },
   },
   computed: {
-    ...mapState("friends", ["friendswaitnumber"]),
+    ...mapState("friends", ["friendsWaitNumber"]),
+    ...mapState("server", ["communityList"]),
   },
-  created() {
-    this.fetchTodoItems();
+  async created() {
+    await this.FETCH_COMMUNITYLIST();
   },
 };
 </script>

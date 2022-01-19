@@ -1,7 +1,7 @@
 <template>
   <section class="primary-header">
     <div class="header-children-wrapper">
-      <div class="primary-icon-wrapper">
+      <div class="primary-icon-wrapper align-items-center">
         <svg class="friends-icon"></svg>
       </div>
       <h3 class="friends-section-title">친구</h3>
@@ -19,7 +19,7 @@
           tabindex="0"
           @click="setFriendsStateMenu('online')"
           v-bind:class="{
-            'friends-tab-decorator-clicked': friendsstatemenu === 'online',
+            'friends-tab-decorator-clicked': friendsStateMenu === 'online',
           }"
         >
           온라인
@@ -31,7 +31,7 @@
           tabindex="-1"
           @click="setFriendsStateMenu('all')"
           v-bind:class="{
-            'friends-tab-decorator-clicked': friendsstatemenu === 'all',
+            'friends-tab-decorator-clicked': friendsStateMenu === 'all',
           }"
         >
           모두
@@ -43,13 +43,13 @@
           tabindex="-1"
           @click="setFriendsStateMenu('waiting')"
           v-bind:class="{
-            'friends-tab-decorator-clicked': friendsstatemenu === 'waiting',
+            'friends-tab-decorator-clicked': friendsStateMenu === 'waiting',
           }"
         >
           대기 중
           <number-badge
-            v-show="friendswaitnumber"
-            :alarms="friendswaitnumber"
+            v-show="friendsWaitNumber"
+            :alarms="friendsWaitNumber"
           ></number-badge>
         </div>
         <div
@@ -59,7 +59,7 @@
           tabindex="-1"
           @click="setFriendsStateMenu('blockedlist')"
           v-bind:class="{
-            'friends-tab-decorator-clicked': friendsstatemenu === 'blockedlist',
+            'friends-tab-decorator-clicked': friendsStateMenu === 'blockedlist',
           }"
         >
           차단 목록
@@ -84,7 +84,7 @@
         <div class="divider"></div>
       </div>
       <div
-        class="primary-icon-wrapper clickable"
+        class="primary-icon-wrapper clickable align-items-center"
         role="button"
         aria-label="받은 편지함"
       >
@@ -102,7 +102,7 @@ export default {
     NumberBadge,
   },
   computed: {
-    ...mapState("friends", ["friendswaitnumber", "friendsstatemenu"]),
+    ...mapState("friends", ["friendsWaitNumber", "friendsStateMenu"]),
   },
   methods: {
     ...mapMutations("friends", ["setFriendsStateMenu"]),
@@ -212,8 +212,8 @@ export default {
 }
 .mail-box {
   display: flex;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   background-image: url("../assets/mail-box.svg");
 }
 </style>

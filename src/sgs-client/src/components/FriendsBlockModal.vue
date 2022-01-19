@@ -1,16 +1,16 @@
 <template>
-  <div class="modal" v-if="friendsReadyToDelete">
+  <div class="modal" v-if="friendsReadyToBlock">
     <div class="blurred-background" @click="exitModal"></div>
     <div class="modal-container">
       <modal @exit="exitModal">
         <template slot="header">
           <h3 class="modal-big-title">
-            {{ friendsReadyToDelete.username }}님을 제거하기
+            {{ friendsReadyToBlock.username }}님을 차단하기
           </h3>
         </template>
         <template slot="content">
           <div class="modal-subtitle">
-            친구 {{ friendsReadyToDelete.username }}님을 삭제하시겠어요?
+            친구 {{ friendsReadyToBlock.username }}님을 차단하시겠어요?
           </div>
         </template>
         <template slot="footer">
@@ -18,9 +18,9 @@
             <button
               type="button"
               class="medium-submit-button"
-              @click="deleteFriends(friendsReadyToDelete.id)"
+              @click="blockFriends(friendsReadyToBlock.id)"
             >
-              <div>친구 삭제하기</div>
+              <div>친구 차단하기</div>
             </button>
             <button class="back-button" @click="exitModal">취소</button>
           </div>
@@ -33,21 +33,20 @@
 <script>
 import Modal from "./common/Modal.vue";
 import { mapState, mapMutations } from "vuex";
-import { deleteFriend } from "../api/index.js";
+import { blockFriend } from "../api/index.js";
 export default {
   components: { Modal },
   computed: {
-    ...mapState("friends", ["friendsReadyToDelete"]),
+    ...mapState("friends", ["friendsReadyToBlock"]),
   },
   methods: {
-    ...mapMutations("friends", ["setFriendsReadyToDelete"]),
+    ...mapMutations("friends", ["setFriendsReadyToBlock"]),
     exitModal() {
-      this.setFriendsReadyToDelete(null);
+      this.setFriendsReadyToBlock(null);
     },
-    async deleteFriends(userId) {
-      await deleteFriend(userId);
+    async blockFriends(userId) {
+      await blockFriend(userId);
       window.location.reload();
-      this.setFriendsReadyToDelete(null);
     },
   },
 };

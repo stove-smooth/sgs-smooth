@@ -6,7 +6,7 @@
     <div class="thin-scrollbar dm-scroller">
       <div class="side-content">
         <div class="primary-member-container">
-          <div class="primary-member-layout">
+          <div class="primary-member-layout" @click="routeMypage">
             <div class="avatar-container">
               <svg class="friends-icon"></svg>
             </div>
@@ -15,8 +15,8 @@
                 <div class="friends-name">친구</div>
               </div>
             </div>
-            <div class="friends-alarm-wrapper" v-show="friendswaitnumber">
-              <number-badge :alarms="friendswaitnumber"></number-badge>
+            <div class="friends-alarm-wrapper" v-show="friendsWaitNumber">
+              <number-badge :alarms="friendsWaitNumber"></number-badge>
             </div>
           </div>
         </div>
@@ -26,7 +26,7 @@
             <svg class="invite-private-channels-icon"></svg>
           </div>
         </h2>
-        <DMListForm></DMListForm>
+        <dm-list-form></dm-list-form>
       </div>
     </div>
   </div>
@@ -35,11 +35,16 @@
 <script>
 import { mapState } from "vuex";
 import NumberBadge from "./common/NumberBadge.vue";
-import DMListForm from "./DMListForm.vue";
+import DmListForm from "./DMListForm.vue";
 export default {
-  components: { DMListForm, NumberBadge },
+  components: { DmListForm, NumberBadge },
   computed: {
-    ...mapState("friends", ["friendswaitnumber"]),
+    ...mapState("friends", ["friendsWaitNumber"]),
+  },
+  methods: {
+    routeMypage() {
+      this.$router.push("/channels/@me");
+    },
   },
 };
 </script>

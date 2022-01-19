@@ -1,6 +1,10 @@
 <template>
   <nav class="server-sidebar-container">
-    <div class="tutorial-container clickable" @click="setOpenServerPopout">
+    <div
+      class="tutorial-container clickable"
+      @click="setOpenServerPopout"
+      :data-container="true"
+    >
       <header class="server-sidebar-header">
         <h1 class="server-name">밍디의 서버</h1>
         <div
@@ -21,14 +25,20 @@
         </div>
       </div>
     </div>
-    <div class="thin-scrollbar dm-scroller">
+    <div class="thin-scrollbar dm-scroller height-100">
       <div class="side-content">
-        <draggable :list="all" @change="log" group="category">
-          <div v-for="element in all" :key="element.id">
+        <draggable
+          :list="communityInfo.categories"
+          @change="log"
+          group="category"
+        >
+          <div v-for="element in communityInfo.categories" :key="element.id">
             <div
               class="channel-default-container"
               data-dnd-name="element.name"
               aria-label="채널 카테고리"
+              @mouseover="categoryHover(element.id)"
+              @mouseleave="categoryUnhover"
             >
               <!--카테고리는 드래그 가능해야하며 하위 채널까지 이동됨..-->
               <div class="channel-category-wrapper clickable" role="listitem">
@@ -47,11 +57,22 @@
                 >
                   <button
                     class="create-channel-button"
-                    aria-label="채널 만들기"
-                    @click="setCreateChannel(true)"
+                    v-bind:style="{ display: 'flex' }"
+                    aria-label="카테고리 만들기"
+                    @click="createChannel(element.name, element.id)"
                   >
                     <svg class="plus-channel-in-this-category"></svg>
                   </button>
+                  <div
+                    class="create-children-button"
+                    aria-label="카테고리 설정"
+                    tabindex="0"
+                    role="button"
+                    v-show="categoryhovered === element.id"
+                    @click="openCategorySetting(element.id, element.name)"
+                  >
+                    <svg class="small-settings"></svg>
+                  </div>
                 </div>
               </div>
             </div>
@@ -71,7 +92,7 @@
                   >
                     <div class="channel-main-content">
                       <div
-                        v-if="el.type === 'chat'"
+                        v-if="el.type === 'TEXT'"
                         class="channel-classification-wrapper"
                         aria-label="텍스트"
                       >
@@ -143,6 +164,7 @@ export default {
   data() {
     return {
       hovered: "",
+      categoryhovered: "",
       all: [
         {
           id: 1,
@@ -195,10 +217,14 @@ export default {
     };
   },
   computed: {
-    ...mapState("server", ["openServerPopout"]),
+    ...mapState("server", ["openServerPopout", "communityInfo"]),
   },
   methods: {
-    ...mapMutations("server", ["setCreateChannel", "setOpenServerPopout"]),
+    ...mapMutations("server", [
+      "setCreateChannel",
+      "setOpenServerPopout",
+      "setCategorySettingModal",
+    ]),
     add: function () {
       this.list.push({ name: "Juan" });
     },
@@ -216,9 +242,41 @@ export default {
     unhover() {
       this.hovered = "";
     },
-    /*     createNewChannel() {
-      this.createchannel = true;
-    }, */
+    categoryHover(index) {
+      this.categoryhovered = index;
+    },
+    categoryUnhover() {
+      this.categoryhovered = "";
+    },
+    createChannel(categoryName, categoryId) {
+      const categoryData = {
+        categoryName: categoryName,
+        categoryId: categoryId,
+      };
+      this.setCreateChannel(categoryData);
+    },
+    openCategorySetting(categoryId, categoryName) {
+      const categoryData = {
+        categoryId: categoryId,
+        categoryName: categoryName,
+      };
+      this.setCategorySettingModal(categoryData);
+    },
+    onClick(e) {
+      if (this.openServerPopout) {
+        var temp = e.target.parentNode.childNodes[0]._prevClass;
+        if (
+          temp !== "server-name" &&
+          temp !== "server-sidebar-header" &&
+          temp !== "expand-down-arrow-icon"
+        ) {
+          this.setOpenServerPopout();
+        }
+      }
+    },
+  },
+  mounted() {
+    window.addEventListener("click", this.onClick);
   },
 };
 </script>
@@ -581,5 +639,8 @@ export default {
   margin-left: 0;
   margin-right: 2px;
   background-image: url("../assets/private-channel-plus.svg");
+}
+.height-100 {
+  height: 100%;
 }
 </style>

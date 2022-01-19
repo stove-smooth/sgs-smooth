@@ -33,7 +33,7 @@ function fetchUserInfo() {
 }
 async function changeUserImage(userData) {
   try {
-    const accesstoken = await store.getters["auth/getAccessToken"];
+    const accesstoken = await store.getters["user/getAccessToken"];
     const response = await axios.post(
       "http://52.79.229.100:8000/auth-server/auth/profile",
       userData,
@@ -55,8 +55,56 @@ function acceptFriend(userId) {
 function deleteFriend(userId) {
   return instance.delete("auth-server/auth/friend?id=" + userId);
 }
+function blockFriend(userId) {
+  return instance.patch("auth-server/auth/ban-friend?id=" + userId);
+}
 function deleteProfileImage() {
   return instance.patch("auth-server/auth/d/profile");
+}
+async function createNewCommunity(userData) {
+  console.log("userDATa", userData);
+  // FormData의 값 확인
+  for (var pair of userData) {
+    console.log(pair[0] + ", " + pair[1]);
+  }
+  try {
+    const accesstoken = await store.getters["user/getAccessToken"];
+    const response = await axios.post(
+      "http://52.79.229.100:8000/community-server/community",
+      userData,
+      {
+        headers: {
+          AUTHORIZATION: accesstoken,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response;
+  } catch (err) {
+    console.log(err.response);
+  }
+}
+function fetchCommunityList() {
+  return instance.get("community-server/community");
+}
+/* function getFriendsProfile(userId) {
+  console.log("룰루?", userId);
+  return instance.post("auth-server/auth/find-id-list", [userId]);
+} */
+function fetchCommunityInfo(communityId) {
+  return instance.get("community-server/community/" + communityId);
+}
+function fetchCommunityMemberList(communityId) {
+  return instance.get(`community-server/community/${communityId}/member`);
+}
+function createNewCategory(categoryData) {
+  return instance.post("community-server/category", categoryData);
+}
+function deleteCategory(categoryId) {
+  return instance.delete("community-server/category/" + categoryId);
+}
+function createNewChannel(channelData) {
+  return instance.post("community-server/channel", channelData);
 }
 export {
   registerUser,
@@ -69,5 +117,14 @@ export {
   changeUserImage,
   acceptFriend,
   deleteFriend,
+  blockFriend,
   deleteProfileImage,
+  createNewCommunity,
+  fetchCommunityList,
+  fetchCommunityInfo,
+  fetchCommunityMemberList,
+  //getFriendsProfile,
+  createNewCategory,
+  deleteCategory,
+  createNewChannel,
 };

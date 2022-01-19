@@ -15,9 +15,9 @@
       tabindex="0"
       data-list-id="people"
     >
-      <template v-if="friendsstatemenu === 'online'">
-        <friends-form :friend="friendsonline">
-          <template slot="title">온라인-{{ friendsonline.length }}명</template>
+      <template v-if="friendsStateMenu === 'online'">
+        <friends-form :friend="friendsOnline">
+          <template slot="title">온라인-{{ friendsOnline.length }}명</template>
           <template slot="status"><span>온라인</span></template>
           <template slot="action">
             <div class="action-button" aria-label="메시지 보내기" role="button">
@@ -29,10 +29,10 @@
           </template>
         </friends-form>
       </template>
-      <template v-else-if="friendsstatemenu === 'all'">
-        <friends-form :friend="friendsaccept">
+      <template v-else-if="friendsStateMenu === 'all'">
+        <friends-form :friend="friendsAccept">
           <template slot="title"
-            >모든친구-{{ friendsaccept.length }}명</template
+            >모든친구-{{ friendsAccept.length }}명</template
           >
           <template slot="status"><span>온라인</span></template>
           <template v-slot:action="slotProps">
@@ -45,17 +45,17 @@
               class="action-button"
               aria-label="기타"
               role="button"
-              @click="clickPlusAction($event, slotProps.id, slotProps.username)"
+              @click="clickPlusAction($event, slotProps)"
             >
               <svg class="plus-action"></svg>
             </div>
           </template>
         </friends-form>
       </template>
-      <template v-else-if="friendsstatemenu === 'waiting'">
-        <friends-form :friend="friendswait">
+      <template v-else-if="friendsStateMenu === 'waiting'">
+        <friends-form :friend="friendsWait">
           <template slot="title">
-            대기중-{{ friendswaitnumber + friendsrequest.length }}명
+            대기중-{{ friendsWaitNumber + friendsRequest.length }}명
           </template>
           <template slot="status"><span>받은 친구 요청</span></template>
           <template v-slot:action="slotProps">
@@ -77,7 +77,7 @@
             </div>
           </template>
         </friends-form>
-        <friends-form :friend="friendsrequest">
+        <friends-form :friend="friendsRequest">
           <template slot="status"><span>보낸 친구 요청</span></template>
           <template v-slot:action="slotProps">
             <div
@@ -91,12 +91,17 @@
           </template>
         </friends-form>
       </template>
-      <template v-else-if="friendsstatemenu === 'blockedlist'">
-        <friends-form :friend="friendsban">
-          <template slot="title">차단-{{ friendsban.length }}명</template>
+      <template v-else-if="friendsStateMenu === 'blockedlist'">
+        <friends-form :friend="friendsBan">
+          <template slot="title">차단-{{ friendsBan.length }}명</template>
           <template slot="status"><span>차단 목록</span></template>
-          <template slot="action">
-            <div class="action-button" aria-label="차단해제" role="button">
+          <template v-slot:action="slotProps">
+            <div
+              class="action-button"
+              aria-label="차단해제"
+              role="button"
+              @click="rejectFriend(slotProps.id)"
+            >
               <svg class="blocked"></svg>
             </div>
           </template>
@@ -125,14 +130,14 @@ export default {
   },
   computed: {
     ...mapState("friends", [
-      "friendsstatemenu",
-      "friendsonline",
-      "friendsaccept",
-      "friendswait",
-      "friendswaitnumber",
-      "friendsrequest",
-      "friendsban",
-      "friendsplusmenu",
+      "friendsStateMenu",
+      "friendsOnline",
+      "friendsAccept",
+      "friendsWait",
+      "friendsWaitNumber",
+      "friendsRequest",
+      "friendsBan",
+      "friendsPlusMenu",
     ]),
   },
   methods: {
@@ -147,20 +152,18 @@ export default {
         console.log(err);
       }
     },
-    clickPlusAction(event, index, name) {
+    clickPlusAction(event, userInfo) {
       const x = event.clientX;
       const y = event.clientY;
       this.setClientX(x);
       this.setClientY(y);
-      const selectedfriends = {
-        id: index,
-        username: name,
-      };
-      this.setFriendsPlusMenu(selectedfriends);
+      this.setFriendsPlusMenu(userInfo);
     },
     onClick(e) {
-      if (!e.target.parentNode.dataset.key) {
-        this.setFriendsPlusMenu(null);
+      if (this.friendsPlusMenu) {
+        if (!e.target.parentNode.dataset.key) {
+          this.setFriendsPlusMenu(null);
+        }
       }
     },
     async rejectFriend(id) {

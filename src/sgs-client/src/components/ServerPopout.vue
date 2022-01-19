@@ -13,7 +13,7 @@
             <div class="plus-action-label">서버 설정</div>
             <svg class="settings"></svg>
           </div>
-          <div class="plus-action-label-container">
+          <div class="plus-action-label-container" @click="createNewCategory">
             <div class="plus-action-label">카테고리 만들기</div>
             <svg class="create-category"></svg>
           </div>
@@ -32,10 +32,16 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 export default {
   computed: {
     ...mapState("server", ["openServerPopout"]),
+  },
+  methods: {
+    ...mapMutations("server", ["setCreateCategory"]),
+    createNewCategory() {
+      this.setCreateCategory(true);
+    },
   },
 };
 </script>

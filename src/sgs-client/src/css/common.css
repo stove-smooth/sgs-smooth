@@ -162,6 +162,13 @@
   display: flex;
   justify-content: space-between;
 }
+.align-items-center {
+  display: flex;
+  align-items: center;
+}
+.text-align-center {
+  text-align: center;
+}
 .primary-text-content {
   white-space: nowrap;
   overflow: hidden;
@@ -274,6 +281,9 @@
   font-size: 16px;
   line-height: 20px;
   color: #4f5660;
+}
+.margin-bottom-16px {
+  margin-bottom: 16px;
 }
 :root {
   --white-color: #fff;

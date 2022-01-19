@@ -1,16 +1,15 @@
 <template>
-  <div class="modal" v-if="friendsReadyToDelete">
+  <div class="modal" v-if="categoryReadyToDelete">
     <div class="blurred-background" @click="exitModal"></div>
     <div class="modal-container">
       <modal @exit="exitModal">
         <template slot="header">
-          <h3 class="modal-big-title">
-            {{ friendsReadyToDelete.username }}님을 제거하기
-          </h3>
+          <h3 class="modal-big-title">카테고리 삭제</h3>
         </template>
         <template slot="content">
           <div class="modal-subtitle">
-            친구 {{ friendsReadyToDelete.username }}님을 삭제하시겠어요?
+            정말 {{ categoryReadyToDelete.categoryName }} 채널을 삭제할까요?
+            삭제하면 되돌릴 수 없어요.
           </div>
         </template>
         <template slot="footer">
@@ -18,9 +17,9 @@
             <button
               type="button"
               class="medium-submit-button"
-              @click="deleteFriends(friendsReadyToDelete.id)"
+              @click="deleteCategory(categoryReadyToDelete.categoryId)"
             >
-              <div>친구 삭제하기</div>
+              <div>카테고리 삭제</div>
             </button>
             <button class="back-button" @click="exitModal">취소</button>
           </div>
@@ -33,21 +32,20 @@
 <script>
 import Modal from "./common/Modal.vue";
 import { mapState, mapMutations } from "vuex";
-import { deleteFriend } from "../api/index.js";
+import { deleteCategory } from "../api/index.js";
 export default {
   components: { Modal },
   computed: {
-    ...mapState("friends", ["friendsReadyToDelete"]),
+    ...mapState("server", ["categoryReadyToDelete"]),
   },
   methods: {
-    ...mapMutations("friends", ["setFriendsReadyToDelete"]),
+    ...mapMutations("server", ["setCategoryReadyToDelete"]),
     exitModal() {
-      this.setFriendsReadyToDelete(null);
+      this.setCategoryReadyToDelete(null);
     },
-    async deleteFriends(userId) {
-      await deleteFriend(userId);
-      window.location.reload();
-      this.setFriendsReadyToDelete(null);
+    async deleteCategory(categoryId) {
+      await deleteCategory(categoryId);
+      this.setCategoryReadyToDelete(null);
     },
   },
 };

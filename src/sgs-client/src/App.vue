@@ -3,25 +3,21 @@
     <div class="wrapper2">
       <div class="wrapper">
         <div class="container">
-          <navigation-bar
-            @create-server="openCreateServer"
-            v-if="getEmail && navbar"
-          ></navigation-bar>
+          <navigation-bar v-if="getEmail && navbar"></navigation-bar>
           <router-view></router-view>
         </div>
       </div>
     </div>
     <server-popout></server-popout>
     <friends-plus-action></friends-plus-action>
-    <create-server-modal
-      v-if="createServer"
-      @exit="exitCreateServer"
-    ></create-server-modal>
-    <create-channel-modal
-      v-if="createchannel"
-      @exit-create-channel="setCreateChannel(false)"
-    ></create-channel-modal>
+    <create-server-modal></create-server-modal>
+    <create-channel-modal></create-channel-modal>
     <friends-delete-modal></friends-delete-modal>
+    <friends-block-modal></friends-block-modal>
+    <friends-profile-modal></friends-profile-modal>
+    <create-category-modal></create-category-modal>
+    <category-setting></category-setting>
+    <category-delete-modal></category-delete-modal>
   </div>
 </template>
 
@@ -29,10 +25,16 @@
 import NavigationBar from "./components/NavigationBar.vue";
 import CreateServerModal from "./components/CreateServerModal.vue";
 import CreateChannelModal from "./components/CreateChannelModal.vue";
-import { mapGetters, mapState, mapMutations } from "vuex";
+import { mapGetters } from "vuex";
 import FriendsPlusAction from "./components/common/FriendsPlusAction.vue";
 import FriendsDeleteModal from "./components/FriendsDeleteModal.vue";
 import ServerPopout from "./components/ServerPopout.vue";
+import FriendsBlockModal from "./components/FriendsBlockModal.vue";
+import FriendsProfileModal from "./components/FriendsProfileModal.vue";
+import CreateCategoryModal from "./components/CreateCategoryModal.vue";
+import CategorySetting from "./components/CategorySetting.vue";
+import CategoryDeleteModal from "./components/CategoryDeleteModal.vue";
+
 export default {
   name: "App",
   components: {
@@ -42,12 +44,15 @@ export default {
     FriendsPlusAction,
     FriendsDeleteModal,
     ServerPopout,
+    FriendsBlockModal,
+    FriendsProfileModal,
+    CreateCategoryModal,
+    CategorySetting,
+    CategoryDeleteModal,
   },
   data() {
     return {
-      createChannel: true,
       navbar: true,
-      createServer: false,
     };
   },
   created() {
@@ -76,17 +81,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters("auth", ["getEmail"]),
-    ...mapState("server", ["createchannel"]),
-  },
-  methods: {
-    ...mapMutations("server", ["setCreateChannel"]),
-    openCreateServer() {
-      this.createServer = true;
-    },
-    exitCreateServer() {
-      this.createServer = false;
-    },
+    ...mapGetters("user", ["getEmail"]),
   },
 };
 </script>

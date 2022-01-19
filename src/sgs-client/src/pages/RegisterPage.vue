@@ -10,7 +10,7 @@ import RegisterForm from "../components/RegisterForm.vue";
 export default {
   components: { RegisterForm },
   computed: {
-    ...mapGetters("auth", ["getEmail"]),
+    ...mapGetters("user", ["getEmail"]),
   },
   created() {
     if (this.getEmail) {
