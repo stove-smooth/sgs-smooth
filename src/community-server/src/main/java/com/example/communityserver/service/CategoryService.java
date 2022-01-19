@@ -56,8 +56,7 @@ public class CategoryService {
                 firstCategory,
                 members
         );
-
-        categoryRepository.save(newCategory);
+        community.addCategory(newCategory);
     }
 
     private Category getFirstCategory(Community community) {
