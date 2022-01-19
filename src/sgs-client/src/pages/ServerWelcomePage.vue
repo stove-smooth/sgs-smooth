@@ -37,28 +37,53 @@ export default {
       console.log(this.$route.params.serverid);
       await this.FETCH_COMMUNITYINFO(this.$route.params.serverid);
     },
+    computeFirstChannel() {
+      for (var category in this.communityInfo.categories) {
+        console.log(this.communityInfo.categories[category]);
+        if (this.communityInfo.categories[category].channels != null) {
+          const firstchannel =
+            this.communityInfo.categories[category].channels[0].id;
+          console.log("첫번째 채널: : ", firstchannel);
+          if (firstchannel) {
+            this.$router.push(
+              "/channels/" + this.$route.params.serverid + "/" + firstchannel
+            );
+          }
+          return true;
+        }
+      }
+      return false;
+    },
   },
   computed: {
     ...mapState("server", ["communityInfo"]),
   },
   watch: {
     // 라우터의 변경을 감시
-    /*     $route(to, from) {
+    async $route(to, from) {
       if (to.path != from.path) {
         console.log(to.path, from.path);
-        this.fetchCommunityInfo();
-        console.log("있나?", this.communityInfo);
+        await this.fetchCommunityInfo();
+        const result = this.computeFirstChannel();
+        if (!result) {
+          console.log("채널없음");
+        }
       }
-    }, */
+    },
   },
   async created() {
     await this.fetchCommunityInfo();
-    const firstchannel = this.communityInfo.categories[0].channels[0].id;
+    const result = this.computeFirstChannel();
+    if (!result) {
+      console.log("채널없음");
+    }
+    /* const firstchannel = this.communityInfo.categories[0].channels[0].id;
+    console.log("첫번째채널", firstchannel);
     if (firstchannel) {
       this.$router.push(
         "/channels/" + this.$route.params.serverid + "/" + firstchannel
       );
-    }
+    } */
   },
 };
 </script>

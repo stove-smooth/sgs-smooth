@@ -37,6 +37,8 @@
               class="channel-default-container"
               data-dnd-name="element.name"
               aria-label="채널 카테고리"
+              @mouseover="categoryHover(element.id)"
+              @mouseleave="categoryUnhover"
             >
               <!--카테고리는 드래그 가능해야하며 하위 채널까지 이동됨..-->
               <div class="channel-category-wrapper clickable" role="listitem">
@@ -55,11 +57,22 @@
                 >
                   <button
                     class="create-channel-button"
-                    aria-label="채널 만들기"
+                    v-bind:style="{ display: 'flex' }"
+                    aria-label="카테고리 만들기"
                     @click="createChannel(element.name, element.id)"
                   >
                     <svg class="plus-channel-in-this-category"></svg>
                   </button>
+                  <div
+                    class="create-children-button"
+                    aria-label="카테고리 설정"
+                    tabindex="0"
+                    role="button"
+                    v-show="categoryhovered === element.id"
+                    @click="openCategorySetting(element.id)"
+                  >
+                    <svg class="small-settings"></svg>
+                  </div>
                 </div>
               </div>
             </div>
@@ -151,6 +164,7 @@ export default {
   data() {
     return {
       hovered: "",
+      categoryhovered: "",
       all: [
         {
           id: 1,
@@ -210,6 +224,7 @@ export default {
       "setCreateChannel",
       "setOpenServerPopout",
       "setCategoryInfo",
+      "setCategorySettingModal",
     ]),
     add: function () {
       this.list.push({ name: "Juan" });
@@ -228,6 +243,12 @@ export default {
     unhover() {
       this.hovered = "";
     },
+    categoryHover(index) {
+      this.categoryhovered = index;
+    },
+    categoryUnhover() {
+      this.categoryhovered = "";
+    },
     createChannel(categoryName, categoryId) {
       console.log(categoryName, categoryId);
       const categoryInfo = {
@@ -236,6 +257,9 @@ export default {
       };
       this.setCategoryInfo(categoryInfo);
       this.setCreateChannel(true);
+    },
+    openCategorySetting(categoryId) {
+      this.setCategorySettingModal(categoryId);
     },
     onClick(e) {
       if (this.openServerPopout) {

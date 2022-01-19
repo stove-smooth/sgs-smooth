@@ -31,7 +31,7 @@
             </div>
             <div class="profile-info">
               <div class="profile-divider" />
-              <div class="profile-about-me-section">
+              <div class="margin-bottom-16px">
                 <div class="justify-content-space-between">
                   <div class="subtext white-color">내 소개</div>
                 </div>

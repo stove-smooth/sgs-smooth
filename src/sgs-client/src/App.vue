@@ -15,6 +15,8 @@
     <friends-delete-modal></friends-delete-modal>
     <friends-block-modal></friends-block-modal>
     <friends-profile-modal></friends-profile-modal>
+    <create-category-modal></create-category-modal>
+    <server-setting></server-setting>
   </div>
 </template>
 
@@ -28,6 +30,9 @@ import FriendsDeleteModal from "./components/FriendsDeleteModal.vue";
 import ServerPopout from "./components/ServerPopout.vue";
 import FriendsBlockModal from "./components/FriendsBlockModal.vue";
 import FriendsProfileModal from "./components/FriendsProfileModal.vue";
+import CreateCategoryModal from "./components/CreateCategoryModal.vue";
+import ServerSetting from "./components/ServerSetting.vue";
+
 export default {
   name: "App",
   components: {
@@ -39,6 +44,8 @@ export default {
     ServerPopout,
     FriendsBlockModal,
     FriendsProfileModal,
+    CreateCategoryModal,
+    ServerSetting,
   },
   data() {
     return {

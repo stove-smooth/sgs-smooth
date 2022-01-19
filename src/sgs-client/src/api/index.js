@@ -97,6 +97,9 @@ function fetchCommunityInfo(communityId) {
 function fetchCommunityMemberList(communityId) {
   return instance.get(`community-server/community/${communityId}/member`);
 }
+function createNewCategory(categoryData) {
+  return instance.post("/community-server/category", categoryData);
+}
 export {
   registerUser,
   loginUser,
@@ -115,4 +118,5 @@ export {
   fetchCommunityInfo,
   fetchCommunityMemberList,
   //getFriendsProfile,
+  createNewCategory,
 };

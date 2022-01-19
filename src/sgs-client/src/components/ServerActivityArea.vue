@@ -73,7 +73,7 @@
               <div class="channel-message-input-placeholder">
                 #잡담에 메시지 보내기
               </div>
-              <div
+              <textarea
                 id="input-text-wrapper"
                 aria-autocomplete="list"
                 class="channel-message-input-wrapper"
@@ -82,7 +82,9 @@
                 aria-multiline="true"
                 contenteditable="true"
                 role="textbox"
-              ></div>
+                :value="value"
+                @input="writeChat"
+              ></textarea>
             </div>
           </div>
         </div>
@@ -92,7 +94,25 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      value: "",
+    };
+  },
+  mounted() {
+    this.calHeight();
+  },
+  methods: {
+    writeChat(event) {
+      console.log(event.target.value);
+      this.calHeight();
+    },
+    calHeight() {
+      console.log(document.getElementById("input-text-wrapper").clientHeight);
+    },
+  },
+};
 </script>
 
 <style>
@@ -376,7 +396,6 @@ export default {};
   min-height: 44px;
   color: #dcddde;
   position: relative;
-  height: auto;
 }
 .channel-message-input-placeholder {
   padding-bottom: 11px;
@@ -410,5 +429,18 @@ export default {};
   user-select: text;
   color: #dcddde;
   font-weight: 400;
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  height: 100%;
+  /*   outline: none;
+  overflow-wrap: break-word;
+  line-height: 1.375rem;
+  white-space: break-spaces !important;
+  text-align: left;
+  position: absolute;
+  left: 0;
+  right: 10px;
+  height: 100px; */
 }
 </style>

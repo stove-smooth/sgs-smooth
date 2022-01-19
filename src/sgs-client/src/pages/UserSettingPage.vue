@@ -55,7 +55,7 @@
                     </div>
                     <div class="profile-info">
                       <div class="profile-divider" />
-                      <div class="profile-about-me-section">
+                      <div class="margin-bottom-16px">
                         <div class="justify-content-space-between">
                           <div class="subtext">내 소개</div>
                           <button class="small-button">수정</button>
@@ -275,8 +275,5 @@ export default {
   height: 1px;
   background-color: hsla(0, 0%, 100%, 0.06);
   margin-bottom: 12px;
-}
-.profile-about-me-section {
-  margin-bottom: 16px;
 }
 </style>

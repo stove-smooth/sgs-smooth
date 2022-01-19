@@ -282,6 +282,9 @@
   line-height: 20px;
   color: #4f5660;
 }
+.margin-bottom-16px {
+  margin-bottom: 16px;
+}
 :root {
   --white-color: #fff;
   --discord-primary: #5865f2;

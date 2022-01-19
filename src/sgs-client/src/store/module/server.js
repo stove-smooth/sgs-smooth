@@ -8,6 +8,8 @@ const server = {
   state: {
     createServer: false,
     createChannel: false,
+    createCategory: false,
+    categorySettingModal: false,
     openServerPopout: false,
     categoryInfo: {},
     communityList: [],
@@ -40,6 +42,12 @@ const server = {
     setCommunityOfflineMemberList(state, communityOfflineMemberList) {
       state.communityOfflineMemberList = communityOfflineMemberList;
     },
+    setCreateCategory(state, createCategory) {
+      state.createCategory = createCategory;
+    },
+    setCategorySettingModal(state, categorySettingModal) {
+      state.categorySettingModal = categorySettingModal;
+    },
   },
   actions: {
     async FETCH_COMMUNITYLIST({ commit }) {
@@ -48,7 +56,7 @@ const server = {
     },
     async FETCH_COMMUNITYINFO({ commit }, serverid) {
       const result = await fetchCommunityInfo(serverid);
-      console.log(result.data.result);
+      console.log("펫치커뮤니티정보", result.data.result);
       commit("setCommunityInfo", result.data.result);
     },
     async FETCH_COMMUNITYMEMBERLIST({ commit }, serverid) {

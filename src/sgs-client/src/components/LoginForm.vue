@@ -65,8 +65,8 @@
                 <div class="need-account-button">
                   <span class="need-account"> 계정이 필요한가요? </span>
                   <button class="small-register-link">
-                    <router-link to="/register" class="highlight-text contents"
-                      >가입하기
+                    <router-link to="/register" class="highlight-text contents">
+                      가입하기
                     </router-link>
                   </button>
                 </div>
@@ -229,7 +229,6 @@ export default {
   flex-direction: column;
   overflow: hidden;
   -webkit-box-flex: 1;
-  -ms-flex: 1 1 auto;
   flex: 1 1 auto;
   flex-grow: 1;
 }
