@@ -27,7 +27,7 @@ class SignUpInfoView: BaseView {
         $0.keyboardType = .default
         
         $0.textColor = .white
-        $0.backgroundColor = UIColor.serverListDartGray
+        $0.backgroundColor = UIColor.serverListDarkGray
         
         $0.returnKeyType = .next
         $0.layer.cornerRadius = 5
@@ -39,7 +39,7 @@ class SignUpInfoView: BaseView {
         $0.isSecureTextEntry = true
         
         $0.textColor = .white
-        $0.backgroundColor = UIColor.serverListDartGray
+        $0.backgroundColor = UIColor.serverListDarkGray
         
         $0.returnKeyType = .done
         $0.layer.cornerRadius = 5
@@ -53,10 +53,10 @@ class SignUpInfoView: BaseView {
     }
     
     override func setup() {
-        self.backgroundColor = UIColor.backgroundDartGray
+        self.backgroundColor = UIColor.backgroundDarkGray
         
         [
-            titleLabel, nickNameLabel, nickNameField, nextButton
+            titleLabel, nickNameLabel, nickNameField, nextButton, passwordField
         ].forEach {
             self.addSubview($0)
         }
@@ -88,11 +88,10 @@ class SignUpInfoView: BaseView {
             $0.height.equalTo(50)
         }
         
-//        nextButton.snp.makeConstraints {
-//            $0.right.left.equalToSuperview().inset(30)
-//            
-//            $0.leading.equalTo(passwordField.snp.leading)
-//            $0.top.equalTo(passwordField.snp.bottom).offset(30)
-//        }
+        nextButton.snp.makeConstraints {
+            $0.right.left.equalToSuperview().inset(30)
+            $0.leading.equalTo(passwordField.snp.leading)
+            $0.top.equalTo(passwordField.snp.bottom).offset(30)
+        }
     }
 }

@@ -39,7 +39,7 @@ class MainTabBarCoordinator: NSObject, Coordinator {
         func getCoordinator(navigationController: UINavigationController) -> Coordinator {
             switch self {
             case .home: return HomeCoordinator(navigationController: navigationController)
-            case .friend: return HomeCoordinator(navigationController: navigationController)
+            case .friend: return FriendCoordinator(navigationController: navigationController)
             case .search: return HomeCoordinator(navigationController: navigationController)
             case .mention: return HomeCoordinator(navigationController: navigationController)
             case .profile: return HomeCoordinator(navigationController: navigationController)

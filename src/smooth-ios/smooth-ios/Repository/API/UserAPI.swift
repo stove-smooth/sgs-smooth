@@ -63,7 +63,7 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
         case .signIn, .signUp, .sendMail, .verifyCode:
             return nil
         case .fetchUserInfo:
-            return .custom("Authorization")
+            return .custom("")
         }
     }
 }

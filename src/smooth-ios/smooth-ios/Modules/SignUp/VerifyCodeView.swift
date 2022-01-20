@@ -27,7 +27,7 @@ class VerifyCodeView: BaseView {
         $0.keyboardType = .default
         
         $0.textColor = .white
-        $0.backgroundColor = UIColor.serverListDartGray
+        $0.backgroundColor = UIColor.serverListDarkGray
         
         $0.returnKeyType = .next
         $0.layer.cornerRadius = 5
@@ -41,7 +41,7 @@ class VerifyCodeView: BaseView {
     }
     
     override func setup() {
-        self.backgroundColor = UIColor.backgroundDartGray
+        self.backgroundColor = UIColor.backgroundDarkGray
         
         [
             titleLabel, verifyCodeLabel, verifyCodeField, nextButton

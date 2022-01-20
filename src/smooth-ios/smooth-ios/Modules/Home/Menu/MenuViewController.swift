@@ -77,9 +77,6 @@ class MenuViewController: BaseViewController, CoordinatorContext {
     let serverViewModel = ServerViewModel()
     let channelViewModel = ChannelViewModel()
     
-    let value = PublishSubject<(id: UUID, value: Int)>()
-    let selectedChanged = PublishSubject<(id: UUID, selected: Bool)>()
-    
     static func instance() -> MenuViewController {
         return MenuViewController(nibName: nil, bundle: nil)
     }
@@ -140,7 +137,7 @@ class MenuViewController: BaseViewController, CoordinatorContext {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .serverListDartGray
+        view.backgroundColor = .serverListDarkGray
         view.addSubview(layout)
         
         // MARK: - setupLayout

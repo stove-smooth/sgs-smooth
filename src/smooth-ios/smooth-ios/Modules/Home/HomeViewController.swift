@@ -61,7 +61,7 @@ class HomeViewController: BaseViewController, CoordinatorContext {
         view.addSubview(navVC.view)
         navVC.didMove(toParent: self)
         
-        navVC.navigationBar.barTintColor = UIColor.backgroundDartGray
+        navVC.navigationBar.barTintColor = UIColor.backgroundDarkGray
         self.navigationViewController = navVC
     }
 }

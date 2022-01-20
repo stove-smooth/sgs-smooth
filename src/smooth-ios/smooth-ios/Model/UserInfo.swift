@@ -11,5 +11,6 @@ struct User: Codable {
     let email: String
     let name: String
     let code: String
-    
+    let profileImage: String?
+    let bio: String?
 }

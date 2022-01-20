@@ -9,7 +9,7 @@ import Foundation
 
 struct UserDefaultsUtil {
     static let KEY_TOKEN = "KEY_TOKEN"
-    static let KEY_USER_ID = "KEY_USER_ID"
+    static let KEY_USER_CODE = "KEY_USER_CODE"
     static let KEY_EVENT = "KEY_EVENT"
     
     let instance: UserDefaults
@@ -32,18 +32,33 @@ struct UserDefaultsUtil {
         self.instance.set(token, forKey: UserDefaultsUtil.KEY_TOKEN)
     }
     
+    func setUserInfo(user: User) {
+        self.instance.set(user.code, forKey: UserDefaultsUtil.KEY_USER_CODE)
+    }
+    
+    func getUserInfo() -> String {
+        return self.instance.string(forKey: UserDefaultsUtil.KEY_USER_CODE) ?? ""
+    }
+    
     func clear() {
-      self.instance.removeObject(forKey: UserDefaultsUtil.KEY_USER_ID)
+      self.instance.removeObject(forKey: UserDefaultsUtil.KEY_USER_CODE)
       self.instance.removeObject(forKey: UserDefaultsUtil.KEY_TOKEN)
     }
     
     static func setUserToken(token: String?) {
-        
       UserDefaults.standard.set(token, forKey: UserDefaultsUtil.KEY_TOKEN)
     }
     
     static func getUserToken() -> String? {
       return UserDefaults.standard.string(forKey: UserDefaultsUtil.KEY_TOKEN)
+    }
+    
+    static func setUserInfo(user: User) {
+        UserDefaults.standard.set(user.code, forKey: UserDefaultsUtil.KEY_USER_CODE)
+    }
+    
+    static func getUserInfo() -> String? {
+        return UserDefaults.standard.string(forKey: UserDefaultsUtil.KEY_USER_CODE)
     }
     
     static func clear() {

@@ -37,7 +37,12 @@ class SplashViewModel: BaseViewModel {
         if self.hasTokenFromLocal(token: token) {
             // 토큰 있을 때 - 토큰 서버처리
             UserRepository.fetchUserInfo { user, _ in
+                guard let user = user else {
+                    return
+                }
+
                 self.userDefaults.setUserToken(token: token)
+                self.userDefaults.setUserInfo(user: user)
                 self.output.goToMain.accept(())
             }
         }
