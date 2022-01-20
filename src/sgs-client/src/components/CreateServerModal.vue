@@ -168,6 +168,7 @@ export default {
     },
     async uploadImage() {
       let image = this.$refs["image"].files[0];
+      console.log("image", image);
       this.thumbnail = await converToThumbnail(image);
     },
     async createNewServer() {

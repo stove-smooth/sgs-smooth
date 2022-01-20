@@ -27,7 +27,7 @@
           <div class="friends-contents">
             <div class="friends-name-decorator">
               <div class="friends-name">{{ item.name }}</div>
-              <svg class="close-dm" v-show="upHere === index"></svg>
+              <svg class="primary-close" v-show="upHere === index"></svg>
             </div>
             <div class="subtext-decorator">
               <div class="subtext" v-show="false">멤버 3명.</div>
@@ -103,11 +103,4 @@ export default {
 };
 </script>
 
-<style>
-.close-dm {
-  display: flex;
-  background-image: url("../assets/close-dm.svg");
-  width: 20px;
-  height: 20px;
-}
-</style>
+<style></style>
