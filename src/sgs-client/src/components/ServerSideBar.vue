@@ -2,7 +2,7 @@
   <nav class="server-sidebar-container">
     <div
       class="tutorial-container clickable"
-      @click="setOpenServerPopout"
+      @click="clickServerPopout()"
       :data-container="true"
     >
       <header class="server-sidebar-header">
@@ -92,8 +92,15 @@
                     class="channel-content"
                     @mouseover="hover(el.id)"
                     @mouseleave="unhover"
+                    v-bind:class="{
+                      'channel-content-hover':
+                        hovered === el.id || selected == el.id,
+                    }"
                   >
-                    <div class="channel-main-content">
+                    <div
+                      class="channel-main-content"
+                      @click="el.type === 'TEXT' && routeChannel(el.id)"
+                    >
                       <div
                         v-if="el.type === 'TEXT'"
                         class="channel-classification-wrapper"
@@ -114,7 +121,7 @@
                     </div>
                     <div
                       class="create-children-wrapper"
-                      v-show="hovered === el.id"
+                      v-show="hovered === el.id || selected == el.id"
                     >
                       <div
                         class="create-children-button"
@@ -166,9 +173,10 @@ export default {
   },
   data() {
     return {
+      selected: "",
       hovered: "",
       categoryhovered: "",
-      all: [
+      /* all: [
         {
           id: 1,
           name: "채팅채널",
@@ -216,7 +224,7 @@ export default {
             },
           ],
         },
-      ],
+      ], */
     };
   },
   computed: {
@@ -277,9 +285,39 @@ export default {
         }
       }
     },
+    clickServerPopout() {
+      if (this.openServerPopout) {
+        this.setOpenServerPopout();
+      } else {
+        const serverInfo = {
+          serverId: this.communityInfo.id,
+          serverName: this.communityInfo.name,
+        };
+        console.log(serverInfo);
+        this.setOpenServerPopout(serverInfo);
+      }
+    },
+    routeChannel(id) {
+      this.selected = id;
+      this.$router.push("/channels/" + this.communityInfo.id + "/" + id);
+    },
+    currentChannel() {
+      console.log("currentChannel");
+    },
   },
   mounted() {
+    let array = window.location.pathname.split("/");
+    this.selected = array[3];
     window.addEventListener("click", this.onClick);
+  },
+  watch: {
+    // 라우터의 변경을 감시
+    $route(to, from) {
+      if (to.path != from.path) {
+        let array = to.path.split("/");
+        this.selected = array[3];
+      }
+    },
   },
 };
 </script>
@@ -492,13 +530,7 @@ export default {
   /* -ms-flex-align: center; */
   align-items: center;
 }
-.channel-content:hover {
-  background-color: rgba(79, 84, 92, 0.32);
-}
-.channel-content:active {
-  background-color: rgba(79, 84, 92, 0.32);
-}
-.channel-content:visited {
+.channel-content-hover {
   background-color: rgba(79, 84, 92, 0.32);
 }
 .channel-main-content {

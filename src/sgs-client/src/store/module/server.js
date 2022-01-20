@@ -10,7 +10,7 @@ const server = {
     createChannel: false,
     createCategory: false,
     categorySettingModal: false,
-    openServerPopout: false,
+    openServerPopout: null,
     categoryReadyToDelete: false,
     communityList: [],
     communityInfo: null,
@@ -24,8 +24,8 @@ const server = {
     setCreateChannel(state, createChannel) {
       state.createChannel = createChannel;
     },
-    setOpenServerPopout(state) {
-      state.openServerPopout = !state.openServerPopout;
+    setOpenServerPopout(state, openServerPopout) {
+      state.openServerPopout = openServerPopout;
     },
     setCommunityList(state, communityList) {
       state.communityList = communityList;

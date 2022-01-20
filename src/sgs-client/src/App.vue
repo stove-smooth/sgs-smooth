@@ -59,13 +59,8 @@ export default {
     };
   },
   created() {
-    console.log(window.location.pathname);
-    const currentUrl = window.location.pathname;
-    if (
-      currentUrl == "/settings" ||
-      currentUrl == "/login" ||
-      currentUrl == "/register"
-    ) {
+    const url = window.location.pathname;
+    if (url == "/settings" || url == "/login" || url == "/register") {
       this.navbar = false;
     } else {
       this.navbar = true;
@@ -74,6 +69,8 @@ export default {
   watch: {
     // 라우터의 변경을 감시
     $route(to, from) {
+      console.log("라우터변경보여주냐고.", to.path, from.path);
+      //this.setCurrentUrl(to.path);
       if (to.path != from.path) {
         if (to.path === "/settings") {
           this.navbar = false;

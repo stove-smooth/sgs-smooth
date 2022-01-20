@@ -39,17 +39,21 @@ export default {
     },
     computeFirstChannel() {
       for (var category in this.communityInfo.categories) {
-        console.log(this.communityInfo.categories[category]);
         if (this.communityInfo.categories[category].channels != null) {
-          const firstchannel =
-            this.communityInfo.categories[category].channels[0].id;
-          console.log("첫번째 채널: : ", firstchannel);
-          if (firstchannel) {
-            this.$router.push(
-              "/channels/" + this.$route.params.serverid + "/" + firstchannel
-            );
+          for (var channels in this.communityInfo.categories[category]
+            .channels) {
+            if (
+              this.communityInfo.categories[category].channels[channels]
+                .type === "TEXT"
+            ) {
+              const firstchannel =
+                this.communityInfo.categories[category].channels[channels].id;
+              this.$router.push(
+                "/channels/" + this.$route.params.serverid + "/" + firstchannel
+              );
+              return true;
+            }
           }
-          return true;
         }
       }
       return false;
@@ -77,13 +81,6 @@ export default {
     if (!result) {
       console.log("채널없음");
     }
-    /* const firstchannel = this.communityInfo.categories[0].channels[0].id;
-    console.log("첫번째채널", firstchannel);
-    if (firstchannel) {
-      this.$router.push(
-        "/channels/" + this.$route.params.serverid + "/" + firstchannel
-      );
-    } */
   },
 };
 </script>

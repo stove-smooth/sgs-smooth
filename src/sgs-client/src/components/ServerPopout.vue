@@ -40,7 +40,7 @@ export default {
   methods: {
     ...mapMutations("server", ["setCreateCategory"]),
     createNewCategory() {
-      this.setCreateCategory(true);
+      this.setCreateCategory(this.openServerPopout);
     },
   },
 };
