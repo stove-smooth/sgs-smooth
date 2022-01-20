@@ -27,7 +27,7 @@ class SignUpView: BaseView {
         $0.keyboardType = .emailAddress
         
         $0.textColor = .white
-        $0.backgroundColor = UIColor.serverListDartGray
+        $0.backgroundColor = UIColor.serverListDarkGray
         
         $0.returnKeyType = .next
         $0.layer.cornerRadius = 5
@@ -41,7 +41,7 @@ class SignUpView: BaseView {
     }
     
     override func setup() {
-        self.backgroundColor = UIColor.backgroundDartGray
+        self.backgroundColor = UIColor.backgroundDarkGray
         
         [
             titleLabel, emailLabel, emailField, nextButton

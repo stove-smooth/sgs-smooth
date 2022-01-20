@@ -27,7 +27,7 @@ class SignInViewController: BaseViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        self.navigationController?.navigationBar.backgroundColor = UIColor.backgroundDartGray
+        self.navigationController?.navigationBar.backgroundColor = UIColor.backgroundDarkGray
         self.navigationController?.navigationBar.topItem?.title = "뒤로가기"
         
         self.navigationController?.setNavigationBarHidden(false, animated: animated)

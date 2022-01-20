@@ -21,7 +21,7 @@ class MainCoordinator: NSObject, Coordinator {
         
         let navigationController = UINavigationController()
         navigationController.navigationBar.tintColor = .white
-        navigationController.navigationBar.barTintColor = UIColor.backgroundDartGray
+        navigationController.navigationBar.barTintColor = UIColor.backgroundDarkGray
         navigationController.navigationBar.shadowImage = UIImage()
         navigationController.navigationBar.isTranslucent = false
         
@@ -56,10 +56,7 @@ class MainCoordinator: NSObject, Coordinator {
     }
     
     func goToMain() {
-        print(self.navigationController.viewControllers)
-        
         coordinatorDidFinish()
-        print(self.navigationController.viewControllers)
         
         let coordinator = MainTabBarCoordinator(navigationController: navigationController)
         childCoordinators.append(coordinator)

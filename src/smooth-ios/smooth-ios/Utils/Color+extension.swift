@@ -18,7 +18,7 @@ extension UIColor {
     static let yellow = UIColor(hex: "0xf7de52")
     static let white = UIColor(hex: "0xffffff")
     static let streaming = UIColor(hex: "0x593695")
-    static let backgroundDartGray = UIColor(hex: "0x2c2f33")
+    static let backgroundDarkGray = UIColor(hex: "0x2c2f33")
     static let textDescription = UIColor(hex: "0xB1B1B1")
     
     static let greyple = UIColor(hex: "0x99aab5")
@@ -32,17 +32,16 @@ extension UIColor {
     static let messageBarDarkGray = UIColor(hex: "0x40444b")
     static let messageBarLightGray = UIColor(hex: "0xf0ecf4")
     
-    static let textChannelDartGray = UIColor(hex: "0x36393f")
+    static let textChannelDarkGray = UIColor(hex: "0x36393f")
     
-    static let channelListDartGray = UIColor(hex: "0x2f3136")
+    static let channelListDarkGray = UIColor(hex: "0x2f3136")
     static let channelListLightGray = UIColor(hex: "0xf8f4f4")
     
     
-    static let serverListDartGray = UIColor(hex: "0x202225")
+    static let serverListDarkGray = UIColor(hex: "0x202225")
     static let serverListLightGray = UIColor(hex: "0xe8e4ec")
     
 }
-
 
 extension UIColor {
     convenience init?(hex: String, alpha: Double=1){
@@ -74,5 +73,16 @@ extension UIColor {
         let blue = CGFloat(hexValue & 0xff) / 255
         
         self.init(red: red, green: green, blue: blue, alpha: CGFloat(a))
+    }
+    
+    static func random(code: Int) -> UIColor {
+        let code = code % 5
+        
+        let randomColorChip = [
+            UIColor.blurple, UIColor.orange, UIColor.red,
+            UIColor(hex: "0xfaa61a"), UIColor.green
+        ]
+        
+        return randomColorChip[code]!
     }
 }

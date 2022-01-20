@@ -49,7 +49,7 @@ class SplashView: BaseView {
     }
     
     override func setup() {
-        self.backgroundColor = UIColor.backgroundDartGray
+        self.backgroundColor = UIColor.backgroundDarkGray
         
         [
             logoImageView, splashImageView,
