@@ -46,6 +46,7 @@ public class Category extends BaseTimeEntity {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<CategoryMember> members = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
     private CommonStatus status;
 
     //== 연관관계 메서드 ==//
