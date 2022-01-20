@@ -21,6 +21,8 @@ public class DirectChat {
     @Field("id")
     private String id;
 
+    private Long community_id;
+
     private Long category_id;
 
     private Long channel_id;
@@ -30,8 +32,6 @@ public class DirectChat {
     private String content;
 
     private LocalDateTime dateTime;
-
-    private List<Long> ids;
 
     private Map<Long,Boolean> read;
 

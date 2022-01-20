@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginSessionRequest {
+    private String type;
     private String session_id;
     private String user_id;
 }

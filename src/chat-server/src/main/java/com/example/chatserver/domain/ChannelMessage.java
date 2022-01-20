@@ -21,6 +21,10 @@ public class ChannelMessage {
     @Field("id")
     private String id;
 
+    private Long community_id;
+
+    private Long category_id;
+
     private Long channel_id;
 
     private Long account_id;
@@ -28,8 +32,6 @@ public class ChannelMessage {
     private String content;
 
     private LocalDateTime localDateTime;
-
-    private List<Long> ids;
 
     private Map<Long,Boolean> read;
 }

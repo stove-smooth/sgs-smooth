@@ -12,7 +12,16 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 public class LoginSessionRequest implements Serializable {
+    private String type;
     private String session_id;
     private String user_id;
 
+    @Override
+    public String toString() {
+        return "{" +
+                "type='" + type + '\'' +
+                ", session_id='" + session_id + '\'' +
+                ", user_id='" + user_id + '\'' +
+                '}';
+    }
 }

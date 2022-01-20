@@ -51,18 +51,19 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
             case CONNECT:
                 String session_id = accessor.getSessionId();
                 String user_id = Objects.requireNonNull(accessor.getFirstNativeHeader("user-id"));
-//                String temp = "USER" + user_id;
-//                long time = 24 * 60 * 60 * 1000L;
                 LoginSessionRequest loginSessionRequest = LoginSessionRequest.builder()
+                                .type("login")
                                 .session_id(session_id).user_id(user_id).build();
-//                String send = tcpClientGateway.send(session_id);
-                presenceClient.uploadState(loginSessionRequest);
+//                tcpClientGateway.send(loginSessionRequest.toString());
+//                presenceClient.uploadState(loginSessionRequest);
                 break;
             case DISCONNECT:
                 String sessionId = accessor.getSessionId();
                 LoginSessionRequest logoutSessionRequest = LoginSessionRequest.builder()
+                                .type("logout")
                                 .session_id(sessionId).build();
-                presenceClient.deleteState(logoutSessionRequest);
+//                tcpClientGateway.send(logoutSessionRequest.toString());
+//                presenceClient.deleteState(logoutSessionRequest);
                 break;
             default:
                 break;
