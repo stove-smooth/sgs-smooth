@@ -121,7 +121,7 @@ export default {
   data() {
     return {
       isChatType: "TEXT",
-      channelName: "새로운 채널",
+      channelName: "",
     };
   },
   computed: {
@@ -138,7 +138,7 @@ export default {
     async createNewChannel(categoryInfo) {
       const newChannelData = {
         id: categoryInfo.categoryId,
-        name: categoryInfo.categoryName,
+        name: this.channelName,
         type: this.isChatType,
         public: true,
       };

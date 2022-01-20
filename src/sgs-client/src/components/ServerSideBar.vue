@@ -176,55 +176,6 @@ export default {
       selected: "",
       hovered: "",
       categoryhovered: "",
-      /* all: [
-        {
-          id: 1,
-          name: "채팅채널",
-          channels: [
-            {
-              id: 3,
-              name: "밍디의 채팅채널",
-              type: "chat",
-            },
-            {
-              id: 4,
-              name: "두리의 채팅채널",
-              type: "chat",
-            },
-            {
-              id: 5,
-              name: "병찬의 채팅채널",
-              type: "chat",
-            },
-            {
-              id: 6,
-              name: "희동의 채팅채널",
-              type: "chat",
-            },
-          ],
-        },
-        {
-          id: 2,
-          name: "음성채널",
-          channels: [
-            {
-              id: 7,
-              name: "노래방",
-              type: "voice",
-            },
-            {
-              id: 8,
-              name: "라운지",
-              type: "voice",
-            },
-            {
-              id: 9,
-              name: "광장",
-              type: "voice",
-            },
-          ],
-        },
-      ], */
     };
   },
   computed: {
@@ -293,16 +244,12 @@ export default {
           serverId: this.communityInfo.id,
           serverName: this.communityInfo.name,
         };
-        console.log(serverInfo);
         this.setOpenServerPopout(serverInfo);
       }
     },
     routeChannel(id) {
       this.selected = id;
       this.$router.push("/channels/" + this.communityInfo.id + "/" + id);
-    },
-    currentChannel() {
-      console.log("currentChannel");
     },
   },
   mounted() {
@@ -674,6 +621,7 @@ export default {
   margin-left: 0;
   margin-right: 2px;
   background-image: url("../assets/private-channel-plus.svg");
+  z-index: 99;
 }
 .height-100 {
   height: 100%;

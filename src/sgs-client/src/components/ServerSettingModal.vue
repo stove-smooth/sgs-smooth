@@ -1,6 +1,6 @@
 <template>
-  <div class="modal" v-if="false">
-    <div class="blurred-background"></div>
+  <div class="modal" v-if="serverSettingModal">
+    <div class="blurred-background" @click="setServerSettingModal(null)"></div>
     <setting-modal>
       <template slot="setting-sidebar">
         <div class="channel-default-container">
@@ -66,10 +66,17 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from "vuex";
 import SettingModal from "./common/SettingModal.vue";
 export default {
   components: {
     SettingModal,
+  },
+  computed: {
+    ...mapState("server", ["serverSettingModal"]),
+  },
+  methods: {
+    ...mapMutations("server", ["setServerSettingModal"]),
   },
 };
 </script>

@@ -62,11 +62,6 @@ function deleteProfileImage() {
   return instance.patch("auth-server/auth/d/profile");
 }
 async function createNewCommunity(userData) {
-  console.log("userDATa", userData);
-  // FormData의 값 확인
-  for (var pair of userData) {
-    console.log(pair[0] + ", " + pair[1]);
-  }
   try {
     const accesstoken = await store.getters["user/getAccessToken"];
     const response = await axios.post(

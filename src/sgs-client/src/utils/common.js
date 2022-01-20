@@ -35,7 +35,6 @@ function processFile2(tempImage) {
       canvasContext.drawImage(this, 0, 0, 100, 100);
 
       dataURI = canvas.toDataURL("image/jpeg");
-      console.log(dataURI);
       thumbnail = dataURI;
       resolve(thumbnail);
     };

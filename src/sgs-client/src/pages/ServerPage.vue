@@ -37,7 +37,6 @@ export default {
       "FETCH_COMMUNITYMEMBERLIST",
     ]),
     async fetchCommunityInfo() {
-      console.log(this.$route.params.serverid);
       await this.FETCH_COMMUNITYINFO(this.$route.params.serverid);
       await this.FETCH_COMMUNITYMEMBERLIST(this.$route.params.serverid);
     },

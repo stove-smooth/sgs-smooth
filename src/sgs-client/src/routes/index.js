@@ -18,7 +18,6 @@ export const router = new VueRouter({
       path: "/",
       redirect: () => {
         const isLogin = store.getters["user/getEmail"];
-        console.log("로그인했나요?", isLogin);
         if (!isLogin) {
           return "/login";
         } else {
@@ -73,7 +72,6 @@ export const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   const isLogin = store.getters["user/getEmail"];
-  console.log("로그인했는가", isLogin);
   if (to.meta.auth && !isLogin) {
     alert("인증이 필요합니다.");
     next("/login");

@@ -54,7 +54,6 @@ const friends = {
       let friendsWait = [];
       let friendsAccept = [];
       let friendsBan = [];
-      console.log(result.data.result);
       for (var i = 0; i < result.data.result.length; i++) {
         if (result.data.result[i].state == "REQUEST") {
           friendsRequest.push(result.data.result[i]);

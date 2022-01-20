@@ -34,20 +34,15 @@ export default {
   methods: {
     ...mapActions("server", ["FETCH_COMMUNITYINFO"]),
     async fetchCommunityInfo() {
-      console.log(this.$route.params.serverid);
       await this.FETCH_COMMUNITYINFO(this.$route.params.serverid);
     },
     computeFirstChannel() {
-      for (var category in this.communityInfo.categories) {
-        if (this.communityInfo.categories[category].channels != null) {
-          for (var channels in this.communityInfo.categories[category]
-            .channels) {
-            if (
-              this.communityInfo.categories[category].channels[channels]
-                .type === "TEXT"
-            ) {
-              const firstchannel =
-                this.communityInfo.categories[category].channels[channels].id;
+      const categories = this.communityInfo.categories;
+      for (var category in categories) {
+        if (categories[category].channels != null) {
+          for (var channels in categories[category].channels) {
+            if (categories[category].channels[channels].type === "TEXT") {
+              const firstchannel = categories[category].channels[channels].id;
               this.$router.push(
                 "/channels/" + this.$route.params.serverid + "/" + firstchannel
               );
@@ -66,7 +61,6 @@ export default {
     // 라우터의 변경을 감시
     async $route(to, from) {
       if (to.path != from.path) {
-        console.log(to.path, from.path);
         await this.fetchCommunityInfo();
         const result = this.computeFirstChannel();
         if (!result) {

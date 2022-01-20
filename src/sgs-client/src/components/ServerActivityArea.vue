@@ -82,8 +82,6 @@
                 aria-multiline="true"
                 contenteditable="true"
                 role="textbox"
-                :value="value"
-                @input="writeChat"
               ></textarea>
             </div>
           </div>
@@ -94,25 +92,7 @@
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      value: "",
-    };
-  },
-  mounted() {
-    this.calHeight();
-  },
-  methods: {
-    writeChat(event) {
-      console.log(event.target.value);
-      this.calHeight();
-    },
-    calHeight() {
-      console.log(document.getElementById("input-text-wrapper").clientHeight);
-    },
-  },
-};
+export default {};
 </script>
 
 <style>
