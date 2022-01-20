@@ -118,7 +118,7 @@ public class Category extends BaseTimeEntity {
     public void delete() {
         if (this.isFirstNode) {
             if (!Objects.isNull(this.getNextNode()))
-                this.getNextNode().isFirstNode = true;
+                this.getNextNode().setFirstNode(true);
             this.isFirstNode = false;
         }
         for (Channel channel: this.getChannels()) {

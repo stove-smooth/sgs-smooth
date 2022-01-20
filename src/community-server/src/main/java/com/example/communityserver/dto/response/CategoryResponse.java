@@ -39,7 +39,8 @@ public class CategoryResponse {
         channels.add(ChannelResponse.fromEntity(firstChannel));
         Channel nextNode = firstChannel.getNextNode();
         while (!Objects.isNull(nextNode)) {
-            channels.add(ChannelResponse.fromEntity(nextNode));
+            if (nextNode.getStatus().equals(ChannelStatus.NORMAL))
+                channels.add(ChannelResponse.fromEntity(nextNode));
             nextNode = nextNode.getNextNode();
         }
         categoryResponse.setChannels(channels);

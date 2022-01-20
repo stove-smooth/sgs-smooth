@@ -37,7 +37,8 @@ public class CommunityDetailResponse {
         categories.add(CategoryResponse.fromEntity(firstCategory));
         Category nextNode = firstCategory.getNextNode();
         while (!Objects.isNull(nextNode)) {
-            categories.add(CategoryResponse.fromEntity(nextNode));
+            if (nextNode.getStatus().equals(CommonStatus.NORMAL))
+                categories.add(CategoryResponse.fromEntity(nextNode));
             nextNode = nextNode.getNextNode();
         }
         communityResponse.setCategories(categories);

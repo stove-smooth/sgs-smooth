@@ -3,6 +3,7 @@ package com.example.communityserver.dto.response;
 import com.example.communityserver.domain.Channel;
 import com.example.communityserver.domain.ChannelMember;
 import com.example.communityserver.domain.Community;
+import com.example.communityserver.domain.type.ChannelStatus;
 import com.example.communityserver.domain.type.ChannelType;
 import com.example.communityserver.domain.type.CommunityMemberStatus;
 import lombok.AllArgsConstructor;
@@ -44,6 +45,7 @@ public class ChannelDetailResponse {
         if (!Objects.isNull(channel.getParent()))
             channelResponse.setParent(ThreadResponse.fromEntity(channel.getParent()));
         channelResponse.setThreads(channel.getThread().stream()
+                .filter(t -> t.getStatus().equals(ChannelStatus.NORMAL))
                 .map(ThreadResponse::fromEntity)
                 .collect(Collectors.toList()));
         return channelResponse;
