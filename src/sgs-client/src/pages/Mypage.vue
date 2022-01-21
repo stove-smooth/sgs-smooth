@@ -22,10 +22,10 @@
 </template>
 
 <script>
-import Stomp from "webstomp-client";
-import SockJS from "sockjs-client";
-import { mapGetters, mapState, mapMutations } from "vuex";
-import { getBaseURL } from "../utils/common";
+/* import Stomp from "webstomp-client";
+import SockJS from "sockjs-client"; */
+import { mapGetters, mapState } from "vuex";
+/* import { getBaseURL } from "../utils/common"; */
 
 import FriendsSideBar from "../components/FriendsSideBar.vue";
 import FriendsStateList from "../components/FriendsStateList.vue";
@@ -48,12 +48,12 @@ export default {
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
     ...mapGetters("user", ["getEmail", "getUserId", "getAccessToken"]),
   },
-  created() {
+  /*  created() {
     if (this.getEmail) {
       this.connect();
     }
-  },
-  methods: {
+  }, */
+  /* methods: {
     ...mapMutations("utils", [
       "setStompSocketClient",
       "setStompSocketConnected",
@@ -82,7 +82,7 @@ export default {
         }
       );
     },
-  },
+  }, */
 };
 </script>
 

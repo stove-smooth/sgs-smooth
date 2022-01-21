@@ -8,6 +8,7 @@ import UserSettingPage from "../pages/UserSettingPage.vue";
 import ServerPage from "../pages/ServerPage.vue";
 import ServerWelcomePage from "../pages/ServerWelcomePage.vue";
 import PrivateDMPage from "../pages/PrivateDMPage.vue";
+
 import store from "../store/index";
 Vue.use(VueRouter);
 

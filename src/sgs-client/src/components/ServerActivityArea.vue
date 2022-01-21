@@ -136,6 +136,7 @@ export default {
   },
   watch: {
     stompSocketConnected: function (val) {
+      console.log(val);
       if (val === true) {
         console.log(val);
         this.stompSocketClient.subscribe("/topic/group", (res) => {
@@ -151,7 +152,9 @@ export default {
   },
   methods: {
     sendMessage(e) {
-      if (e.keyCode === 13 && !e.shiftKey && this.stompSocketConnected) {
+      console.log(this.stompSocketConnected);
+      if (e.keyCode == 13 && this.stompSocketConnected) {
+        console.log("메시지를 chatting에서 보냄.");
         this.send();
         this.text = "";
       }

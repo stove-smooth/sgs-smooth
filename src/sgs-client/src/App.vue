@@ -23,8 +23,10 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-
+import Stomp from "webstomp-client";
+import SockJS from "sockjs-client";
+import { mapGetters, mapMutations, mapState } from "vuex";
+import { getBaseURL } from "./utils/common";
 import NavigationBar from "./components/NavigationBar.vue";
 import CreateServerModal from "./components/CreateServerModal.vue";
 import CreateChannelModal from "./components/CreateChannelModal.vue";
@@ -60,6 +62,11 @@ export default {
     };
   },
   created() {
+    console.log("로그인안된 크레이트");
+    if (this.getEmail) {
+      console.log("안녕크레이트");
+      this.connect();
+    }
     const url = window.location.pathname;
     if (url == "/settings" || url == "/login" || url == "/register") {
       this.navbar = false;
@@ -80,7 +87,38 @@ export default {
     },
   },
   computed: {
+    ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
     ...mapGetters("user", ["getEmail", "getUserId", "getAccessToken"]),
+  },
+  methods: {
+    ...mapMutations("utils", [
+      "setStompSocketClient",
+      "setStompSocketConnected",
+    ]),
+    connect() {
+      const serverURL = getBaseURL() + "my-chat";
+      let socket = new SockJS(serverURL);
+      this.setStompSocketClient(Stomp.over(socket));
+      console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
+      this.stompSocketClient.connect(
+        {
+          "access-token": this.getAccessToken,
+          "user-id": this.getUserId,
+        }, //header
+        (frame) => {
+          // 소켓 연결 성공
+          this.connected = true;
+          this.setStompSocketConnected(true);
+          console.log("소켓 연결 성공", frame);
+        },
+        (error) => {
+          // 소켓 연결 실패
+          console.log("소켓 연결 실패", error);
+          this.connected = false;
+          this.setStompSocketConnected(false);
+        }
+      );
+    },
   },
 };
 </script>
