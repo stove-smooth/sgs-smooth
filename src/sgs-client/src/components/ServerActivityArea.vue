@@ -4,24 +4,26 @@
       <div class="thin-scrollbar server-chat-scroller">
         <div class="scroller-content">
           <ol class="scroller-inner">
-            <li class="chat-message-wrapper">
-              <div
-                class="primary-chat-message-wrapper others-chat-message-wrapper"
-              >
-                <div class="chat-message-content">
-                  <img
-                    src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=80"
-                    class="chat-avatar clickable"
-                    alt="image"
-                  />
-                  <h2 class="chat-avatar-header">
-                    <span class="chat-user-name">user0</span>
-                    <span class="chat-time-stamp">어제 오후 11:56</span>
-                  </h2>
-                  <div class="message-content">안녕~^^</div>
+            <div v-for="(item, idx) in receiveList" :key="idx">
+              <li class="chat-message-wrapper">
+                <div
+                  class="primary-chat-message-wrapper others-chat-message-wrapper"
+                >
+                  <div class="chat-message-content">
+                    <img
+                      src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=80"
+                      class="chat-avatar clickable"
+                      alt="image"
+                    />
+                    <h2 class="chat-avatar-header">
+                      <span class="chat-user-name">{{ item.name }}</span>
+                      <span class="chat-time-stamp">{{ item.time }}</span>
+                    </h2>
+                    <div class="message-content">{{ item.message }}</div>
+                  </div>
                 </div>
-              </div>
-            </li>
+              </li>
+            </div>
           </ol>
         </div>
       </div>
@@ -54,13 +56,15 @@
                       </div>
                     </div>
                     <div class="message-upload-filename-container">
-                      <div class="filename-wrapper">{{ item }}</div>
+                      <div class="filename-wrapper">
+                        {{ images[index].name }}
+                      </div>
                     </div>
                     <div class="message-upload-actionbar-container">
                       <div aria-label="첨부파일 수정" class="actionbar-wrapper">
                         <div class="actionbar-wrapper2">
                           <div
-                            @click="thumbnails.splice(index, 1)"
+                            @click="deleteAttachment(index)"
                             class="remove-attachment-button"
                             aria-label="첨부 파일 제거"
                             role="button"
@@ -116,41 +120,68 @@
 
 <script>
 import { converToThumbnail } from "../utils/common.js";
+import { mapState } from "vuex";
 export default {
   data() {
     return {
       text: "",
       images: [],
       thumbnails: [],
+      receiveList: [],
     };
+  },
+  computed: {
+    ...mapState("user", ["nickname"]),
+    ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
+  },
+  watch: {
+    stompSocketConnected: function (val) {
+      if (val === true) {
+        console.log(val);
+        this.stompSocketClient.subscribe("/topic/group", (res) => {
+          console.log("구독으로 받은 메시지 입니다.", res.body);
+
+          this.receiveList.push(JSON.parse(res.body));
+          console.log(this.receiveList);
+        });
+      } else {
+        alert("채팅 연결이 끊겼습니다.");
+      }
+    },
   },
   methods: {
     sendMessage(e) {
-      if (e.keyCode === 13 && !e.shiftKey) {
-        console.log(this.text);
+      if (e.keyCode === 13 && !e.shiftKey && this.stompSocketConnected) {
+        this.send();
         this.text = "";
       }
     },
     async uploadImage() {
-      console.log(this.$refs["images"].files);
       for (var i = 0; i < this.$refs["images"].files.length; i++) {
         this.images.push(this.$refs["images"].files[i]);
         let thumbnail = await converToThumbnail(this.$refs["images"].files[i]);
-        console.log("썸네일", thumbnail);
         this.thumbnails.push(thumbnail);
-        console.log("thumbnailssss", this.thumbnails);
       }
-      /*       for (var i in this.$refs["images"].files) {
-        console.log("i", this.$refs["images"].files[i]);
-        this.images.push(this.$refs["images"].files[i]);
-        let thumbnail = await converToThumbnail(this.$refs["images"].files[i]);
-        console.log("썸네일", thumbnail);
-        this.thumbnails.push(thumbnail);
-        console.log("thumbnailssss", this.thumbnails);
-      } */
-      /*  let image = this.$refs["images"].files[0];
-      console.log("image", image);
-      this.thumbnails = await converToThumbnail(image); */
+    },
+    deleteAttachment(index) {
+      this.thumbnails.splice(index, 1);
+      this.images.splice(index, 1);
+    },
+    send() {
+      console.log("Send message:" + this.text);
+      if (this.stompSocketClient && this.stompSocketClient.connected) {
+        const msg = {
+          userName: this.nickname,
+          content: this.text,
+          channel_id: 1,
+          account_id: 2,
+        };
+        this.stompSocketClient.send(
+          "/kafka/send-channel-message",
+          JSON.stringify(msg),
+          {}
+        );
+      }
     },
   },
 };

@@ -3,6 +3,8 @@ const utils = {
   state: {
     clientX: 0,
     clientY: 0,
+    stompSocketClient: null,
+    stompSocketConnected: false,
   },
   mutations: {
     setClientX(state, clientX) {
@@ -10,6 +12,12 @@ const utils = {
     },
     setClientY(state, clientY) {
       state.clientY = clientY;
+    },
+    setStompSocketClient(state, stompSocketClient) {
+      state.stompSocketClient = stompSocketClient;
+    },
+    setStompSocketConnected(state, stompSocketConnected) {
+      state.stompSocketConnected = stompSocketConnected;
     },
   },
 };
