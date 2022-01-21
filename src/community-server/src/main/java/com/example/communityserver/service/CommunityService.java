@@ -408,4 +408,17 @@ public class CommunityService {
 
         community.delete();
     }
+
+    public MemberListFeignResponse getCommunityMember(Long communityId) {
+        Community community = communityRepository.findById(communityId)
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
+
+        List<Long> ids = community.getMembers().stream()
+                .filter(cm -> cm.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .map(CommunityMember::getUserId)
+                .collect(Collectors.toList());
+
+        return new MemberListFeignResponse(ids);
+    }
 }

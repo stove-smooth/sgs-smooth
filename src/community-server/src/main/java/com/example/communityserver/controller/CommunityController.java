@@ -4,6 +4,7 @@ import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.service.CommunityService;
 import com.example.communityserver.service.ResponseService;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -214,5 +215,16 @@ public class CommunityController {
         log.info("DELETE /community-server/community/{}", communityId);
         communityService.deleteCommunity(Long.parseLong(userId), communityId);
         return responseService.getSuccessResponse();
+    }
+
+    /**
+     * 커뮤니티에 속한 회원 아이디 찾기
+     */
+    @GetMapping("/{communityId}/member")
+    public DataResponse<MemberListFeignResponse> getCommunityMember(
+            @PathVariable Long communityId
+    ) {
+        log.info("GET /community-server/community/{}/member", communityId);
+        return responseService.getDataResponse(communityService.getCommunityMember(communityId));
     }
 }
