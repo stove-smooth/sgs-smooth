@@ -32,7 +32,6 @@ public class CategoryService {
 
     @Transactional
     public void createCategory(Long userId, CreateCategoryRequest request) {
-
         Community community = communityRepository.findById(request.getCommunityId())
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));

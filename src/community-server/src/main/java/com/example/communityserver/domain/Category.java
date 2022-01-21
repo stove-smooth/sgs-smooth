@@ -35,10 +35,10 @@ public class Category extends BaseTimeEntity {
     @Column(length = 200)
     private String name;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Category beforeNode;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Category nextNode;
 
     private boolean isPublic;

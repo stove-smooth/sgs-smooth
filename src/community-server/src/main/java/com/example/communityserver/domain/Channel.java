@@ -44,10 +44,10 @@ public class Channel extends BaseTimeEntity {
 
     private boolean isPublic;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Channel beforeNode;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Channel nextNode;
 
     private LocalDateTime expiredAt;

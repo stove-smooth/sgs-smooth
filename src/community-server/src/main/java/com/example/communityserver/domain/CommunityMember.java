@@ -37,10 +37,10 @@ public class CommunityMember extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private CommunityRole role;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private CommunityMember beforeNode;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private CommunityMember nextNode;
 
     @Column(length = 10)
