@@ -4,6 +4,7 @@ import com.example.presenceserver.dto.request.LoginSessionRequest;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class TcpService {
 
     private final RedisTemplate<String, Object> redisTemplate;
+    private final HashOperations<String,String,Object> hashOperations;
 
     public String processMessage(String message) {
         LoginSessionRequest request = new Gson().fromJson(message,LoginSessionRequest.class);
@@ -31,6 +33,9 @@ public class TcpService {
 
             redisTemplate.delete(session_id);
             redisTemplate.delete(user_Id);
+        } else if (request.getType().equals("state")) {
+            String user_id = request.getUser_id();
+            request.getChannel_id()
         }
 
         return "반환메세지";

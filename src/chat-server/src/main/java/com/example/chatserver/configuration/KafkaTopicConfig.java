@@ -28,12 +28,12 @@ public class KafkaTopicConfig {
     }
 
     @Bean
-    public NewTopic newTopic() {
+    public NewTopic directChat() {
         return new NewTopic(topicName,1, (short) 1);
     }
 
     @Bean
-    public NewTopic newTopic2() {
+    public NewTopic communityChat() {
         return new NewTopic(topicName2,1, (short) 1);
     }
 }

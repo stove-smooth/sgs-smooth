@@ -38,7 +38,6 @@ public class ChatController {
     private final MessageRepository messageRepository;
 
     @MessageMapping("/send-message")
-//    @SendTo("/topic/group")
     public void sendMessage(@Payload DirectChat directChat) {
         directChat.setDateTime(LocalDateTime.now());
         messageSender.send(topicName,directChat);

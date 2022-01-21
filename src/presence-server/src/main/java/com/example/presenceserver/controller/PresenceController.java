@@ -39,4 +39,5 @@ public class PresenceController {
     public Map<Long,Boolean> read(@RequestBody List<Long> requestAccountIds) {
         return presenceService.findRead(requestAccountIds);
     }
+
 }

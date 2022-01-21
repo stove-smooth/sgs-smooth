@@ -4,18 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserInfoFeignResponse extends CommonResponse {
-
-    private UserInfoResponse result;
+public class CommunityFeignResponse extends CommonResponse{
+    private UserIdResponse result;
 
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class UserInfoResponse {
-        private String name;
-        private String profileImage;
+    public static class UserIdResponse {
+        private List<Long> members;
     }
 }
