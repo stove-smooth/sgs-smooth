@@ -10,10 +10,12 @@
   "dependencies": {
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
+    "sockjs-client": "^1.5.2",
     "vue": "^2.6.11",
     "vue-router": "^3.5.3",
     "vuedraggable": "^2.24.3",
-    "vuex": "^3.6.2"
+    "vuex": "^3.6.2",
+    "webstomp-client": "^1.2.6"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

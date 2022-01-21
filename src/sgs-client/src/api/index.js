@@ -101,6 +101,9 @@ function deleteCategory(categoryId) {
 function createNewChannel(channelData) {
   return instance.post("community-server/channel", channelData);
 }
+function moveCategory(categoryData) {
+  return instance.patch("community-server/category/location", categoryData);
+}
 export {
   registerUser,
   loginUser,
@@ -122,4 +125,5 @@ export {
   createNewCategory,
   deleteCategory,
   createNewChannel,
+  moveCategory,
 };

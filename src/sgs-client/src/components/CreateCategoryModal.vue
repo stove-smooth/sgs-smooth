@@ -75,8 +75,12 @@ export default {
         public: true,
         members: null,
       };
-      await createNewCategory(categoryData);
-      window.location.reload();
+      try {
+        await createNewCategory(categoryData);
+        window.location.reload();
+      } catch (err) {
+        console.log(err.response);
+      }
     },
   },
 };

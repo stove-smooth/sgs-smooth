@@ -6,7 +6,7 @@
       :data-container="true"
     >
       <header class="server-sidebar-header">
-        <h1 class="server-name">밍디의 서버</h1>
+        <h1 class="server-name">{{ communityInfo.name }}</h1>
         <div
           class="sidebar-header-button"
           aria-label="밍디님의 서버 활동"
@@ -167,6 +167,7 @@
 <script>
 import draggable from "vuedraggable";
 import { mapState, mapMutations } from "vuex";
+import { moveCategory } from "../api/index.js";
 export default {
   components: {
     draggable,
@@ -176,6 +177,7 @@ export default {
       selected: "",
       hovered: "",
       categoryhovered: "",
+      new: 0,
     };
   },
   computed: {
@@ -187,16 +189,42 @@ export default {
       "setOpenServerPopout",
       "setCategorySettingModal",
     ]),
-    add: function () {
+    /* add: function () {
       this.list.push({ name: "Juan" });
     },
     clone: function (el) {
       return {
         name: el.name + " cloned",
       };
+    }, */
+    log: async function (evt) {
+      if (evt.moved) {
+        //console.log(evt);
+        if (evt.moved.element.channels != "undefined") {
+          console.log(evt);
+          console.log("카테고리아이디", evt.moved.element.id);
+
+          if (evt.moved.newIndex == 0) {
+            this.new = 0;
+          } else {
+            this.new = this.communityInfo.categories[evt.moved.newIndex - 1].id;
+          }
+
+          const movedCategoryInfo = {
+            id: evt.moved.element.id,
+            next: this.new,
+          };
+          try {
+            const result = await moveCategory(movedCategoryInfo);
+            console.log(result);
+          } catch (err) {
+            console.log(err.response);
+          }
+        }
+      }
     },
-    log: function (evt) {
-      window.console.log(evt);
+    happy() {
+      this.log;
     },
     hover(index) {
       this.hovered = index;
