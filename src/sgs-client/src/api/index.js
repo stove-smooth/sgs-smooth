@@ -1,10 +1,10 @@
 import axios from "axios";
 import store from "../store/index";
 import { setInterceptors } from "./common/interceptors";
-
+import { getBaseURL } from "../utils/common";
 function createInstance() {
   const instance = axios.create({
-    baseURL: "http://52.79.229.100:8000/",
+    baseURL: getBaseURL(),
   });
   return setInterceptors(instance);
 }

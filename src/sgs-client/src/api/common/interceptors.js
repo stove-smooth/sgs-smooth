@@ -3,6 +3,8 @@ import axios from "axios";
 
 async function logoutUser() {
   await store.dispatch("user/LOGOUT");
+  const stompSocketClient = await store.getters("utils/stompSocketClient");
+  stompSocketClient.disconnect();
   window.location = "http://localhost:3000/";
 }
 

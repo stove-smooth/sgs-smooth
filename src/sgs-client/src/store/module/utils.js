@@ -6,6 +6,11 @@ const utils = {
     stompSocketClient: null,
     stompSocketConnected: false,
   },
+  getters: {
+    getStompSocketClient: (state) => {
+      return state.stompSocketClient;
+    },
+  },
   mutations: {
     setClientX(state, clientX) {
       state.clientX = clientX;

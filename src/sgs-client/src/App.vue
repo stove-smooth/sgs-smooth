@@ -23,12 +23,11 @@
 </template>
 
 <script>
-import Stomp from "webstomp-client";
-import SockJS from "sockjs-client";
+import { mapGetters } from "vuex";
+
 import NavigationBar from "./components/NavigationBar.vue";
 import CreateServerModal from "./components/CreateServerModal.vue";
 import CreateChannelModal from "./components/CreateChannelModal.vue";
-import { mapGetters, mapState, mapMutations } from "vuex";
 import FriendsPlusAction from "./components/common/FriendsPlusAction.vue";
 import FriendsDeleteModal from "./components/FriendsDeleteModal.vue";
 import ServerPopout from "./components/ServerPopout.vue";
@@ -61,7 +60,6 @@ export default {
     };
   },
   created() {
-    this.connect();
     const url = window.location.pathname;
     if (url == "/settings" || url == "/login" || url == "/register") {
       this.navbar = false;
@@ -81,40 +79,8 @@ export default {
       }
     },
   },
-  methods: {
-    ...mapMutations("utils", [
-      "setStompSocketClient",
-      "setStompSocketConnected",
-    ]),
-    connect() {
-      const serverURL = "http://52.79.229.100:8000/my-chat";
-      let socket = new SockJS(serverURL);
-      this.setStompSocketClient(Stomp.over(socket));
-      console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
-      this.stompSocketClient.connect(
-        {
-          "access-token":
-            "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYWs3MzgwQG5hdmVyLmNvbSIsInJvbGUiOiJST0xFX0FETUlOIiwiaWQiOjIsImlhdCI6MTY0MjQ3MDUxMCwiZXhwIjoxNjUxMTEwNTEwfQ.9BPJb78q4GUiLX3pMcUhlT4wDR-sx3tdu8RodYNwkfk",
-          "user-id": "1",
-        }, //header
-        (frame) => {
-          // 소켓 연결 성공
-          this.connected = true;
-          this.setStompSocketConnected(true);
-          console.log("소켓 연결 성공", frame);
-        },
-        (error) => {
-          // 소켓 연결 실패
-          console.log("소켓 연결 실패", error);
-          this.connected = false;
-          this.setStompSocketConnected(false);
-        }
-      );
-    },
-  },
   computed: {
-    ...mapGetters("user", ["getEmail"]),
-    ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
+    ...mapGetters("user", ["getEmail", "getUserId", "getAccessToken"]),
   },
 };
 </script>

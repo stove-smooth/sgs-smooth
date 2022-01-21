@@ -2,6 +2,7 @@ import { loginUser, fetchUserInfo } from "../../api/index.js";
 const user = {
   namespaced: true,
   state: {
+    userId: "",
     email: "",
     nickname: "",
     code: "",
@@ -11,6 +12,19 @@ const user = {
     useraboutme: "",
   },
   getters: {
+    getUserId: (state) => {
+      if (!state.userId) {
+        try {
+          const token = localStorage.getItem("userId");
+          if (token) {
+            state.userId = JSON.parse(token);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      return state.userId;
+    },
     getEmail: (state) => {
       if (!state.email) {
         try {
@@ -52,6 +66,10 @@ const user = {
     },
   },
   mutations: {
+    setUserId(state, userId) {
+      state.userId = userId;
+      localStorage.setItem("userId", JSON.stringify(userId));
+    },
     setEmail(state, email) {
       state.email = email;
       localStorage.setItem("email", JSON.stringify(email));
@@ -76,6 +94,9 @@ const user = {
     setUserAboutMe(state, userAboutMe) {
       state.useraboutme = userAboutMe;
     },
+    clearUserId(state) {
+      state.userId = "";
+    },
     clearEmail(state) {
       state.email = "";
     },
@@ -88,15 +109,23 @@ const user = {
   },
   actions: {
     async LOGIN({ commit }, userData) {
-      const response = await loginUser(userData);
-      commit("setEmail", response.data.result.email);
-      commit("setAccessToken", response.data.result.accessToken);
-      commit("setRefreshToken", response.data.result.refreshToken);
+      try {
+        const response = await loginUser(userData);
+        console.log(response);
+        commit("setUserId", response.data.result.id);
+        commit("setEmail", response.data.result.email);
+        commit("setAccessToken", response.data.result.accessToken);
+        commit("setRefreshToken", response.data.result.refreshToken);
+      } catch (err) {
+        alert("로그인 정보를 다시 확인해주세요.");
+      }
     },
     LOGOUT({ commit }) {
+      localStorage.removeItem("userId");
       localStorage.removeItem("email");
       localStorage.removeItem("accesstoken");
       localStorage.removeItem("refreshtoken");
+      commit("clearUserId");
       commit("clearEmail");
       commit("clearAccessToken");
       commit("clearRefreshToken");
