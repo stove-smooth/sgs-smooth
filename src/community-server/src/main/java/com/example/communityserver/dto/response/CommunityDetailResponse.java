@@ -27,8 +27,8 @@ public class CommunityDetailResponse {
         communityResponse.setName(community.getName());
 
         Category firstCategory = community.getCategories().stream()
-                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
-                .filter(c -> c.isFirstNode())
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL)
+                    && Objects.isNull(c.getBeforeNode()))
                 .findFirst().orElse(null);
         if (Objects.isNull(firstCategory))
             return communityResponse;

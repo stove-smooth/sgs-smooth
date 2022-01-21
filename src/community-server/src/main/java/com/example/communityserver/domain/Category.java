@@ -35,8 +35,8 @@ public class Category extends BaseTimeEntity {
     @Column(length = 200)
     private String name;
 
-    @Column(columnDefinition = "TINYINT(1) DEFAULT TRUE")
-    private boolean isFirstNode;
+    @OneToOne(fetch = FetchType.LAZY)
+    private Category beforeNode;
 
     @OneToOne(fetch = FetchType.LAZY)
     private Category nextNode;
@@ -58,7 +58,7 @@ public class Category extends BaseTimeEntity {
     public void setNextNode(Category nextNode) {
         this.nextNode = nextNode;
         if (!Objects.isNull(nextNode))
-            nextNode.isFirstNode = false;
+            nextNode.setBeforeNode(this);
     }
 
     //== 생성 메서드 ==//
@@ -76,56 +76,29 @@ public class Category extends BaseTimeEntity {
                 category.addMember(categoryMember);
             }
         }
-        category.setFirstNode(true);
         category.setNextNode(nextNode);
         category.setStatus(CommonStatus.NORMAL);
         return category;
     }
 
-    public void locate(Category before, Category first) {
-        Category originBeforeNode = first;
-        
-        if (first.equals(this)) {
-            this.isFirstNode = false;
-            Category originNextNode = before.getNextNode();
-            before.setNextNode(this);
-            this.getNextNode().setFirstNode(true);
-            this.setNextNode(originNextNode);
+    public void locate(Category tobe, Category first) {
+        this.beforeNode.setNextNode(this.nextNode);
+        if (Objects.isNull(tobe)) {
+            this.setBeforeNode(null);
+            this.setNextNode(first);
         } else {
-            while (!Objects.isNull(originBeforeNode.getNextNode())) {
-                if (originBeforeNode.getNextNode().equals(this))
-                    break;
-                else
-                    originBeforeNode = originBeforeNode.getNextNode();
-            }
-
-            if (Objects.isNull(before)) {
-                this.isFirstNode = true;
-                originBeforeNode.setNextNode(this.nextNode);
-                this.nextNode = first;
-                first.setFirstNode(false);
-            } else {
-                Category originNextNode = before.getNextNode();
-                before.setNextNode(this);
-                if (!Objects.isNull(originNextNode))
-                    originNextNode.setNextNode(this.nextNode);
-                this.nextNode = originNextNode;
-                originBeforeNode.setNextNode(before);
-            }
+            this.setNextNode(tobe.getNextNode());
+            tobe.setNextNode(this);
         }
     }
 
     public void delete() {
-        if (this.isFirstNode) {
-            if (!Objects.isNull(this.getNextNode()))
-                this.getNextNode().setFirstNode(true);
-            this.isFirstNode = false;
-        }
-        for (Channel channel: this.getChannels()) {
-            channel.delete();
-        }
-        for (CategoryMember member: this.getMembers()) {
-            member.delete();
+        if (Objects.isNull(this.beforeNode)) {
+            if (!Objects.isNull(this.nextNode)) {
+                this.nextNode.setBeforeNode(null);
+            }
+        } else {
+            this.beforeNode.setNextNode(this.nextNode);
         }
         this.setStatus(CommonStatus.DELETED);
     }

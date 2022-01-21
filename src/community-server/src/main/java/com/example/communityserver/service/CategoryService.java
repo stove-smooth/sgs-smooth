@@ -39,6 +39,7 @@ public class CategoryService {
 
         Category firstCategory = getFirstCategory(community);
 
+        // 멤버 조회
         List<CategoryMember> members = new ArrayList<>();
         if (!request.isPublic()) {
             validateMemberId(community, request.getMembers());
@@ -61,7 +62,7 @@ public class CategoryService {
 
     private Category getFirstCategory(Community community) {
         return community.getCategories().stream()
-                .filter(c -> c.isFirstNode() && c.getStatus().equals(CommonStatus.NORMAL))
+                .filter(c -> Objects.isNull(c.getBeforeNode()) && c.getStatus().equals(CommonStatus.NORMAL))
                 .findFirst().orElse(null);
     }
 
@@ -106,7 +107,6 @@ public class CategoryService {
 
     @Transactional
     public void locateCategory(Long userId, LocateRequest request) {
-
         Category target = categoryRepository.findById(request.getId())
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CATEGORY));
@@ -118,25 +118,21 @@ public class CategoryService {
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .collect(Collectors.toList());
 
-        Category first = getFirstCategory(community);
-
-        Category before = null;
-        if (request.getNext().equals(0L)) {
-            if (target.equals(first))
-                throw new CustomException(ALREADY_LOCATED);
-        } else {
-            before = categories.stream()
-                    .filter(c -> c.getId().equals(request.getNext()))
-                    .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+        Category tobe = null;
+        if (!request.getNext().equals(0L)) {
+            tobe = categories.stream()
+                    .filter(c -> c.getId().equals(request.getNext())
+                        && c.getStatus().equals(CommonStatus.NORMAL))
                     .findAny().orElseThrow(() -> new CustomException(NON_VALID_NEXT_NODE));
-
-            if (!Objects.isNull(before.getNextNode())) {
-                if (before.getNextNode().equals(target))
-                    throw new CustomException(ALREADY_LOCATED);
-            }
+        } else {
+            if (Objects.isNull(target.getBeforeNode()))
+                throw new CustomException(ALREADY_LOCATED);
         }
 
-        target.locate(before, first);
+        if (tobe.getNextNode().equals(target))
+            throw new CustomException(ALREADY_LOCATED);
+
+        target.locate(tobe, getFirstCategory(community));
     }
 
     @Transactional

@@ -116,7 +116,7 @@ public class ChannelService {
 
     private Channel getFirstChannel(Category category) {
         return category.getChannels().stream()
-                .filter(c -> c.isFirstNode() && c.getStatus().equals(ChannelStatus.NORMAL))
+                .filter(c -> Objects.isNull(c.getBeforeNode()) && c.getStatus().equals(ChannelStatus.NORMAL))
                 .findFirst().orElse(null);
     }
 
@@ -332,7 +332,6 @@ public class ChannelService {
 
     @Transactional
     public void locateChannel(Long userId, LocateRequest request) {
-
         Channel target = channelRepository.findById(request.getId())
                 .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
@@ -347,24 +346,20 @@ public class ChannelService {
                 .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                 .collect(Collectors.toList());
 
-        Channel first = getFirstChannel(category);
-
-        Channel before = null;
-        if (request.getNext().equals(0L)) {
-            if (target.equals(first))
-                throw new CustomException(ALREADY_LOCATED);
-        } else {
-            before = channels.stream()
-                    .filter(c -> c.getId().equals(request.getNext()))
-                    .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
+        Channel tobe = null;
+        if (!request.getNext().equals(0L)) {
+            tobe = channels.stream()
+                    .filter(c -> c.getId().equals(request.getNext())
+                        && c.getStatus().equals(ChannelStatus.NORMAL))
                     .findAny().orElseThrow(() -> new CustomException(NON_VALID_NEXT_NODE));
-
-            if (!Objects.isNull(before.getNextNode())) {
-                if (before.getNextNode().equals(target))
-                    throw new CustomException(ALREADY_LOCATED);
-            }
+        } else {
+            if (Objects.isNull(target.getBeforeNode()))
+                throw new CustomException(ALREADY_LOCATED);
         }
 
-        target.locate(before, first);
+        if (tobe.getNextNode().equals(target))
+            throw new CustomException(ALREADY_LOCATED);
+
+        target.locate(tobe, getFirstChannel(category));
     }
 }

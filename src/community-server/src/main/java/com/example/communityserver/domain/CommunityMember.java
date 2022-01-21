@@ -37,8 +37,8 @@ public class CommunityMember extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private CommunityRole role;
 
-    @Column(columnDefinition = "TINYINT(1) DEFAULT TRUE")
-    private boolean isFirstNode;
+    @OneToOne(fetch = FetchType.LAZY)
+    private CommunityMember beforeNode;
 
     @OneToOne(fetch = FetchType.LAZY)
     private CommunityMember nextNode;
@@ -56,7 +56,7 @@ public class CommunityMember extends BaseTimeEntity {
     public void setNextNode(CommunityMember nextNode) {
         this.nextNode = nextNode;
         if (!Objects.isNull(nextNode))
-            nextNode.isFirstNode = false;
+            nextNode.setBeforeNode(this);
     }
 
     //== 생성 메서드 ==//
@@ -75,60 +75,41 @@ public class CommunityMember extends BaseTimeEntity {
         communityMember.setProfileImage(profileImage);
         communityMember.setMemo(null);
         communityMember.setRole(role);
-        communityMember.setFirstNode(true);
         communityMember.setNextNode(nextNode);
         communityMember.setStatus(CommunityMemberStatus.NORMAL);
         return communityMember;
     }
 
     //== 비즈니스 메서드 ==//
-    public void locate(CommunityMember before, CommunityMember first) {
-        CommunityMember originBeforeNode = first;
-
-        if (first.equals(this)) {
-            this.isFirstNode = false;
-            CommunityMember originNextNode = before.getNextNode();
-            before.setNextNode(this);
-            this.getNextNode().setFirstNode(true);
-            this.setNextNode(originNextNode);
+    public void locate(CommunityMember tobe, CommunityMember first) {
+        this.beforeNode.setNextNode(this.nextNode);
+        if (Objects.isNull(tobe)) {
+            this.setBeforeNode(null);
+            this.setNextNode(first);
         } else {
-            while(!Objects.isNull(originBeforeNode.getNextNode())) {
-                if (originBeforeNode.getNextNode().equals(this))
-                    break;
-                else
-                    originBeforeNode = originBeforeNode.getNextNode();
-            }
-            if (Objects.isNull(before)) {
-                this.isFirstNode = true;
-                originBeforeNode.setNextNode(this.nextNode);
-                this.nextNode = first;
-                first.setFirstNode(false);
-            } else {
-                CommunityMember originNextNode = before.getNextNode();
-                before.setNextNode(this);
-                if (!Objects.isNull(originNextNode))
-                    originNextNode.setNextNode(this.nextNode);
-                this.nextNode = originNextNode;
-                originBeforeNode.setNextNode(before);
-            }
+            this.setNextNode(tobe.getNextNode());
+            tobe.setNextNode(this);
         }
     }
 
     public void delete() {
-        if (this.isFirstNode) {
-            if (!Objects.isNull(this.getNextNode()))
-                this.getNextNode().isFirstNode = true;
-            this.isFirstNode = false;
-        }
+        deleteInList();
         this.setStatus(CommunityMemberStatus.DELETED);
     }
 
     public void suspend() {
-        if (this.isFirstNode) {
-            if (!Objects.isNull(this.getNextNode()))
-                this.getNextNode().isFirstNode = true;
-            this.isFirstNode = false;
-        }
+        deleteInList();
         this.setStatus(CommunityMemberStatus.SUSPENDED);
+    }
+
+    // 노드 연결 관리용
+    private void deleteInList() {
+        if (Objects.isNull(this.beforeNode)) {
+            if (!Objects.isNull(this.nextNode)) {
+                this.nextNode.setBeforeNode(null);
+            }
+        } else {
+            this.beforeNode.setNextNode(this.nextNode);
+        }
     }
 }

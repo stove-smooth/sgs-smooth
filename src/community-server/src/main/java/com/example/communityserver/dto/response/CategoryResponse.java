@@ -29,8 +29,8 @@ public class CategoryResponse {
         categoryResponse.setName(category.getName());
 
         Channel firstChannel = category.getChannels().stream()
-                .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
-                .filter(c -> c.isFirstNode())
+                .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL)
+                    && Objects.isNull(c.getBeforeNode()))
                 .findFirst().orElse(null);
         if (Objects.isNull(firstChannel))
             return categoryResponse;
