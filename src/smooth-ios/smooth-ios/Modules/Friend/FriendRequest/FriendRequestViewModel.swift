@@ -19,14 +19,10 @@ class FriendRequestViewModel: BaseViewModel {
     }
     
     struct Output {
-        
+        let dismiss = PublishRelay<Void>()
     }
     
     override func bind() {
-//        isValidUser(userStr: self.input.userTextField.value)
-        
-        
-        
         self.input.userTextField
             .subscribe(onNext: {
                 print($0)
@@ -47,6 +43,7 @@ class FriendRequestViewModel: BaseViewModel {
                 }
             })
             .disposed(by: disposeBag)
+        
     }
 }
 

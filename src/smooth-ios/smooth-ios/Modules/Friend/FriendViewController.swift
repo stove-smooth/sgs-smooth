@@ -63,7 +63,23 @@ class FriendViewController: BaseViewController, CoordinatorContext {
             $0.edges.equalToSuperview()
         }
     }
+    
+    func setNavigation() {
+        let buttonImg = UIImage(named: "User+Add")?.resizeImage(size: CGSize(width: 25, height: 25))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(
+            image: buttonImg,
+            style: .plain,
+            target: self,
+            action: #selector(didTapAddButton)
+        )
+    
+        self.title = "친구"
+    }
    
+    @objc func didTapAddButton(_ sender: UIBarButtonItem) {
+        self.coordinator?.goToRequest()
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.viewModel.input.getFriendList.onNext(())
@@ -71,10 +87,10 @@ class FriendViewController: BaseViewController, CoordinatorContext {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "친구"
         view.backgroundColor = .messageBarDarkGray
         
         self.setupTableView()
+        self.setNavigation()
         self.viewModel.input.viewDidLoad.onNext(())
     }
     
@@ -84,17 +100,6 @@ class FriendViewController: BaseViewController, CoordinatorContext {
         viewModel.sections
             .bind(to: tableView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
-        /*
-        tableView.rx.itemSelected
-        .subscribe(onNext: { [weak self] indexPath in
-        guard let self = self else { return }
-        let data = self.roomViewModel.data
-        print("\(indexPath.row)번째 Cell: \(data[indexPath.row])")
-        
-        // todos: 선택 시 channel viewModel에게 이벤트 방출
-        })
-        .disposed(by: disposeBag)
-        */
         
         tableView.rx.modelSelected(FriendCellType.self)
                 .subscribe(onNext:  { item in
@@ -107,25 +112,6 @@ class FriendViewController: BaseViewController, CoordinatorContext {
             .subscribe { _ in
                 self.viewModel.loadFriend()
             }
-            .disposed(by: disposeBag)
-        
-//        self.viewModel.output.goToRequest
-//            .observe(on: MainScheduler.instance)
-//            .bind(onNext: self.goToRequeset)
-//            .disposed(by: disposeBag)
-        
-        self.viewModel.output.tapRejectButton
-            .subscribe(onNext: { friend in
-                
-                
-                guard let friend = friend else {
-                    return
-                }
-
-                FriendRepository.deleteFriend(DeleteFriendRequest(id: friend.id)) { response, _  in
-                    self.viewModel.loadFriend()
-                }
-            })
             .disposed(by: disposeBag)
     }
     

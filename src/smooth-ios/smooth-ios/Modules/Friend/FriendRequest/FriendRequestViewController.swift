@@ -6,18 +6,33 @@
 //
 
 import UIKit
+import Then
 import RxSwift
 import RxCocoa
 
-class FriendRequestViewController: BaseViewController, CoordinatorContext {
-    weak var coordinator: FriendCoordinator?
+protocol FriendRequestDelegate: class {
+    func onClose()
+}
+
+class FriendRequestViewController: BaseViewController {
     var navigationViewController: UINavigationController?
+    weak var delegate: FriendRequestDelegate?
     
     private let requestView = FriendRequestView()
     private let viewModel = FriendRequestViewModel()
     
-    static func instance() -> FriendRequestViewController {
-        return FriendRequestViewController(nibName: nil, bundle: nil)
+    static func instance() -> UINavigationController {
+        let friendVC = FriendRequestViewController(nibName: nil, bundle: nil)
+        
+        return UINavigationController(rootViewController: friendVC).then {
+            $0.modalPresentationStyle = .overCurrentContext
+            $0.isNavigationBarHidden = true
+        }
+    }
+    
+    private func dismiss() {
+        self.dismiss(animated: true, completion: nil)
+        self.delegate?.onClose()
     }
     
     override func loadView() {
@@ -52,6 +67,12 @@ class FriendRequestViewController: BaseViewController, CoordinatorContext {
             .orEmpty
             .bind(to: viewModel.input.userTextField)
             .disposed(by: disposeBag)
+        
+        self.requestView.closeButton.rx.tap
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: self.dismiss)
+            .disposed(by: disposeBag)
+        
     }
 }
 
