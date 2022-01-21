@@ -46,11 +46,22 @@ struct FriendRepository: Networkable {
         }
     }
     
-    static func deleteFriend(_ request: DeleteFriendRequest, _ completion: @escaping (DeleteFriendResponse?, Error?) -> Void) {
+    static func deleteFriend(_ request: DeleteFriendRequest, _ completion: @escaping (DefaultFriendResponse?, Error?) -> Void) {
         makeProvider().request(.deleteFriend(param: request)) { result in
-            switch BaseResponse<DeleteFriendResponse>.processJSONResponse(result) {
+            switch BaseResponse<DefaultFriendResponse>.processJSONResponse(result) {
             case .success(let responses):
                 return completion(responses, nil)
+            case .failure(let error):
+                return completion(nil, error)
+            }
+        }
+    }
+    
+    static func requestFriend(_ request: RequestFriend, _ completion: @escaping (DefaultFriendResponse?, Error?) -> Void) {
+        makeProvider().request(.requestFriend(param: request)) { result in
+            switch BaseResponse<DefaultFriendResponse>.processJSONResponse(result) {
+            case .success(let response):
+                return completion(response, nil)
             case .failure(let error):
                 return completion(nil, error)
             }

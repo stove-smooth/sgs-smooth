@@ -23,7 +23,7 @@ extension UIImageView {
     
     func makeRoundedRactangle() {
         let radius = 10.0
-        self.layer.cornerRadius = radius
+        self.layer.cornerRadius = CGFloat(radius)
         self.contentMode = .scaleAspectFill
         self.layer.masksToBounds = true
         self.clipsToBounds = true

@@ -40,10 +40,15 @@ struct DefaultResponse: Codable {
     let message: String
 }
 
-struct DeleteFriendResponse: Codable {
+struct DefaultFriendResponse: Codable {
     let result: DefaultResponse
 }
 
 struct DeleteFriendRequest: Codable {
     let id: Int
+}
+
+struct RequestFriend: Codable {
+    let name: String
+    let code: String
 }

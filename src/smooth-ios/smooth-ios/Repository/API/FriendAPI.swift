@@ -11,6 +11,7 @@ import Moya
 enum FriendTarget {
     case fetchFriend
     case deleteFriend(param: DeleteFriendRequest)
+    case requestFriend(param: RequestFriend)
 }
 
 extension FriendTarget: BaseAPI, AccessTokenAuthorizable {
@@ -21,6 +22,8 @@ extension FriendTarget: BaseAPI, AccessTokenAuthorizable {
             return "/auth-server/auth/friend"
         case .deleteFriend:
             return "/auth-server/auth/friend"
+        case .requestFriend:
+            return "/auth-server/auth/friend"
         }
     }
     
@@ -28,6 +31,7 @@ extension FriendTarget: BaseAPI, AccessTokenAuthorizable {
         switch self {
         case .fetchFriend: return .get
         case .deleteFriend: return .delete
+        case .requestFriend: return .post
         }
     }
     
@@ -37,6 +41,8 @@ extension FriendTarget: BaseAPI, AccessTokenAuthorizable {
             return .requestPlain
         case .deleteFriend(let request):
             return .requestParameters(parameters: ["id": request.id], encoding: URLEncoding.queryString)
+        case .requestFriend(let request):
+            return .requestCustomJSONEncodable(request, encoder: JSONEncoder())
         }
     }
     
@@ -45,6 +51,8 @@ extension FriendTarget: BaseAPI, AccessTokenAuthorizable {
         case .fetchFriend:
             return .custom("")
         case .deleteFriend:
+            return .custom("")
+        case .requestFriend:
             return .custom("")
         }
     }
