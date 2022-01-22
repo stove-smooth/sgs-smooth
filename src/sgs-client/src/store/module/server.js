@@ -10,12 +10,13 @@ const server = {
     createChannel: false,
     createCategory: false,
     categorySettingModal: false,
-    openServerPopout: false,
+    openServerPopout: null,
     categoryReadyToDelete: false,
     communityList: [],
     communityInfo: null,
     communityOnlineMemberList: [],
     communityOfflineMemberList: [],
+    serverSettingModal: null,
   },
   mutations: {
     setCreateServer(state, createServer) {
@@ -24,8 +25,8 @@ const server = {
     setCreateChannel(state, createChannel) {
       state.createChannel = createChannel;
     },
-    setOpenServerPopout(state) {
-      state.openServerPopout = !state.openServerPopout;
+    setOpenServerPopout(state, openServerPopout) {
+      state.openServerPopout = openServerPopout;
     },
     setCommunityList(state, communityList) {
       state.communityList = communityList;
@@ -48,6 +49,9 @@ const server = {
     setCategoryReadyToDelete(state, categoryReadyToDelete) {
       state.categoryReadyToDelete = categoryReadyToDelete;
     },
+    setServerSettingModal(state, serverSettingModal) {
+      state.serverSettingModal = serverSettingModal;
+    },
   },
   actions: {
     async FETCH_COMMUNITYLIST({ commit }) {
@@ -56,12 +60,10 @@ const server = {
     },
     async FETCH_COMMUNITYINFO({ commit }, serverid) {
       const result = await fetchCommunityInfo(serverid);
-      console.log("펫치커뮤니티정보", result.data.result);
       commit("setCommunityInfo", result.data.result);
     },
     async FETCH_COMMUNITYMEMBERLIST({ commit }, serverid) {
       const result = await fetchCommunityMemberList(serverid);
-      console.log(result.data.result.members);
       let onlineMembers = [];
       let offlineMembers = [];
       for (var i = 0; i < result.data.result.members.length; i++) {

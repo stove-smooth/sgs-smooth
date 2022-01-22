@@ -3,7 +3,7 @@
     <section class="my-section">
       <div class="my-section-container">
         <div
-          class="my-avatar-wrapper"
+          class="margin-right-8px"
           aria-controls="popout"
           aria-expaned="true"
           aria-lable="상태설정"
@@ -121,9 +121,6 @@ export default {
   padding: 0 8px;
   margin-bottom: 1px;
   flex-shrink: 0;
-}
-.my-avatar-wrapper {
-  margin-right: 8px;
 }
 .nametag {
   cursor: pointer;

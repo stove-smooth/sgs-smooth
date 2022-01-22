@@ -5,13 +5,13 @@
         <div class="tutorial-container">
           <div
             class="listItem"
-            @mouseover="hover('me')"
+            @mouseover="hover('@me')"
             @mouseleave="unhover"
-            @click="enterMe('me')"
+            @click="enterMe('@me')"
           >
             <div
               class="selected-wrapper"
-              v-show="hovered === 'me' || selected === 'me'"
+              v-show="hovered === '@me' || selected === '@me'"
             >
               <span class="selected-item"></span>
             </div>
@@ -20,7 +20,7 @@
                 class="circleIcon-button"
                 v-bind:class="{
                   'circleIcon-button-hovered':
-                    hovered === 'me' || selected === 'me',
+                    hovered === '@me' || selected === '@me',
                 }"
               >
                 <svg class="discord-logo"></svg>
@@ -45,7 +45,7 @@
             >
               <div
                 class="selected-wrapper"
-                v-show="hovered === community.id || selected === community.id"
+                v-show="hovered == community.id || selected == community.id"
               >
                 <span class="selected-item"></span>
               </div>
@@ -58,7 +58,7 @@
                       class="server-nav-image"
                       v-bind:class="{
                         'selected-border-radius':
-                          hovered === community.id || selected === community.id,
+                          hovered == community.id || selected == community.id,
                       }"
                     />
                   </div>
@@ -67,7 +67,7 @@
                       class="server"
                       v-bind:class="{
                         'selected-border-radius':
-                          hovered === community.id || selected === community.id,
+                          hovered == community.id || selected == community.id,
                       }"
                     >
                       {{ community.name }}
@@ -103,12 +103,12 @@ export default {
   data() {
     return {
       hovered: "",
-      selected: "me",
+      selected: "@me",
       images: "",
     };
   },
   methods: {
-    ...mapActions("server", ["LOGOUT", "FETCH_COMMUNITYLIST"]),
+    ...mapActions("server", ["FETCH_COMMUNITYLIST"]),
     ...mapMutations("server", ["setCreateServer"]),
     hover(index) {
       this.hovered = index;
@@ -138,6 +138,9 @@ export default {
     ...mapState("server", ["communityList"]),
   },
   async created() {
+    const currentUrl = window.location.pathname;
+    let array = currentUrl.split("/");
+    this.selected = array[2];
     await this.FETCH_COMMUNITYLIST();
   },
 };

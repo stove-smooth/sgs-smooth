@@ -9,7 +9,7 @@
             </div>
             <svg class="invite-people-primary-color"></svg>
           </div>
-          <div class="plus-action-label-container">
+          <div class="plus-action-label-container" @click="openServerSetting">
             <div class="plus-action-label">서버 설정</div>
             <svg class="settings"></svg>
           </div>
@@ -38,9 +38,12 @@ export default {
     ...mapState("server", ["openServerPopout"]),
   },
   methods: {
-    ...mapMutations("server", ["setCreateCategory"]),
+    ...mapMutations("server", ["setCreateCategory", "setServerSettingModal"]),
     createNewCategory() {
-      this.setCreateCategory(true);
+      this.setCreateCategory(this.openServerPopout);
+    },
+    openServerSetting() {
+      this.setServerSettingModal(this.openServerPopout);
     },
   },
 };

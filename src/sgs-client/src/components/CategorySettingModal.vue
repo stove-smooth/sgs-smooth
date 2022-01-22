@@ -6,17 +6,13 @@
     ></div>
     <setting-modal>
       <template slot="setting-sidebar">
-        <div
-          class="channel-default-container"
-          data-dnd-name="일반"
-          aria-label="채널"
-        >
+        <div class="channel-default-container">
           <div class="channel-content-wrapper" role="listitem">
-            <div class="channel-content" v-bind:style="{ marginRight: '8px' }">
+            <div class="channel-content margin-right-8px">
               <div class="channel-main-content">
                 <div class="channel-name-wrapper">
                   <div
-                    class="primary-text-content white-color text-align-center"
+                    class="primary-text-content white-color text-align-center font-size-14px"
                   >
                     카테고리 편집
                   </div>
@@ -26,13 +22,14 @@
           </div>
           <div class="channel-content-wrapper" role="listitem">
             <div
-              class="channel-content"
-              v-bind:style="{ marginRight: '8px' }"
+              class="channel-content margin-right-8px"
               @click="setCategoryReadyToDelete(categorySettingModal)"
             >
               <div class="channel-main-content">
                 <div class="channel-name-wrapper">
-                  <div class="primary-text-content red-color text-align-center">
+                  <div
+                    class="primary-text-content red-color text-align-center font-size-14px"
+                  >
                     카테고리 삭제
                   </div>
                 </div>

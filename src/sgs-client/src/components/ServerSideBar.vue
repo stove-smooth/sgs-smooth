@@ -2,11 +2,11 @@
   <nav class="server-sidebar-container">
     <div
       class="tutorial-container clickable"
-      @click="setOpenServerPopout"
+      @click="clickServerPopout()"
       :data-container="true"
     >
       <header class="server-sidebar-header">
-        <h1 class="server-name">밍디의 서버</h1>
+        <h1 class="server-name">{{ communityInfo.name }}</h1>
         <div
           class="sidebar-header-button"
           aria-label="밍디님의 서버 활동"
@@ -73,6 +73,9 @@
                   >
                     <svg class="small-settings"></svg>
                   </div>
+                  <div v-show="categoryhovered != element.id">
+                    <div class="none-settings"></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -89,8 +92,15 @@
                     class="channel-content"
                     @mouseover="hover(el.id)"
                     @mouseleave="unhover"
+                    v-bind:class="{
+                      'channel-content-hover':
+                        hovered === el.id || selected == el.id,
+                    }"
                   >
-                    <div class="channel-main-content">
+                    <div
+                      class="channel-main-content"
+                      @click="el.type === 'TEXT' && routeChannel(el.id)"
+                    >
                       <div
                         v-if="el.type === 'TEXT'"
                         class="channel-classification-wrapper"
@@ -111,7 +121,7 @@
                     </div>
                     <div
                       class="create-children-wrapper"
-                      v-show="hovered === el.id"
+                      v-show="hovered === el.id || selected == el.id"
                     >
                       <div
                         class="create-children-button"
@@ -157,63 +167,17 @@
 <script>
 import draggable from "vuedraggable";
 import { mapState, mapMutations } from "vuex";
+import { moveCategory } from "../api/index.js";
 export default {
   components: {
     draggable,
   },
   data() {
     return {
+      selected: "",
       hovered: "",
       categoryhovered: "",
-      all: [
-        {
-          id: 1,
-          name: "채팅채널",
-          channels: [
-            {
-              id: 3,
-              name: "밍디의 채팅채널",
-              type: "chat",
-            },
-            {
-              id: 4,
-              name: "두리의 채팅채널",
-              type: "chat",
-            },
-            {
-              id: 5,
-              name: "병찬의 채팅채널",
-              type: "chat",
-            },
-            {
-              id: 6,
-              name: "희동의 채팅채널",
-              type: "chat",
-            },
-          ],
-        },
-        {
-          id: 2,
-          name: "음성채널",
-          channels: [
-            {
-              id: 7,
-              name: "노래방",
-              type: "voice",
-            },
-            {
-              id: 8,
-              name: "라운지",
-              type: "voice",
-            },
-            {
-              id: 9,
-              name: "광장",
-              type: "voice",
-            },
-          ],
-        },
-      ],
+      new: 0,
     };
   },
   computed: {
@@ -225,16 +189,42 @@ export default {
       "setOpenServerPopout",
       "setCategorySettingModal",
     ]),
-    add: function () {
+    /* add: function () {
       this.list.push({ name: "Juan" });
     },
     clone: function (el) {
       return {
         name: el.name + " cloned",
       };
+    }, */
+    log: async function (evt) {
+      if (evt.moved) {
+        //console.log(evt);
+        if (evt.moved.element.channels != "undefined") {
+          console.log(evt);
+          console.log("카테고리아이디", evt.moved.element.id);
+
+          if (evt.moved.newIndex == 0) {
+            this.new = 0;
+          } else {
+            this.new = this.communityInfo.categories[evt.moved.newIndex - 1].id;
+          }
+
+          const movedCategoryInfo = {
+            id: evt.moved.element.id,
+            next: this.new,
+          };
+          try {
+            const result = await moveCategory(movedCategoryInfo);
+            console.log(result);
+          } catch (err) {
+            console.log(err.response);
+          }
+        }
+      }
     },
-    log: function (evt) {
-      window.console.log(evt);
+    happy() {
+      this.log;
     },
     hover(index) {
       this.hovered = index;
@@ -274,9 +264,35 @@ export default {
         }
       }
     },
+    clickServerPopout() {
+      if (this.openServerPopout) {
+        this.setOpenServerPopout();
+      } else {
+        const serverInfo = {
+          serverId: this.communityInfo.id,
+          serverName: this.communityInfo.name,
+        };
+        this.setOpenServerPopout(serverInfo);
+      }
+    },
+    routeChannel(id) {
+      this.selected = id;
+      this.$router.push("/channels/" + this.communityInfo.id + "/" + id);
+    },
   },
   mounted() {
+    let array = window.location.pathname.split("/");
+    this.selected = array[3];
     window.addEventListener("click", this.onClick);
+  },
+  watch: {
+    // 라우터의 변경을 감시
+    $route(to, from) {
+      if (to.path != from.path) {
+        let array = to.path.split("/");
+        this.selected = array[3];
+      }
+    },
   },
 };
 </script>
@@ -489,13 +505,7 @@ export default {
   /* -ms-flex-align: center; */
   align-items: center;
 }
-.channel-content:hover {
-  background-color: rgba(79, 84, 92, 0.32);
-}
-.channel-content:active {
-  background-color: rgba(79, 84, 92, 0.32);
-}
-.channel-content:visited {
+.channel-content-hover {
   background-color: rgba(79, 84, 92, 0.32);
 }
 .channel-main-content {
@@ -639,8 +649,13 @@ export default {
   margin-left: 0;
   margin-right: 2px;
   background-image: url("../assets/private-channel-plus.svg");
+  z-index: 99;
 }
 .height-100 {
   height: 100%;
+}
+.none-settings {
+  width: 16px;
+  height: 12px;
 }
 </style>

@@ -1,91 +1,24 @@
 <template>
   <div>
-    <div class="wrapper2">
-      <div class="wrapper">
-        <div class="container">
-          <navigation-bar v-if="getEmail && navbar"></navigation-bar>
-          <router-view></router-view>
-        </div>
-      </div>
-    </div>
-    <server-popout></server-popout>
-    <friends-plus-action></friends-plus-action>
-    <create-server-modal></create-server-modal>
-    <create-channel-modal></create-channel-modal>
-    <friends-delete-modal></friends-delete-modal>
-    <friends-block-modal></friends-block-modal>
-    <friends-profile-modal></friends-profile-modal>
-    <create-category-modal></create-category-modal>
-    <category-setting></category-setting>
-    <category-delete-modal></category-delete-modal>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import NavigationBar from "./components/NavigationBar.vue";
-import CreateServerModal from "./components/CreateServerModal.vue";
-import CreateChannelModal from "./components/CreateChannelModal.vue";
 import { mapGetters } from "vuex";
-import FriendsPlusAction from "./components/common/FriendsPlusAction.vue";
-import FriendsDeleteModal from "./components/FriendsDeleteModal.vue";
-import ServerPopout from "./components/ServerPopout.vue";
-import FriendsBlockModal from "./components/FriendsBlockModal.vue";
-import FriendsProfileModal from "./components/FriendsProfileModal.vue";
-import CreateCategoryModal from "./components/CreateCategoryModal.vue";
-import CategorySetting from "./components/CategorySetting.vue";
-import CategoryDeleteModal from "./components/CategoryDeleteModal.vue";
-
 export default {
-  name: "App",
-  components: {
-    NavigationBar,
-    CreateServerModal,
-    CreateChannelModal,
-    FriendsPlusAction,
-    FriendsDeleteModal,
-    ServerPopout,
-    FriendsBlockModal,
-    FriendsProfileModal,
-    CreateCategoryModal,
-    CategorySetting,
-    CategoryDeleteModal,
-  },
-  data() {
-    return {
-      navbar: true,
-    };
-  },
-  created() {
-    console.log(window.location.pathname);
-    const currentUrl = window.location.pathname;
-    if (
-      currentUrl == "/settings" ||
-      currentUrl == "/login" ||
-      currentUrl == "/register"
-    ) {
-      this.navbar = false;
+  mounted() {
+    if (!this.getEmail) {
+      this.$router.replace("/login");
     } else {
-      this.navbar = true;
+      this.$router.replace("/channels/@me");
     }
-  },
-  watch: {
-    // 라우터의 변경을 감시
-    $route(to, from) {
-      if (to.path != from.path) {
-        if (to.path === "/settings") {
-          this.navbar = false;
-        } else {
-          this.navbar = true;
-        }
-      }
-    },
   },
   computed: {
     ...mapGetters("user", ["getEmail"]),
   },
 };
 </script>
-
 <style>
 @import "./css/common.css";
 .wrapper2 {

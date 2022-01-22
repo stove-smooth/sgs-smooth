@@ -85,7 +85,6 @@ export default {
         var user = this.userinfo.split("#");
         this.username = user[0];
         this.usercode = user[1];
-        console.log(this.username, this.usercode);
         const userData = {
           name: this.username,
           code: this.usercode,
@@ -97,7 +96,6 @@ export default {
       } catch (err) {
         this.isAddedSuccess = "fail";
         console.log(err);
-        console.log("실패");
       }
     },
   },

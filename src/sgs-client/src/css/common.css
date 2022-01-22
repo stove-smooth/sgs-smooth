@@ -285,6 +285,12 @@
 .margin-bottom-16px {
   margin-bottom: 16px;
 }
+.margin-right-8px {
+  margin-right: 8px;
+}
+.font-size-14px {
+  font-size: 14px;
+}
 :root {
   --white-color: #fff;
   --discord-primary: #5865f2;

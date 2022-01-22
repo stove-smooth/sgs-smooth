@@ -4,62 +4,85 @@
       <div class="thin-scrollbar server-chat-scroller">
         <div class="scroller-content">
           <ol class="scroller-inner">
-            <li class="chat-message-wrapper">
-              <div class="chat-message-wrapper2">
-                <div class="chat-message-content">
-                  <img
-                    src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=80"
-                    class="chat-avatar clickable"
-                    alt="image"
-                  />
-                  <h2 class="chat-avatar-header">
-                    <span class="chat-user-name">user0</span>
-                    <span class="chat-time-stamp">어제 오후 11:56</span>
-                  </h2>
-                  <div class="message-content">안녕~^^</div>
+            <div v-for="(item, idx) in receiveList" :key="idx">
+              <li class="chat-message-wrapper">
+                <div
+                  class="primary-chat-message-wrapper others-chat-message-wrapper"
+                >
+                  <div class="chat-message-content">
+                    <img
+                      src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=80"
+                      class="chat-avatar clickable"
+                      alt="image"
+                    />
+                    <h2 class="chat-avatar-header">
+                      <span class="chat-user-name">{{ item.name }}</span>
+                      <span class="chat-time-stamp">{{ item.time }}</span>
+                    </h2>
+                    <div class="message-content">{{ item.message }}</div>
+                  </div>
                 </div>
-              </div>
-            </li>
+              </li>
+            </div>
           </ol>
         </div>
       </div>
     </div>
-    <form class="channel-message-input-form">
+    <div class="channel-message-input-form">
       <div class="channel-message-area">
         <div class="channel-message-scrollbar-container">
-          <div v-show="false">
+          <div v-if="thumbnails.length > 0">
             <!--ul에 scrollbar추가필요.-->
             <ul
-              class="channel-attachment-area"
+              class="channel-attachment-area scrollbar-ghost"
               role="list"
               data-list-id="attachments"
             >
-              <li
-                class="upload-attachments"
-                role="listitem"
-                data-list-item-id="attachments-upload"
-                tabindex="-1"
-              >
-                <div class="message-upload-container">
-                  <div class="message-upload-image-container"></div>
-                  <div class="message-upload-filename-container"></div>
-                  <div class="message-upload-actionbar-container"></div>
-                </div>
-              </li>
+              <div v-for="(item, index) in thumbnails" :key="index">
+                <li
+                  class="upload-attachments"
+                  role="listitem"
+                  data-list-item-id="attachments-upload"
+                  tabindex="-1"
+                >
+                  <div class="message-upload-container">
+                    <div class="message-upload-image-container">
+                      <div class="spoiler-wrapper">
+                        <img
+                          class="attach-image"
+                          :src="item"
+                          alt="첨부이미지"
+                        />
+                      </div>
+                    </div>
+                    <div class="message-upload-filename-container">
+                      <div class="filename-wrapper">
+                        {{ images[index].name }}
+                      </div>
+                    </div>
+                    <div class="message-upload-actionbar-container">
+                      <div aria-label="첨부파일 수정" class="actionbar-wrapper">
+                        <div class="actionbar-wrapper2">
+                          <div
+                            @click="deleteAttachment(index)"
+                            class="remove-attachment-button"
+                            aria-label="첨부 파일 제거"
+                            role="button"
+                            tabindex="0"
+                          >
+                            <svg class="trashcan"></svg>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </div>
             </ul>
           </div>
           <div class="message-attachment-divider"></div>
           <div class="channel-message-form-inner-button">
-            <div class="message-upload-input">
-              <input
-                class="file-input"
-                type="file"
-                tabindex="-1"
-                multiple
-                aria-hidden="true"
-              />
-            </div>
-            <div class="message-attach-button-wrapper">
+            <div class="upload-chat-image-icon">
               <button
                 class="message-attach-button"
                 aria-label="파일을 업로드하거나 초대를 보내세요"
@@ -67,49 +90,92 @@
                 <div class="attach-button-inner">
                   <svg class="attach-button"></svg>
                 </div>
+                <input
+                  class="file-input"
+                  multiple
+                  type="file"
+                  ref="images"
+                  accept="image/*"
+                  @change="uploadImage()"
+                />
               </button>
             </div>
             <div class="channel-message-input-area">
-              <div class="channel-message-input-placeholder">
-                #잡담에 메시지 보내기
-              </div>
               <textarea
                 id="input-text-wrapper"
-                aria-autocomplete="list"
                 class="channel-message-input-wrapper"
                 aria-haspopup="listbox"
                 aria-label="#잡담에서 메시지보내기"
-                aria-multiline="true"
-                contenteditable="true"
-                role="textbox"
-                :value="value"
-                @input="writeChat"
+                v-model="text"
+                @keyup="sendMessage"
+                placeholder="#잡담에 메세지 보내기"
               ></textarea>
             </div>
           </div>
         </div>
       </div>
-    </form>
+    </div>
   </div>
 </template>
 
 <script>
+import { converToThumbnail } from "../utils/common.js";
+import { mapState } from "vuex";
 export default {
   data() {
     return {
-      value: "",
+      text: "",
+      images: [],
+      thumbnails: [],
+      receiveList: [],
     };
   },
-  mounted() {
-    this.calHeight();
+  computed: {
+    ...mapState("user", ["nickname"]),
+    ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
+  },
+  created() {
+    this.stompSocketClient.subscribe("/topic/group", (res) => {
+      console.log("구독으로 받은 메시지 입니다.", res.body);
+      this.receiveList.push(JSON.parse(res.body));
+      console.log(this.receiveList);
+    });
   },
   methods: {
-    writeChat(event) {
-      console.log(event.target.value);
-      this.calHeight();
+    sendMessage(e) {
+      console.log(this.stompSocketConnected);
+      if (e.keyCode == 13 && this.stompSocketConnected) {
+        console.log("메시지를 chatting에서 보냄.");
+        this.send();
+        this.text = "";
+      }
     },
-    calHeight() {
-      console.log(document.getElementById("input-text-wrapper").clientHeight);
+    async uploadImage() {
+      for (var i = 0; i < this.$refs["images"].files.length; i++) {
+        this.images.push(this.$refs["images"].files[i]);
+        let thumbnail = await converToThumbnail(this.$refs["images"].files[i]);
+        this.thumbnails.push(thumbnail);
+      }
+    },
+    deleteAttachment(index) {
+      this.thumbnails.splice(index, 1);
+      this.images.splice(index, 1);
+    },
+    send() {
+      console.log("Send message:" + this.text);
+      if (this.stompSocketClient && this.stompSocketClient.connected) {
+        const msg = {
+          userName: this.nickname,
+          content: this.text,
+          channel_id: 1,
+          account_id: 2,
+        };
+        this.stompSocketClient.send(
+          "/kafka/send-channel-message",
+          JSON.stringify(msg),
+          {}
+        );
+      }
     },
   },
 };
@@ -167,9 +233,24 @@ export default {
 .chat-message-wrapper {
   outline: none;
 }
-.chat-message-wrapper2 {
+/* .chat-message-wrapper2 {
   margin-top: 1.0625rem;
   min-height: 2.75rem;
+  padding-left: 72px;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+  padding-right: 48px !important;
+  position: relative;
+  word-wrap: break-word;
+  user-select: text;
+  -webkit-box-flex: 0;
+  flex: 0 0 auto;
+} */
+.others-chat-message-wrapper {
+  margin-top: 1.0625rem;
+  min-height: 2.75rem;
+}
+.primary-chat-message-wrapper {
   padding-left: 72px;
   padding-top: 0.125rem;
   padding-bottom: 0.125rem;
@@ -208,6 +289,7 @@ export default {
   min-height: 1.375rem;
   color: #72767d;
   white-space: break-spaces;
+  margin: 0px;
 }
 .chat-user-name {
   font-size: 1rem;
@@ -252,7 +334,6 @@ export default {
   flex-shrink: 0;
   padding-left: 16px;
   padding-right: 16px;
-  margin-top: -8px;
 }
 .channel-message-area {
   margin-bottom: 24px;
@@ -263,12 +344,33 @@ export default {
   border-radius: 8px;
 }
 .channel-message-scrollbar-container {
-  overflow-x: hidden;
-  overflow-y: scroll;
+  /* overflow-x: hidden;
+  overflow-y: scroll; */
   background-color: #40444b;
-  max-height: 50vh;
   border-radius: 8px;
+  max-height: 350px;
+  /* height: 60px; */
 }
+.scrollbar-ghost::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+.scrollbar-ghost::-webkit-scrollbar-corner {
+  border: none;
+  background: none;
+}
+.scrollbar-ghost::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-width: 3px;
+  border-radius: 7px;
+  background-clip: padding-box;
+}
+.scrollbar-ghost::-webkit-scrollbar-track {
+  border-width: initial;
+  border-color: transparent;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
 .channel-message-form-inner-button {
   display: flex;
   position: relative;
@@ -316,7 +418,6 @@ export default {
   position: relative;
   min-width: 200px;
   max-width: 200px;
-  min-height: 200px;
   max-height: 200px;
 }
 .message-upload-container {
@@ -396,27 +497,15 @@ export default {
   min-height: 44px;
   color: #dcddde;
   position: relative;
-}
-.channel-message-input-placeholder {
-  padding-bottom: 11px;
-  padding-top: 11px;
-  padding-right: 10px;
-  left: 0;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  position: absolute;
-  right: 0;
-  user-select: none;
-  color: #72767d;
+  margin-left: 24px;
 }
 .channel-message-input-wrapper {
   outline: none;
   overflow-wrap: break-word;
   -webkit-user-modify: read-write-plaintext-only;
-  padding-bottom: 11px;
+  /*   padding-bottom: 11px;
   padding-top: 11px;
-  padding-right: 10px;
+  padding-right: 10px; */
   caret-color: #dcddde;
   position: absolute;
   left: 0;
@@ -432,7 +521,9 @@ export default {
   width: 100%;
   background-color: transparent;
   border: none;
-  height: 100%;
+  height: 90%;
+  resize: none;
+  /* margin-top: 6px; */
   /*   outline: none;
   overflow-wrap: break-word;
   line-height: 1.375rem;
@@ -442,5 +533,73 @@ export default {
   left: 0;
   right: 10px;
   height: 100px; */
+}
+.upload-chat-image-icon {
+  height: 24px;
+  position: relative;
+  width: 24px;
+}
+.spoiler-wrapper {
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  height: 100%;
+}
+.attach-image {
+  border-radius: 3px;
+  max-width: 100%;
+  object-fit: contain;
+}
+.filename-wrapper {
+  margin-top: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 18px;
+  color: #dcddde;
+}
+.actionbar-wrapper {
+  position: absolute;
+  right: 0;
+  z-index: 1;
+  transform: translate(25%, -25%);
+  padding: 0;
+}
+.actionbar-wrapper2 {
+  background-color: #36393f;
+  box-shadow: 0 0 0 1px rgba(4, 4, 5, 0.15);
+  display: grid;
+  grid-auto-flow: column;
+  box-sizing: border-box;
+  height: 32px;
+  border-radius: 4px;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: start;
+  justify-content: flex-start;
+  user-select: none;
+  transition: box-shadow 0.1s ease-out, -webkit-box-shadow 0.1s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+.remove-attachment-button {
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  height: 24px;
+  padding: 4px;
+  min-width: 24px;
+  -webkit-box-flex: 0;
+  flex: 0 0 auto;
+  cursor: pointer;
+  position: relative;
+}
+.trashcan {
+  width: 24px;
+  height: 24px;
+  background-image: url("../assets/trashcan.svg");
 }
 </style>

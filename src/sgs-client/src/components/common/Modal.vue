@@ -8,7 +8,7 @@
         type="button"
         @click="exitCreate"
       >
-        <svg class="close-dm"></svg>
+        <svg class="primary-close"></svg>
       </button>
     </div>
     <div class="create-server-form-content">

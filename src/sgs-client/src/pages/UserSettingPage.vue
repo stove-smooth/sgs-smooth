@@ -100,6 +100,7 @@ export default {
   },
   computed: {
     ...mapState("user", ["code", "nickname", "userimage", "useraboutme"]),
+    ...mapState("utils", ["stompSocketClient"]),
   },
   async created() {
     await this.fetchUserInfo();
@@ -129,7 +130,8 @@ export default {
     },
     async logoutUser() {
       await this.LOGOUT();
-      this.$router.push("/");
+      await this.stompSocketClient.disconnect();
+      this.$router.push("/login");
     },
     async uploadImage() {
       let image = this.$refs["image"].files[0];

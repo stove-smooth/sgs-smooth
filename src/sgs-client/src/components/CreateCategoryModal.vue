@@ -61,7 +61,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("server", ["createCategory", "communityInfo"]),
+    ...mapState("server", ["createCategory"]),
   },
   methods: {
     ...mapMutations("server", ["setCreateCategory"]),
@@ -70,13 +70,17 @@ export default {
     },
     async createNewCategory() {
       const categoryData = {
-        communityId: this.communityInfo.id,
+        communityId: this.createCategory.serverId,
         name: this.categoryName,
         public: true,
         members: null,
       };
-      const result = await createNewCategory(categoryData);
-      console.log("result", result);
+      try {
+        await createNewCategory(categoryData);
+        window.location.reload();
+      } catch (err) {
+        console.log(err.response);
+      }
     },
   },
 };

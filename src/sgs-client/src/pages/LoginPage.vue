@@ -17,6 +17,18 @@ export default {
       this.$router.push("/channels/@me");
     }
   },
+  mounted() {
+    console.log("로그인페이지1");
+    if (this.$route.params?.message) {
+      console.log("로그인페이지2");
+      if (this.$route.params?.message === "sessionOut") {
+        console.log("로그인페이지3");
+        this.$message.error(
+          "로그인 세션이 만료되었습니다. 재로그인이 필요합니다."
+        );
+      }
+    }
+  },
 };
 </script>
 

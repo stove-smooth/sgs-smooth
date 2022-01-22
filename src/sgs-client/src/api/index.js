@@ -1,10 +1,10 @@
 import axios from "axios";
 import store from "../store/index";
 import { setInterceptors } from "./common/interceptors";
-
+import { getBaseURL } from "../utils/common";
 function createInstance() {
   const instance = axios.create({
-    baseURL: "http://52.79.229.100:8000/",
+    baseURL: getBaseURL(),
   });
   return setInterceptors(instance);
 }
@@ -62,11 +62,6 @@ function deleteProfileImage() {
   return instance.patch("auth-server/auth/d/profile");
 }
 async function createNewCommunity(userData) {
-  console.log("userDATa", userData);
-  // FormData의 값 확인
-  for (var pair of userData) {
-    console.log(pair[0] + ", " + pair[1]);
-  }
   try {
     const accesstoken = await store.getters["user/getAccessToken"];
     const response = await axios.post(
@@ -106,6 +101,9 @@ function deleteCategory(categoryId) {
 function createNewChannel(channelData) {
   return instance.post("community-server/channel", channelData);
 }
+function moveCategory(categoryData) {
+  return instance.patch("community-server/category/location", categoryData);
+}
 export {
   registerUser,
   loginUser,
@@ -127,4 +125,5 @@ export {
   createNewCategory,
   deleteCategory,
   createNewChannel,
+  moveCategory,
 };

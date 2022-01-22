@@ -1,3 +1,6 @@
+function getBaseURL() {
+  return "http://52.79.229.100:8000/";
+}
 function selectProfile(code) {
   if (code == 0) {
     return "discord_blue";
@@ -35,7 +38,6 @@ function processFile2(tempImage) {
       canvasContext.drawImage(this, 0, 0, 100, 100);
 
       dataURI = canvas.toDataURL("image/jpeg");
-      console.log(dataURI);
       thumbnail = dataURI;
       resolve(thumbnail);
     };
@@ -53,4 +55,4 @@ async function dataUrlToFile(dataUrl) {
   const time = new Date().getTime();
   return new File([blob], time, { type: "image/*" });
 }
-export { selectProfile, converToThumbnail, dataUrlToFile };
+export { selectProfile, converToThumbnail, dataUrlToFile, getBaseURL };

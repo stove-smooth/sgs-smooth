@@ -143,11 +143,11 @@ export default {
       thumbnail: "",
     };
   },
-  watch: {
+  /*   watch: {
     thumbnail(newVal, oldVal) {
       console.log(newVal, oldVal);
     },
-  },
+  }, */
   computed: {
     ...mapState("server", ["createServer"]),
   },
@@ -168,6 +168,7 @@ export default {
     },
     async uploadImage() {
       let image = this.$refs["image"].files[0];
+      console.log("image", image);
       this.thumbnail = await converToThumbnail(image);
     },
     async createNewServer() {
