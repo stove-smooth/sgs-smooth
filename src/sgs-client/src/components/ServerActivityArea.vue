@@ -134,21 +134,12 @@ export default {
     ...mapState("user", ["nickname"]),
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
   },
-  watch: {
-    stompSocketConnected: function (val) {
-      console.log(val);
-      if (val === true) {
-        console.log(val);
-        this.stompSocketClient.subscribe("/topic/group", (res) => {
-          console.log("구독으로 받은 메시지 입니다.", res.body);
-
-          this.receiveList.push(JSON.parse(res.body));
-          console.log(this.receiveList);
-        });
-      } else {
-        alert("채팅 연결이 끊겼습니다.");
-      }
-    },
+  created() {
+    this.stompSocketClient.subscribe("/topic/group", (res) => {
+      console.log("구독으로 받은 메시지 입니다.", res.body);
+      this.receiveList.push(JSON.parse(res.body));
+      console.log(this.receiveList);
+    });
   },
   methods: {
     sendMessage(e) {

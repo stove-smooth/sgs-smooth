@@ -108,7 +108,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions("server", ["LOGOUT", "FETCH_COMMUNITYLIST"]),
+    ...mapActions("server", ["FETCH_COMMUNITYLIST"]),
     ...mapMutations("server", ["setCreateServer"]),
     hover(index) {
       this.hovered = index;

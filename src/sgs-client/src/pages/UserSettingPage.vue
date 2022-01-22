@@ -131,7 +131,7 @@ export default {
     async logoutUser() {
       await this.LOGOUT();
       await this.stompSocketClient.disconnect();
-      this.$router.push("/");
+      this.$router.push("/login");
     },
     async uploadImage() {
       let image = this.$refs["image"].files[0];

@@ -1,128 +1,24 @@
 <template>
   <div>
-    <div class="wrapper2">
-      <div class="wrapper">
-        <div class="container">
-          <navigation-bar v-if="getEmail && navbar"></navigation-bar>
-          <router-view></router-view>
-        </div>
-      </div>
-    </div>
-    <server-popout></server-popout>
-    <friends-plus-action></friends-plus-action>
-    <create-server-modal></create-server-modal>
-    <create-channel-modal></create-channel-modal>
-    <friends-delete-modal></friends-delete-modal>
-    <friends-block-modal></friends-block-modal>
-    <friends-profile-modal></friends-profile-modal>
-    <create-category-modal></create-category-modal>
-    <category-setting-modal></category-setting-modal>
-    <category-delete-modal></category-delete-modal>
-    <server-setting-modal></server-setting-modal>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import Stomp from "webstomp-client";
-import SockJS from "sockjs-client";
-import { mapGetters, mapMutations, mapState } from "vuex";
-import { getBaseURL } from "./utils/common";
-import NavigationBar from "./components/NavigationBar.vue";
-import CreateServerModal from "./components/CreateServerModal.vue";
-import CreateChannelModal from "./components/CreateChannelModal.vue";
-import FriendsPlusAction from "./components/common/FriendsPlusAction.vue";
-import FriendsDeleteModal from "./components/FriendsDeleteModal.vue";
-import ServerPopout from "./components/ServerPopout.vue";
-import FriendsBlockModal from "./components/FriendsBlockModal.vue";
-import FriendsProfileModal from "./components/FriendsProfileModal.vue";
-import CreateCategoryModal from "./components/CreateCategoryModal.vue";
-import CategorySettingModal from "./components/CategorySettingModal.vue";
-import CategoryDeleteModal from "./components/CategoryDeleteModal.vue";
-import ServerSettingModal from "./components/ServerSettingModal.vue";
-
+import { mapGetters } from "vuex";
 export default {
-  name: "App",
-  components: {
-    NavigationBar,
-    CreateServerModal,
-    CreateChannelModal,
-    FriendsPlusAction,
-    FriendsDeleteModal,
-    ServerPopout,
-    FriendsBlockModal,
-    FriendsProfileModal,
-    CreateCategoryModal,
-    CategorySettingModal,
-    CategoryDeleteModal,
-    ServerSettingModal,
-  },
-  data() {
-    return {
-      navbar: true,
-    };
-  },
-  created() {
-    console.log("로그인안된 크레이트");
-    if (this.getEmail) {
-      console.log("안녕크레이트");
-      this.connect();
-    }
-    const url = window.location.pathname;
-    if (url == "/settings" || url == "/login" || url == "/register") {
-      this.navbar = false;
+  mounted() {
+    if (!this.getEmail) {
+      this.$router.replace("/login");
     } else {
-      this.navbar = true;
+      this.$router.replace("/channels/@me");
     }
-  },
-  watch: {
-    // 라우터의 변경을 감시
-    $route(to, from) {
-      if (to.path != from.path) {
-        if (to.path === "/settings") {
-          this.navbar = false;
-        } else {
-          this.navbar = true;
-        }
-      }
-    },
   },
   computed: {
-    ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
-    ...mapGetters("user", ["getEmail", "getUserId", "getAccessToken"]),
-  },
-  methods: {
-    ...mapMutations("utils", [
-      "setStompSocketClient",
-      "setStompSocketConnected",
-    ]),
-    connect() {
-      const serverURL = getBaseURL() + "my-chat";
-      let socket = new SockJS(serverURL);
-      this.setStompSocketClient(Stomp.over(socket));
-      console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
-      this.stompSocketClient.connect(
-        {
-          "access-token": this.getAccessToken,
-          "user-id": this.getUserId,
-        }, //header
-        (frame) => {
-          // 소켓 연결 성공
-          this.connected = true;
-          this.setStompSocketConnected(true);
-          console.log("소켓 연결 성공", frame);
-        },
-        (error) => {
-          // 소켓 연결 실패
-          console.log("소켓 연결 실패", error);
-          this.connected = false;
-          this.setStompSocketConnected(false);
-        }
-      );
-    },
+    ...mapGetters("user", ["getEmail"]),
   },
 };
 </script>
-
 <style>
 @import "./css/common.css";
 .wrapper2 {
