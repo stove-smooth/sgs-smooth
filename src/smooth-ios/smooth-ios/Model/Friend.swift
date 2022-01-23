@@ -13,6 +13,7 @@ enum FriendState: String, Codable {
     case request = "REQUEST" // (내가 친구 요청 보낸거)
     case accept = "ACCEPT" // (친구)
     case ban = "BAN"
+    case none
 }
 
 struct Friend: Codable, Equatable, IdentifiableType {
@@ -25,6 +26,14 @@ struct Friend: Codable, Equatable, IdentifiableType {
     var identity: Int {
         return self.id
     }
+    
+    init() {
+        self.id = 0
+        self.code = ""
+        self.name = ""
+        self.profileImage = nil
+        self.state = FriendState.none
+    }
 }
 
 struct FriendListResponse: Codable {
@@ -32,20 +41,6 @@ struct FriendListResponse: Codable {
     let code: Int
     let message: String
     let result: [Friend]
-}
-
-struct DefaultResponse: Codable {
-    let isSuccess: Bool
-    let code: Int
-    let message: String
-}
-
-struct DefaultFriendResponse: Codable {
-    let result: DefaultResponse
-}
-
-struct DeleteFriendRequest: Codable {
-    let id: Int
 }
 
 struct RequestFriend: Codable {
