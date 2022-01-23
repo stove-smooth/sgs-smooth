@@ -13,7 +13,8 @@ import Then
 class SignInViewController: BaseViewController {
     private let authView = SignInView()
     private let viewModel = SignInViewModel(
-        userDefaults: UserDefaultsUtil()
+        userDefaults: UserDefaultsUtil(),
+        userRepository: UserRepository()
     )
     
     weak var coordinator: MainCoordinator?

@@ -13,6 +13,7 @@ class SignInViewModel: BaseViewModel {
     let output = Output()
     
     let userDefaults: UserDefaultsUtil
+    let userRepository: UserRepositoryProtocol
     
     struct Input {
         let tapLoginButton = PublishSubject<Void>()
@@ -27,9 +28,11 @@ class SignInViewModel: BaseViewModel {
     
     
     init(
-        userDefaults: UserDefaultsUtil
+        userDefaults: UserDefaultsUtil,
+        userRepository: UserRepositoryProtocol
     ) {
         self.userDefaults = userDefaults
+        self.userRepository = userRepository
         super.init()
     }
     
@@ -58,7 +61,7 @@ class SignInViewModel: BaseViewModel {
     }
     
     private func signIn(request: SignInRequest) {
-        UserRepository.signIn(request) { response, error in
+        self.userRepository.signIn(request) { response, error in
             if error == nil {
                 self.output.goToMain.accept(())
             } else {

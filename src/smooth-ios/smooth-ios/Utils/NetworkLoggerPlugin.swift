@@ -102,11 +102,11 @@ struct NetworkLoggerPlugin: PluginType {
 
 protocol Networkable {
     associatedtype Target: TargetType
-    static func makeProvider() -> MoyaProvider<Target>
+    func makeProvider() -> MoyaProvider<Target>
 }
 
 extension Networkable {
-    static func makeProvider() -> MoyaProvider<Target> {
+    func makeProvider() -> MoyaProvider<Target> {
         
         var tokenClosure: String {
             guard let token = UserDefaultsUtil.getUserToken() else {return ""}
