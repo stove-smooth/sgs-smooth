@@ -15,14 +15,24 @@ protocol FriendRequestDelegate: class {
 }
 
 class FriendRequestViewController: BaseViewController {
-    var navigationViewController: UINavigationController?
+    
     weak var delegate: FriendRequestDelegate?
     
     private let requestView = FriendRequestView()
-    private let viewModel = FriendRequestViewModel()
+    private let viewModel: FriendRequestViewModel
+    
+    
+    init() {
+        self.viewModel = FriendRequestViewModel(friendRepository: FriendRepository())
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     static func instance() -> UINavigationController {
-        let friendVC = FriendRequestViewController(nibName: nil, bundle: nil)
+        let friendVC = FriendRequestViewController()
         
         return UINavigationController(rootViewController: friendVC).then {
             $0.modalPresentationStyle = .overCurrentContext
@@ -30,9 +40,9 @@ class FriendRequestViewController: BaseViewController {
         }
     }
     
+
     private func dismiss() {
         self.dismiss(animated: true, completion: nil)
-        self.delegate?.onClose()
     }
     
     override func loadView() {
@@ -41,21 +51,11 @@ class FriendRequestViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
-        self.setNavigation()
     }
     
-    func setNavigation() {
-        let buttonImg = UIImage(named: "User+Add")?.resizeImage(size: CGSize(width: 25, height: 25))
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: buttonImg,
-            style: .plain,
-            target: self,
-            action: nil //didTapAddButton
-        )
-    
-        self.title = "친구 추가하기"
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        delegate?.onClose()
     }
     
     override func bindViewModel() {
@@ -73,6 +73,24 @@ class FriendRequestViewController: BaseViewController {
             .bind(onNext: self.dismiss)
             .disposed(by: disposeBag)
         
+        self.viewModel.output.dismiss
+            .asDriver(onErrorJustReturn: ())
+            .drive(onNext: self.dismiss)
+            .disposed(by: disposeBag)
+        
+        // MARK: 토스트 팝업 처리
+        self.viewModel.showErrorMessage
+            .asDriver(onErrorJustReturn: "")
+            .drive(onNext: { message in
+                self.showToast(message: message, isWarning: true)
+            })
+            .disposed(by: disposeBag)
+        
+        self.viewModel.showToastMessage
+            .asDriver(onErrorJustReturn: "")
+            .drive(onNext: { message in
+                self.showToast(message: message, isWarning: false)
+            })
+            .disposed(by: disposeBag)
     }
 }
-
