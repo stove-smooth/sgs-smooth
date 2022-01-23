@@ -5,9 +5,19 @@
         <div class="scroller-content">
           <ol class="scroller-inner">
             <div v-for="(item, idx) in receiveList" :key="idx">
-              <li class="chat-message-wrapper">
+              <li
+                class="chat-message-wrapper"
+                @mouseover="messageHover(idx)"
+                @mouseleave="messageHover('')"
+                v-bind:class="{
+                  'selected-message-area': messageHovered === idx,
+                }"
+              >
                 <div
                   class="primary-chat-message-wrapper others-chat-message-wrapper"
+                  v-bind:class="{
+                    'message-replying': replyId === idx,
+                  }"
                 >
                   <div class="chat-message-content">
                     <img
@@ -21,6 +31,69 @@
                     </h2>
                     <div class="message-content">{{ item.message }}</div>
                   </div>
+                  <div class="chat-message-accessories">
+                    <div class="chat-message-attachment" v-if="false">
+                      <a
+                        class="chat-message-image-wrapper"
+                        href="https://cdn.discordapp.com/attachments/933212892466118726/934732073661509642/axios-logo.png"
+                        ><img
+                          alt="이미지"
+                          src="https://media.discordapp.net/attachments/933212892466118726/934732073661509642/axios-logo.png?width=550&height=275"
+                      /></a>
+                    </div>
+                  </div>
+                  <div
+                    class="chat-message-plus-action-container"
+                    v-show="messageHovered === idx"
+                  >
+                    <div class="actionbar-wrapper2">
+                      <div
+                        class="chat-action-button"
+                        aria-label="반응 추가하기"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <svg class="add-emotion"></svg>
+                      </div>
+                      <!--내꺼면 수정아니면 답장-->
+                      <div
+                        v-show="false"
+                        class="chat-action-button"
+                        aria-label="수정하기"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <svg class="edit-pencil"></svg>
+                      </div>
+                      <div
+                        @click="selectReplying(idx)"
+                        class="chat-action-button"
+                        aria-label="답장하기"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <svg class="reply-button"></svg>
+                      </div>
+                      <div
+                        class="chat-action-button"
+                        aria-label="스레드 만들기"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <svg class="thread-icon"></svg>
+                      </div>
+                      <div
+                        :data-key="idx"
+                        @click="clickPlusAction($event, idx)"
+                        class="chat-action-button"
+                        aria-label="추가 기능"
+                        role="button"
+                        tabindex="0"
+                      >
+                        <svg class="row-plus-action"></svg>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </li>
             </div>
@@ -30,6 +103,27 @@
     </div>
     <div class="channel-message-input-form">
       <div class="channel-message-area">
+        <div class="attached-bar" v-if="replyId !== ''">
+          <div>
+            <div class="clip-container">
+              <div class="base-container">
+                <div class="reply-bar">
+                  <div role="button" tabindex="0">
+                    <div class="reply-label-container">
+                      <span class="large-description"> 두리짱 </span>
+                      님에게 답장하는 중
+                    </div>
+                  </div>
+                  <div class="align-items-center">
+                    <div class="reply-close-button" @click="selectReplying('')">
+                      <svg class="small-close-button"></svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="channel-message-scrollbar-container">
           <div v-if="thumbnails.length > 0">
             <!--ul에 scrollbar추가필요.-->
@@ -65,7 +159,7 @@
                         <div class="actionbar-wrapper2">
                           <div
                             @click="deleteAttachment(index)"
-                            class="remove-attachment-button"
+                            class="chat-action-button"
                             aria-label="첨부 파일 제거"
                             role="button"
                             tabindex="0"
@@ -120,31 +214,45 @@
 
 <script>
 import { converToThumbnail } from "../utils/common.js";
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 export default {
   data() {
     return {
+      replyId: "",
+      messageHovered: "",
       text: "",
       images: [],
       thumbnails: [],
       receiveList: [],
     };
   },
+  mounted() {
+    window.addEventListener("click", this.onClick);
+  },
   computed: {
     ...mapState("user", ["nickname"]),
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
+    ...mapState("server", ["messagePlusMenu"]),
   },
   created() {
     this.stompSocketClient.subscribe("/topic/group", (res) => {
       console.log("구독으로 받은 메시지 입니다.", res.body);
+      const result = this.convertFromStringToDate(JSON.parse(res.body).time);
+      console.log("시간 변환", result);
       this.receiveList.push(JSON.parse(res.body));
       console.log(this.receiveList);
     });
   },
   methods: {
+    ...mapMutations("utils", ["setClientX", "setClientY"]),
+    ...mapMutations("server", ["setMessagePlusMenu"]),
+    selectReplying(idx) {
+      console.log(idx);
+      this.replyId = idx;
+    },
     sendMessage(e) {
       console.log(this.stompSocketConnected);
-      if (e.keyCode == 13 && this.stompSocketConnected) {
+      if (e.keyCode == 13 && !e.shiftKey && this.stompSocketConnected) {
         console.log("메시지를 chatting에서 보냄.");
         this.send();
         this.text = "";
@@ -176,6 +284,38 @@ export default {
           {}
         );
       }
+    },
+    messageHover(idx) {
+      this.messageHovered = idx;
+    },
+    clickPlusAction(event, idx) {
+      const x = event.clientX;
+      const y = event.clientY;
+      this.setClientX(x);
+      this.setClientY(y);
+      this.setMessagePlusMenu(idx);
+    },
+    onClick(e) {
+      if (this.messagePlusMenu != null) {
+        if (!e.target.parentNode.dataset.key) {
+          this.setMessagePlusMenu(null);
+        }
+      }
+    },
+    convertFromStringToDate(responseDate) {
+      var time = {};
+      console.log(responseDate);
+      let dateComponents = responseDate.split("T");
+      //let datePieces = dateComponents[0].split("-");
+      let timePieces = dateComponents[1].split(":");
+      console.log(timePieces[0], timePieces[1]);
+      if (parseInt(timePieces[0]) + 9 < 24) {
+        time.hour = parseInt(timePieces[0]) + 9;
+      } else {
+        time.hour = parseInt(timePieces[0]) + 9 - 24;
+      }
+      time.minutes = parseInt(timePieces[1]);
+      return time;
     },
   },
 };
@@ -233,19 +373,6 @@ export default {
 .chat-message-wrapper {
   outline: none;
 }
-/* .chat-message-wrapper2 {
-  margin-top: 1.0625rem;
-  min-height: 2.75rem;
-  padding-left: 72px;
-  padding-top: 0.125rem;
-  padding-bottom: 0.125rem;
-  padding-right: 48px !important;
-  position: relative;
-  word-wrap: break-word;
-  user-select: text;
-  -webkit-box-flex: 0;
-  flex: 0 0 auto;
-} */
 .others-chat-message-wrapper {
   margin-top: 1.0625rem;
   min-height: 2.75rem;
@@ -342,6 +469,11 @@ export default {
   width: 100%;
   text-indent: 0;
   border-radius: 8px;
+}
+.attached-bar {
+  background: #2f3136;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
 }
 .channel-message-scrollbar-container {
   /* overflow-x: hidden;
@@ -583,7 +715,7 @@ export default {
   position: relative;
   overflow: hidden;
 }
-.remove-attachment-button {
+.chat-action-button {
   display: flex;
   -webkit-box-align: center;
   align-items: center;
@@ -597,9 +729,108 @@ export default {
   cursor: pointer;
   position: relative;
 }
+.chat-action-button:hover {
+  background-color: #40444b;
+}
 .trashcan {
   width: 24px;
   height: 24px;
   background-image: url("../assets/trashcan.svg");
+}
+.chat-message-accessories {
+  display: grid;
+  grid-auto-flow: row;
+  grid-row-gap: 0.25rem;
+  text-indent: 0;
+  min-height: 0;
+  min-width: 0;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+  position: relative;
+}
+.chat-message-attachment {
+  justify-self: start;
+  align-self: start;
+  position: relative;
+}
+.chat-message-image-wrapper {
+  width: 400px;
+  height: 200px;
+  cursor: pointer;
+}
+.chat-message-plus-action-container {
+  position: absolute;
+  right: 0;
+  z-index: 1;
+  top: -25px;
+  padding: 0 14px 0 32px;
+  opacity: 1;
+  pointer-events: auto;
+}
+.add-emotion {
+  width: 24px;
+  height: 24px;
+  background-image: url("../assets/add-emotion.svg");
+}
+.edit-pencil {
+  width: 24px;
+  height: 24px;
+  background-image: url("../assets/edit-pencil.svg");
+}
+.row-plus-action {
+  width: 20px;
+  height: 20px;
+  background-image: url("../assets/row-plus-action.svg");
+}
+.selected-message-area {
+  background-color: #2f3136;
+}
+.message-replying {
+  position: relative;
+  background-color: rgba(53, 68, 129, 0.1);
+  border-left: 1mm solid var(--discord-primary);
+}
+.clip-container {
+  overflow: hidden;
+  padding-top: 3px;
+  margin-top: -3px;
+}
+.reply-bar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  -webkit-box-align: center;
+  align-items: center;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  background: #2f3136;
+  cursor: pointer;
+}
+.reply-label-container {
+  -webkit-box-flex: 1;
+  flex: 1 1 auto;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-left: 16px;
+  font-size: 14px;
+  line-height: 18px;
+  color: #b9bbbe;
+}
+.reply-close-button {
+  flex: 0 0 auto;
+  cursor: pointer;
+  color: #b9bbbe;
+  line-height: 0;
+  padding: 8px 18px 8px 16px;
+}
+.small-close-button {
+  width: 15px;
+  height: 15px;
+  background-image: url("../assets/small-close-button.svg");
+}
+.reply-button {
+  width: 20px;
+  height: 20px;
+  background-image: url("../assets/reply-button.svg");
 }
 </style>

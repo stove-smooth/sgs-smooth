@@ -651,7 +651,7 @@ export default {
   margin-left: 0;
   margin-right: 2px;
   background-image: url("../assets/private-channel-plus.svg");
-  z-index: 99;
+  z-index: 1;
 }
 .height-100 {
   height: 100%;

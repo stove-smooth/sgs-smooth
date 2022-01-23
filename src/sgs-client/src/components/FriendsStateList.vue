@@ -117,11 +117,6 @@ import FriendsForm from "./common/FriendsForm.vue";
 import { acceptFriend, deleteFriend } from "../api/index.js";
 export default {
   components: { FriendsForm },
-  data() {
-    return {
-      //plusID: 0,
-    };
-  },
   async created() {
     await this.FETCH_FRIENDSLIST();
   },

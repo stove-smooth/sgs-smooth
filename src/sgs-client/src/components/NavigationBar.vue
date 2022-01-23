@@ -6,7 +6,7 @@
           <div
             class="listItem"
             @mouseover="hover('@me')"
-            @mouseleave="unhover"
+            @mouseleave="hover('')"
             @click="enterMe('@me')"
           >
             <div
@@ -40,7 +40,7 @@
             <div
               class="listItem"
               @mouseover="hover(community.id)"
-              @mouseleave="unhover"
+              @mouseleave="hover('')"
               @click="enterServer(community.id)"
             >
               <div
@@ -112,9 +112,6 @@ export default {
     ...mapMutations("server", ["setCreateServer"]),
     hover(index) {
       this.hovered = index;
-    },
-    unhover() {
-      this.hovered = "";
     },
     select(index) {
       this.selected = index;

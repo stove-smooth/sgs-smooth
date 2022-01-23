@@ -11,6 +11,7 @@
       </div>
       <server-popout></server-popout>
       <friends-plus-action></friends-plus-action>
+      <message-plus-action></message-plus-action>
       <create-server-modal></create-server-modal>
       <create-channel-modal></create-channel-modal>
       <friends-delete-modal></friends-delete-modal>
@@ -43,6 +44,7 @@ import CreateCategoryModal from "../components/CreateCategoryModal.vue";
 import CategorySettingModal from "../components/CategorySettingModal.vue";
 import CategoryDeleteModal from "../components/CategoryDeleteModal.vue";
 import ServerSettingModal from "../components/ServerSettingModal.vue";
+import MessagePlusAction from "../components/MessagePlusAction.vue";
 
 export default {
   name: "App",
@@ -60,6 +62,7 @@ export default {
     CategoryDeleteModal,
     ServerSettingModal,
     LoadingSpinner,
+    MessagePlusAction,
   },
   data() {
     return {
