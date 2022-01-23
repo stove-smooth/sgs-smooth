@@ -1,5 +1,5 @@
 //
-//  MediaCachingService.swift
+//  UIImageView+Extension.swift
 //  smooth-ios
 //
 //  Created by durikim-MN on 2022/01/13.

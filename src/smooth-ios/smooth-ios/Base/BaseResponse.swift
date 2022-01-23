@@ -8,6 +8,12 @@
 import Foundation
 import Moya
 
+struct DefaultResponse: Codable {
+    let isSuccess: Bool
+    let code: Int
+    let message: String
+}
+
 struct BaseResponse<Model: Codable>{
     struct CommonResponse: Codable {
         let result: Model
