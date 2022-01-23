@@ -14,4 +14,7 @@ target 'smooth-ios' do
   pod 'Moya/RxSwift'
   
   pod 'Kingfisher'
+  
+  pod 'PanModal'
+  pod 'Toast-Swift', '~> 5.0.1'
 end

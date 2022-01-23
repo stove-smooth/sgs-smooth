@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import PanModal
 
 class FriendCoordinator: NSObject, Coordinator {
     var delegate: CoordinatorDelegate?
@@ -25,13 +26,23 @@ class FriendCoordinator: NSObject, Coordinator {
     }
     
     func start() {
-        let friendVC = FriendViewController.instance()
+        let friendVC = FriendListViewController.instance()
         friendVC.coordinator = self
+        navigationController.isNavigationBarHidden = true
         navigationController.pushViewController(friendVC, animated: true)
     }
     
     func goToRequest() {
         let requestVC = FriendRequestViewController.instance()
+    
+        requestVC.modalPresentationStyle = .fullScreen
         navigationController.present(requestVC, animated: true, completion: nil)
+    }
+    
+    func showFriendInfoModal(friend: Friend) {
+        let friendInfoVC = FriendInfoViewController.instance(friend: friend)
+        friendInfoVC.coordinator = self
+        
+        navigationController.presentPanModal(friendInfoVC)
     }
 }
