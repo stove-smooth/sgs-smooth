@@ -21,7 +21,7 @@ class FriendEmptyView: BaseView {
         $0.contentMode = .scaleAspectFill
     }
     
-    let friendButton = UIButton().then {
+    let requestButton = UIButton().then {
         $0.setTitle("친구 추가하기", for: .normal)
         $0.backgroundColor = .blurple
         $0.layer.cornerRadius = 5
@@ -34,7 +34,7 @@ class FriendEmptyView: BaseView {
         self.backgroundColor = .messageBarDarkGray
          
         [
-            emptyTextLabel, emptyImage, friendButton
+            emptyTextLabel, emptyImage, requestButton
         ].forEach {
             self.addSubview($0)
         }
@@ -54,7 +54,7 @@ class FriendEmptyView: BaseView {
             $0.centerX.equalToSuperview()
         }
         
-        friendButton.snp.makeConstraints {
+        requestButton.snp.makeConstraints {
             $0.top.equalTo(emptyTextLabel.snp.bottom).offset(15)
             $0.centerX.equalToSuperview()
             
