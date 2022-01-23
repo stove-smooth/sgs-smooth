@@ -7,7 +7,8 @@ class SplashViewConroller: BaseViewController {
     
     private let splashView = SplashView()
     private let viewModel = SplashViewModel(
-        userDefaults: UserDefaultsUtil()
+        userDefaults: UserDefaultsUtil(),
+        userRepository: UserRepository()
     )
     
     static func instance() -> SplashViewConroller {

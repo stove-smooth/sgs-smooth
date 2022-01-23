@@ -10,38 +10,40 @@ import Then
 import SnapKit
 import RxSwift
 
-// TODO: - state가 친구인 경우, 메시지/미팅 버튼 노출
-
-class FriendCell: UITableViewCell {
-    let disposeBag = DisposeBag()
+class FriendListViewCell: UITableViewCell {
+    var disposeBag = DisposeBag()
     
     static let identifier = "FriendCell"
     
-    let profileImg: UIImageView = {
-        let imgView = UIImageView(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-        let img = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+    override func prepareForReuse() {
+        super.prepareForReuse()
         
-        let imgCGValue = img.bounds.size.width/4
-        img.center = CGPoint(x: imgView.bounds.size.width / 2 - imgCGValue, y: imgView.bounds.size.height / 2 - imgCGValue)
+        self.nameLabel.text = nil
+        self.stateLabel.text = nil
+        self.callingButton.isHidden = false
+        self.messageButton.isHidden = false
+        self.rejectButton.isHidden = false
+        self.acceptButton.isHidden = false
+        self.profileImg.image = nil
+        self.imageView?.image = nil
         
-        img.image = UIImage(named: "Logo")
-        img.contentMode = .scaleAspectFit
-        imgView.addSubview(img)
+        self.profileImg.subviews.forEach {$0.removeFromSuperview()}
+        self.disposeBag = DisposeBag()
+    }
     
-        imgView.layer.cornerRadius = 15
-        imgView.layer.masksToBounds = true
-        imgView.clipsToBounds = true
-        
-        return imgView
-    }()
+    let profileImg = UIImageView().then {
+        $0.layer.cornerRadius = 15
+        $0.layer.masksToBounds = true
+        $0.clipsToBounds = true
+    }
     
     let nameLabel = UILabel().then {
         $0.text = "두리짱"
         $0.textColor = .white
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
-    
-    let stateLable = UILabel().then {
+
+    let stateLabel = UILabel().then {
         $0.textColor = .white
         $0.font = UIFont.systemFont(ofSize: 9, weight: .thin)
         $0.translatesAutoresizingMaskIntoConstraints = false
@@ -82,29 +84,39 @@ class FriendCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         layout()
+        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func ui(friend: Friend) {
+    func bind(friend: Friend) {
         nameLabel.text = friend.name
         profileImg.backgroundColor = UIColor.random(code: Int(friend.code) ?? 0)
         
         if (friend.profileImage != nil) {
             profileImg.setImage(URL(string: friend.profileImage!)!)
+        } else {
+            let img = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+            
+            img.center = CGPoint(x: 15 , y: 15)
+            
+            img.image = UIImage(named: "Logo")
+            img.contentMode = .scaleAspectFit
+            
+            profileImg.addSubview(img)
         }
         
         switch friend.state {
         case .wait:
-            stateLable.text = "받은 친구 요청"
+            stateLabel.text = "받은 친구 요청"
             
             self.messageButton.isHidden = true
             self.callingButton.isHidden = true
             
         case .request:
-            stateLable.text = "보낸 친구 요청"
+            stateLabel.text = "보낸 친구 요청"
             
             self.acceptButton.isHidden = true
             self.messageButton.isHidden = true
@@ -115,9 +127,15 @@ class FriendCell: UITableViewCell {
         case .accept:
             self.rejectButton.isHidden = true
             self.acceptButton.isHidden = true
+
         case .ban:
             self.rejectButton.isHidden = true
             self.acceptButton.isHidden = true
+
+        case .none:
+            self.acceptButton.isHidden = true
+            self.messageButton.isHidden = true
+            self.callingButton.isHidden = true
         }
         
         self.textLabel?.textColor = .white
@@ -129,13 +147,11 @@ class FriendCell: UITableViewCell {
         
         // request(친구 요청 보낸 사람 - 수락 대기 중)
         // wait(친구 요청 응답 기다리는 중)
-        
     }
-    
     
     func layout() {
         [
-            profileImg, nameLabel, stateLable,
+            profileImg, nameLabel, stateLabel,
             rejectButton, acceptButton,
             messageButton, callingButton
         ].forEach {
@@ -153,7 +169,7 @@ class FriendCell: UITableViewCell {
             $0.leading.equalTo(profileImg.snp.trailing).offset(10)
         }
         
-        stateLable.snp.makeConstraints {
+        stateLabel.snp.makeConstraints {
             $0.top.equalTo(nameLabel.snp.bottom).offset(2)
             $0.leading.equalTo(nameLabel.snp.leading)
         }
@@ -183,3 +199,4 @@ class FriendCell: UITableViewCell {
         }
     }
 }
+

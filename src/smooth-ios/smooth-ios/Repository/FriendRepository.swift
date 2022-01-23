@@ -9,12 +9,20 @@ import Foundation
 import Moya
 import RxSwift
 
-struct FriendRepository: Networkable {
+protocol FriendRepositoryProtocol {
+    func fetchFriend(_ completion: @escaping ([FriendSection]?, Error?) -> Void)
+    func deleteFriend(_ request: Int, _ completion: @escaping (DefaultResponse?, Error?) -> Void)
+    func requestFriend(_ request: RequestFriend, _ completion: @escaping (DefaultResponse?, Error?) -> Void)
+    func banFriend(_ request: Int, _ completion: @escaping (DefaultResponse?, Error?) -> Void)
+    func acceptFriend(_ request: Int, _ completion: @escaping (DefaultResponse?, Error?) -> Void)
+}
+
+struct FriendRepository: Networkable, FriendRepositoryProtocol {
     let disposeBag = DisposeBag()
     
     typealias Target = FriendTarget
     
-    static func fetchFriend(_ completion: @escaping ([FriendSection]?, Error?) -> Void) {
+    func fetchFriend(_ completion: @escaping ([FriendSection]?, Error?) -> Void) {
         makeProvider().request(.fetchFriend) { result in
             switch BaseResponse<FriendListResponse>.processJSONResponse(result) {
             case .success(let responses):
@@ -38,6 +46,15 @@ struct FriendRepository: Networkable {
                 if waitList.count > 0 {
                     section.append(FriendSection(header: "수락 대기 중", items: waitList))
                 }
+                
+                let banList = responses.result
+                    .filter { $0.state == .ban }
+                    .map { FriendCellType.normal($0) }
+                
+                if banList.count > 0 {
+                    section.append(FriendSection(header: "차단", items: banList))
+                }
+                
                 return completion(section, nil)
                 
             case .failure(let error):
@@ -46,9 +63,42 @@ struct FriendRepository: Networkable {
         }
     }
     
-    static func deleteFriend(_ request: DeleteFriendRequest, _ completion: @escaping (DeleteFriendResponse?, Error?) -> Void) {
+     func deleteFriend(_ request: Int, _ completion: @escaping (DefaultResponse?, Error?) -> Void) {
         makeProvider().request(.deleteFriend(param: request)) { result in
-            switch BaseResponse<DeleteFriendResponse>.processJSONResponse(result) {
+            switch BaseResponse<DefaultResponse>.processJSONResponse(result) {
+            case .success(let responses):
+                return completion(responses, nil)
+            case .failure(let error):
+                return completion(nil, error)
+            }
+        }
+    }
+    
+     func requestFriend(_ request: RequestFriend, _ completion: @escaping (DefaultResponse?, Error?) -> Void) {
+        makeProvider().request(.requestFriend(param: request)) { result in
+            switch BaseResponse<DefaultResponse>.processJSONResponse(result) {
+            case .success(let response):
+                return completion(response, nil)
+            case .failure(let error):
+                return completion(nil, error)
+            }
+        }
+    }
+    
+    func banFriend(_ request: Int, _ completion: @escaping (DefaultResponse?, Error?) -> Void) {
+        makeProvider().request(.banFriend(param: request)) { result in
+            switch BaseResponse<DefaultResponse>.processJSONResponse(result) {
+            case .success(let responses):
+                return completion(responses, nil)
+            case .failure(let error):
+                return completion(nil, error)
+            }
+        }
+    }
+    
+    func acceptFriend(_ request: Int, _ completion: @escaping (DefaultResponse?, Error?) -> Void) {
+        makeProvider().request(.acceptFriend(param: request)) { result in
+            switch BaseResponse<DefaultResponse>.processJSONResponse(result) {
             case .success(let responses):
                 return completion(responses, nil)
             case .failure(let error):

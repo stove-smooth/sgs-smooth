@@ -12,6 +12,7 @@ class SplashViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     let userDefaults: UserDefaultsUtil
+    let userRepository: UserRepositoryProtocol
     
     struct Input {
         let viewDidLoad = PublishSubject<Void>()
@@ -26,9 +27,11 @@ class SplashViewModel: BaseViewModel {
     }
     
     init(
-        userDefaults: UserDefaultsUtil
+        userDefaults: UserDefaultsUtil,
+        userRepository: UserRepositoryProtocol
     ) {
         self.userDefaults = userDefaults
+        self.userRepository = userRepository
         super.init()
     }
     
@@ -36,7 +39,7 @@ class SplashViewModel: BaseViewModel {
         let token = self.userDefaults.getUserToken()
         if self.hasTokenFromLocal(token: token) {
             // 토큰 있을 때 - 토큰 서버처리
-            UserRepository.fetchUserInfo { user, _ in
+            self.userRepository.fetchUserInfo { user, _ in
                 guard let user = user else {
                     return
                 }

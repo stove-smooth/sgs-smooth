@@ -10,6 +10,9 @@ import RxCocoa
 
 class BaseViewModel {
     let disposeBag = DisposeBag()
+    let showLoading = PublishRelay<Bool>()
+    let showErrorMessage = PublishRelay<String>()
+    let showToastMessage = PublishRelay<String>()
     
     init() {
         self.bind()

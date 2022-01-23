@@ -8,22 +8,6 @@
 import Foundation
 import RxDataSources
 
-
-//
-//extension FriendSection: AnimatableSectionModelType {
-//
-//    typealias Item = Friend
-//
-//    init(original: FriendSection, items: [Friend]) {
-//        self = original
-//        self.items = items
-//    }
-//
-//    var identity: String {
-//        return header
-//    }
-//}
-
 enum FriendCellType {
     case empty
     case normal(Friend)

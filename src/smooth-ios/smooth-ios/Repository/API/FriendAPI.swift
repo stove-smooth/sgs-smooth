@@ -10,7 +10,10 @@ import Moya
 
 enum FriendTarget {
     case fetchFriend
-    case deleteFriend(param: DeleteFriendRequest)
+    case deleteFriend(param: Int)
+    case requestFriend(param: RequestFriend)
+    case banFriend(param: Int)
+    case acceptFriend(param: Int)
 }
 
 extension FriendTarget: BaseAPI, AccessTokenAuthorizable {
@@ -21,6 +24,12 @@ extension FriendTarget: BaseAPI, AccessTokenAuthorizable {
             return "/auth-server/auth/friend"
         case .deleteFriend:
             return "/auth-server/auth/friend"
+        case .requestFriend:
+            return "/auth-server/auth/friend"
+        case .banFriend:
+            return "/auth-server/auth/ban-friend"
+        case .acceptFriend:
+            return "/auth-server/auth/friend"
         }
     }
     
@@ -28,6 +37,9 @@ extension FriendTarget: BaseAPI, AccessTokenAuthorizable {
         switch self {
         case .fetchFriend: return .get
         case .deleteFriend: return .delete
+        case .requestFriend: return .post
+        case .banFriend: return .patch
+        case .acceptFriend: return .patch
         }
     }
     
@@ -35,8 +47,14 @@ extension FriendTarget: BaseAPI, AccessTokenAuthorizable {
         switch self {
         case .fetchFriend:
             return .requestPlain
-        case .deleteFriend(let request):
-            return .requestParameters(parameters: ["id": request.id], encoding: URLEncoding.queryString)
+        case .deleteFriend(let friendId):
+            return .requestParameters(parameters: ["id": friendId], encoding: URLEncoding.queryString)
+        case .requestFriend(let request):
+            return .requestCustomJSONEncodable(request, encoder: JSONEncoder())
+        case .banFriend(let friendId):
+            return .requestParameters(parameters: ["id": friendId], encoding: URLEncoding.queryString)
+        case .acceptFriend(let friendId):
+            return .requestParameters(parameters: ["id": friendId], encoding: URLEncoding.queryString)
         }
     }
     
@@ -45,6 +63,12 @@ extension FriendTarget: BaseAPI, AccessTokenAuthorizable {
         case .fetchFriend:
             return .custom("")
         case .deleteFriend:
+            return .custom("")
+        case .requestFriend:
+            return .custom("")
+        case .banFriend:
+            return .custom("")
+        case .acceptFriend:
             return .custom("")
         }
     }

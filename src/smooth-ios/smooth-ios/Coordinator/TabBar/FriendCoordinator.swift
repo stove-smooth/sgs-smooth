@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import PanModal
 
 class FriendCoordinator: NSObject, Coordinator {
     var delegate: CoordinatorDelegate?
@@ -25,32 +26,23 @@ class FriendCoordinator: NSObject, Coordinator {
     }
     
     func start() {
-        let friendVC = FriendViewController.instance()
+        let friendVC = FriendListViewController.instance()
         friendVC.coordinator = self
+        navigationController.isNavigationBarHidden = true
         navigationController.pushViewController(friendVC, animated: true)
-        
-        // TODO: - 1개의 뷰에서 테이블뷰로 하기
-//        FriendRepository.fetchFriend { [self] friends, _ in
-//            guard let friends = (friends as [Friend]? ) else {
-//                print("FriendRepository.fetchFriend error")
-//                return
-//            }
-//            if friends.count == 0 {
-//                let emptyVC = FriendEmptyViewController.instance()
-//                emptyVC.coordinator = self
-//                navigationController.pushViewController(emptyVC, animated: true)
-//            } else {
-//                let friendVC = FriendViewController.instance()
-//                friendVC.coordinator = self
-//                friendVC.friends = friends
-//                navigationController.pushViewController(friendVC, animated: true)
-//            }
-//        }
     }
     
     func goToRequest() {
         let requestVC = FriendRequestViewController.instance()
-        requestVC.coordinator = self
+    
+        requestVC.modalPresentationStyle = .fullScreen
         navigationController.present(requestVC, animated: true, completion: nil)
+    }
+    
+    func showFriendInfoModal(friend: Friend) {
+        let friendInfoVC = FriendInfoViewController.instance(friend: friend)
+        friendInfoVC.coordinator = self
+        
+        navigationController.presentPanModal(friendInfoVC)
     }
 }

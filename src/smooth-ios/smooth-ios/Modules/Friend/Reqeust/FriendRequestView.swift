@@ -9,6 +9,20 @@ import UIKit
 import Then
 
 class FriendRequestView: BaseView {
+    let navigationView = UIView().then {
+        $0.backgroundColor = .backgroundDarkGray
+    }
+    
+    let closeButton = UIButton().then {
+        $0.setTitle("닫기", for: .normal)
+        $0.tintColor = .white
+    }
+    
+    let naviTitleLabel = UILabel().then {
+        $0.textColor = .white
+        $0.text = "친구 추가하기"
+    }
+    
     let titleLabel = UILabel().then {
         $0.text = "Discord에 친구 추가하기"
         $0.textColor = .white
@@ -63,6 +77,7 @@ class FriendRequestView: BaseView {
         self.backgroundColor = UIColor.backgroundDarkGray
         
         [
+            navigationView, closeButton, naviTitleLabel,
             titleLabel, titleDescriptionLabel,
             userLabel, userField,
             myUserLabel, userNameLabel,
@@ -73,20 +88,36 @@ class FriendRequestView: BaseView {
     }
     
     override func bindConstraints() {
+        
+        navigationView.snp.makeConstraints {
+            $0.left.right.top.equalToSuperview()
+            $0.bottom.equalTo(safeAreaLayoutGuide.snp.top).offset(40)
+        }
+        
+        closeButton.snp.makeConstraints {
+            $0.left.equalToSuperview().offset(24)
+            $0.centerY.equalTo(naviTitleLabel)
+        }
+        
+        naviTitleLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalTo(navigationView).offset(-10)
+        }
+        
         titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(20)
+            $0.top.equalTo(navigationView.snp.bottom).offset(15)
             $0.centerX.equalToSuperview()
         }
         
         titleDescriptionLabel.snp.makeConstraints {
             $0.right.left.equalToSuperview().inset(15)
-            $0.top.equalTo(titleLabel.snp.bottom).offset(5)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(10)
             $0.centerX.equalToSuperview()
         }
         
         userLabel.snp.makeConstraints {
             $0.right.left.equalToSuperview().inset(30)
-            $0.top.equalTo(titleDescriptionLabel.snp.bottom).offset(10)
+            $0.top.equalTo(titleDescriptionLabel.snp.bottom).offset(20)
         }
         
         userField.snp.makeConstraints {

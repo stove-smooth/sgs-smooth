@@ -24,7 +24,7 @@ class MainTabBarCoordinator: NSObject, Coordinator {
             case .mention: return "멘션"
             case .profile: return "나"
             }
-        } 
+        }
         
         var image: String {
             switch self {
@@ -72,7 +72,7 @@ class MainTabBarCoordinator: NSObject, Coordinator {
         let navigationController = UINavigationController()
         let tabItem = UITabBarItem(title: item.title, image: UIImage(named: item.image), selectedImage: UIImage(named: "\(item.image)-selected"))
         navigationController.tabBarItem = tabItem
-    
+        
         let coordinator = item.getCoordinator(navigationController: navigationController)
         coordinator.delegate = self
         childCoordinators.append(coordinator)
@@ -87,4 +87,5 @@ class MainTabBarCoordinator: NSObject, Coordinator {
         tabBarController.tabBar.isTranslucent = true
         navigationController.viewControllers = [tabBarController]
     }
+    
 }

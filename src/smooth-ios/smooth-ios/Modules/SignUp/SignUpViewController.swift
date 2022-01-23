@@ -14,7 +14,8 @@ import Then
 class SignUpViewController: BaseViewController {
     private let signUpView = SignUpView()
     private let viewModel = SignUpViewModel(
-        userDefaults: UserDefaultsUtil()
+        userDefaults: UserDefaultsUtil(),
+        userRepository: UserRepository()
     )
     
     weak var coordinator: MainCoordinator?
