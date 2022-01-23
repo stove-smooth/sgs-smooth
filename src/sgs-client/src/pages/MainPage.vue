@@ -1,24 +1,27 @@
 <template>
   <div>
-    <div class="wrapper2">
-      <div class="wrapper">
-        <div class="container">
-          <navigation-bar v-if="navbar"></navigation-bar>
-          <router-view></router-view>
+    <template v-if="this.stompSocketConnected">
+      <div class="wrapper2">
+        <div class="wrapper">
+          <div class="container">
+            <navigation-bar v-if="navbar"></navigation-bar>
+            <router-view></router-view>
+          </div>
         </div>
       </div>
-    </div>
-    <server-popout></server-popout>
-    <friends-plus-action></friends-plus-action>
-    <create-server-modal></create-server-modal>
-    <create-channel-modal></create-channel-modal>
-    <friends-delete-modal></friends-delete-modal>
-    <friends-block-modal></friends-block-modal>
-    <friends-profile-modal></friends-profile-modal>
-    <create-category-modal></create-category-modal>
-    <category-setting-modal></category-setting-modal>
-    <category-delete-modal></category-delete-modal>
-    <server-setting-modal></server-setting-modal>
+      <server-popout></server-popout>
+      <friends-plus-action></friends-plus-action>
+      <create-server-modal></create-server-modal>
+      <create-channel-modal></create-channel-modal>
+      <friends-delete-modal></friends-delete-modal>
+      <friends-block-modal></friends-block-modal>
+      <friends-profile-modal></friends-profile-modal>
+      <create-category-modal></create-category-modal>
+      <category-setting-modal></category-setting-modal>
+      <category-delete-modal></category-delete-modal>
+      <server-setting-modal></server-setting-modal>
+    </template>
+    <template v-else> </template>
   </div>
 </template>
 

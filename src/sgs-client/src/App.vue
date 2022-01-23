@@ -11,7 +11,9 @@ export default {
     if (!this.getEmail) {
       this.$router.replace("/login");
     } else {
-      this.$router.replace("/channels/@me");
+      if (this.$route.path == "/") {
+        this.$router.replace("/channels/@me");
+      }
     }
   },
   computed: {

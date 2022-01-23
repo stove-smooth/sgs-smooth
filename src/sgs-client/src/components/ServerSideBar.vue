@@ -6,7 +6,9 @@
       :data-container="true"
     >
       <header class="server-sidebar-header">
-        <h1 class="server-name">{{ communityInfo.name }}</h1>
+        <h1 class="server-name">
+          {{ communityInfo ? communityInfo.name : "" }}
+        </h1>
         <div
           class="sidebar-header-button"
           aria-label="밍디님의 서버 활동"
@@ -26,7 +28,7 @@
       </div>
     </div>
     <div class="thin-scrollbar dm-scroller height-100">
-      <div class="side-content">
+      <div class="side-content" v-if="communityInfo">
         <draggable
           :list="communityInfo.categories"
           @change="log"
