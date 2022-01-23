@@ -21,7 +21,7 @@
       <category-delete-modal></category-delete-modal>
       <server-setting-modal></server-setting-modal>
     </template>
-    <template v-else> </template>
+    <template v-else> <loading-spinner /> </template>
   </div>
 </template>
 
@@ -29,6 +29,7 @@
 import Stomp from "webstomp-client";
 import SockJS from "sockjs-client";
 import { mapGetters, mapMutations, mapState } from "vuex";
+import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import { getBaseURL } from "../utils/common";
 import NavigationBar from "../components/NavigationBar.vue";
 import CreateServerModal from "../components/CreateServerModal.vue";
@@ -58,6 +59,7 @@ export default {
     CategorySettingModal,
     CategoryDeleteModal,
     ServerSettingModal,
+    LoadingSpinner,
   },
   data() {
     return {
