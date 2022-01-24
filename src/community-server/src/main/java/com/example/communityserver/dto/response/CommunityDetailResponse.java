@@ -27,8 +27,8 @@ public class CommunityDetailResponse {
         communityResponse.setName(community.getName());
 
         Category firstCategory = community.getCategories().stream()
-                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
-                .filter(c -> c.isFirstNode())
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL)
+                    && Objects.isNull(c.getBeforeNode()))
                 .findFirst().orElse(null);
         if (Objects.isNull(firstCategory))
             return communityResponse;
@@ -37,7 +37,8 @@ public class CommunityDetailResponse {
         categories.add(CategoryResponse.fromEntity(firstCategory));
         Category nextNode = firstCategory.getNextNode();
         while (!Objects.isNull(nextNode)) {
-            categories.add(CategoryResponse.fromEntity(nextNode));
+            if (nextNode.getStatus().equals(CommonStatus.NORMAL))
+                categories.add(CategoryResponse.fromEntity(nextNode));
             nextNode = nextNode.getNextNode();
         }
         communityResponse.setCategories(categories);
