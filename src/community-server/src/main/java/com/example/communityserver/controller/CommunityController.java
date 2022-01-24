@@ -220,7 +220,7 @@ public class CommunityController {
     /**
      * 커뮤니티에 속한 회원 아이디 찾기
      */
-    @GetMapping("/{communityId}/member-id")
+    @GetMapping("/feign/{communityId}/member-id")
     public DataResponse<MemberListFeignResponse> getCommunityMember(
             @PathVariable Long communityId
     ) {

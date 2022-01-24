@@ -387,13 +387,15 @@ public class CommunityService {
                     .filter(cm -> cm.getCommunity().getId().equals(request.getNext())
                         && cm.getCommunity().getStatus().equals(CommonStatus.NORMAL))
                     .findAny().orElseThrow(() -> new CustomException(NON_VALID_NEXT_NODE));
+
+            if (!Objects.isNull(tobe.getNextNode())) {
+                if (tobe.getNextNode().equals(target))
+                    throw new CustomException(ALREADY_LOCATED);
+            }
         } else {
             if (Objects.isNull(target.getBeforeNode()))
                 throw new CustomException(ALREADY_LOCATED);
         }
-
-        if (tobe.getNextNode().equals(target))
-            throw new CustomException(ALREADY_LOCATED);
 
         target.locate(tobe, getFirstNode(userId));
     }
