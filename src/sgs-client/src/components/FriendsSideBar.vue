@@ -50,37 +50,26 @@ export default {
 </script>
 <style>
 .private-channels {
-  /*   -webkit-box-sizing: border-box; */
   box-sizing: border-box;
   overflow: hidden;
-  /*   -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none; */
   user-select: none;
   -webkit-box-flex: 1;
-  /*   -ms-flex: 1; */
   flex: 1;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-  /*   -ms-flex-direction: column; */
   flex-direction: column;
   background-color: #2f3136;
   position: relative;
-  /*   display: -webkit-box;
-  display: -ms-flexbox; */
   display: flex;
 }
 .searchbar-container {
   z-index: 2;
   -webkit-box-flex: 0;
-  /*     -ms-flex: 0 0 auto; */
   flex: 0 0 auto;
   padding: 10px 10px 0px 10px;
   height: 48px;
   -webkit-box-align: center;
-  /*     -ms-flex-align: center; */
   align-items: center;
-  /*     -webkit-box-shadow: var(--elevation-low); */
   box-shadow: 0 1px 0 rgba(4, 4, 5, 0.2), 0 1.5px 0 rgba(6, 6, 7, 0.05),
     0 2px 0 rgba(4, 4, 5, 0.05);
 }
@@ -90,7 +79,6 @@ export default {
   overflow: hidden;
   border-radius: 4px;
   background-color: var(--dark-grey-color);
-  /*  -webkit-box-shadow: none; */
   box-shadow: none;
   color: #72767d;
   text-align: left;
@@ -101,24 +89,17 @@ export default {
   white-space: nowrap;
 }
 .side-content {
-  /* height: 1420px; */
   position: relative;
   padding-top: 8px;
-  /**padding은 임의로해봄. */
 }
 
 .avatar-container {
-  /*   display: -webkit-box;
-    display: -ms-flexbox; */
   display: flex;
   -webkit-box-align: center;
-  /* -ms-flex-align: center; */
   align-items: center;
   -webkit-box-pack: center;
-  /* -ms-flex-pack: center; */
   justify-content: center;
   -webkit-box-flex: 0;
-  /* -ms-flex: 0 0 auto; */
   flex: 0 0 auto;
   width: 32px;
   height: 32px;
@@ -131,9 +112,6 @@ export default {
   background-image: url("../assets/friends.svg");
 }
 .friends-contents {
-  /* white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden; */
   min-width: 0;
   -webkit-box-flex: 1;
   flex: 1 1 auto;
@@ -141,10 +119,8 @@ export default {
 .friends-name-decorator {
   display: flex;
   -webkit-box-pack: start;
-
   justify-content: space-between;
   -webkit-box-align: center;
-
   align-items: center;
 }
 .friends-name {
@@ -152,7 +128,6 @@ export default {
   line-height: 20px;
   font-weight: 500;
   -webkit-box-flex: 0;
-  /*     -ms-flex: 0 1 auto; */
   flex: 0 1 auto;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -175,32 +150,24 @@ export default {
   letter-spacing: 0.25px;
   font-weight: 600;
   -webkit-box-flex: 1;
-  /* -ms-flex: 1 1 auto; */
   flex: 1 1 auto;
   color: #8e9297;
 }
 
 .private-channels-header-text {
   -webkit-box-flex: 1;
-  /* -ms-flex: 1; */
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .invite-private-channels-button {
   -webkit-box-flex: 0;
-  /*  -ms-flex: 0; */
   flex: 0;
   width: 16px;
   height: 16px;
   margin-left: 0;
   margin-right: 2px;
   position: relative;
-  /* height: 24px;
-    width: auto;
-    -webkit-box-flex: 0;
-    -ms-flex: 0 0 auto;
-    flex: 0 0 auto; */
   margin: 0 8px;
   cursor: pointer;
 }
@@ -219,7 +186,6 @@ export default {
 }
 .avatar {
   display: block;
-  /* -o-object-fit: cover; */
   object-fit: cover;
   pointer-events: none;
   width: 100%;

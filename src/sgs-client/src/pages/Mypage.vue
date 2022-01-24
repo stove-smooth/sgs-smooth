@@ -66,7 +66,6 @@ export default {
   min-height: 0;
   width: 240px;
   -webkit-box-flex: 0;
-  /*   -ms-flex: 0 0 auto; */
   flex: 0 0 auto;
   background: #2f3136;
   overflow: hidden;
@@ -103,7 +102,6 @@ export default {
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-  /*  -ms-flex-direction: column; */
   flex-direction: column;
 }
 
@@ -111,11 +109,9 @@ export default {
   height: 100%;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
-  /* -ms-flex-direction: row; */
   flex-direction: row;
   position: relative;
   overflow: hidden;
-  /* -webkit-transform: translateZ(0); */
   transform: translateZ(0);
   display: flex;
 }

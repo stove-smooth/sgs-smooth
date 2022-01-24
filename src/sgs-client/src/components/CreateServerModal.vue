@@ -143,11 +143,6 @@ export default {
       thumbnail: "",
     };
   },
-  /*   watch: {
-    thumbnail(newVal, oldVal) {
-      console.log(newVal, oldVal);
-    },
-  }, */
   computed: {
     ...mapState("server", ["createServer"]),
   },

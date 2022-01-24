@@ -81,10 +81,6 @@ async function createNewCommunity(userData) {
 function fetchCommunityList() {
   return instance.get("community-server/community");
 }
-/* function getFriendsProfile(userId) {
-  console.log("룰루?", userId);
-  return instance.post("auth-server/auth/find-id-list", [userId]);
-} */
 function fetchCommunityInfo(communityId) {
   return instance.get("community-server/community/" + communityId);
 }
@@ -138,7 +134,6 @@ export {
   fetchCommunityList,
   fetchCommunityInfo,
   fetchCommunityMemberList,
-  //getFriendsProfile,
   createNewCategory,
   deleteCategory,
   createNewChannel,

@@ -69,18 +69,14 @@ export default {
     };
   },
   created() {
-    console.log("로그인안된 크레이트");
     if (this.getEmail) {
-      console.log("안녕크레이트");
       this.connect();
     }
     const url = window.location.pathname;
     if (url == "/settings") {
       this.navbar = false;
-      console.log("navbar", this.navbar);
     } else {
       this.navbar = true;
-      console.log("navbar", this.navbar);
     }
   },
   watch: {

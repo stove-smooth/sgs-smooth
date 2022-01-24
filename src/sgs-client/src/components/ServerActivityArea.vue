@@ -281,14 +281,11 @@ export default {
     ...mapMutations("utils", ["setClientX", "setClientY"]),
     ...mapMutations("server", ["setMessagePlusMenu"]),
     selectReplying(idx) {
-      console.log(idx);
       this.replyId = idx;
     },
     sendMessage(e) {
-      console.log(this.stompSocketConnected);
       if (e.keyCode == 13 && !e.shiftKey && this.stompSocketConnected) {
         if (this.text.trim().length == 0 && this.images.length == 0) {
-          console.log("아무것도없다.");
           return;
         }
         if (this.images.length > 0) {
@@ -396,18 +393,14 @@ export default {
 <style>
 .server-chatting-container {
   position: relative;
-  /* display: -webkit-box;
-  display: -ms-flexbox; */
   display: flex;
   height: 100%;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-  /* -ms-flex-direction: column; */
   flex-direction: column;
   min-width: 0;
   min-height: 0;
   -webkit-box-flex: 1;
-  /* -ms-flex: 1 1 auto; */
   flex: 1 1 auto;
 }
 .message-container {
@@ -529,7 +522,6 @@ export default {
 }
 .channel-message-input-form {
   position: relative;
-  /* -ms-flex-negative: 0; */
   flex-shrink: 0;
   padding-left: 16px;
   padding-right: 16px;
@@ -548,12 +540,9 @@ export default {
   border-top-right-radius: 8px;
 }
 .channel-message-scrollbar-container {
-  /* overflow-x: hidden;
-  overflow-y: scroll; */
   background-color: #40444b;
   border-radius: 8px;
   max-height: 350px;
-  /* height: 60px; */
 }
 .scrollbar-ghost::-webkit-scrollbar {
   width: 14px;
@@ -584,21 +573,15 @@ export default {
   z-index: 1;
   height: 0;
   border-top: thin solid hsla(0, 0%, 100%, 0.06);
-  /* display: -webkit-box;
-  display: -ms-flexbox; */
   display: flex;
   -webkit-box-align: center;
-  /*  -ms-flex-align: center; */
   align-items: center;
   -webkit-box-pack: center;
-  /* -ms-flex-pack: center; */
   justify-content: center;
   position: relative;
   -webkit-box-flex: 0;
-  /* -ms-flex: 0 0 auto; */
   flex: 0 0 auto;
   pointer-events: none;
-  /* -webkit-box-sizing: border-box; */
   box-sizing: border-box;
   --divider-color: hsl(359, calc(var(1, 1) * 82.6%), 59.4%);
 }
@@ -613,7 +596,6 @@ export default {
   display: inline-flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-  /* -ms-flex-direction: column; */
   flex-direction: column;
   background-color: #2f3136;
   border-radius: 4px;
@@ -628,7 +610,6 @@ export default {
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-  /* -ms-flex-direction: column; */
   flex-direction: column;
   height: 100%;
 }
@@ -707,9 +688,6 @@ export default {
   outline: none;
   overflow-wrap: break-word;
   -webkit-user-modify: read-write-plaintext-only;
-  /*   padding-bottom: 11px;
-  padding-top: 11px;
-  padding-right: 10px; */
   caret-color: #dcddde;
   position: absolute;
   left: 0;
@@ -727,16 +705,6 @@ export default {
   border: none;
   height: 90%;
   resize: none;
-  /* margin-top: 6px; */
-  /*   outline: none;
-  overflow-wrap: break-word;
-  line-height: 1.375rem;
-  white-space: break-spaces !important;
-  text-align: left;
-  position: absolute;
-  left: 0;
-  right: 10px;
-  height: 100px; */
 }
 .upload-chat-image-icon {
   height: 24px;

@@ -189,7 +189,6 @@ export default {
   align-items: center;
   -webkit-box-pack: start;
   justify-content: flex-start;
-  /*contain: layout size;*/
 }
 .selected-item {
   opacity: 1;

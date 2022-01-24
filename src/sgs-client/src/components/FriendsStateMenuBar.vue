@@ -113,21 +113,15 @@ export default {
 <style>
 .friends-section-title {
   -webkit-box-pack: start;
-  /* -ms-flex-pack: start; */
   justify-content: flex-start;
   margin: 0 8px 0 0;
-  /* -ms-flex: 0 0 auto; */
   flex: 0 0 auto;
   min-width: auto;
   overflow: hidden;
   white-space: nowrap;
-
   -webkit-box-flex: 0;
-  /*  display: -webkit-box;
-  display: -ms-flexbox; */
   display: flex;
   -webkit-box-align: center;
-  /* -ms-flex-align: center; */
   align-items: center;
   box-sizing: border-box;
   color: var(--white-color);
@@ -137,26 +131,20 @@ export default {
   height: 24px;
   margin: 0 8px;
   -webkit-box-flex: 0;
-  /* -ms-flex: 0 0 auto; */
   flex: 0 0 auto;
   background: hsla(0, 0%, 100%, 0.06);
 }
 .friends-tabbar {
-  /* display: -webkit-box;
-  display: -ms-flexbox; */
   display: flex;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
-  /* -ms-flex-direction: row; */
   flex-direction: row;
 }
 .friends-tab-decorator {
   display: flex;
   -webkit-box-pack: center;
-  /* -ms-flex-pack: center; */
   justify-content: center;
   -webkit-box-align: center;
-  /* -ms-flex-align: center; */
   align-items: center;
   text-align: center;
   min-width: 40px;
@@ -172,7 +160,6 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  /* -ms-flex-negative: 0; */
   flex-shrink: 0;
   font-weight: 500;
 }
@@ -181,16 +168,6 @@ export default {
   cursor: default;
   color: var(--white-color);
 }
-/* .friends-tab-decorator:active {
-  background-color: rgb(47 49 54);
-  cursor: default;
-  color: var(--white-color);
-}
-.friends-tab-decorator:visited {
-  background-color: rgb(47 49 54);
-  cursor: default;
-  color: var(--white-color);
-} */
 .add-friends-button {
   color: hsl(0, calc(var(--saturation-factor, 1) * 0%), 100%);
   background-color: hsl(139, calc(var(--saturation-factor, 1) * 47.3%), 43.9%);
