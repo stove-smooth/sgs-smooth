@@ -1,24 +1,18 @@
-package com.example.chatserver.configuration;
+package com.example.chatserver.config;
 
-import com.example.chatserver.client.PresenceClient;
-import com.example.chatserver.configuration.message.JwtTokenFilter;
+import com.example.chatserver.config.message.JwtTokenFilter;
 import com.example.chatserver.dto.request.LoginSessionRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.rsocket.RSocketRequester;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 

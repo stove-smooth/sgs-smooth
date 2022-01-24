@@ -1,7 +1,7 @@
 package com.example.chatserver.controller;
 
-import com.example.chatserver.configuration.message.MessageSender;
-import com.example.chatserver.configuration.S3Config;
+import com.example.chatserver.config.message.MessageSender;
+import com.example.chatserver.config.S3Config;
 import com.example.chatserver.domain.DirectChat;
 import com.example.chatserver.repository.MessageRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;

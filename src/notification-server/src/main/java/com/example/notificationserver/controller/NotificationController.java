@@ -24,11 +24,16 @@ public class NotificationController {
     private Long multicastMessageSize;
 
     @PostMapping("/pushs/topics/{topic}")
-    public void notificationTopics(@PathVariable("topic") String topic, @RequestBody RequestPushMessage data) throws FirebaseMessagingException {
-        Notification notification = Notification.builder().setTitle(data.getTitle()).setBody(data.getBody()).setImage(data.getImage()).build();
+    public String notificationTopics(@PathVariable("topic") String topic, @RequestBody RequestPushMessage data) throws FirebaseMessagingException {
+        Notification notification = Notification
+                .builder()
+                .setTitle(data.getTitle())
+                .setBody(data.getBody())
+                .setImage(data.getImage()).build();
         Message.Builder builder = Message.builder();
+
         Optional.ofNullable(data.getData()).ifPresent(sit -> builder.putAllData(sit));
         Message msg = builder.setTopic(topic).setNotification(notification).build();
-        fcmService.sendMessage(msg);
+        return fcmService.sendMessage(msg);
     }
 }

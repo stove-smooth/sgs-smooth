@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +36,11 @@ public class PresenceService {
 
     public Map<Long,Boolean> findRead(List<Long> requestAccountIds) {
         Map<Long,Boolean> check = new HashMap<>();
+        List<Long> alarm = new ArrayList<>();
         for (Long i : requestAccountIds) {
             if (redisTemplate.opsForValue().get("USER" + i) == null) {
                 check.put(i,false);
+                alarm.add(i);
             } else {
                 check.put(i,true);
             }
