@@ -29,7 +29,11 @@
                 >
                   <div class="chat-message-content">
                     <img
-                      :src="item.profileImage"
+                      :src="
+                        item.profileImage
+                          ? item.profileImage
+                          : discordProfile(0)
+                      "
                       class="chat-avatar clickable"
                       alt="image"
                     />
@@ -237,18 +241,13 @@
 <script>
 import { VEmojiPicker } from "v-emoji-picker";
 
-import { converToThumbnail } from "../utils/common.js";
+import { converToThumbnail, selectProfile } from "../utils/common.js";
 import { mapState, mapMutations, mapGetters } from "vuex";
 import { sendImageChatting } from "../api/index";
 export default {
   components: {
     VEmojiPicker,
   },
-  /* props: {
-    channelid: {
-      type: Number,
-    },
-  }, */
   data() {
     return {
       replyId: "",
@@ -288,13 +287,7 @@ export default {
     sendMessage(e) {
       console.log(this.stompSocketConnected);
       if (e.keyCode == 13 && !e.shiftKey && this.stompSocketConnected) {
-        console.log(
-          "this.text",
-          this.text.length,
-          "length",
-          this.images.length
-        );
-        if (this.text.length <= 1 && this.images.length == 0) {
+        if (this.text.trim().length == 0 && this.images.length == 0) {
           console.log("아무것도없다.");
           return;
         }
@@ -390,6 +383,11 @@ export default {
     },
     openEmojiPopout() {
       this.emojiPopout = !this.emojiPopout;
+    },
+    discordProfile(code) {
+      const classify = code % 4;
+      const result = selectProfile(classify);
+      return require("../assets/" + result + ".png");
     },
   },
 };

@@ -64,7 +64,7 @@ export default {
     discordProfile(code) {
       const classify = code % 4;
       const result = selectProfile(classify);
-      this.discordProfile = require("../assets/" + result + ".png");
+      return require("../assets/" + result + ".png");
     },
   },
 };
