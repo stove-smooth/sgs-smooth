@@ -41,4 +41,10 @@ extension Reactive where Base: MenuView {
             view.serverView.bind(serverList: serverList)
         }
     }
+    
+    var categories: Binder<[Category]> {
+        return Binder(self.base) { view, categoryList in
+            view.channelView.bind(categoryList: categoryList)
+        }
+    }
 }

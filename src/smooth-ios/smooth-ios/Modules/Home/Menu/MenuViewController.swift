@@ -45,6 +45,16 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             .asDriver(onErrorJustReturn: [])
             .drive(self.menuView.rx.server)
             .disposed(by: disposeBag)
+        
+        self.viewModel.output.categories
+            .asDriver(onErrorJustReturn: [])
+            .drive(self.menuView.rx.categories)
+            .disposed(by: disposeBag)
+        
+        menuView.serverView.tableView.rx.itemSelected
+            .map { $0.row }
+            .bind(to: self.viewModel.input.tapServer)
+            .disposed(by: disposeBag)
     }
     
 }
