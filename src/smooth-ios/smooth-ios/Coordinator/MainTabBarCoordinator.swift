@@ -56,6 +56,13 @@ class MainTabBarCoordinator: NSObject, Coordinator {
     
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
+        self.navigationController.navigationBar.tintColor = .white
+        self.navigationController.navigationBar.barTintColor = UIColor.backgroundDarkGray
+        self.navigationController.navigationBar.shadowImage = UIImage()
+        self.navigationController.navigationBar.isTranslucent = false
+        
+        self.navigationController.setNavigationBarHidden(true, animated: true)
+        
         self.childCoordinators = []
         self.tabBarController = UITabBarController()
         
