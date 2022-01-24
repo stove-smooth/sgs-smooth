@@ -7,7 +7,6 @@
 
 import Foundation
 import Moya
-import RxSwift
 
 protocol FriendRepositoryProtocol {
     func fetchFriend(_ completion: @escaping ([FriendSection]?, Error?) -> Void)
@@ -18,8 +17,6 @@ protocol FriendRepositoryProtocol {
 }
 
 struct FriendRepository: Networkable, FriendRepositoryProtocol {
-    let disposeBag = DisposeBag()
-    
     typealias Target = FriendTarget
     
     func fetchFriend(_ completion: @escaping ([FriendSection]?, Error?) -> Void) {

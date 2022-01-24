@@ -7,7 +7,6 @@
 
 import Foundation
 import Moya
-import RxSwift
 
 protocol UserRepositoryProtocol {
     func signIn(_ request: SignInRequest, _ completion: @escaping (SignInResponse?, Error?) -> Void )
@@ -18,8 +17,6 @@ protocol UserRepositoryProtocol {
 }
 
 struct UserRepository: Networkable, UserRepositoryProtocol {
-    let disposeBag = DisposeBag()
-    
     typealias Target = UserTarget
     
     func signIn(_ request: SignInRequest, _ completion: @escaping (SignInResponse?, Error?) -> Void ) {
