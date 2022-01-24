@@ -89,10 +89,8 @@ export default {
       if (to.path != from.path) {
         if (to.path === "/settings") {
           this.navbar = false;
-          console.log("navbar", this.navbar);
         } else {
           this.navbar = true;
-          console.log("navbar", this.navbar);
         }
       }
     },

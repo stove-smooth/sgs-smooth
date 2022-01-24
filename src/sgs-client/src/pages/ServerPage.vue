@@ -8,7 +8,7 @@
       <div class="server-activity-container">
         <server-chatting-menu-bar></server-chatting-menu-bar>
         <div class="server-activity-container1">
-          <server-activity-area></server-activity-area>
+          <server-activity-area :channelid="channelid"></server-activity-area>
           <server-member-list></server-member-list>
         </div>
       </div>
@@ -31,6 +31,11 @@ export default {
     ServerActivityArea,
     ServerMemberList,
   },
+  data() {
+    return {
+      channelid: null,
+    };
+  },
   methods: {
     ...mapActions("server", [
       "FETCH_COMMUNITYINFO",
@@ -42,7 +47,13 @@ export default {
     },
   },
   async created() {
+    this.channelid = parseInt(this.$route.params.channelid);
     await this.fetchCommunityInfo();
+  },
+  watch: {
+    $route(to) {
+      this.channelid = parseInt(to.params.channelid);
+    },
   },
 };
 </script>

@@ -103,6 +103,24 @@ function createNewChannel(channelData) {
 function moveCategory(categoryData) {
   return instance.patch("community-server/category/location", categoryData);
 }
+async function sendImageChatting(userData) {
+  try {
+    const accesstoken = await store.getters["user/getAccessToken"];
+    const response = await axios.post(
+      "http://52.79.229.100:8000/chat-server/file",
+      userData,
+      {
+        headers: {
+          AUTHORIZATION: accesstoken,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response;
+  } catch (err) {
+    console.log(err.response);
+  }
+}
 export {
   registerUser,
   loginUser,
@@ -125,4 +143,5 @@ export {
   deleteCategory,
   createNewChannel,
   moveCategory,
+  sendImageChatting,
 };

@@ -29,7 +29,7 @@
                 >
                   <div class="chat-message-content">
                     <img
-                      src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=80"
+                      :src="item.profileImage"
                       class="chat-avatar clickable"
                       alt="image"
                     />
@@ -238,10 +238,16 @@
 import { VEmojiPicker } from "v-emoji-picker";
 
 import { converToThumbnail } from "../utils/common.js";
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapGetters } from "vuex";
+import { sendImageChatting } from "../api/index";
 export default {
   components: {
     VEmojiPicker,
+  },
+  props: {
+    channelid: {
+      type: Number,
+    },
   },
   data() {
     return {
@@ -261,14 +267,15 @@ export default {
     ...mapState("user", ["nickname"]),
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
     ...mapState("server", ["messagePlusMenu"]),
+    ...mapGetters("user", ["getUserId"]),
   },
   created() {
     this.stompSocketClient.subscribe("/topic/group", (res) => {
       console.log("구독으로 받은 메시지 입니다.", res.body);
       const result = this.convertFromStringToDate(JSON.parse(res.body).time);
-      console.log("시간 변환", result);
-      this.receiveList.push(JSON.parse(res.body));
-      console.log(this.receiveList);
+      const receivedForm = JSON.parse(res.body);
+      receivedForm.time = result;
+      this.receiveList.push(receivedForm);
     });
   },
   methods: {
@@ -281,9 +288,23 @@ export default {
     sendMessage(e) {
       console.log(this.stompSocketConnected);
       if (e.keyCode == 13 && !e.shiftKey && this.stompSocketConnected) {
-        console.log("메시지를 chatting에서 보냄.");
-        this.send();
-        this.text = "";
+        console.log(
+          "this.text",
+          this.text.length,
+          "length",
+          this.images.length
+        );
+        if (this.text.length <= 1 && this.images.length == 0) {
+          console.log("아무것도없다.");
+          return;
+        }
+        if (this.images.length > 0) {
+          this.sendPicture();
+        }
+        if (this.text != undefined) {
+          this.send();
+          this.text = "";
+        }
       }
     },
     async uploadImage() {
@@ -303,14 +324,28 @@ export default {
         const msg = {
           userName: this.nickname,
           content: this.text,
-          channel_id: 1,
-          account_id: 2,
+          channel_id: this.channelid,
+          account_id: this.getUserId,
         };
         this.stompSocketClient.send(
           "/kafka/send-channel-message",
           JSON.stringify(msg),
           {}
         );
+      }
+    },
+    async sendPicture() {
+      console.log("보내는 이미지", this.images);
+      const formData = new FormData();
+      for (let i = 0; i < this.images.length; i++) {
+        formData.append("image", this.images[i]);
+      }
+      //formData.append("image", this.images);
+      try {
+        const result = await sendImageChatting(formData);
+        console.log("sendpictureresult", result);
+      } catch (err) {
+        console.log("errrr", err.response);
       }
     },
     messageHover(idx) {
@@ -334,20 +369,24 @@ export default {
       var time = {};
       console.log(responseDate);
       let dateComponents = responseDate.split("T");
-      //let datePieces = dateComponents[0].split("-");
+      let datePieces = dateComponents[0].split("-");
       let timePieces = dateComponents[1].split(":");
-      console.log(timePieces[0], timePieces[1]);
+      console.log(
+        datePieces[0],
+        datePieces[1],
+        datePieces[2],
+        timePieces[0],
+        timePieces[1]
+      );
       if (parseInt(timePieces[0]) + 9 < 24) {
         time.hour = parseInt(timePieces[0]) + 9;
       } else {
         time.hour = parseInt(timePieces[0]) + 9 - 24;
       }
       time.minutes = parseInt(timePieces[1]);
-      return time;
+      return time.hour + ":" + time.minutes;
     },
     onSelectEmoji(emoji) {
-      console.log("emoji", emoji);
-      console.log("emoji", emoji.data);
       this.text += emoji.data;
     },
     openEmojiPopout() {
@@ -899,7 +938,7 @@ export default {
   background-image: url("../assets/yellow-emotion.svg");
 }
 .emoji-picker-popout {
-  background-color: "#2f3136";
+  background-color: #2f3136 !important;
   position: absolute;
   bottom: 0;
   right: 0;

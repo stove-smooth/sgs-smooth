@@ -191,14 +191,6 @@ export default {
       "setOpenServerPopout",
       "setCategorySettingModal",
     ]),
-    /* add: function () {
-      this.list.push({ name: "Juan" });
-    },
-    clone: function (el) {
-      return {
-        name: el.name + " cloned",
-      };
-    }, */
     log: async function (evt) {
       if (evt.moved) {
         //console.log(evt);
@@ -279,6 +271,7 @@ export default {
     },
     routeChannel(id) {
       this.selected = id;
+      console.log("라우트", id);
       this.$router.push("/channels/" + this.communityInfo.id + "/" + id);
     },
   },
