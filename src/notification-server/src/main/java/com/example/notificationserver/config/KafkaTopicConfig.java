@@ -1,4 +1,4 @@
-package com.example.chatserver.configuration;
+package com.example.notificationserver.config;
 
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -29,11 +29,11 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic directChat() {
-        return new NewTopic(topicName,1, (short) 1);
+        return new NewTopic(topicName,3, (short) 3);
     }
 
     @Bean
     public NewTopic communityChat() {
-        return new NewTopic(topicName2,1, (short) 1);
+        return new NewTopic(topicName2,3, (short) 3);
     }
 }

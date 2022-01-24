@@ -1,4 +1,4 @@
-package com.example.chatserver.configuration.message;
+package com.example.chatserver.config.message;
 
 import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.domain.DirectChat;

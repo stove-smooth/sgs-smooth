@@ -1,4 +1,4 @@
-package com.example.chatserver.configuration;
+package com.example.chatserver.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

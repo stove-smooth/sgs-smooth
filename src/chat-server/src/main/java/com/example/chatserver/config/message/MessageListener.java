@@ -1,11 +1,13 @@
-package com.example.chatserver.configuration.message;
+package com.example.chatserver.config.message;
 
 import com.example.chatserver.client.CommunityClient;
+import com.example.chatserver.client.NotificationClient;
 import com.example.chatserver.client.PresenceClient;
 import com.example.chatserver.client.UserClient;
-import com.example.chatserver.configuration.TcpClientGateway;
+import com.example.chatserver.config.TcpClientGateway;
 import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.domain.DirectChat;
+import com.example.chatserver.dto.request.RequestPushMessage;
 import com.example.chatserver.dto.response.CommunityFeignResponse;
 import com.example.chatserver.dto.response.UserInfoFeignResponse;
 import com.example.chatserver.repository.ChannelChatRepository;
@@ -20,9 +22,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -45,6 +45,7 @@ public class MessageListener {
     private final RedisTemplate<String, CommunityFeignResponse.UserIdResponse> redisTemplateForIds;
     private final PresenceClient presenceClient;
     private final CommunityClient communityClient;
+    private final NotificationClient notificationClient;
     private final TcpClientGateway tcpClientGateway;
 
     // 레디스 채팅 저장 시간 5분
@@ -98,7 +99,12 @@ public class MessageListener {
             Map<Long, Boolean> readCheck = presenceClient.read(userIdResponse.getMembers());
             channelMessage.setRead(readCheck);
         }
+        RequestPushMessage request = RequestPushMessage
+                .builder()
+                .title("방이름")
+                .body(msg.get("name") + ":" + msg.get("message")).build();
 
+        notificationClient.notificationTopics("/topic/group",request);
         channelChatRepository.save(channelMessage);
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(msg);

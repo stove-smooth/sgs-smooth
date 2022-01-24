@@ -1,4 +1,4 @@
-package com.example.chatserver.configuration;
+package com.example.chatserver.config;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;

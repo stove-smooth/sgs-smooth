@@ -1,6 +1,5 @@
-package com.example.chatserver.configuration;
+package com.example.chatserver.config;
 
-import com.example.chatserver.dto.request.LoginSessionRequest;
 import org.springframework.integration.annotation.MessagingGateway;
 import org.springframework.stereotype.Component;
 

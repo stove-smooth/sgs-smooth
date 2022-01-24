@@ -1,4 +1,4 @@
-package com.example.chatserver.configuration;
+package com.example.chatserver.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

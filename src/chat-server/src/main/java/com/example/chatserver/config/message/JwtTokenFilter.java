@@ -1,4 +1,4 @@
-package com.example.chatserver.configuration.message;
+package com.example.chatserver.config.message;
 
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
