@@ -29,11 +29,7 @@
                 >
                   <div class="chat-message-content">
                     <img
-                      :src="
-                        item.profileImage
-                          ? item.profileImage
-                          : discordProfile(0)
-                      "
+                      :src="item.profileImage"
                       class="chat-avatar clickable"
                       alt="image"
                     />
@@ -241,7 +237,7 @@
 <script>
 import { VEmojiPicker } from "v-emoji-picker";
 
-import { converToThumbnail, selectProfile } from "../utils/common.js";
+import { converToThumbnail } from "../utils/common.js";
 import { mapState, mapMutations, mapGetters } from "vuex";
 import { sendImageChatting } from "../api/index";
 export default {
@@ -380,11 +376,6 @@ export default {
     },
     openEmojiPopout() {
       this.emojiPopout = !this.emojiPopout;
-    },
-    discordProfile(code) {
-      const classify = code % 4;
-      const result = selectProfile(classify);
-      return require("../assets/" + result + ".png");
     },
   },
 };

@@ -17,9 +17,7 @@
                       <div class="avatar-uploader-inner">
                         <img
                           class="avatar-uploader-image"
-                          :src="
-                            userimage ? userimage : discordProfile(this.code)
-                          "
+                          :src="userimage"
                           alt=" "
                         />
                         <div class="avatar-uploader-hint" v-show="false">
@@ -93,7 +91,7 @@ import {
   converToThumbnail,
   dataUrlToFile,
 } from "../utils/common.js";
-import { changeUserImage, deleteProfileImage } from "../api/index.js";
+import { changeUserImage } from "../api/index.js";
 export default {
   computed: {
     ...mapState("user", ["code", "nickname", "userimage", "useraboutme"]),
@@ -122,23 +120,17 @@ export default {
       this.setUserImage(thumbnail);
     },
     async changeProfile() {
-      if (!this.userimage) {
-        await deleteProfileImage();
-      } else {
-        var frm = new FormData();
-        const result = await dataUrlToFile(this.userimage);
-        frm.append("image", result);
-        await changeUserImage(frm);
-        window.location.reload();
-      }
+      var frm = new FormData();
+      const result = await dataUrlToFile(this.userimage);
+      frm.append("image", result);
+      await changeUserImage(frm);
+      window.location.reload();
     },
     resetImage() {
-      this.setUserImage("");
-    },
-    discordProfile(code) {
-      const classify = code % 4;
+      const classify = this.code % 4;
       const result = selectProfile(classify);
-      return require("../assets/" + result + ".png");
+      console.log("reset", result);
+      this.setUserImage(require("../assets/" + result + ".png"));
     },
   },
 };

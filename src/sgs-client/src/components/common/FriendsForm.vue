@@ -8,13 +8,7 @@
         <div class="friends-list-item-contents">
           <div class="friends-state-info">
             <div class="profile-margin profile-wrapper">
-              <img
-                class="avatar"
-                :src="
-                  item.profileImage ? item.profileImage : getImgUrl(item.code)
-                "
-                alt="image"
-              />
+              <img class="avatar" :src="item.profileImage" alt="image" />
               <template aria-label="status-invisible">
                 <div class="status-ring">
                   <div class="status-offline"></div>
@@ -50,19 +44,11 @@
 </template>
 
 <script>
-import { selectProfile } from "../../utils/common.js";
 export default {
   props: {
     friend: {
       type: Array,
       required: true,
-    },
-  },
-  methods: {
-    getImgUrl(code) {
-      const classify = code % 4;
-      const result = selectProfile(classify);
-      return require("../../assets/" + result + ".png");
     },
   },
 };

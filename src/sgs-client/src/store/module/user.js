@@ -114,6 +114,7 @@ const user = {
       commit("setEmail", response.data.result.email);
       commit("setAccessToken", response.data.result.accessToken);
       commit("setRefreshToken", response.data.result.refreshToken);
+      return response.data.result.code;
     },
     LOGOUT({ commit }) {
       localStorage.removeItem("userId");

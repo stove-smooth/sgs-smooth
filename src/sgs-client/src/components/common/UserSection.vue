@@ -11,11 +11,7 @@
         >
           <div class="profile-wrapper" aria-label="내 프로필">
             <div class="avatar-wrapper">
-              <img
-                class="avatar"
-                :src="userimage ? userimage : discordProfile(this.code)"
-                alt=" "
-              />
+              <img class="avatar" :src="userimage" alt=" " />
               <template aria-label="status-invisible">
                 <div class="status-ring">
                   <div class="status-offline"></div>
@@ -72,18 +68,12 @@
 </template>
 
 <script>
-import { selectProfile } from "../../utils/common.js";
 import { mapState, mapActions } from "vuex";
 export default {
   methods: {
     ...mapActions("user", ["FETCH_USERINFO"]),
     openSettings() {
       this.$router.push("/settings");
-    },
-    discordProfile(code) {
-      const classify = code % 4;
-      const result = selectProfile(classify);
-      return require("../../assets/" + result + ".png");
     },
   },
   computed: {
