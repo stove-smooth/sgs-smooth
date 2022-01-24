@@ -4,7 +4,7 @@
       <div class="primary-icon-wrapper">
         <svg class="hashtag-icon"></svg>
       </div>
-      <h3 class="server-name" aria-label="channel-name">밍디의 채널</h3>
+      <h3 class="server-name" aria-label="channel-name">{{ $route.params }}</h3>
     </div>
     <div class="primary-header-toolbar">
       <div

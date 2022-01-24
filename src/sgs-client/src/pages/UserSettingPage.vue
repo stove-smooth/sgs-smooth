@@ -17,7 +17,9 @@
                       <div class="avatar-uploader-inner">
                         <img
                           class="avatar-uploader-image"
-                          :src="userimage ? userimage : discordProfile"
+                          :src="
+                            userimage ? userimage : discordProfile(this.code)
+                          "
                           alt=" "
                         />
                         <div class="avatar-uploader-hint" v-show="false">
@@ -93,31 +95,12 @@ import {
 } from "../utils/common.js";
 import { changeUserImage, deleteProfileImage } from "../api/index.js";
 export default {
-  data() {
-    return {
-      discordProfile: "",
-    };
-  },
   computed: {
     ...mapState("user", ["code", "nickname", "userimage", "useraboutme"]),
     ...mapState("utils", ["stompSocketClient"]),
   },
   async created() {
     await this.fetchUserInfo();
-    if (!this.userimage) {
-      const classify = this.code % 4;
-      const result = selectProfile(classify);
-      this.discordProfile = require("../assets/" + result + ".png");
-    }
-  },
-  watch: {
-    userimage(newVal, oldVal) {
-      if (newVal !== oldVal && !newVal) {
-        const classify = this.code % 4;
-        const result = selectProfile(classify);
-        this.discordProfile = require("../assets/" + result + ".png");
-      }
-    },
   },
   methods: {
     ...mapActions("user", ["LOGOUT", "FETCH_USERINFO"]),
@@ -151,6 +134,11 @@ export default {
     },
     resetImage() {
       this.setUserImage("");
+    },
+    discordProfile(code) {
+      const classify = code % 4;
+      const result = selectProfile(classify);
+      return require("../assets/" + result + ".png");
     },
   },
 };

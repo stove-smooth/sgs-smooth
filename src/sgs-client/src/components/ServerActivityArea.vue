@@ -244,11 +244,11 @@ export default {
   components: {
     VEmojiPicker,
   },
-  props: {
+  /* props: {
     channelid: {
       type: Number,
     },
-  },
+  }, */
   data() {
     return {
       replyId: "",
@@ -324,7 +324,7 @@ export default {
         const msg = {
           userName: this.nickname,
           content: this.text,
-          channel_id: this.channelid,
+          channel_id: this.$route.params.channelid,
           account_id: this.getUserId,
         };
         this.stompSocketClient.send(
@@ -340,7 +340,6 @@ export default {
       for (let i = 0; i < this.images.length; i++) {
         formData.append("image", this.images[i]);
       }
-      //formData.append("image", this.images);
       try {
         const result = await sendImageChatting(formData);
         console.log("sendpictureresult", result);

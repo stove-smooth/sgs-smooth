@@ -176,7 +176,7 @@ export default {
   },
   data() {
     return {
-      selected: "",
+      selected: this.$route.params.channelid,
       hovered: "",
       categoryhovered: "",
       new: 0,
@@ -193,7 +193,6 @@ export default {
     ]),
     log: async function (evt) {
       if (evt.moved) {
-        //console.log(evt);
         if (evt.moved.element.channels != "undefined") {
           console.log(evt);
           console.log("카테고리아이디", evt.moved.element.id);
@@ -271,23 +270,11 @@ export default {
     },
     routeChannel(id) {
       this.selected = id;
-      console.log("라우트", id);
       this.$router.push("/channels/" + this.communityInfo.id + "/" + id);
     },
   },
   mounted() {
-    let array = window.location.pathname.split("/");
-    this.selected = array[3];
     window.addEventListener("click", this.onClick);
-  },
-  watch: {
-    // 라우터의 변경을 감시
-    $route(to, from) {
-      if (to.path != from.path) {
-        let array = to.path.split("/");
-        this.selected = array[3];
-      }
-    },
   },
 };
 </script>

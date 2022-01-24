@@ -9,11 +9,11 @@
           aria-lable="상태설정"
           role="button"
         >
-          <div class="profile-wrapper" aria-label="칭구1">
+          <div class="profile-wrapper" aria-label="내 프로필">
             <div class="avatar-wrapper">
               <img
                 class="avatar"
-                :src="userimage ? userimage : discordProfile"
+                :src="userimage ? userimage : discordProfile(this.code)"
                 alt=" "
               />
               <template aria-label="status-invisible">
@@ -75,15 +75,15 @@
 import { selectProfile } from "../../utils/common.js";
 import { mapState, mapActions } from "vuex";
 export default {
-  data() {
-    return {
-      discordProfile: "",
-    };
-  },
   methods: {
     ...mapActions("user", ["FETCH_USERINFO"]),
     openSettings() {
       this.$router.push("/settings");
+    },
+    discordProfile(code) {
+      const classify = code % 4;
+      const result = selectProfile(classify);
+      return require("../../assets/" + result + ".png");
     },
   },
   computed: {
@@ -91,11 +91,6 @@ export default {
   },
   async created() {
     await this.FETCH_USERINFO();
-    if (!this.userimage) {
-      const classify = this.code % 4;
-      const result = selectProfile(classify);
-      this.discordProfile = require("../../assets/" + result + ".png");
-    }
   },
 };
 </script>
