@@ -82,6 +82,7 @@ class ServerCell: UITableViewCell {
         if selected {
             // 원형 -> 둥근 사각형으로
             selectedView.isHidden = false
+            serverImg.backgroundColor = .blurple
             
             UIView.animate(withDuration: 0.2, animations: {
                 self.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)}, completion: { finished in
@@ -98,6 +99,8 @@ class ServerCell: UITableViewCell {
             })
         } else {
             selectedView.isHidden = true
+            serverImg.backgroundColor = .messageBarDarkGray
+            
             UIView.animate(withDuration: 0.2, animations: {
                 self.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)}, completion: { finished in
                     UIView.animate(withDuration: 0.2) {
@@ -119,6 +122,7 @@ class ServerCell: UITableViewCell {
             serverImg.setImage(URL(string: server.icon!)!)
             textView.isHidden = true
         } else {
+            textView.isHidden = false
             if (server.name.count > 5) {
                 let subIdx: String.Index = server.name.index(server.name.startIndex, offsetBy: 2)
                 let result = "\(server.name[...subIdx])"+"..."
