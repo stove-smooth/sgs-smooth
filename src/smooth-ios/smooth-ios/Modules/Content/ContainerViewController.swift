@@ -29,16 +29,16 @@ class ContainerViewController: BaseViewController, CoordinatorContext {
         view.backgroundColor = .messageBarDarkGray
         self.tabBarController?.tabBar.isHidden = true
         
+        navigationController?.navigationBar.tintColor = .white
         navigationItem.leftBarButtonItem = UIBarButtonItem(
-            image: UIImage(systemName: "list.dash"),
+            image: UIImage(named: "Menu")?.resizeImage(size: CGSize(width: 25, height: 25)),
             style: .done,
             target: self,
             action: #selector(didTapMenuButton)
         )
-//        self.tabBarController?.tabBar.isHidden = true
+        navigationController?.title = "컨테이너 뷰"
+
         self.setupTableView()
-        
-        title = "컨테이너 뷰"
     }
     
     func setupTableView() {

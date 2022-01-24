@@ -34,13 +34,6 @@ class HomeViewController: BaseViewController, CoordinatorContext {
         return HomeViewController(nibName: nil, bundle: nil)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        // main nav 숨기기
-        self.navigationController?.setNavigationBarHidden(true, animated: animated)
-        
-        
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         addChildVCs()
@@ -48,7 +41,6 @@ class HomeViewController: BaseViewController, CoordinatorContext {
     
     private func addChildVCs() {
         // Menu VC
-//        menuViewController.delegate = self
         addChild(menuViewController)
         view.addSubview(menuViewController.view)
         menuViewController.didMove(toParent: self)
@@ -97,7 +89,7 @@ extension HomeViewController: ContainerViewControllerDelegate {
                     }
                 }
             }
-            
+
         }
     }
 }

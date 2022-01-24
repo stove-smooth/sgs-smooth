@@ -21,6 +21,8 @@ class HomeCoordinator: NSObject, Coordinator {
     func start() {
         let homeVC = HomeViewController.instance()
         homeVC.coordinator = self
+        
+        navigationController.setNavigationBarHidden(true, animated: false)
         navigationController.pushViewController(homeVC, animated: true)
     }
     
@@ -28,5 +30,14 @@ class HomeCoordinator: NSObject, Coordinator {
         let vc = ContainerViewController.instance()
         vc.coordinator = self
         navigationController.pushViewController(vc, animated: true)
+    }
+    
+    func goToMenu() {
+        let vc = MenuViewController.instance()
+        vc.coordinator = self
+        let homeVC = HomeViewController.instance()
+        
+        vc.didMove(toParent: homeVC)
+        
     }
 }

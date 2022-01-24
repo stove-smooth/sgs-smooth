@@ -34,7 +34,6 @@
 		C1024148279DA8C300B702DB /* ServerRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1024147279DA8C300B702DB /* ServerRepository.swift */; };
 		C102414A279DAA5700B702DB /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1024149279DAA5700B702DB /* Channel.swift */; };
 		C102414E279DADAE00B702DB /* ChannelSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C102414D279DADAE00B702DB /* ChannelSection.swift */; };
-		C1024150279E266300B702DB /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C102414F279E266300B702DB /* HomeView.swift */; };
 		C1024152279E346000B702DB /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1024151279E346000B702DB /* MenuView.swift */; };
 		C1024156279E482100B702DB /* ServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1024155279E482100B702DB /* ServerView.swift */; };
 		C1024158279E4B3B00B702DB /* ChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1024157279E4B3B00B702DB /* ChannelView.swift */; };
@@ -116,7 +115,6 @@
 		C1024147279DA8C300B702DB /* ServerRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerRepository.swift; sourceTree = "<group>"; };
 		C1024149279DAA5700B702DB /* Channel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
 		C102414D279DADAE00B702DB /* ChannelSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelSection.swift; sourceTree = "<group>"; };
-		C102414F279E266300B702DB /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		C1024151279E346000B702DB /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		C1024155279E482100B702DB /* ServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerView.swift; sourceTree = "<group>"; };
 		C1024157279E4B3B00B702DB /* ChannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelView.swift; sourceTree = "<group>"; };
@@ -417,7 +415,6 @@
 			isa = PBXGroup;
 			children = (
 				C1D47F0327795ED100DBA3CA /* HomeViewController.swift */,
-				C102414F279E266300B702DB /* HomeView.swift */,
 				C129ADE2278BED1A00AC1092 /* Server */,
 				C1D47F50278B0F0900DBA3CA /* Channel */,
 				C1D47F0F2779D66700DBA3CA /* Menu */,
@@ -663,7 +660,6 @@
 				C1D47F112779D6FD00DBA3CA /* ContainerViewController.swift in Sources */,
 				C1D47F3C278474AA00DBA3CA /* SignUpViewController.swift in Sources */,
 				2709162927917FA600A0772D /* FriendRepository.swift in Sources */,
-				C1024150279E266300B702DB /* HomeView.swift in Sources */,
 				C1024156279E482100B702DB /* ServerView.swift in Sources */,
 				C1D47F56278B2CC800DBA3CA /* ServerViewModel.swift in Sources */,
 				2709161927912BBA00A0772D /* FriendListViewController.swift in Sources */,
