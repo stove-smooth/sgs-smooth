@@ -27,9 +27,4 @@ struct Server: Codable, Equatable {
         self.name = ""
         self.icon = nil
     }
-    
-}
-
-struct Community: Codable {
-    let communities: [Server]
 }

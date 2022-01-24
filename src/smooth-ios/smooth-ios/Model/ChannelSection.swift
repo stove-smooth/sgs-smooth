@@ -8,28 +8,24 @@
 import Foundation
 import RxDataSources
 
-
-struct Channel: Codable, Equatable, IdentifiableType {
-    var id: String
-    var name: String
-    var identity: String {
+struct ChannelSection {
+    var header: String
+    var id: Int
+    var items: [Item]
+    
+    init(header: String, id: Int, items: [Item]) {
+        self.header = header
+        self.items = items
+        self.id = id
+    }
+    
+    var identity: Int {
         return self.id
     }
 }
 
-struct ChannelSection {
-    var header: String
-    var items: [Item]
-    var identity: String
+extension ChannelSection: SectionModelType {
     
-    init(header: String, items: [Item]) {
-        self.header = header
-        self.items = items
-        self.identity = UUID().uuidString
-    }
-}
-
-extension ChannelSection: AnimatableSectionModelType {
     typealias Item = Channel
     
     init(original: ChannelSection, items: [Channel]) {
