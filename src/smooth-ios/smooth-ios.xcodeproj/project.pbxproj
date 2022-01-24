@@ -37,6 +37,7 @@
 		C1024152279E346000B702DB /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1024151279E346000B702DB /* MenuView.swift */; };
 		C1024156279E482100B702DB /* ServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1024155279E482100B702DB /* ServerView.swift */; };
 		C1024158279E4B3B00B702DB /* ChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1024157279E4B3B00B702DB /* ChannelView.swift */; };
+		C102415C279EA2EB00B702DB /* Community.swift in Sources */ = {isa = PBXBuildFile; fileRef = C102415B279EA2EB00B702DB /* Community.swift */; };
 		C129ADE1278BCBE400AC1092 /* ChannelViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C129ADE0278BCBE400AC1092 /* ChannelViewModel.swift */; };
 		C15A22C2279A33E00009095E /* FriendRequestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C15A22C1279A33E00009095E /* FriendRequestViewController.swift */; };
 		C15A22C4279A37230009095E /* UIImage+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C15A22C3279A37230009095E /* UIImage+Extension.swift */; };
@@ -118,6 +119,7 @@
 		C1024151279E346000B702DB /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
 		C1024155279E482100B702DB /* ServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerView.swift; sourceTree = "<group>"; };
 		C1024157279E4B3B00B702DB /* ChannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelView.swift; sourceTree = "<group>"; };
+		C102415B279EA2EB00B702DB /* Community.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Community.swift; sourceTree = "<group>"; };
 		C129ADE0278BCBE400AC1092 /* ChannelViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelViewModel.swift; sourceTree = "<group>"; };
 		C15A22C1279A33E00009095E /* FriendRequestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendRequestViewController.swift; sourceTree = "<group>"; };
 		C15A22C3279A37230009095E /* UIImage+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extension.swift"; sourceTree = "<group>"; };
@@ -402,11 +404,12 @@
 				C1D47EFA27795E1000DBA3CA /* SignIn.swift */,
 				C1D47EFE27795E3400DBA3CA /* Signup.swift */,
 				C1D47EFC27795E2300DBA3CA /* UserInfo.swift */,
-				C1D47F14277ACD2800DBA3CA /* Server.swift */,
 				2709162A2791804200A0772D /* Friend.swift */,
 				27091637279803B300A0772D /* FriendSection.swift */,
+				C1D47F14277ACD2800DBA3CA /* Server.swift */,
 				C1024149279DAA5700B702DB /* Channel.swift */,
 				C102414D279DADAE00B702DB /* ChannelSection.swift */,
+				C102415B279EA2EB00B702DB /* Community.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -676,6 +679,7 @@
 				27F2BE70278FB76D00A0F0A8 /* MainTabBarCoordinator.swift in Sources */,
 				C1766053279A75900062D0CB /* FriendInfoViewModel.swift in Sources */,
 				C1024146279DA7FB00B702DB /* ServerAPI.swift in Sources */,
+				C102415C279EA2EB00B702DB /* Community.swift in Sources */,
 				C1024158279E4B3B00B702DB /* ChannelView.swift in Sources */,
 				C129ADE1278BCBE400AC1092 /* ChannelViewModel.swift in Sources */,
 				C15A22C2279A33E00009095E /* FriendRequestViewController.swift in Sources */,
