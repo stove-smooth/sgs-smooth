@@ -4,7 +4,10 @@
       <div class="thin-scrollbar nav-scroller" v-bind:style="{ width: '100%' }">
         <div>
           <div class="plus-action-label-container hover-white">
-            <div class="plus-action-label discord-primary-color">
+            <div
+              class="plus-action-label discord-primary-color"
+              @click="createInviteModal"
+            >
               친구 초대하기
             </div>
             <svg class="invite-people-primary-color"></svg>
@@ -38,12 +41,19 @@ export default {
     ...mapState("server", ["openServerPopout"]),
   },
   methods: {
-    ...mapMutations("server", ["setCreateCategory", "setServerSettingModal"]),
+    ...mapMutations("server", [
+      "setCreateCategory",
+      "setServerSettingModal",
+      "setCommunityInviteModal",
+    ]),
     createNewCategory() {
       this.setCreateCategory(this.openServerPopout);
     },
     openServerSetting() {
       this.setServerSettingModal(this.openServerPopout);
+    },
+    createInviteModal() {
+      this.setCommunityInviteModal(this.openServerPopout);
     },
   },
 };
@@ -90,9 +100,6 @@ export default {
   width: 16px;
   height: 16px;
   background-image: url("../assets/alarms.svg");
-}
-.red-color {
-  color: #ed4245;
 }
 .discord-primary-color {
   color: var(--discord-primary);

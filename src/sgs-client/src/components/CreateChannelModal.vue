@@ -10,7 +10,7 @@
           </div>
         </template>
         <template slot="content">
-          <h5 class="label-id" v-bind:style="{ color: 'black' }">채널 유형</h5>
+          <h5 class="label-id black-color">채널 유형</h5>
           <button
             class="select-channel-type-button"
             @click="selectChatType('TEXT')"
@@ -67,9 +67,7 @@
           </button>
           <form>
             <div class="server-name-input-container">
-              <h5 class="label-id" v-bind:style="{ color: 'black' }">
-                채널 이름
-              </h5>
+              <h5 class="label-id black-color">채널 이름</h5>
               <div
                 class="friends-state-text"
                 v-bind:style="{ position: 'relative' }"
@@ -184,9 +182,6 @@ export default {
   width: 24px;
   height: 24px;
   background-image: url("../assets/big-voice-channel.svg");
-}
-.no-margin-bottom {
-  margin-bottom: 0px;
 }
 .channel-name-input {
   padding-left: 28px !important;

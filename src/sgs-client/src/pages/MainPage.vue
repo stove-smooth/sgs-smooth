@@ -21,6 +21,7 @@
       <category-setting-modal></category-setting-modal>
       <category-delete-modal></category-delete-modal>
       <server-setting-modal></server-setting-modal>
+      <invite-community-modal></invite-community-modal>
     </template>
     <template v-else> <loading-spinner /> </template>
   </div>
@@ -44,6 +45,7 @@ import CategorySettingModal from "../components/CategorySettingModal.vue";
 import CategoryDeleteModal from "../components/CategoryDeleteModal.vue";
 import ServerSettingModal from "../components/ServerSettingModal.vue";
 import MessagePlusAction from "../components/MessagePlusAction.vue";
+import InviteCommunityModal from "../components/InviteCommunityModal.vue";
 
 export default {
   name: "App",
@@ -62,6 +64,7 @@ export default {
     ServerSettingModal,
     LoadingSpinner,
     MessagePlusAction,
+    InviteCommunityModal,
   },
   data() {
     return {

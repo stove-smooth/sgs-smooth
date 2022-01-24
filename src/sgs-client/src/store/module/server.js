@@ -18,6 +18,7 @@ const server = {
     communityOfflineMemberList: [],
     serverSettingModal: null,
     messagePlusMenu: null,
+    communityInviteModal: false,
   },
   mutations: {
     setCreateServer(state, createServer) {
@@ -55,6 +56,9 @@ const server = {
     },
     setMessagePlusMenu(state, messagePlusMenu) {
       state.messagePlusMenu = messagePlusMenu;
+    },
+    setCommunityInviteModal(state, communityInviteModal) {
+      state.communityInviteModal = communityInviteModal;
     },
   },
   actions: {

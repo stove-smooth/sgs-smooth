@@ -8,9 +8,7 @@
           <div class="create-category-modal">
             <form>
               <div class="server-name-input-container">
-                <h5 class="label-id" v-bind:style="{ color: 'black' }">
-                  카테고리 이름
-                </h5>
+                <h5 class="label-id black-color">카테고리 이름</h5>
                 <div
                   class="friends-state-text"
                   v-bind:style="{ position: 'relative' }"
