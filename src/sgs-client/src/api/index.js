@@ -1,10 +1,9 @@
 import axios from "axios";
 import store from "../store/index";
 import { setInterceptors } from "./common/interceptors";
-import { getBaseURL } from "../utils/common";
 function createInstance() {
   const instance = axios.create({
-    baseURL: getBaseURL(),
+    baseURL: process.env.VUE_APP_BASE_URL,
   });
   return setInterceptors(instance);
 }

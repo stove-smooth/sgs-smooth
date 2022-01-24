@@ -3,6 +3,13 @@
     <div class="message-container">
       <div class="thin-scrollbar server-chat-scroller">
         <div class="scroller-content">
+          <VEmojiPicker
+            v-show="this.emojiPopout"
+            class="emoji-picker-popout"
+            labelSearch="Search"
+            lang="pt-BR"
+            @select="onSelectEmoji"
+          />
           <ol class="scroller-inner">
             <div v-for="(item, idx) in receiveList" :key="idx">
               <li
@@ -10,7 +17,8 @@
                 @mouseover="messageHover(idx)"
                 @mouseleave="messageHover('')"
                 v-bind:class="{
-                  'selected-message-area': messageHovered === idx,
+                  'selected-message-area':
+                    messageHovered === idx || messagePlusMenu === idx,
                 }"
               >
                 <div
@@ -44,7 +52,7 @@
                   </div>
                   <div
                     class="chat-message-plus-action-container"
-                    v-show="messageHovered === idx"
+                    v-show="messageHovered === idx || messagePlusMenu === idx"
                   >
                     <div class="actionbar-wrapper2">
                       <div
@@ -205,6 +213,20 @@
                 placeholder="#잡담에 메세지 보내기"
               ></textarea>
             </div>
+            <div class="channel-message-button-wrapper">
+              <div class="display-flex margin-right-8px">
+                <button
+                  @click="openEmojiPopout"
+                  class="emoji-button"
+                  tabindex="0"
+                  aria-label="이모티콘 선택하기"
+                  type="button"
+                >
+                  <svg v-if="emojiPopout" class="yellow-emotion"></svg>
+                  <svg v-else class="add-emotion"></svg>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -213,9 +235,14 @@
 </template>
 
 <script>
+import { VEmojiPicker } from "v-emoji-picker";
+
 import { converToThumbnail } from "../utils/common.js";
 import { mapState, mapMutations } from "vuex";
 export default {
+  components: {
+    VEmojiPicker,
+  },
   data() {
     return {
       replyId: "",
@@ -224,6 +251,7 @@ export default {
       images: [],
       thumbnails: [],
       receiveList: [],
+      emojiPopout: false,
     };
   },
   mounted() {
@@ -316,6 +344,14 @@ export default {
       }
       time.minutes = parseInt(timePieces[1]);
       return time;
+    },
+    onSelectEmoji(emoji) {
+      console.log("emoji", emoji);
+      console.log("emoji", emoji.data);
+      this.text += emoji.data;
+    },
+    openEmojiPopout() {
+      this.emojiPopout = !this.emojiPopout;
     },
   },
 };
@@ -832,5 +868,40 @@ export default {
   width: 20px;
   height: 20px;
   background-image: url("../assets/reply-button.svg");
+}
+.channel-message-button-wrapper {
+  margin-right: -6px;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  flex-direction: row;
+  height: 44px;
+  position: sticky;
+  top: 0;
+}
+.emoji-button {
+  cursor: pointer;
+  max-height: 50px;
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  padding: 4px;
+  margin-left: 4px;
+  margin-right: 4px;
+  border-radius: 5px;
+  background: none;
+}
+.yellow-emotion {
+  width: 24px;
+  height: 24px;
+  background-image: url("../assets/yellow-emotion.svg");
+}
+.emoji-picker-popout {
+  background-color: "#2f3136";
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 </style>

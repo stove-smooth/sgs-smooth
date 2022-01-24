@@ -33,7 +33,7 @@
               </div>
             </div>
           </div>
-          <div class="action-to-friends">
+          <div class="margin-left-8px display-flex">
             <slot
               name="action"
               v-bind:code="item.code"
@@ -151,9 +151,5 @@ export default {
   text-overflow: ellipsis;
   overflow: hidden;
   font-size: 14px;
-}
-.action-to-friends {
-  margin-left: 8px;
-  display: flex;
 }
 </style>
