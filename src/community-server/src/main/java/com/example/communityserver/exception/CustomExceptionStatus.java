@@ -30,7 +30,9 @@ public enum CustomExceptionStatus {
     CANT_SUSPEND_YOURSELF(false, 4014, "스스로를 추방할 수 없습니다."),
     NON_EXIST_OWNER(false, 4015, "커뮤니티의 소유주가 없습니다."),
     NON_SERVE_IN_THREAD(false, 4016, "스레드에서 제공하지 않는 기능입니다."),
-    EMPTY_USER_IN_ROOM(false, 4017, "방에 다른 사용자가 존재하지 않습니다.");
+    EMPTY_USER_IN_ROOM(false, 4017, "방에 다른 사용자가 존재하지 않습니다."),
+    NON_VALID_ROOM(false, 4018, "유효하지 않은 채팅방입니다."),
+    FAILED_EXCHANGE_ROOM_NAME(false, 4019, "채팅방 이름을 변경할 수 없습니다.");
 
     private final boolean isSuccess;
     private final int code;

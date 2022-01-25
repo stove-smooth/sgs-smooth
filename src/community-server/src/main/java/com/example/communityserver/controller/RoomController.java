@@ -1,10 +1,8 @@
 package com.example.communityserver.controller;
 
 import com.example.communityserver.dto.request.CreateRoomRequest;
-import com.example.communityserver.dto.response.DataResponse;
-import com.example.communityserver.dto.response.RoomDetailResponse;
-import com.example.communityserver.dto.response.RoomListResponse;
-import com.example.communityserver.dto.response.RoomResponse;
+import com.example.communityserver.dto.request.EditNameRequest;
+import com.example.communityserver.dto.response.*;
 import com.example.communityserver.service.ResponseService;
 import com.example.communityserver.service.RoomService;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +48,7 @@ public class RoomController {
     /**
      * 채팅방 생성하기
      */
+    @PostMapping
     public DataResponse<RoomDetailResponse> createRoom(
             @RequestHeader(AUTHORIZATION) String token,
             @RequestHeader(ID) String userId,
@@ -57,5 +56,31 @@ public class RoomController {
     ) {
         log.info("POST /community-server/room");
         return responseService.getDataResponse(roomService.createRoom(Long.parseLong(userId), request, token));
+    }
+
+    /**
+     * 채팅방 정보 가져오기
+     */
+    @GetMapping("/{roomId}")
+    public DataResponse<RoomDetailResponse> getRoom(
+            @RequestHeader(AUTHORIZATION) String token,
+            @RequestHeader(ID) String userId,
+            @PathVariable Long roomId
+    ) {
+        log.info("GET /community-server/room/{}", roomId);
+        return responseService.getDataResponse(roomService.getRoom(Long.parseLong(userId), roomId, token));
+    }
+
+    /**
+     * 채팅방 이름 바꾸기
+     */
+    @PatchMapping("/name")
+    public CommonResponse editName(
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody EditNameRequest request
+    ) {
+        log.info("PATCH /community-server/room/name");
+        roomService.editName(Long.parseLong(userId), request);
+        return responseService.getSuccessResponse();
     }
 }

@@ -5,6 +5,7 @@ import com.example.communityserver.domain.Room;
 import com.example.communityserver.domain.RoomMember;
 import com.example.communityserver.domain.type.CommonStatus;
 import com.example.communityserver.dto.request.CreateRoomRequest;
+import com.example.communityserver.dto.request.EditNameRequest;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.RoomMemberRepository;
@@ -16,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.example.communityserver.exception.CustomExceptionStatus.EMPTY_USER_IN_ROOM;
+import static com.example.communityserver.exception.CustomExceptionStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -137,5 +138,52 @@ public class RoomService {
         updateUserInfo(roomDetailResponse, userMap, userId);
 
         return roomDetailResponse;
+    }
+
+    public RoomDetailResponse getRoom(Long userId, Long roomId, String token) {
+        Room room = roomRepository.findById(roomId)
+                .filter(r -> r.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_ROOM));
+
+        isContain(room, userId);
+
+        List<Long> ids = room.getMembers().stream()
+                .filter(rm -> rm.getStatus().equals(CommonStatus.NORMAL))
+                .map(RoomMember::getUserId)
+                .collect(Collectors.toList());
+        HashMap<Long, UserResponse> userMap = getUserMap(ids, token);
+
+        RoomDetailResponse roomDetailResponse = RoomDetailResponse.fromEntity(room);
+        roomDetailResponse.setMembers(room.getMembers().stream()
+                .map(rm -> RoomMemberResponse.fromEntity(rm, userMap))
+                .collect(Collectors.toList()));
+        updateUserInfo(roomDetailResponse, userMap, userId);
+
+        return roomDetailResponse;
+    }
+
+    private void isContain(Room room, Long userId) {
+        boolean isContain = room.getMembers().stream()
+                .filter(rm -> rm.getStatus().equals(CommonStatus.NORMAL))
+                .map(RoomMember::getUserId)
+                .collect(Collectors.toList())
+                .contains(userId);
+
+        if (!isContain)
+            throw new CustomException(NON_AUTHORIZATION);
+    }
+
+    @Transactional
+    public void editName(Long userId, EditNameRequest request) {
+        Room room = roomRepository.findById(request.getId())
+                .filter(r -> r.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_ROOM));
+
+        if (!room.getIsGroup())
+            throw new CustomException(FAILED_EXCHANGE_ROOM_NAME);
+
+        isContain(room, userId);
+
+        room.setName(request.getName());
     }
 }
