@@ -129,6 +129,24 @@ public class RoomService {
         ids.add(userId);
         HashMap<Long, UserResponse> userMap = getUserMap(ids, token);
 
+        if (request.getMembers().size() == 1) {
+            Room savedRoom = roomMemberRepository.findByUserId(request.getMembers().get(0)).stream()
+                    .map(RoomMember::getRoom)
+                    .filter(r -> r.getMembers().stream()
+                            .map(RoomMember::getUserId)
+                            .collect(Collectors.toList())
+                            .contains(userId))
+                    .findAny().orElse(null);
+
+            if (!Objects.isNull(savedRoom)) {
+                RoomMember roomMember = savedRoom.getMembers().stream()
+                        .filter(rm -> rm.getUserId().equals(userId))
+                        .findFirst().get();
+                roomMember.setStatus(CommonStatus.NORMAL);
+                return getRoomDetail(savedRoom, userMap, userId);
+            }
+        }
+
         // TODO string 계속 더하는 건 좋지 않으니 stringbuilder로 가져가는 것도 고민하기
         String name = "";
         for (int i=0; i<ids.size(); i++) {
@@ -144,12 +162,15 @@ public class RoomService {
         Room newRoom = Room.createRoom(name, members);
         roomRepository.save(newRoom);
 
-        RoomDetailResponse roomDetailResponse = RoomDetailResponse.fromEntity(newRoom);
-        roomDetailResponse.setMembers(newRoom.getMembers().stream()
-            .map(rm -> RoomMemberResponse.fromEntity(rm, userMap))
-            .collect(Collectors.toList()));
-        updateUserInfo(roomDetailResponse, userMap, userId);
+        return getRoomDetail(newRoom, userMap, userId);
+    }
 
+    private RoomDetailResponse getRoomDetail(Room room, HashMap<Long, UserResponse> userMap, Long userId) {
+        RoomDetailResponse roomDetailResponse = RoomDetailResponse.fromEntity(room);
+        roomDetailResponse.setMembers(room.getMembers().stream()
+                .map(rm -> RoomMemberResponse.fromEntity(rm, userMap))
+                .collect(Collectors.toList()));
+        updateUserInfo(roomDetailResponse, userMap, userId);
         return roomDetailResponse;
     }
 
@@ -259,7 +280,6 @@ public class RoomService {
             throw new CustomException(NON_VALID_ROOM);
 
         checkDuplicatedMember(room, userId);
-
         room.addMember(RoomMember.createRoomMember(userId, false));
 
         return getRoom(userId, room.getId(), token);
@@ -274,5 +294,64 @@ public class RoomService {
 
         if (isDuplicated)
             throw new CustomException(ALREADY_INVITED);
+    }
+
+    @Transactional
+    public void inviteMember(Long userId, InviteMemberRequest request) {
+        Room room = roomRepository.findById(request.getId())
+                .filter(r -> r.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_ROOM));
+
+        isContain(room, userId);
+
+        for (Long memberId: request.getMembers()) {
+            checkDuplicatedMember(room, memberId);
+            room.addMember(RoomMember.createRoomMember(memberId, false));
+        }
+    }
+
+    @Transactional
+    public void deleteMember(Long userId, Long roomId, Long memberId) {
+        Room room = roomRepository.findById(roomId)
+                .filter(r -> r.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_ROOM));
+
+        boolean isOwner = isOwner(room, userId);
+
+        // 추방하기
+        if (!userId.equals(memberId)) {
+            if (!isOwner)
+                throw new CustomException(NON_AUTHORIZATION);
+        }
+
+        RoomMember member = room.getMembers().stream()
+                .filter(m -> m.getUserId().equals(memberId))
+                .filter(m -> m.getStatus().equals(CommonStatus.NORMAL))
+                .findAny().orElseThrow(() -> new CustomException(EMPTY_MEMBER));
+
+        member.delete();
+
+        // owner면서 단체 메세지의 경우 다른 유저에게 owner 넘기기
+        if (isOwner && room.getIsGroup()) {
+            RoomMember otherOwner = room.getMembers().stream()
+                    .filter(m -> m.getStatus().equals(CommonStatus.NORMAL))
+                    .filter(m -> !m.isOwner())
+                    .findAny().orElse(null);
+
+            if (Objects.isNull(otherOwner)) {
+                room.delete();
+            } else {
+                otherOwner.setOwner(true);
+            }
+        }
+    }
+
+    private boolean isOwner(Room room, Long userId) {
+        Long ownerId = room.getMembers().stream()
+                .filter(rm -> rm.isOwner())
+                .findFirst().orElseThrow(() -> new CustomException(NON_EXIST_OWNER))
+                .getUserId();
+
+        return ownerId.equals(userId);
     }
 }

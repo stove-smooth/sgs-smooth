@@ -123,7 +123,29 @@ public class RoomController {
     }
 
     /**
-     * 채팅방 초대하기
+     * 채팅방에 추가하기
      */
+    @PostMapping("/member")
+    public CommonResponse inviteMember(
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody InviteMemberRequest request
+    ) {
+        log.info("POST /community-server/room/member");
+        roomService.inviteMember(Long.parseLong(userId), request);
+        return responseService.getSuccessResponse();
+    }
 
+    /**
+     * 채팅방에서 나가기(추방하기)
+     */
+    @DeleteMapping("/{roomId}/member")
+    public CommonResponse deleteMember(
+            @RequestHeader(ID) String userId,
+            @PathVariable Long roomId,
+            @RequestParam(name = "id") Long memberId
+    ) {
+        log.info("DELETE /community-server/room/{}/member", roomId);
+        roomService.deleteMember(Long.parseLong(userId), roomId, memberId);
+        return responseService.getSuccessResponse();
+    }
 }

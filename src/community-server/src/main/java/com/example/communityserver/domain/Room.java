@@ -56,4 +56,8 @@ public class Room extends BaseTimeEntity {
         this.getMembers().add(roomMember);
         roomMember.setRoom(this);
     }
+
+    public void delete() {
+        this.setStatus(CommonStatus.DELETED);
+    }
 }

@@ -31,7 +31,6 @@ public class RoomMember extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private CommonStatus status;
 
-
     //== 생성 메서드 ==//
     public static RoomMember createRoomMember(
         Long userId,
@@ -41,5 +40,9 @@ public class RoomMember extends BaseTimeEntity {
         roomMember.setUserId(userId);
         roomMember.setOwner(owner);
         return roomMember;
+    }
+
+    public void delete() {
+        this.setStatus(CommonStatus.DELETED);
     }
 }
