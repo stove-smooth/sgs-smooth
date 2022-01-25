@@ -3,19 +3,14 @@ package com.example.communityserver.dto.request;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EditCommunityIconRequest {
-
+public class CreateRoomRequest {
     @NotNull
-    private Long communityId;
-
-    private MultipartFile icon;
+    private List<Long> members;
 }

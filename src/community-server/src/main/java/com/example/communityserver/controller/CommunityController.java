@@ -4,7 +4,6 @@ import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.service.CommunityService;
 import com.example.communityserver.service.ResponseService;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -86,7 +85,7 @@ public class CommunityController {
     @PatchMapping("/icon")
     public CommonResponse editIcon(
             @RequestHeader(ID) String userId,
-            @Valid @ModelAttribute EditCommunityIconRequest request
+            @Valid @ModelAttribute EditIconRequest request
     ) {
         log.info("PATCH /community-server/community/icon");
         communityService.editIcon(Long.parseLong(userId), request);
@@ -156,7 +155,7 @@ public class CommunityController {
     public DataResponse<CommunityResponse> join(
             @RequestHeader(AUTHORIZATION) String token,
             @RequestHeader(ID) String userId,
-            @Valid @RequestBody JoinCommunityRequest request
+            @Valid @RequestBody JoinRequest request
     ) {
         log.info("POST /community-server/community/member");
         CommunityResponse response = communityService.join(Long.parseLong(userId), request, token);

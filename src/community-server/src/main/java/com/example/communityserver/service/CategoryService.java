@@ -157,7 +157,9 @@ public class CategoryService {
             throw new CustomException(ALREADY_PUBLIC_STATE);
 
         for (Long memberId: request.getMembers()) {
+            // 커뮤니티에 존재하는 회원인지 검사
             isMemberInCommunity(category.getCommunity(), memberId);
+            // 카테고리에 중복 초대됐는지 검사
             isContains(category, memberId);
             category.addMember(new CategoryMember(memberId));
         }

@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import java.util.List;
 
 
-@FeignClient(name = "UserFeign", url = "http://52.79.229.100:8000/auth-server/auth")
+@FeignClient(name = "UserFeign", url = "http://52.79.229.100:8000/auth-server")
 public interface UserClient {
 
     String AUTHORIZATION = "AUTHORIZATION";
 
-    @GetMapping("/info")
+    @GetMapping("/auth/info")
     UserInfoFeignResponse getUserInfo(@RequestHeader(AUTHORIZATION) String token);
 
     @PostMapping("/find-id-list")
