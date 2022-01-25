@@ -13,18 +13,14 @@
           <div class="invite-scroller thin-scrollbar">
             <div
               class="invite-row justify-content-space-between align-items-center"
-              v-for="(item, index) in 10"
-              :key="index"
+              v-for="friend in friendsAccept"
+              :key="friend.id"
             >
               <div class="align-items-center">
                 <div class="invite-avatar margin-right-8px">
-                  <img
-                    class="avatar"
-                    src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=32"
-                    alt=" "
-                  />
+                  <img class="avatar" :src="friend.profileImage" alt=" " />
                 </div>
-                <div class="primary-text-content">밍디</div>
+                <div class="primary-text-content">{{ friend.name }}</div>
               </div>
               <button class="invite-button positive-border-color">
                 <div class="primary-text-content">초대하기</div>
@@ -49,7 +45,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 import Modal from "../components/common/Modal.vue";
 import SearchBar from "./common/SearchBar.vue";
 export default {
@@ -57,10 +53,16 @@ export default {
     Modal,
     SearchBar,
   },
+  async created() {
+    await this.FETCH_FRIENDSLIST();
+    console.log("되나?");
+  },
   computed: {
     ...mapState("server", ["communityInviteModal"]),
+    ...mapState("friends", ["friendsAccept"]),
   },
   methods: {
+    ...mapActions("friends", ["FETCH_FRIENDSLIST"]),
     ...mapMutations("server", ["setCommunityInviteModal"]),
     closeModal() {
       this.setCommunityInviteModal(false);

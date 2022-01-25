@@ -20,8 +20,12 @@
               </div>
             </div>
           </div>
+          <div class="primary-seperator"></div>
           <div class="channel-content-wrapper" role="listitem">
-            <div class="channel-content margin-right-8px">
+            <div
+              class="channel-content margin-right-8px"
+              @click="setChannelReadyToDelete(channelSettingModal)"
+            >
               <div class="channel-main-content">
                 <div class="channel-name-wrapper">
                   <div
@@ -36,7 +40,7 @@
         </div>
       </template>
       <template slot="setting-content">
-        <div class="setting-content-container">
+        <!-- <div class="setting-content-container">
           <div class="primary-text-content white-color margin-bottom-16px">
             일반
           </div>
@@ -44,7 +48,7 @@
           <div class="input-wrapper">
             <input class="input-default" />
           </div>
-        </div>
+        </div> -->
       </template>
     </setting-modal>
   </div>
@@ -61,7 +65,10 @@ export default {
     ...mapState("server", ["channelSettingModal"]),
   },
   methods: {
-    ...mapMutations("server", ["setChannelSettingModal"]),
+    ...mapMutations("server", [
+      "setChannelSettingModal",
+      "setChannelReadyToDelete",
+    ]),
   },
 };
 </script>

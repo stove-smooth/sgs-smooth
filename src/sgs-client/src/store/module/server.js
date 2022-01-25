@@ -15,6 +15,7 @@ const server = {
     openServerPopout: null,
     categoryReadyToDelete: false,
     communityReadyToDelete: false,
+    channelReadyToDelete: false,
     communityList: [],
     communityInfo: null,
     communityOnlineMemberList: [],
@@ -57,6 +58,9 @@ const server = {
     },
     setCommunityReadyToDelete(state, communityReadyToDelete) {
       state.communityReadyToDelete = communityReadyToDelete;
+    },
+    setChannelReadyToDelete(state, channelReadyToDelete) {
+      state.channelReadyToDelete = channelReadyToDelete;
     },
     setServerSettingModal(state, serverSettingModal) {
       state.serverSettingModal = serverSettingModal;

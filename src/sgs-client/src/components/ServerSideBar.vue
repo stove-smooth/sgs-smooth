@@ -138,7 +138,7 @@
                         aria-label="채널 편집"
                         tabindex="0"
                         role="button"
-                        @click="setChannelSettingModal(el.id)"
+                        @click="setChannelSettingModal(el)"
                       >
                         <svg class="small-settings"></svg>
                       </div>
