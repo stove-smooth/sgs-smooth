@@ -90,7 +90,7 @@
                 />
               </div>
             </div>
-            <form>
+            <div>
               <div class="server-name-input-container">
                 <div class="server-name-label">서버 이름</div>
                 <div class="flex-direction-column">
@@ -103,7 +103,7 @@
                   />
                 </div>
               </div>
-            </form>
+            </div>
           </template>
           <template slot="footer">
             <div class="submit-server-form-footer">
@@ -158,6 +158,7 @@ export default {
       this.progress = "openSelect";
     },
     openFinalSelect(isPublic) {
+      console.log("누름", isPublic);
       this.progress = "finalSelect";
       this.isPublic = isPublic;
     },
