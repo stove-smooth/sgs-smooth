@@ -18,7 +18,8 @@ class SplashView: BaseView {
     
     let splashImageView = UIImageView().then {
         $0.image = UIImage(named: "Splash+Main")
-        $0.contentMode = .scaleAspectFill
+        $0.contentMode = .scaleAspectFit
+        $0.setContentCompressionResistancePriority(UILayoutPriority(0), for: .vertical)
     }
     
     let titleLabel = UILabel().then {
@@ -48,49 +49,44 @@ class SplashView: BaseView {
         $0.layer.cornerRadius = 5
     }
     
+    let stackView = UIStackView().then {
+        $0.distribution = .fill
+        $0.alignment = .fill
+        $0.axis = .vertical
+        $0.contentMode = .scaleAspectFit
+        $0.spacing = 10
+        $0.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
     override func setup() {
         self.backgroundColor = UIColor.backgroundDarkGray
+        [
+            logoImageView, splashImageView, titleLabel, titleDescriptionLabel, signUpButton, signInButton
+        ].forEach {stackView.addArrangedSubview($0)}
         
         [
-            logoImageView, splashImageView,
-            titleLabel, titleDescriptionLabel,
-            signUpButton, signInButton
+            stackView
         ].forEach {
             self.addSubview($0)
         }
     }
     
     override func bindConstraints() {
+        stackView.snp.makeConstraints {
+            $0.top.bottom.equalTo(safeAreaLayoutGuide).inset(30)
+            $0.right.left.equalToSuperview().inset(30)
+        }
+        
         logoImageView.snp.makeConstraints {
-            $0.right.left.equalToSuperview().inset(50)
-            $0.top.equalToSuperview().offset(100)
             $0.height.equalTo(60)
         }
         
-        splashImageView.snp.makeConstraints {
-            $0.right.left.equalToSuperview().inset(50)
-            $0.top.equalTo(logoImageView.snp.bottom).offset(150)
-            $0.height.equalTo(90)
-        }
-        
-        titleLabel.snp.makeConstraints {
-            $0.right.left.equalToSuperview().inset(30)
-            $0.top.equalTo(splashImageView.snp.bottom).offset(150)
-        }
-        
-        titleDescriptionLabel.snp.makeConstraints {
-            $0.right.left.equalToSuperview().inset(30)
-            $0.bottom.equalTo(signUpButton.snp.top).offset(-30)
-        }
-        
         signUpButton.snp.makeConstraints {
-            $0.right.left.equalToSuperview().inset(30)
-            $0.bottom.equalTo(signInButton.snp.top).offset(-15)
+            $0.height.equalTo(50)
         }
         
         signInButton.snp.makeConstraints {
-            $0.right.left.equalToSuperview().inset(30)
-            $0.bottom.equalTo(self.safeAreaLayoutGuide.snp.bottom).inset(30)
+            $0.height.equalTo(50)
         }
     }
 }
