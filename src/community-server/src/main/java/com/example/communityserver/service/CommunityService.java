@@ -35,7 +35,8 @@ import static com.example.communityserver.service.ChannelService.CHANNEL_DEFAULT
 public class CommunityService {
 
     @Value("${smooth.url}")
-    public String HOST_ADDRESS;
+    private String HOST_ADDRESS;
+    private String COMMUNITY_INVITATION_PREFIX = "/c/";
 
     private final CommunityRepository communityRepository;
     private final CommunityMemberRepository communityMemberRepository;
@@ -162,7 +163,7 @@ public class CommunityService {
             communityInvitation.setCode(base62.encode(communityInvitation.getId()));
         }
 
-        return new CreateInvitationResponse(HOST_ADDRESS + "/" + communityInvitation.getCode());
+        return new CreateInvitationResponse(HOST_ADDRESS + COMMUNITY_INVITATION_PREFIX + communityInvitation.getCode());
     }
 
     public InvitationListResponse getInvitations(Long userId, Long communityId, String token) {

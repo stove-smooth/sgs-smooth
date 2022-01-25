@@ -2,20 +2,26 @@ package com.example.communityserver.service;
 
 import com.example.communityserver.client.UserClient;
 import com.example.communityserver.domain.Room;
+import com.example.communityserver.domain.RoomInvitation;
 import com.example.communityserver.domain.RoomMember;
 import com.example.communityserver.domain.type.CommonStatus;
+import com.example.communityserver.dto.request.CreateInvitationRequest;
 import com.example.communityserver.dto.request.CreateRoomRequest;
 import com.example.communityserver.dto.request.EditIconRequest;
 import com.example.communityserver.dto.request.EditNameRequest;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.exception.CustomException;
+import com.example.communityserver.repository.RoomInvitationRepository;
 import com.example.communityserver.repository.RoomMemberRepository;
 import com.example.communityserver.repository.RoomRepository;
 import com.example.communityserver.util.AmazonS3Connector;
+import com.example.communityserver.util.Base62;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,10 +32,16 @@ import static com.example.communityserver.exception.CustomExceptionStatus.*;
 @Transactional(readOnly = true)
 public class RoomService {
 
+    @Value("${smooth.url}")
+    private String HOST_ADDRESS;
+    private String ROOM_INVITATION_PREFIX = "/r/";
+
     private final RoomRepository roomRepository;
     private final RoomMemberRepository roomMemberRepository;
+    private final RoomInvitationRepository roomInvitationRepository;
 
     private final AmazonS3Connector amazonS3Connector;
+    private final Base62 base62;
 
     private final UserClient userClient;
 
@@ -207,5 +219,31 @@ public class RoomService {
             iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
 
         room.setIconImage(iconImage);
+    }
+
+    @Transactional
+    public CreateInvitationResponse createInvitation(Long userId, CreateInvitationRequest request) {
+        Room room = roomRepository.findById(request.getId())
+                .filter(r -> r.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_ROOM));
+
+        isContain(room, userId);
+
+        // 이미 생성한 초대장 있는지 확인
+        LocalDateTime now = LocalDateTime.now();
+        RoomInvitation roomInvitation = room.getInvitations().stream()
+                .filter(i -> i.getExpiredAt().isAfter(now))
+                .findAny().orElse(null);
+
+        // 없는 경우 생성
+        if (Objects.isNull(roomInvitation)) {
+            RoomInvitation newInvitation = new RoomInvitation();
+            newInvitation.setRoom(room);
+            newInvitation.setExpiredAt(now.plusDays(1L));
+            roomInvitation = roomInvitationRepository.save(newInvitation);
+            roomInvitation.setCode(base62.encode(roomInvitation.getId()));
+        }
+
+        return new CreateInvitationResponse(HOST_ADDRESS + ROOM_INVITATION_PREFIX + roomInvitation.getCode());
     }
 }

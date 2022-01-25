@@ -30,6 +30,9 @@ public class Room extends BaseTimeEntity {
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<RoomMember> members = new ArrayList<>();
 
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    private List<RoomInvitation> invitations = new ArrayList<>();
+
     private Boolean isGroup;
 
     @Enumerated(EnumType.STRING)

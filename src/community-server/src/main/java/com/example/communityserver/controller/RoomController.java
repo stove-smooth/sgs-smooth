@@ -1,5 +1,6 @@
 package com.example.communityserver.controller;
 
+import com.example.communityserver.dto.request.CreateInvitationRequest;
 import com.example.communityserver.dto.request.CreateRoomRequest;
 import com.example.communityserver.dto.request.EditIconRequest;
 import com.example.communityserver.dto.request.EditNameRequest;
@@ -30,8 +31,9 @@ public class RoomController {
      * 3. 채팅방 정보 가져오기
      * 4. 채팅방 이름 바꾸기
      * 5. 채팅방 아이콘 바꾸기
-     * 6. 채팅방에 초대하기
-     * 7. 채팅방에서 나가기(추방하기)
+     * 6. 채팅방 초대장 만들기
+     * 7. 채팅방에 초대하기
+     * 8. 채팅방에서 나가기(추방하기)
      */
 
     /**
@@ -96,5 +98,17 @@ public class RoomController {
         log.info("PATCH /community-server/room/icon");
         roomService.editIcon(Long.parseLong(userId), request);
         return responseService.getSuccessResponse();
+    }
+
+    /**
+     * 채팅방 초대장 만들기
+     */
+    @PostMapping("/invitation")
+    public DataResponse<CreateInvitationResponse> createRoomInvitation(
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody CreateInvitationRequest request
+    ) {
+        log.info("POST /community-server/room/invitation");
+        return responseService.getDataResponse(roomService.createInvitation(Long.parseLong(userId), request));
     }
 }
