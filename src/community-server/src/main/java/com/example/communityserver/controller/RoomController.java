@@ -1,6 +1,7 @@
 package com.example.communityserver.controller;
 
 import com.example.communityserver.dto.request.CreateRoomRequest;
+import com.example.communityserver.dto.request.EditIconRequest;
 import com.example.communityserver.dto.request.EditNameRequest;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.service.ResponseService;
@@ -81,6 +82,19 @@ public class RoomController {
     ) {
         log.info("PATCH /community-server/room/name");
         roomService.editName(Long.parseLong(userId), request);
+        return responseService.getSuccessResponse();
+    }
+
+    /**
+     * 채팅방 아이콘 바꾸기
+     */
+    @PatchMapping("/icon")
+    public CommonResponse editIcon(
+            @RequestHeader(ID) String userId,
+            @Valid @ModelAttribute EditIconRequest request
+    ) {
+        log.info("PATCH /community-server/room/icon");
+        roomService.editIcon(Long.parseLong(userId), request);
         return responseService.getSuccessResponse();
     }
 }

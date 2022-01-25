@@ -5,11 +5,13 @@ import com.example.communityserver.domain.Room;
 import com.example.communityserver.domain.RoomMember;
 import com.example.communityserver.domain.type.CommonStatus;
 import com.example.communityserver.dto.request.CreateRoomRequest;
+import com.example.communityserver.dto.request.EditIconRequest;
 import com.example.communityserver.dto.request.EditNameRequest;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.RoomMemberRepository;
 import com.example.communityserver.repository.RoomRepository;
+import com.example.communityserver.util.AmazonS3Connector;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,8 @@ public class RoomService {
 
     private final RoomRepository roomRepository;
     private final RoomMemberRepository roomMemberRepository;
+
+    private final AmazonS3Connector amazonS3Connector;
 
     private final UserClient userClient;
 
@@ -180,10 +184,28 @@ public class RoomService {
                 .orElseThrow(() -> new CustomException(NON_VALID_ROOM));
 
         if (!room.getIsGroup())
-            throw new CustomException(FAILED_EXCHANGE_ROOM_NAME);
+            throw new CustomException(CANT_EXCHANGE_PERSONAL_ROOM);
 
         isContain(room, userId);
 
         room.setName(request.getName());
+    }
+
+    @Transactional
+    public void editIcon(Long userId, EditIconRequest request) {
+        Room room = roomRepository.findById(request.getId())
+                .filter(r -> r.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_ROOM));
+
+        if (!room.getIsGroup())
+            throw new CustomException(CANT_EXCHANGE_PERSONAL_ROOM);
+
+        isContain(room, userId);
+
+        String iconImage = null;
+        if (!Objects.isNull(request.getIcon()))
+            iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
+
+        room.setIconImage(iconImage);
     }
 }

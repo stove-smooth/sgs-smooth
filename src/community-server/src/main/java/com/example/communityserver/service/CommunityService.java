@@ -123,9 +123,9 @@ public class CommunityService {
     }
 
     @Transactional
-    public void editIcon(Long userId, EditCommunityIconRequest request) {
+    public void editIcon(Long userId, EditIconRequest request) {
 
-        Community community = communityRepository.findById(request.getCommunityId())
+        Community community = communityRepository.findById(request.getId())
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 

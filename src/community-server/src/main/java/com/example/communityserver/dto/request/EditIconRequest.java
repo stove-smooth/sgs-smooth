@@ -12,10 +12,10 @@ import javax.validation.constraints.NotNull;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EditCommunityIconRequest {
+public class EditIconRequest {
 
     @NotNull
-    private Long communityId;
+    private Long id;
 
     private MultipartFile icon;
 }
