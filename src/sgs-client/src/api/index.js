@@ -114,6 +114,9 @@ async function sendImageChatting(userData) {
     console.log(err.response);
   }
 }
+function deleteCommunity(communityId) {
+  return instance.delete(`community-server/community/${communityId}`);
+}
 export {
   registerUser,
   loginUser,
@@ -135,4 +138,5 @@ export {
   createNewChannel,
   moveCategory,
   sendImageChatting,
+  deleteCommunity,
 };

@@ -312,7 +312,8 @@ export default {
         password: this.pwd,
         name: this.username,
       };
-      await registerUser(userData);
+      const result2 = await registerUser(userData);
+      console.log("result", result2);
       const code = await this.LOGIN(userData);
       const classify = code % 4;
       const result = selectProfile(classify);
@@ -326,10 +327,19 @@ export default {
     },
     async verifyEmail() {
       this.emailsend = false;
+      console.log("왔다.");
       const userData = {
         email: this.id,
       };
-      const result = await sendAuthCode(userData);
+
+      let result;
+      try {
+        result = await sendAuthCode(userData);
+      } catch (err) {
+        console.log(err.response);
+      }
+
+      console.log("result", result);
       if (result.data.code === 1000) {
         this.emailsend = true;
       }

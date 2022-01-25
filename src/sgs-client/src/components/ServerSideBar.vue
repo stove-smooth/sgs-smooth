@@ -138,6 +138,7 @@
                         aria-label="채널 편집"
                         tabindex="0"
                         role="button"
+                        @click="setChannelSettingModal(el.id)"
                       >
                         <svg class="small-settings"></svg>
                       </div>
@@ -190,6 +191,7 @@ export default {
       "setCreateChannel",
       "setOpenServerPopout",
       "setCategorySettingModal",
+      "setChannelSettingModal",
     ]),
     log: async function (evt) {
       if (evt.moved) {

@@ -7,7 +7,7 @@
           aria-label="멤버"
           class="server-member-list"
           v-show="
-            communityOnlineMemberList !== undefined &&
+            communityOnlineMemberList != null &&
             communityOnlineMemberList.length > 0
           "
         >
@@ -46,7 +46,7 @@
           aria-label="멤버"
           class="server-member-list"
           v-show="
-            communityOfflineMemberList !== undefined &&
+            communityOfflineMemberList != null &&
             communityOfflineMemberList.length > 0
           "
         >
