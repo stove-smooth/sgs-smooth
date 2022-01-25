@@ -140,6 +140,14 @@ export default {
     this.selected = array[2];
     await this.FETCH_COMMUNITYLIST();
   },
+  watch: {
+    // 라우터의 변경을 감시
+    async $route(to) {
+      if (to.path == "/channels/@me") {
+        this.selected = "@me";
+      }
+    },
+  },
 };
 </script>
 
