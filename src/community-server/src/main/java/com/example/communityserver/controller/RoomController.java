@@ -1,9 +1,6 @@
 package com.example.communityserver.controller;
 
-import com.example.communityserver.dto.request.CreateInvitationRequest;
-import com.example.communityserver.dto.request.CreateRoomRequest;
-import com.example.communityserver.dto.request.EditIconRequest;
-import com.example.communityserver.dto.request.EditNameRequest;
+import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.service.ResponseService;
 import com.example.communityserver.service.RoomService;
@@ -111,4 +108,22 @@ public class RoomController {
         log.info("POST /community-server/room/invitation");
         return responseService.getDataResponse(roomService.createInvitation(Long.parseLong(userId), request));
     }
+
+    /**
+     * 초대장으로 채팅방 들어오기
+     */
+    @PatchMapping("/member")
+    public DataResponse<RoomDetailResponse> join(
+            @RequestHeader(AUTHORIZATION) String token,
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody JoinRequest request
+    ) {
+        log.info("PATCH /community-server/room/member");
+        return responseService.getDataResponse(roomService.join(Long.parseLong(userId), request, token));
+    }
+
+    /**
+     * 채팅방 초대하기
+     */
+
 }

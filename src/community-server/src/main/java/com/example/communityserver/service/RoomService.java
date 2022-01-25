@@ -5,10 +5,7 @@ import com.example.communityserver.domain.Room;
 import com.example.communityserver.domain.RoomInvitation;
 import com.example.communityserver.domain.RoomMember;
 import com.example.communityserver.domain.type.CommonStatus;
-import com.example.communityserver.dto.request.CreateInvitationRequest;
-import com.example.communityserver.dto.request.CreateRoomRequest;
-import com.example.communityserver.dto.request.EditIconRequest;
-import com.example.communityserver.dto.request.EditNameRequest;
+import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.RoomInvitationRepository;
@@ -245,5 +242,37 @@ public class RoomService {
         }
 
         return new CreateInvitationResponse(HOST_ADDRESS + ROOM_INVITATION_PREFIX + roomInvitation.getCode());
+    }
+
+    @Transactional
+    public RoomDetailResponse join(Long userId, JoinRequest request, String token) {
+        LocalDateTime now = LocalDateTime.now();
+
+        RoomInvitation invitation = roomInvitationRepository.findByCode(request.getCode()).stream()
+                .filter(i -> i.getExpiredAt().isAfter(now))
+                .findAny().orElseThrow(() -> new CustomException(NON_VALID_INVITATION));
+
+        // 중복 초대 확인
+        Room room = invitation.getRoom();
+
+        if (!room.getStatus().equals(CommonStatus.NORMAL))
+            throw new CustomException(NON_VALID_ROOM);
+
+        checkDuplicatedMember(room, userId);
+
+        room.addMember(RoomMember.createRoomMember(userId, false));
+
+        return getRoom(userId, room.getId(), token);
+    }
+
+    private void checkDuplicatedMember(Room room, Long userId) {
+        boolean isDuplicated = room.getMembers().stream()
+                .filter(rm -> rm.getStatus().equals(CommonStatus.NORMAL))
+                .map(RoomMember::getUserId)
+                .collect(Collectors.toList())
+                .contains(userId);
+
+        if (isDuplicated)
+            throw new CustomException(ALREADY_INVITED);
     }
 }

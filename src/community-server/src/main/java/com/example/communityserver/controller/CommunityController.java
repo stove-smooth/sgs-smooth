@@ -155,7 +155,7 @@ public class CommunityController {
     public DataResponse<CommunityResponse> join(
             @RequestHeader(AUTHORIZATION) String token,
             @RequestHeader(ID) String userId,
-            @Valid @RequestBody JoinCommunityRequest request
+            @Valid @RequestBody JoinRequest request
     ) {
         log.info("POST /community-server/community/member");
         CommunityResponse response = communityService.join(Long.parseLong(userId), request, token);

@@ -237,7 +237,7 @@ public class CommunityService {
     }
 
     @Transactional
-    public CommunityResponse join(Long userId, JoinCommunityRequest request, String token) {
+    public CommunityResponse join(Long userId, JoinRequest request, String token) {
 
         CommunityInvitation invitation = communityInvitationRepository.findByCode(request.getCode())
                 .filter(i -> i.isActivate())
