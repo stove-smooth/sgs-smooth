@@ -44,10 +44,10 @@ public class Channel extends BaseTimeEntity {
 
     private boolean isPublic;
 
-    @Column(columnDefinition = "TINYINT(1) DEFAULT TRUE")
-    private boolean isFirstNode;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Channel beforeNode;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Channel nextNode;
 
     private LocalDateTime expiredAt;
@@ -82,7 +82,7 @@ public class Channel extends BaseTimeEntity {
     public void setNextNode(Channel nextNode) {
         this.nextNode = nextNode;
         if (!Objects.isNull(nextNode))
-            nextNode.isFirstNode = false;
+            nextNode.setBeforeNode(this);
     }
 
     public void setParent(Channel parent) {
@@ -110,7 +110,6 @@ public class Channel extends BaseTimeEntity {
                 channel.addMember(member);
             }
         }
-        channel.setFirstNode(true);
         channel.setNextNode(nextNode);
         channel.setStatus(ChannelStatus.NORMAL);
         return channel;
@@ -131,56 +130,35 @@ public class Channel extends BaseTimeEntity {
         thread.setType(ChannelType.TEXT);
         thread.setPublic(parent.isPublic());
         thread.setMembers(channelMembers);
-        thread.isFirstNode = false;
         thread.setExpiredAt(LocalDateTime.now().plusHours(24));
         thread.setStatus(ChannelStatus.NORMAL);
         return thread;
     }
 
-    public void locate(Channel before, Channel first) {
-        Channel originBeforeNode = first;
-
-        if (first.equals(this)) {
-            this.isFirstNode = false;
-            Channel originNextNode = before.getNextNode();
-            before.setNextNode(this);
-            this.getNextNode().setFirstNode(true);
-            this.setNextNode(originNextNode);
+    public void locate(Channel tobe, Channel first) {
+        if (Objects.isNull(this.beforeNode)) {
+            this.nextNode.setBeforeNode(null);
+            this.setNextNode(tobe.getNextNode());
+            tobe.setNextNode(this);
         } else {
-            while (!Objects.isNull(originBeforeNode.getNextNode())) {
-                if (originBeforeNode.getNextNode().equals(this))
-                    break;
-                else
-                    originBeforeNode = originBeforeNode.getNextNode();
-            }
-
-            if (Objects.isNull(before)) {
-                this.isFirstNode = true;
-                originBeforeNode.setNextNode(this.nextNode);
-                this.nextNode = first;
-                first.setFirstNode(false);
+            this.beforeNode.setNextNode(this.nextNode);
+            if (Objects.isNull(tobe)) {
+                this.setBeforeNode(null);
+                this.setNextNode(first);
             } else {
-                Channel originNextNode = before.getNextNode();
-                before.setNextNode(this);
-                if (!Objects.isNull(originNextNode))
-                    originNextNode.setNextNode(this.nextNode);
-                this.nextNode = originNextNode;
-                originBeforeNode.setNextNode(before);
+                this.setNextNode(tobe.getNextNode());
+                tobe.setNextNode(this);
             }
         }
     }
 
     public void delete() {
-        if (this.isFirstNode) {
-            if (!Objects.isNull(this.getNextNode()))
-                this.getNextNode().isFirstNode = true;
-            this.isFirstNode = false;
-        }
-        for (Channel thread: this.getThread()) {
-            thread.setStatus(ChannelStatus.DELETED);
-        }
-        for (ChannelMember member: this.getMembers()) {
-            member.delete();
+        if (Objects.isNull(this.beforeNode)) {
+            if (!Objects.isNull(this.nextNode)) {
+                this.nextNode.setBeforeNode(null);
+            }
+        } else {
+            this.beforeNode.setNextNode(this.nextNode);
         }
         this.setStatus(ChannelStatus.DELETED);
     }

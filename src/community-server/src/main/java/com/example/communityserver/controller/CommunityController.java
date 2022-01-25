@@ -23,6 +23,10 @@ public class CommunityController {
     public final static String AUTHORIZATION = "AUTHORIZATION";
 
     /**
+     * Todo 커뮤니티 내 메세지 읽음 처리 (Optional)
+     */
+
+    /**
      * 사용자가 소속된 커뮤니티 리스트 조회
      */
     @GetMapping()
@@ -51,15 +55,15 @@ public class CommunityController {
      * 커뮤니티 생성하기
      */
     @PostMapping
-    public DataResponse<CreateCommunityResponse> createCommunity(
+    public DataResponse<CommunityResponse> createCommunity(
             @RequestHeader(AUTHORIZATION) String token,
             @RequestHeader(ID) String userId,
             @Valid @ModelAttribute CreateCommunityRequest request
     ) {
         log.info("POST /community-server/community");
-        CreateCommunityResponse createCommunityResponse =
+        CommunityResponse response =
                 communityService.createCommunity(Long.parseLong(userId), request, token);
-        return responseService.getDataResponse(createCommunityResponse);
+        return responseService.getDataResponse(response);
     }
 
     /**
@@ -81,7 +85,7 @@ public class CommunityController {
     @PatchMapping("/icon")
     public CommonResponse editIcon(
             @RequestHeader(ID) String userId,
-            @Valid @ModelAttribute EditCommunityIconRequest request
+            @Valid @ModelAttribute EditIconRequest request
     ) {
         log.info("PATCH /community-server/community/icon");
         communityService.editIcon(Long.parseLong(userId), request);
@@ -148,18 +152,18 @@ public class CommunityController {
      * 초대장으로 커뮤니티 들어오기
      */
     @PostMapping("/member")
-    public CommonResponse join(
+    public DataResponse<CommunityResponse> join(
             @RequestHeader(AUTHORIZATION) String token,
             @RequestHeader(ID) String userId,
-            @Valid @RequestBody JoinCommunityRequest request
+            @Valid @RequestBody JoinRequest request
     ) {
         log.info("POST /community-server/community/member");
-        communityService.join(Long.parseLong(userId), request, token);
-        return responseService.getSuccessResponse();
+        CommunityResponse response = communityService.join(Long.parseLong(userId), request, token);
+        return responseService.getDataResponse(response);
     }
 
     /**
-     * 멤버 추방하기
+     * 커뮤니티 나가기(멤버 추방하기)
      */
     @DeleteMapping("/{communityId}/member")
     public CommonResponse deleteMember(
@@ -210,5 +214,16 @@ public class CommunityController {
         log.info("DELETE /community-server/community/{}", communityId);
         communityService.deleteCommunity(Long.parseLong(userId), communityId);
         return responseService.getSuccessResponse();
+    }
+
+    /**
+     * 커뮤니티에 속한 회원 아이디 찾기
+     */
+    @GetMapping("/feign/{communityId}/member-id")
+    public DataResponse<MemberListFeignResponse> getCommunityMember(
+            @PathVariable Long communityId
+    ) {
+        log.info("GET /community-server/community/{}/member", communityId);
+        return responseService.getDataResponse(communityService.getCommunityMember(communityId));
     }
 }

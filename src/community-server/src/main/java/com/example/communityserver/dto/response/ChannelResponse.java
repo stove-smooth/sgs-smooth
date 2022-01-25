@@ -1,6 +1,7 @@
 package com.example.communityserver.dto.response;
 
 import com.example.communityserver.domain.Channel;
+import com.example.communityserver.domain.type.ChannelStatus;
 import com.example.communityserver.domain.type.ChannelType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -18,7 +20,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChannelResponse {
-    private Long channelId;
+    private Long id;
     private String username;
     private String name;
     @Enumerated(EnumType.STRING)
@@ -29,7 +31,7 @@ public class ChannelResponse {
 
     public static ChannelResponse fromEntity(Channel channel) {
         ChannelResponse channelResponse = new ChannelResponse();
-        channelResponse.setChannelId(channel.getId());
+        channelResponse.setId(channel.getId());
         channelResponse.setUsername(channel.getUsername());
         channelResponse.setName(channel.getName());
         channelResponse.setType(channel.getType());
@@ -37,6 +39,8 @@ public class ChannelResponse {
         if (!Objects.isNull(channel.getParent()))
             channelResponse.setParent(ThreadResponse.fromEntity(channel.getParent()));
         channelResponse.setThreads(channel.getThread().stream()
+                .filter(thread -> thread.getStatus().equals(ChannelStatus.NORMAL))
+                .sorted(Comparator.comparing(Channel::getCreatedAt).reversed())
                 .map(ThreadResponse::fromEntity)
                 .collect(Collectors.toList()));
         return channelResponse;

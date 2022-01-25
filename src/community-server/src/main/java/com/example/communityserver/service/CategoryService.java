@@ -32,13 +32,13 @@ public class CategoryService {
 
     @Transactional
     public void createCategory(Long userId, CreateCategoryRequest request) {
-
         Community community = communityRepository.findById(request.getCommunityId())
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
         Category firstCategory = getFirstCategory(community);
 
+        // 멤버 조회
         List<CategoryMember> members = new ArrayList<>();
         if (!request.isPublic()) {
             validateMemberId(community, request.getMembers());
@@ -56,13 +56,12 @@ public class CategoryService {
                 firstCategory,
                 members
         );
-
-        categoryRepository.save(newCategory);
+        community.addCategory(newCategory);
     }
 
     private Category getFirstCategory(Community community) {
         return community.getCategories().stream()
-                .filter(c -> c.isFirstNode() && c.getStatus().equals(CommonStatus.NORMAL))
+                .filter(c -> Objects.isNull(c.getBeforeNode()) && c.getStatus().equals(CommonStatus.NORMAL))
                 .findFirst().orElse(null);
     }
 
@@ -107,7 +106,6 @@ public class CategoryService {
 
     @Transactional
     public void locateCategory(Long userId, LocateRequest request) {
-
         Category target = categoryRepository.findById(request.getId())
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CATEGORY));
@@ -119,25 +117,22 @@ public class CategoryService {
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .collect(Collectors.toList());
 
-        Category first = getFirstCategory(community);
-
-        Category before = null;
-        if (request.getNext().equals(0L)) {
-            if (target.equals(first))
-                throw new CustomException(ALREADY_LOCATED);
-        } else {
-            before = categories.stream()
-                    .filter(c -> c.getId().equals(request.getNext()))
-                    .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+        Category tobe = null;
+        if (!request.getNext().equals(0L)) {
+            tobe = categories.stream()
+                    .filter(c -> c.getId().equals(request.getNext())
+                        && c.getStatus().equals(CommonStatus.NORMAL))
                     .findAny().orElseThrow(() -> new CustomException(NON_VALID_NEXT_NODE));
 
-            if (!Objects.isNull(before.getNextNode())) {
-                if (before.getNextNode().equals(target))
+            if (!Objects.isNull(tobe.getNextNode())) {
+                if (tobe.getNextNode().equals(target))
                     throw new CustomException(ALREADY_LOCATED);
             }
+        } else {
+            if (Objects.isNull(target.getBeforeNode()))
+                throw new CustomException(ALREADY_LOCATED);
         }
-
-        target.locate(before, first);
+        target.locate(tobe, getFirstCategory(community));
     }
 
     @Transactional
@@ -162,7 +157,9 @@ public class CategoryService {
             throw new CustomException(ALREADY_PUBLIC_STATE);
 
         for (Long memberId: request.getMembers()) {
+            // 커뮤니티에 존재하는 회원인지 검사
             isMemberInCommunity(category.getCommunity(), memberId);
+            // 카테고리에 중복 초대됐는지 검사
             isContains(category, memberId);
             category.addMember(new CategoryMember(memberId));
         }

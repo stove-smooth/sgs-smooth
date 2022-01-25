@@ -5,13 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateInvitationRequest {
-
+public class CreateRoomRequest {
     @NotNull
-    private Long id;
-
+    private List<Long> members;
 }

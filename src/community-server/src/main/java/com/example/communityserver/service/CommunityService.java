@@ -35,7 +35,8 @@ import static com.example.communityserver.service.ChannelService.CHANNEL_DEFAULT
 public class CommunityService {
 
     @Value("${smooth.url}")
-    public String HOST_ADDRESS;
+    private String HOST_ADDRESS;
+    private String COMMUNITY_INVITATION_PREFIX = "/c/";
 
     private final CommunityRepository communityRepository;
     private final CommunityMemberRepository communityMemberRepository;
@@ -47,31 +48,38 @@ public class CommunityService {
     private final UserClient userClient;
 
     @Transactional
-    public CreateCommunityResponse createCommunity(
+    public CommunityResponse createCommunity(
             Long userId,
             CreateCommunityRequest request,
             String token
     ) {
-        String iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
+        String iconImage = null;
+        if (!Objects.isNull(request.getIcon()))
+            iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
 
+
+        // 기본 생성되는 카테고리
         Category voiceCategory = makeDefaultCategory(ChannelType.VOICE, null);
         Category textCategory = makeDefaultCategory(ChannelType.TEXT, voiceCategory);
 
         Community newCommunity = Community.createCommunity(
                 request.getName(), iconImage, request.isPublic(), textCategory, voiceCategory);
 
+        // 생성한 유저 정보 불러오기
         // Todo auth 터졌을 때 예외 처리
         // Todo feign config로 처리하기 controller, servive, userclient
         UserInfoFeignResponse userInfoFeignResponse = userClient.getUserInfo(token);
         String nickname = userInfoFeignResponse.getResult().getName();
         String profileImage = userInfoFeignResponse.getResult().getProfileImage();
 
+        // 순서 배치를 위해 첫 번째로 위치한 노드 찾기
         CommunityMember firstNode = getFirstNode(userId);
-
+        
+        // 생성
         createCommunityMember(userId, newCommunity, nickname, profileImage, firstNode, CommunityRole.OWNER);
         communityRepository.save(newCommunity);
 
-        return CreateCommunityResponse.fromEntity(newCommunity);
+        return CommunityResponse.fromEntity(newCommunity);
     }
 
     private Category makeDefaultCategory(ChannelType channelType, Category nextNode) {
@@ -116,32 +124,36 @@ public class CommunityService {
     }
 
     @Transactional
-    public void editIcon(Long userId, EditCommunityIconRequest request) {
+    public void editIcon(Long userId, EditIconRequest request) {
 
-        Community community = communityRepository.findById(request.getCommunityId())
+        Community community = communityRepository.findById(request.getId())
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
         isOwner(community, userId);
 
-        String iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
+        String iconImage = null;
+        if (!Objects.isNull(request.getIcon()))
+            iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
 
         community.setIconImage(iconImage);
     }
 
     @Transactional
     public CreateInvitationResponse createInvitation(Long userId, CreateInvitationRequest request) {
-
-        Community community = communityRepository.findById(request.getCommunityId())
+        Community community = communityRepository.findById(request.getId())
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
         isAuthorizedMember(community, userId);
+
+        // 이미 생성한 초대장 있는지 확인
         CommunityInvitation communityInvitation = community.getInvitations().stream()
                 .filter(i -> i.isActivate())
                 .filter(invitation -> invitation.getUserId().equals(userId))
                 .findAny().orElse(null);
 
+        // 없는 경우 생성
         if (Objects.isNull(communityInvitation)) {
             CommunityInvitation newInvitation = new CommunityInvitation();
             newInvitation.setCommunity(community);
@@ -151,7 +163,7 @@ public class CommunityService {
             communityInvitation.setCode(base62.encode(communityInvitation.getId()));
         }
 
-        return new CreateInvitationResponse(HOST_ADDRESS + "/" + communityInvitation.getCode());
+        return new CreateInvitationResponse(HOST_ADDRESS + COMMUNITY_INVITATION_PREFIX + communityInvitation.getCode());
     }
 
     public InvitationListResponse getInvitations(Long userId, Long communityId, String token) {
@@ -161,23 +173,25 @@ public class CommunityService {
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
         isAuthorizedMember(community, userId);
-        HashMap<Long, UserResponse> userInfoMap = getUserMap(community, token);
+
+        // 초대장을 생성한 멤버들의 아이디 조회
+        List<Long> ids = community.getInvitations().stream()
+                .filter(i -> i.isActivate())
+                .map(invitation -> invitation.getUserId())
+                .collect(Collectors.toList());
+        
+        // 아이디로 유저 정보 조회
+        HashMap<Long, UserResponse> userInfoMap = getUserMap(ids, token);
 
         List<InvitationResponse> invitations = community.getInvitations().stream()
                 .filter(i -> i.isActivate())
-                .map(invitation ->
-                        new InvitationResponse(invitation, userInfoMap.get(invitation.getUserId())))
+                .map(invitation -> new InvitationResponse(invitation, userInfoMap.get(invitation.getUserId())))
                 .collect(Collectors.toList());
 
         return new InvitationListResponse(invitations);
     }
 
-    private HashMap<Long, UserResponse> getUserMap(Community community, String token) {
-        List<Long> ids = community.getInvitations().stream()
-                .filter(i -> i.isActivate())
-                .map(invitation -> invitation.getUserId())
-                .collect(Collectors.toList());
-
+    private HashMap<Long, UserResponse> getUserMap(List<Long> ids, String token) {
         Set<Long> set = new HashSet<>(ids);
         ids = new ArrayList<>(set);
 
@@ -199,13 +213,20 @@ public class CommunityService {
     }
 
     public MemberListResponse getMembers(Long userId, Long communityId, String token) {
-
         Community community = communityRepository.findById(communityId)
                 .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
         isAuthorizedMember(community, userId);
-        HashMap<Long, UserResponse> userInfoMap = getUserMap(community, token);
+
+        // 커뮤니티에 속한 멤버의 아이디 조회
+        List<Long> ids = community.getMembers().stream()
+                .filter(m -> m.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .map(CommunityMember::getUserId)
+                .collect(Collectors.toList());
+        
+        // 아이디로 유저 정보 조회
+        HashMap<Long, UserResponse> userInfoMap = getUserMap(ids, token);
 
         List<MemberResponse> members = community.getMembers().stream()
                 .filter(member -> member.getStatus().equals(CommunityMemberStatus.NORMAL))
@@ -216,7 +237,7 @@ public class CommunityService {
     }
 
     @Transactional
-    public void join(Long userId, JoinCommunityRequest request, String token) {
+    public CommunityResponse join(Long userId, JoinRequest request, String token) {
 
         CommunityInvitation invitation = communityInvitationRepository.findByCode(request.getCode())
                 .filter(i -> i.isActivate())
@@ -226,17 +247,24 @@ public class CommunityService {
 
         if (isSuspendedMember(community, userId))
             throw new CustomException(SUSPENDED_COMMUNITY);
-
-        isAuthorizedMember(community, userId);
+        
+        // 이미 커뮤니티에 속해있는지 확인
         isContains(community, userId);
 
+        // 배치를 위해 첫 번재로 위치한 커뮤니티 조회
         CommunityMember firstNode = getFirstNode(userId);
+        
+        // 유저 정보 조회
         // Todo auth 터졌을 때 예외 처리
         // Todo feign config로 처리하기 controller, servive, userclient
         UserInfoFeignResponse userInfoFeignResponse = userClient.getUserInfo(token);
         String nickname = userInfoFeignResponse.getResult().getName();
         String profileImage = userInfoFeignResponse.getResult().getProfileImage();
+        
+        // 생성
         createCommunityMember(userId, community, nickname, profileImage, firstNode, CommunityRole.NONE);
+
+        return CommunityResponse.fromEntity(community);
     }
 
     private void isContains(Community community, Long userId) {
@@ -309,6 +337,7 @@ public class CommunityService {
                 .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
         isAuthorizedMember(community, userId);
+
         return CommunityDetailResponse.fromEntity(community);
     }
 
@@ -317,11 +346,9 @@ public class CommunityService {
 
         List<Community> communities = new ArrayList<>();
         if (Objects.isNull(firstNode))
-            return new CommunityListResponse(
-                    communities.stream()
+            return new CommunityListResponse(communities.stream()
                             .map(CommunityResponse::fromEntity)
-                            .collect(Collectors.toList())
-            );
+                            .collect(Collectors.toList()));
 
         communities.add(firstNode.getCommunity());
         CommunityMember nextNode = firstNode.getNextNode();
@@ -340,7 +367,7 @@ public class CommunityService {
 
     public CommunityMember getFirstNode(Long userId) {
         return communityMemberRepository.findByUserId(userId).stream()
-                .filter(member -> member.isFirstNode() && member.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .filter(member -> Objects.isNull(member.getBeforeNode()) && member.getStatus().equals(CommunityMemberStatus.NORMAL))
                 .findAny().orElse(null);
     }
 
@@ -351,28 +378,27 @@ public class CommunityService {
                 .collect(Collectors.toList());
 
         CommunityMember target = communities.stream()
-                .filter(cm -> cm.getCommunity().getId().equals(request.getId()))
+                .filter(cm -> cm.getCommunity().getId().equals(request.getId())
+                    && cm.getCommunity().getStatus().equals(CommonStatus.NORMAL))
                 .findAny().orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
 
-        CommunityMember first = getFirstNode(userId);
-
-        CommunityMember before = null;
-        if (request.getNext().equals(0L)) {
-            if (target.equals(first))
-                throw new CustomException(ALREADY_LOCATED);
-        } else {
-            before = communities.stream()
-                    .filter(cm -> cm.getCommunity().getId().equals(request.getNext()))
-                    .filter(cm -> cm.getStatus().equals(CommunityMemberStatus.NORMAL))
+        CommunityMember tobe = null;
+        if (!request.getNext().equals(0L)) {
+            tobe = communities.stream()
+                    .filter(cm -> cm.getCommunity().getId().equals(request.getNext())
+                        && cm.getCommunity().getStatus().equals(CommonStatus.NORMAL))
                     .findAny().orElseThrow(() -> new CustomException(NON_VALID_NEXT_NODE));
 
-            if (!Objects.isNull(before.getNextNode())) {
-                if (before.getNextNode().equals(target))
+            if (!Objects.isNull(tobe.getNextNode())) {
+                if (tobe.getNextNode().equals(target))
                     throw new CustomException(ALREADY_LOCATED);
             }
+        } else {
+            if (Objects.isNull(target.getBeforeNode()))
+                throw new CustomException(ALREADY_LOCATED);
         }
 
-        target.locate(before, first);
+        target.locate(tobe, getFirstNode(userId));
     }
 
     @Transactional
@@ -384,5 +410,18 @@ public class CommunityService {
         isOwner(community, userId);
 
         community.delete();
+    }
+
+    public MemberListFeignResponse getCommunityMember(Long communityId) {
+        Community community = communityRepository.findById(communityId)
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_COMMUNITY));
+
+        List<Long> ids = community.getMembers().stream()
+                .filter(cm -> cm.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .map(CommunityMember::getUserId)
+                .collect(Collectors.toList());
+
+        return new MemberListFeignResponse(ids);
     }
 }

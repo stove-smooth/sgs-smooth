@@ -15,10 +15,10 @@ import javax.persistence.Enumerated;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberResponse {
-    private Long userId;
+    private Long id;
     private String profileImage;
     private String communityName;
-    private String username;
+    private String nickname;
     private String code;
     @Enumerated(EnumType.STRING)
     private CommunityRole role;
@@ -26,10 +26,10 @@ public class MemberResponse {
 
     public static MemberResponse fromEntity(CommunityMember member, UserResponse user) {
         MemberResponse memberResponse = new MemberResponse();
-        memberResponse.setUserId(user.getId());
+        memberResponse.setId(user.getId());
         memberResponse.setProfileImage(user.getImage());
         memberResponse.setCommunityName(member.getNickname());
-        memberResponse.setUsername(user.getName());
+        memberResponse.setNickname(user.getName());
         memberResponse.setCode(user.getCode());
         memberResponse.setRole(member.getRole());
         memberResponse.setStatus("online");

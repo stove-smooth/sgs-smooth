@@ -9,9 +9,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateInvitationRequest {
-
+public class JoinRequest {
     @NotNull
-    private Long id;
-
+    private String code;
 }
