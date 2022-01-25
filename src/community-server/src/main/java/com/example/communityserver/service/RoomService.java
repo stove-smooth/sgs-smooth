@@ -4,10 +4,8 @@ import com.example.communityserver.client.UserClient;
 import com.example.communityserver.domain.Room;
 import com.example.communityserver.domain.RoomMember;
 import com.example.communityserver.domain.type.CommonStatus;
-import com.example.communityserver.dto.response.RoomListResponse;
-import com.example.communityserver.dto.response.RoomResponse;
-import com.example.communityserver.dto.response.UserInfoListFeignResponse;
-import com.example.communityserver.dto.response.UserResponse;
+import com.example.communityserver.dto.request.CreateRoomRequest;
+import com.example.communityserver.dto.response.*;
 import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.RoomMemberRepository;
 import com.example.communityserver.repository.RoomRepository;
@@ -25,7 +23,7 @@ import static com.example.communityserver.exception.CustomExceptionStatus.EMPTY_
 @Transactional(readOnly = true)
 public class RoomService {
 
-    private final RoomRepository repository;
+    private final RoomRepository roomRepository;
     private final RoomMemberRepository roomMemberRepository;
 
     private final UserClient userClient;
@@ -56,7 +54,7 @@ public class RoomService {
         
         // 1:1 메시지방 유저 정보로 업데이트
         roomResponses.forEach(roomResponse -> {
-            updateUserInfo(roomResponse, userMap);
+            updateUserInfo(roomResponse, userMap, userId);
         });
 
         // TODO 메세지 순으로 정렬
@@ -80,13 +78,64 @@ public class RoomService {
         return response.getResult();
     }
 
-    private void updateUserInfo(RoomResponse roomResponse, HashMap<Long, UserResponse> userMap) {
+    private void updateUserInfo(RoomResponse roomResponse, HashMap<Long, UserResponse> userMap, Long userId) {
         if (!roomResponse.isGroup()) {
-            UserResponse otherUser = userMap.get(roomResponse.getMembers().get(0));
+            UserResponse otherUser = userMap.get(
+                    roomResponse.getMembers().stream()
+                            .filter(rm -> !rm.equals(userId))
+                            .findFirst().get());
             if (!Objects.isNull(otherUser)) {
+                roomResponse.setName(otherUser.getName());
                 roomResponse.setIcon(otherUser.getImage());
                 roomResponse.setState(otherUser.getState());
             }
         }
+    }
+
+    private void updateUserInfo(RoomDetailResponse roomDetailResponse, HashMap<Long, UserResponse> userMap, Long userId) {
+        if (!roomDetailResponse.isGroup()) {
+            UserResponse otherUser = userMap.get(
+                    roomDetailResponse.getMembers().stream()
+                            .filter(rm -> !rm.getId().equals(userId))
+                            .map(RoomMemberResponse::getId)
+                            .findFirst().get());
+            if (!Objects.isNull(otherUser)) {
+                roomDetailResponse.setName(otherUser.getName());
+            }
+        }
+    }
+
+    @Transactional
+    public RoomDetailResponse createRoom(Long userId, CreateRoomRequest request, String token) {
+
+        List<RoomMember> members = new ArrayList<>();
+
+        // 유저 정보 요청
+        List<Long> ids = request.getMembers();
+        ids.add(userId);
+        HashMap<Long, UserResponse> userMap = getUserMap(ids, token);
+
+        // TODO string 계속 더하는 건 좋지 않으니 stringbuilder로 가져가는 것도 고민하기
+        String name = "";
+        for (int i=0; i<ids.size(); i++) {
+            Long id = ids.get(i);
+            boolean isOwner = id.equals(userId) ? true : false;
+            String otherUsername = userMap.get(id).getName();
+            members.add(RoomMember.createRoomMember(id, isOwner));
+            name += otherUsername;
+            if (i != ids.size()-1)
+                name += ", ";
+        }
+
+        Room newRoom = Room.createRoom(name, members);
+        roomRepository.save(newRoom);
+
+        RoomDetailResponse roomDetailResponse = RoomDetailResponse.fromEntity(newRoom);
+        roomDetailResponse.setMembers(newRoom.getMembers().stream()
+            .map(rm -> RoomMemberResponse.fromEntity(rm, userMap))
+            .collect(Collectors.toList()));
+        updateUserInfo(roomDetailResponse, userMap, userId);
+
+        return roomDetailResponse;
     }
 }

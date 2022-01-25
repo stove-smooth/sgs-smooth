@@ -1,15 +1,17 @@
 package com.example.communityserver.controller;
 
+import com.example.communityserver.dto.request.CreateRoomRequest;
 import com.example.communityserver.dto.response.DataResponse;
+import com.example.communityserver.dto.response.RoomDetailResponse;
 import com.example.communityserver.dto.response.RoomListResponse;
+import com.example.communityserver.dto.response.RoomResponse;
 import com.example.communityserver.service.ResponseService;
 import com.example.communityserver.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 import static com.example.communityserver.controller.CommunityController.AUTHORIZATION;
 import static com.example.communityserver.controller.CommunityController.ID;
@@ -43,5 +45,17 @@ public class RoomController {
     ) {
         log.info("GET /community-server/room");
         return responseService.getDataResponse(roomService.getRooms(Long.parseLong(userId), token));
+    }
+
+    /**
+     * 채팅방 생성하기
+     */
+    public DataResponse<RoomDetailResponse> createRoom(
+            @RequestHeader(AUTHORIZATION) String token,
+            @RequestHeader(ID) String userId,
+            @Valid @RequestBody CreateRoomRequest request
+    ) {
+        log.info("POST /community-server/room");
+        return responseService.getDataResponse(roomService.createRoom(Long.parseLong(userId), request, token));
     }
 }
