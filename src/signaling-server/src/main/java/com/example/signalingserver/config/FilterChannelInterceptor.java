@@ -43,11 +43,19 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
         switch (accessor.getCommand()) {
             case CONNECT:
                 String connectSessionId = accessor.getSessionId();
-                String connectUserId = Objects.requireNonNull(accessor.getFirstNativeHeader(USER_ID));
-                String connectChannelId = Objects.requireNonNull(accessor.getFirstNativeHeader(CHANNEL_ID));
+//                String connectUserId = Objects.requireNonNull(accessor.getFirstNativeHeader(USER_ID));
+//                String connectChannelId = Objects.requireNonNull(accessor.getFirstNativeHeader(CHANNEL_ID));
+                
+                // 유저 세션 저장
+                // 상태관리서버 업데이트
+                
                 break;
             case DISCONNECT:
                 String disconnectSessionId = accessor.getSessionId();
+                
+                // 유저 세션 삭제
+                // 상태관리서버 업데이트
+                
                 break;
             default:
 //                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
