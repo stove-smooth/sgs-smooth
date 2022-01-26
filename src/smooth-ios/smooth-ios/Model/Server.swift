@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import RxDataSources
 
-struct Server: Codable, Equatable {
+struct Server: Codable, Equatable, IdentifiableType {
     let id: Int
     let name: String
     let icon: String?
@@ -27,4 +28,10 @@ struct Server: Codable, Equatable {
         self.name = ""
         self.icon = nil
     }
+}
+
+struct ServerRequest: Codable {
+    let name: String
+    let `public`: Bool
+    let icon: Data
 }
