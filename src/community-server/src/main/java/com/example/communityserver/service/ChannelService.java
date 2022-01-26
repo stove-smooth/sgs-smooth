@@ -331,15 +331,18 @@ public class ChannelService {
     }
 
     @Transactional
-    public void locateChannel(Long userId, LocateRequest request) {
+    public void locateChannel(Long userId, LocateChannelRequest request) {
         Channel target = channelRepository.findById(request.getId())
                 .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
 
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_CATEGORY));
+
         if (!Objects.isNull(target.getParent()))
             throw new CustomException(NON_SERVE_IN_THREAD);
 
-        Category category = target.getCategory();
         isAuthorizedMember(category.getCommunity(), userId);
 
         List<Channel> channels = category.getChannels().stream()
@@ -357,11 +360,56 @@ public class ChannelService {
                 if (tobe.getNextNode().equals(target))
                     throw new CustomException(ALREADY_LOCATED);
             }
-        } else {
-            if (Objects.isNull(target.getBeforeNode()))
-                throw new CustomException(ALREADY_LOCATED);
         }
 
-        target.locate(tobe, getFirstChannel(category));
+        Channel first = getFirstChannel(category);
+
+        if (target.getCategory().equals(category)) {
+            // 동일한 카테고리 내 이동
+            if (Objects.isNull(target.getBeforeNode())) {
+                // target이 첫 번째 노드일 때
+                target.getNextNode().setBeforeNode(null);
+                target.setNextNode(tobe.getNextNode());
+                tobe.setNextNode(target);
+            } else {
+                // target이 첫 번째 노드가 아닐 때
+                target.getBeforeNode().setNextNode(target.getNextNode());
+                if (Objects.isNull(tobe)) {
+                    // 첫 번째 노드로 변경하는 경우
+                    target.setBeforeNode(null);
+                    target.setNextNode(first);
+                } else {
+                    target.setNextNode(tobe.getNextNode());
+                    tobe.setNextNode(target);
+                }
+            }
+        } else {
+            // 다른 카테고리로 이동
+            target.setCategory(category);
+            if (Objects.isNull(target.getBeforeNode())) {
+                // target이 첫 번째 노드일 때
+                if (!Objects.isNull(target.getNextNode()))
+                    target.getNextNode().setBeforeNode(null);
+
+                if (Objects.isNull(tobe)) {
+                    // 다른 카테고리의 첫 번째 노드로 변경하는 경우
+                    target.setNextNode(first);
+                } else {
+                    target.setNextNode(tobe.getNextNode());
+                    tobe.setNextNode(target);
+                }
+            } else {
+                // target이 첫 번째 노드가 아닐 때
+                target.getBeforeNode().setNextNode(target.getNextNode());
+                if (Objects.isNull(tobe)) {
+                    // 다른 카테고리의 첫 번째 노드로 변경하는 경우
+                    target.setBeforeNode(null);
+                    target.setNextNode(first);
+                } else {
+                    target.setNextNode(tobe.getNextNode());
+                    tobe.setNextNode(target);
+                }
+            }
+        }
     }
 }
