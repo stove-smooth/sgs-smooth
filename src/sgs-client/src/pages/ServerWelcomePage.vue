@@ -62,19 +62,13 @@ export default {
     async $route(to, from) {
       if (to.path != from.path) {
         await this.fetchCommunityInfo();
-        const result = this.computeFirstChannel();
-        if (!result) {
-          console.log("채널없음");
-        }
+        this.computeFirstChannel();
       }
     },
   },
   async created() {
     await this.fetchCommunityInfo();
-    const result = this.computeFirstChannel();
-    if (!result) {
-      console.log("채널없음");
-    }
+    this.computeFirstChannel();
   },
 };
 </script>

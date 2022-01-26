@@ -114,7 +114,6 @@ export default {};
   position: relative;
   display: grid;
   -webkit-box-align: center;
-  /*   -ms-flex-align: center; */
   align-items: center;
   height: 36px;
   grid-gap: 12px;

@@ -7,7 +7,9 @@
             <div class="center-wrapper">
               <form @submit.prevent="submitForm" class="auth-container layer">
                 <div class="header">
-                  <h3 class="title-welcome">돌아오신 걸 환영해요!</h3>
+                  <h3 class="title-welcome">
+                    {{ this.path }}돌아오신 걸 환영해요!
+                  </h3>
                   <div class="large-description">
                     다시 만나다니 너무 반가워요!
                   </div>
@@ -82,6 +84,7 @@
 <script>
 import { mapActions } from "vuex";
 import { validateEmail } from "../utils/validation.js";
+import { joinCommunity } from "../api/index.js";
 export default {
   data() {
     return {
@@ -89,6 +92,16 @@ export default {
       pwd: "",
       logMessage: "",
     };
+  },
+  props: {
+    path: {
+      type: String,
+      default: "",
+    },
+    communityId: {
+      type: String,
+      default: "",
+    },
   },
   computed: {
     ispwdValid() {
@@ -111,7 +124,18 @@ export default {
           password: this.pwd,
         };
         await this.LOGIN(userData);
-        this.$router.push("/channels/@me");
+        if (this.path != "" && this.communityId != "") {
+          console.log(this.path, this.communityId);
+          if (this.path == "c") {
+            const communityHashCode = {
+              code: this.communityId,
+            };
+            const result = await joinCommunity(communityHashCode);
+            this.$router.replace("/channels/" + result.data.result.id);
+          }
+        } else {
+          this.$router.push("/channels/@me");
+        }
       } catch (err) {
         console.log("로그인 실패에러", err.response);
         this.logMessage = "로그인에 실패하셨습니다.";
@@ -221,12 +245,9 @@ export default {
 }
 
 .layer {
-  /* display: -webkit-box;
-  display: -ms-flexbox; */
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-  /* -ms-flex-direction: column; */
   flex-direction: column;
   overflow: hidden;
   -webkit-box-flex: 1;

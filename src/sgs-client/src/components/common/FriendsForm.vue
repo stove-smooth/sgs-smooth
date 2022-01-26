@@ -8,13 +8,7 @@
         <div class="friends-list-item-contents">
           <div class="friends-state-info">
             <div class="profile-margin profile-wrapper">
-              <img
-                class="avatar"
-                :src="
-                  item.profileImage ? item.profileImage : getImgUrl(item.code)
-                "
-                alt="image"
-              />
+              <img class="avatar" :src="item.profileImage" alt="image" />
               <template aria-label="status-invisible">
                 <div class="status-ring">
                   <div class="status-offline"></div>
@@ -33,7 +27,7 @@
               </div>
             </div>
           </div>
-          <div class="action-to-friends">
+          <div class="margin-left-8px display-flex">
             <slot
               name="action"
               v-bind:code="item.code"
@@ -50,19 +44,11 @@
 </template>
 
 <script>
-import { selectProfile } from "../../utils/common.js";
 export default {
   props: {
     friend: {
       type: Array,
       required: true,
-    },
-  },
-  methods: {
-    getImgUrl(code) {
-      const classify = code % 4;
-      const result = selectProfile(classify);
-      return require("../../assets/" + result + ".png");
     },
   },
 };
@@ -76,12 +62,9 @@ export default {
 .firends-list-item {
   height: 62px;
   opacity: 1;
-  /* display: -webkit-box;
-  display: -ms-flexbox; */
   display: flex;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
-  /* -ms-flex-direction: row; */
   flex-direction: row;
   margin-left: 30px;
   margin-right: 20px;
@@ -89,7 +72,6 @@ export default {
   font-size: 16px;
   line-height: 20px;
   overflow: hidden;
-  /* -webkit-box-sizing: border-box; */
   box-sizing: border-box;
   cursor: pointer;
   border-top: 1px solid hsla(0, 0%, 100%, 0.06);
@@ -97,13 +79,10 @@ export default {
 .friends-list-item-contents {
   display: flex;
   -webkit-box-flex: 1;
-  /* -ms-flex-positive: 1; */
   flex-grow: 1;
   -webkit-box-align: center;
-  /* -ms-flex-align: center; */
   align-items: center;
   -webkit-box-pack: justify;
-  /* -ms-flex-pack: justify; */
   justify-content: space-between;
   max-width: 100%;
 }
@@ -114,16 +93,12 @@ export default {
 
 .profile-margin {
   margin: 0 12px 0 0;
-  /* -ms-flex-negative: 0; */
   flex-shrink: 0;
 }
 .friends-state-text {
-  /* display: -webkit-box;
-  display: -ms-flexbox; */
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-  /* -ms-flex-direction: column; */
   flex-direction: column;
   overflow: hidden;
 }
@@ -132,10 +107,8 @@ export default {
   display: flex;
   overflow: hidden;
   -webkit-box-flex: 1;
-  /* -ms-flex-positive: 1; */
   flex-grow: 1;
   -webkit-box-align: end;
-  /* -ms-flex-align: end; */
   align-items: flex-end;
   -webkit-box-pack: start;
   justify-content: flex-start;
@@ -151,9 +124,5 @@ export default {
   text-overflow: ellipsis;
   overflow: hidden;
   font-size: 14px;
-}
-.action-to-friends {
-  margin-left: 8px;
-  display: flex;
 }
 </style>

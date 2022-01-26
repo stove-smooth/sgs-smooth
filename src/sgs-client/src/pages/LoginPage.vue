@@ -1,6 +1,7 @@
 <template>
   <div>
-    <login-form></login-form>
+    <login-form :path="this.path" :communityId="this.communityId"></login-form>
+    <div>path:{{ this.path }}communityId:{{ this.communityId }}</div>
   </div>
 </template>
 
@@ -9,6 +10,12 @@ import { mapGetters } from "vuex";
 import LoginForm from "../components/LoginForm.vue";
 export default {
   components: { LoginForm },
+  data() {
+    return {
+      path: this.$route.query.path,
+      communityId: this.$route.query.communityId,
+    };
+  },
   computed: {
     ...mapGetters("user", ["getEmail"]),
   },
@@ -16,18 +23,19 @@ export default {
     if (this.getEmail) {
       this.$router.push("/channels/@me");
     }
+    console.log(this.$route.query);
+    console.log(this.path);
   },
   mounted() {
-    console.log("로그인페이지1");
     if (this.$route.params?.message) {
-      console.log("로그인페이지2");
       if (this.$route.params?.message === "sessionOut") {
-        console.log("로그인페이지3");
         this.$message.error(
           "로그인 세션이 만료되었습니다. 재로그인이 필요합니다."
         );
       }
     }
+    console.log(this.$route.query);
+    console.log(this.path);
   },
 };
 </script>

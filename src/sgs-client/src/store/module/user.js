@@ -109,16 +109,12 @@ const user = {
   },
   actions: {
     async LOGIN({ commit }, userData) {
-      //try {
       const response = await loginUser(userData);
-      console.log("로그인됨", response);
       commit("setUserId", response.data.result.id);
       commit("setEmail", response.data.result.email);
       commit("setAccessToken", response.data.result.accessToken);
       commit("setRefreshToken", response.data.result.refreshToken);
-      //} catch (err) {
-      //  alert("로그인 정보를 다시 확인해주세요.");
-      //}
+      return response.data.result.code;
     },
     LOGOUT({ commit }) {
       localStorage.removeItem("userId");

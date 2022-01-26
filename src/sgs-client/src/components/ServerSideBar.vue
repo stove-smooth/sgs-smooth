@@ -6,7 +6,9 @@
       :data-container="true"
     >
       <header class="server-sidebar-header">
-        <h1 class="server-name">{{ communityInfo.name }}</h1>
+        <h1 class="server-name">
+          {{ communityInfo ? communityInfo.name : "" }}
+        </h1>
         <div
           class="sidebar-header-button"
           aria-label="밍디님의 서버 활동"
@@ -26,7 +28,7 @@
       </div>
     </div>
     <div class="thin-scrollbar dm-scroller height-100">
-      <div class="side-content">
+      <div class="side-content" v-if="communityInfo">
         <draggable
           :list="communityInfo.categories"
           @change="log"
@@ -136,6 +138,7 @@
                         aria-label="채널 편집"
                         tabindex="0"
                         role="button"
+                        @click="setChannelSettingModal(el)"
                       >
                         <svg class="small-settings"></svg>
                       </div>
@@ -174,7 +177,7 @@ export default {
   },
   data() {
     return {
-      selected: "",
+      selected: this.$route.params.channelid,
       hovered: "",
       categoryhovered: "",
       new: 0,
@@ -188,28 +191,20 @@ export default {
       "setCreateChannel",
       "setOpenServerPopout",
       "setCategorySettingModal",
+      "setChannelSettingModal",
     ]),
-    /* add: function () {
-      this.list.push({ name: "Juan" });
-    },
-    clone: function (el) {
-      return {
-        name: el.name + " cloned",
-      };
-    }, */
     log: async function (evt) {
       if (evt.moved) {
-        //console.log(evt);
-        if (evt.moved.element.channels != "undefined") {
-          console.log(evt);
+        console.log("communityinfo", this.communityInfo);
+        console.log(evt);
+        if (evt.moved.element.channels) {
+          console.log("카테고리 단위로 움직임");
           console.log("카테고리아이디", evt.moved.element.id);
-
           if (evt.moved.newIndex == 0) {
             this.new = 0;
           } else {
             this.new = this.communityInfo.categories[evt.moved.newIndex - 1].id;
           }
-
           const movedCategoryInfo = {
             id: evt.moved.element.id,
             next: this.new,
@@ -220,7 +215,25 @@ export default {
           } catch (err) {
             console.log(err.response);
           }
+        } else {
+          console.log(
+            "채널이 카테고리 내에서 움직임,채널 아이디, 변경할 위치 위에 있는 채널 아이디."
+          );
+          console.log(evt);
+          console.log("채널아이디", evt.moved.element.id);
+          if (evt.moved.newIndex == 0) {
+            //맨위일경우.
+            this.new = 0;
+          } else {
+            //아닐경우.
+            console.log(
+              "맨위가 아닐땐 ,this.communityInfo.categories[?][evt.moved.newIndex-1].id 이걸로 해야하는디.?"
+            );
+          }
         }
+      } else {
+        console.log("채널이 카테고리를 건너 움직임");
+        console.log(evt);
       }
     },
     happy() {
@@ -281,18 +294,7 @@ export default {
     },
   },
   mounted() {
-    let array = window.location.pathname.split("/");
-    this.selected = array[3];
     window.addEventListener("click", this.onClick);
-  },
-  watch: {
-    // 라우터의 변경을 감시
-    $route(to, from) {
-      if (to.path != from.path) {
-        let array = to.path.split("/");
-        this.selected = array[3];
-      }
-    },
   },
 };
 </script>
@@ -302,16 +304,12 @@ export default {
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-  /* -ms-flex-direction: column; */
   flex-direction: column;
   -webkit-box-align: stretch;
-  /* -ms-flex-align: stretch; */
   align-items: stretch;
   -webkit-box-pack: start;
-  /* -ms-flex-pack: start; */
   justify-content: flex-start;
   -webkit-box-flex: 1;
-  /*  -ms-flex: 1 1 auto; */
   flex: 1 1 auto;
   min-height: 0;
   position: relative;
@@ -319,23 +317,16 @@ export default {
 }
 .server-sidebar-header {
   position: relative;
-  /* font-family: var(--font-display); */
   font-weight: 500;
   padding: 0 16px;
   height: 48px;
-  /* -webkit-box-sizing: border-box; */
   box-sizing: border-box;
-  /* display: -webkit-box;
-    display: -ms-flexbox; */
   display: flex;
   -webkit-box-align: center;
-  /* -ms-flex-align: center; */
   align-items: center;
   z-index: 3;
-  /* -webkit-transition: background-color .1s linear; */
   transition: #202225 0.1s linear;
   color: var(--white-color);
-  /* -webkit-box-shadow: var(--elevation-low); */
   box-shadow: 0 1px 0 rgba(4, 4, 5, 0.2), 0 1.5px 0 rgba(6, 6, 7, 0.05),
     0 2px 0 rgba(4, 4, 5, 0.05);
 }
@@ -347,7 +338,6 @@ export default {
   text-overflow: ellipsis;
   overflow: hidden;
   -webkit-box-flex: 1;
-  /* -ms-flex: 1; */
   flex: 1;
 }
 .sidebar-header-button {
@@ -384,19 +374,14 @@ export default {
   transform: translateY(0%);
   background-color: #ff0000;
   opacity: 0.7;
-  /* display: -webkit-box;
-  display: -ms-flexbox; */
   display: flex;
   -webkit-box-align: center;
-  /* -ms-flex-align: center; */
   align-items: center;
   -webkit-box-pack: center;
-  /* -ms-flex-pack: center; */
   justify-content: center;
   position: relative;
   font-size: 12px;
   line-height: 16px;
-  /* font-family: var(--font-display); */
   font-weight: 600;
   color: var(--white-color);
   height: 24px;
@@ -404,7 +389,6 @@ export default {
   text-transform: uppercase;
   border-radius: 12px;
   pointer-events: auto;
-  /* -webkit-box-shadow: 0 2px 6px rgb(0 0 0 / 24%); */
   box-shadow: 0 2px 6px rgb(0 0 0 / 24%);
   -webkit-app-region: no-drag;
 }
@@ -414,27 +398,18 @@ export default {
 }
 .channel-category-wrapper {
   position: relative;
-  /* -webkit-box-sizing: border-box; */
   box-sizing: border-box;
   height: 0px;
   padding-right: 8px;
   padding-left: 16px;
-  /* display: -webkit-box;
-  display: -ms-flexbox; */
   display: flex;
   -webkit-box-align: center;
-  /* -ms-flex-align: center; */
   align-items: center;
   -webkit-box-pack: justify;
-  /* -ms-flex-pack: justify; */
   justify-content: space-between;
-  /* cursor: default; */
   color: #8e9297;
 }
 .channel-category-content {
-  /* -webkit-box-flex: 1; */
-  /* -ms-flex: 1 1 auto; */
-  /* flex: 1 1 auto; */
   overflow: hidden;
   display: flex;
   flex-direction: row;
@@ -463,7 +438,6 @@ export default {
 }
 .create-channel-button {
   display: block;
-  /* font-family: var(--font-korean); */
   width: 18px;
   height: 18px;
   background: transparent;
@@ -489,20 +463,15 @@ export default {
 }
 .channel-content {
   position: relative;
-  /* -webkit-box-sizing: border-box; */
   box-sizing: border-box;
   padding: 0 8px;
   margin-left: 8px;
   border-radius: 4px;
-  /* display: -webkit-box;
-  display: -ms-flexbox; */
   display: flex;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
-  /* -ms-flex-direction: row; */
   flex-direction: row;
   -webkit-box-align: center;
-  /* -ms-flex-align: center; */
   align-items: center;
 }
 .channel-content-hover {
@@ -510,19 +479,13 @@ export default {
 }
 .channel-main-content {
   -webkit-box-flex: 1;
-  /* -ms-flex: 1 1 auto; */
   flex: 1 1 auto;
-  /*  -webkit-box-sizing: border-box; */
   box-sizing: border-box;
-  /* display: -webkit-box;
-  display: -ms-flexbox; */
   display: flex;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
-  /* -ms-flex-direction: row; */
   flex-direction: row;
   -webkit-box-align: center;
-  /* -ms-flex-align: center; */
   align-items: center;
   min-width: 0;
   padding: 6px 0;
@@ -543,7 +506,6 @@ export default {
   line-height: 20px;
   font-weight: 500;
   -webkit-box-flex: 1;
-  /* -ms-flex: 1 1 auto; */
   flex: 1 1 auto;
   white-space: normal;
   text-overflow: ellipsis;
@@ -579,18 +541,12 @@ export default {
   padding-bottom: 8px;
   -webkit-box-direction: normal;
   -webkit-box-orient: vertical;
-  /* -ms-flex-direction: column; */
   flex-direction: column;
-  /*  -ms-flex-wrap: nowrap; */
   flex-wrap: nowrap;
   -webkit-box-align: stretch;
-  /* -ms-flex-align: stretch; */
   align-items: stretch;
-  /* display: -webkit-box;
-  display: -ms-flexbox; */
   display: flex;
   -webkit-box-pack: start;
-  /* -ms-flex-pack: start; */
   justify-content: flex-start;
 }
 .draggable {
@@ -602,15 +558,11 @@ export default {
   height: 32px;
 }
 .voice-user-content {
-  /* display: -webkit-box;
-  display: -ms-flexbox; */
   display: flex;
   border-radius: 4px;
   -webkit-box-pack: start;
-  /* -ms-flex-pack: start; */
   justify-content: flex-start;
   -webkit-box-align: center;
-  /* -ms-flex-align: center; */
   align-items: center;
   margin-top: 1px;
   margin-bottom: 1px;
@@ -622,7 +574,6 @@ export default {
   width: 24px;
   height: 24px;
   -webkit-box-flex: 0;
-  /* -ms-flex: 0 0 auto; */
   flex: 0 0 auto;
   border-radius: 50%;
   background-size: cover;
@@ -637,7 +588,6 @@ export default {
   line-height: 18px;
   font-weight: 500;
   -webkit-box-flex: 1;
-  /* -ms-flex: 1 1 auto; */
   flex: 1 1 auto;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -649,7 +599,7 @@ export default {
   margin-left: 0;
   margin-right: 2px;
   background-image: url("../assets/private-channel-plus.svg");
-  z-index: 99;
+  z-index: 1;
 }
 .height-100 {
   height: 100%;

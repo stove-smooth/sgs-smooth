@@ -9,9 +9,21 @@ import { mapGetters } from "vuex";
 export default {
   mounted() {
     if (!this.getEmail) {
-      this.$router.replace("/login");
+      if (!this.$route.params.invitePath) {
+        this.$router.replace("/login");
+      } else {
+        this.$router.push({
+          name: "LoginPage",
+          query: {
+            path: this.$route.params.invitePath,
+            communityId: this.$route.params.communityId,
+          },
+        });
+      }
     } else {
-      this.$router.replace("/channels/@me");
+      if (this.$route.path == "/") {
+        this.$router.replace("/channels/@me");
+      }
     }
   },
   computed: {

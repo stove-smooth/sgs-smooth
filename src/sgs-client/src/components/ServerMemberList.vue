@@ -7,7 +7,7 @@
           aria-label="멤버"
           class="server-member-list"
           v-show="
-            communityOnlineMemberList !== undefined &&
+            communityOnlineMemberList != null &&
             communityOnlineMemberList.length > 0
           "
         >
@@ -20,15 +20,7 @@
                 <div class="avatar-container">
                   <div class="profile-wrapper" aria-label="칭구1">
                     <div class="avatar-wrapper">
-                      <img
-                        class="avatar"
-                        :src="
-                          item.profileImage
-                            ? item.profileImage
-                            : discordProfile(item.code)
-                        "
-                        alt=" "
-                      />
+                      <img class="avatar" :src="item.profileImage" alt=" " />
                       <template aria-label="status-invisible">
                         <div class="status-ring">
                           <div class="status-online"></div>
@@ -54,7 +46,7 @@
           aria-label="멤버"
           class="server-member-list"
           v-show="
-            communityOfflineMemberList !== undefined &&
+            communityOfflineMemberList != null &&
             communityOfflineMemberList.length > 0
           "
         >
@@ -99,20 +91,12 @@
 
 <script>
 import { mapState } from "vuex";
-import { selectProfile } from "../utils/common.js";
 export default {
   computed: {
     ...mapState("server", [
       "communityOnlineMemberList",
       "communityOfflineMemberList",
     ]),
-  },
-  methods: {
-    discordProfile(code) {
-      const classify = code % 4;
-      const result = selectProfile(classify);
-      return require("../assets/" + result + ".png");
-    },
   },
 };
 </script>
@@ -122,7 +106,6 @@ export default {
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-  /* -ms-flex-direction: column; */
   flex-direction: column;
   background: #2f3136;
   height: 100%;

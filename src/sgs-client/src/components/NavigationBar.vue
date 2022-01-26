@@ -6,7 +6,7 @@
           <div
             class="listItem"
             @mouseover="hover('@me')"
-            @mouseleave="unhover"
+            @mouseleave="hover('')"
             @click="enterMe('@me')"
           >
             <div
@@ -40,7 +40,7 @@
             <div
               class="listItem"
               @mouseover="hover(community.id)"
-              @mouseleave="unhover"
+              @mouseleave="hover('')"
               @click="enterServer(community.id)"
             >
               <div
@@ -113,9 +113,6 @@ export default {
     hover(index) {
       this.hovered = index;
     },
-    unhover() {
-      this.hovered = "";
-    },
     select(index) {
       this.selected = index;
     },
@@ -142,6 +139,14 @@ export default {
     let array = currentUrl.split("/");
     this.selected = array[2];
     await this.FETCH_COMMUNITYLIST();
+  },
+  watch: {
+    // 라우터의 변경을 감시
+    async $route(to) {
+      if (to.path == "/channels/@me") {
+        this.selected = "@me";
+      }
+    },
   },
 };
 </script>
@@ -192,7 +197,6 @@ export default {
   align-items: center;
   -webkit-box-pack: start;
   justify-content: flex-start;
-  /*contain: layout size;*/
 }
 .selected-item {
   opacity: 1;

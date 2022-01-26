@@ -1,6 +1,3 @@
-function getBaseURL() {
-  return "http://52.79.229.100:8000/";
-}
 function selectProfile(code) {
   if (code == 0) {
     return "discord_blue";
@@ -55,4 +52,4 @@ async function dataUrlToFile(dataUrl) {
   const time = new Date().getTime();
   return new File([blob], time, { type: "image/*" });
 }
-export { selectProfile, converToThumbnail, dataUrlToFile, getBaseURL };
+export { selectProfile, converToThumbnail, dataUrlToFile };

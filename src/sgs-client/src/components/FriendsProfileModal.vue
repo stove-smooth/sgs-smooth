@@ -10,11 +10,7 @@
               <div class="avatar-uploader-inner">
                 <img
                   class="avatar-uploader-image"
-                  :src="
-                    friendsProfileModal.profileImage
-                      ? friendsProfileModal.profileImage
-                      : discordProfile
-                  "
+                  :src="friendsProfileModal.profileImage"
                   alt=" "
                 />
               </div>
@@ -51,26 +47,9 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
-import { selectProfile } from "../utils/common.js";
 export default {
-  data() {
-    return {
-      discordProfile: "",
-    };
-  },
   computed: {
     ...mapState("friends", ["friendsProfileModal"]),
-  },
-  watch: {
-    friendsProfileModal(newVal, oldVal) {
-      if (!oldVal && newVal) {
-        if (!this.friendsProfileModal.profileImage) {
-          const classify = this.friendsProfileModal.code % 4;
-          const result = selectProfile(classify);
-          this.discordProfile = require("../assets/" + result + ".png");
-        }
-      }
-    },
   },
   methods: {
     ...mapMutations("friends", ["setFriendsProfileModal"]),

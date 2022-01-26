@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- <template v-if="this.stompSocketConnected"> -->
     <div class="wrapper2">
       <div class="wrapper">
         <div class="container">
@@ -10,6 +11,7 @@
     </div>
     <server-popout></server-popout>
     <friends-plus-action></friends-plus-action>
+    <message-plus-action></message-plus-action>
     <create-server-modal></create-server-modal>
     <create-channel-modal></create-channel-modal>
     <friends-delete-modal></friends-delete-modal>
@@ -19,6 +21,16 @@
     <category-setting-modal></category-setting-modal>
     <category-delete-modal></category-delete-modal>
     <server-setting-modal></server-setting-modal>
+    <template v-if="communityInviteModal">
+      <invite-community-modal></invite-community-modal>
+    </template>
+
+    <channel-setting-modal></channel-setting-modal>
+    <community-delete-modal></community-delete-modal>
+    <channel-delete-modal></channel-delete-modal>
+    <community-exit-modal></community-exit-modal>
+    <!-- </template> -->
+    <!-- <template v-else> <loading-spinner /> </template> -->
   </div>
 </template>
 
@@ -26,7 +38,7 @@
 import Stomp from "webstomp-client";
 import SockJS from "sockjs-client";
 import { mapGetters, mapMutations, mapState } from "vuex";
-import { getBaseURL } from "../utils/common";
+//import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import NavigationBar from "../components/NavigationBar.vue";
 import CreateServerModal from "../components/CreateServerModal.vue";
 import CreateChannelModal from "../components/CreateChannelModal.vue";
@@ -39,6 +51,12 @@ import CreateCategoryModal from "../components/CreateCategoryModal.vue";
 import CategorySettingModal from "../components/CategorySettingModal.vue";
 import CategoryDeleteModal from "../components/CategoryDeleteModal.vue";
 import ServerSettingModal from "../components/ServerSettingModal.vue";
+import MessagePlusAction from "../components/MessagePlusAction.vue";
+import InviteCommunityModal from "../components/InviteCommunityModal.vue";
+import ChannelSettingModal from "../components/ChannelSettingModal.vue";
+import CommunityDeleteModal from "../components/CommunityDeleteModal.vue";
+import ChannelDeleteModal from "../components/ChannelDeleteModal.vue";
+import CommunityExitModal from "../components/CommunityExitModal.vue";
 
 export default {
   name: "App",
@@ -55,6 +73,13 @@ export default {
     CategorySettingModal,
     CategoryDeleteModal,
     ServerSettingModal,
+    //LoadingSpinner,
+    MessagePlusAction,
+    InviteCommunityModal,
+    ChannelSettingModal,
+    CommunityDeleteModal,
+    ChannelDeleteModal,
+    CommunityExitModal,
   },
   data() {
     return {
@@ -62,18 +87,14 @@ export default {
     };
   },
   created() {
-    console.log("로그인안된 크레이트");
     if (this.getEmail) {
-      console.log("안녕크레이트");
       this.connect();
     }
     const url = window.location.pathname;
     if (url == "/settings") {
       this.navbar = false;
-      console.log("navbar", this.navbar);
     } else {
       this.navbar = true;
-      console.log("navbar", this.navbar);
     }
   },
   watch: {
@@ -82,10 +103,8 @@ export default {
       if (to.path != from.path) {
         if (to.path === "/settings") {
           this.navbar = false;
-          console.log("navbar", this.navbar);
         } else {
           this.navbar = true;
-          console.log("navbar", this.navbar);
         }
       }
     },
@@ -93,6 +112,7 @@ export default {
   computed: {
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
     ...mapGetters("user", ["getEmail", "getUserId", "getAccessToken"]),
+    ...mapState("server", ["communityInviteModal"]),
   },
   methods: {
     ...mapMutations("utils", [
@@ -100,7 +120,7 @@ export default {
       "setStompSocketConnected",
     ]),
     connect() {
-      const serverURL = getBaseURL() + "my-chat";
+      const serverURL = process.env.VUE_APP_BASE_URL + "my-chat";
       let socket = new SockJS(serverURL);
       this.setStompSocketClient(Stomp.over(socket));
       console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);

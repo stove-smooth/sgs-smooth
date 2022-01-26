@@ -69,6 +69,7 @@ const friends = {
       commit("setWaitingFriends", friendsWait);
       commit("setAllFriends", friendsAccept);
       commit("setBanFriends", friendsBan);
+      console.log("state", this.state.friendsAccept);
     },
   },
 };

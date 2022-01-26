@@ -9,13 +9,9 @@
           aria-lable="상태설정"
           role="button"
         >
-          <div class="profile-wrapper" aria-label="칭구1">
+          <div class="profile-wrapper" aria-label="내 프로필">
             <div class="avatar-wrapper">
-              <img
-                class="avatar"
-                :src="userimage ? userimage : discordProfile"
-                alt=" "
-              />
+              <img class="avatar" :src="userimage" alt=" " />
               <template aria-label="status-invisible">
                 <div class="status-ring">
                   <div class="status-offline"></div>
@@ -72,14 +68,8 @@
 </template>
 
 <script>
-import { selectProfile } from "../../utils/common.js";
 import { mapState, mapActions } from "vuex";
 export default {
-  data() {
-    return {
-      discordProfile: "",
-    };
-  },
   methods: {
     ...mapActions("user", ["FETCH_USERINFO"]),
     openSettings() {
@@ -91,11 +81,6 @@ export default {
   },
   async created() {
     await this.FETCH_USERINFO();
-    if (!this.userimage) {
-      const classify = this.code % 4;
-      const result = selectProfile(classify);
-      this.discordProfile = require("../../assets/" + result + ".png");
-    }
   },
 };
 </script>
@@ -103,7 +88,6 @@ export default {
 <style>
 .my-section {
   -webkit-box-flex: 0;
-  /* -ms-flex: 0 0 auto; */
   flex: 0 0 auto;
   background-color: #292b2f;
   z-index: 1;
@@ -112,11 +96,8 @@ export default {
   height: 52px;
   font-size: 14px;
   font-weight: 500;
-  /* display: -webkit-box;
-    display: -ms-flexbox; */
   display: flex;
   -webkit-box-align: center;
-  /* -ms-flex-align: center; */
   align-items: center;
   padding: 0 8px;
   margin-bottom: 1px;
@@ -124,22 +105,15 @@ export default {
 }
 .nametag {
   cursor: pointer;
-  /* -webkit-user-select: text;
-    -moz-user-select: text;
-    -ms-user-select: text; */
   user-select: text;
   -webkit-box-flex: 1;
-  /* -ms-flex-positive: 1; */
   flex-grow: 1;
   margin-right: 4px;
   min-width: 0;
 }
 .myname-container {
-  /* display: -webkit-box;
-    display: -ms-flexbox; */
   display: flex;
   -webkit-box-align: center;
-  /* -ms-flex-align: center; */
   align-items: center;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -170,32 +144,22 @@ export default {
   flex: 0 1 auto;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
-  /* -ms-flex-direction: row; */
   flex-direction: row;
-  /* -ms-flex-wrap: nowrap; */
   flex-wrap: nowrap;
   -webkit-box-pack: start;
-  /*  -ms-flex-pack: start; */
   justify-content: flex-start;
   -webkit-box-align: stretch;
-  /* -ms-flex-align: stretch; */
   align-items: stretch;
-  /*   display: -webkit-box;
-  display: -ms-flexbox; */
   display: flex;
 }
 .device-controll-button {
   line-height: 0;
   width: 32px;
   height: 32px;
-  /* display: -webkit-box;
-  display: -ms-flexbox; */
   display: flex;
   -webkit-box-align: center;
-  /* -ms-flex-align: center; */
   align-items: center;
   -webkit-box-pack: center;
-  /* -ms-flex-pack: center; */
   justify-content: center;
   border-radius: 4px;
   position: relative;

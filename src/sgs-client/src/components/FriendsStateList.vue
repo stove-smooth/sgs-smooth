@@ -117,11 +117,6 @@ import FriendsForm from "./common/FriendsForm.vue";
 import { acceptFriend, deleteFriend } from "../api/index.js";
 export default {
   components: { FriendsForm },
-  data() {
-    return {
-      //plusID: 0,
-    };
-  },
   async created() {
     await this.FETCH_FRIENDSLIST();
   },
@@ -227,10 +222,8 @@ export default {
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
-  /* -ms-flex-direction: column; */
   flex-direction: column;
   -webkit-box-flex: 1;
-  /* -ms-flex: 1 1 auto; */
   flex: 1 1 auto;
   overflow: hidden;
 }
@@ -248,16 +241,11 @@ export default {
   border-radius: 50%;
   color: var(--description-primary);
   background-color: #2f3136;
-  /* display: -webkit-box;
-  display: -ms-flexbox; */
   display: flex;
   -webkit-box-align: center;
-  /* -ms-flex-align: center; */
   align-items: center;
   -webkit-box-pack: center;
-  /*  -ms-flex-pack: center; */
   justify-content: center;
-  /* margin-left: 10px; */
 }
 .send-message {
   display: flex;

@@ -1,10 +1,9 @@
 import axios from "axios";
 import store from "../store/index";
 import { setInterceptors } from "./common/interceptors";
-import { getBaseURL } from "../utils/common";
 function createInstance() {
   const instance = axios.create({
-    baseURL: getBaseURL(),
+    baseURL: process.env.VUE_APP_BASE_URL,
   });
   return setInterceptors(instance);
 }
@@ -58,9 +57,6 @@ function deleteFriend(userId) {
 function blockFriend(userId) {
   return instance.patch("auth-server/auth/ban-friend?id=" + userId);
 }
-function deleteProfileImage() {
-  return instance.patch("auth-server/auth/d/profile");
-}
 async function createNewCommunity(userData) {
   try {
     const accesstoken = await store.getters["user/getAccessToken"];
@@ -82,10 +78,6 @@ async function createNewCommunity(userData) {
 function fetchCommunityList() {
   return instance.get("community-server/community");
 }
-/* function getFriendsProfile(userId) {
-  console.log("룰루?", userId);
-  return instance.post("auth-server/auth/find-id-list", [userId]);
-} */
 function fetchCommunityInfo(communityId) {
   return instance.get("community-server/community/" + communityId);
 }
@@ -104,6 +96,41 @@ function createNewChannel(channelData) {
 function moveCategory(categoryData) {
   return instance.patch("community-server/category/location", categoryData);
 }
+async function sendImageChatting(userData) {
+  try {
+    const accesstoken = await store.getters["user/getAccessToken"];
+    const response = await axios.post(
+      "http://52.79.229.100:8000/chat-server/file",
+      userData,
+      {
+        headers: {
+          AUTHORIZATION: accesstoken,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response;
+  } catch (err) {
+    console.log(err.response);
+  }
+}
+function deleteCommunity(communityId) {
+  return instance.delete(`community-server/community/${communityId}`);
+}
+function createInvitation(invitationData) {
+  return instance.post("community-server/community/invitation", invitationData);
+}
+function deleteChannel(channelId) {
+  return instance.delete(`community-server/channel/${channelId}`);
+}
+function exitCommunity(communityId, userId) {
+  return instance.delete(
+    `community-server/community/${communityId}/member?id=` + userId
+  );
+}
+function joinCommunity(communityHashCode) {
+  return instance.post(`community-server/community/member`, communityHashCode);
+}
 export {
   registerUser,
   loginUser,
@@ -116,14 +143,18 @@ export {
   acceptFriend,
   deleteFriend,
   blockFriend,
-  deleteProfileImage,
   createNewCommunity,
   fetchCommunityList,
   fetchCommunityInfo,
   fetchCommunityMemberList,
-  //getFriendsProfile,
   createNewCategory,
   deleteCategory,
   createNewChannel,
   moveCategory,
+  sendImageChatting,
+  deleteCommunity,
+  createInvitation,
+  deleteChannel,
+  exitCommunity,
+  joinCommunity,
 };

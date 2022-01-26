@@ -9,7 +9,7 @@ import ServerPage from "../pages/ServerPage.vue";
 import ServerWelcomePage from "../pages/ServerWelcomePage.vue";
 import PrivateDMPage from "../pages/PrivateDMPage.vue";
 import MainPage from "../pages/MainPage.vue";
-
+import InvitePage from "../pages/InvitePage.vue";
 Vue.use(VueRouter);
 
 export const router = new VueRouter({
@@ -24,6 +24,11 @@ export const router = new VueRouter({
       path: "/register",
       name: "RegisterPage",
       component: RegisterPage,
+    },
+    {
+      path: "/invite/:invitePath/:communityId",
+      name: "InvitePage",
+      component: InvitePage,
     },
     {
       path: "/",
