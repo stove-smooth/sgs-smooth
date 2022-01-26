@@ -28,16 +28,24 @@ class HomeCoordinator: NSObject, Coordinator {
     
     func goToContainer() {
         let vc = ContainerViewController.instance()
+        let homeVC = HomeViewController.instance()
+        
         vc.coordinator = self
-        navigationController.pushViewController(vc, animated: true)
+        
+        vc.didMove(toParent: homeVC)
     }
     
     func goToMenu() {
         let vc = MenuViewController.instance()
-        vc.coordinator = self
         let homeVC = HomeViewController.instance()
         
+        vc.coordinator = self
         vc.didMove(toParent: homeVC)
-        
+    }
+    
+    func goToAddServer() {
+        let coordinator = AddServerCoordinator(navigationController: navigationController)
+        childCoordinators.append(coordinator)
+        coordinator.start()
     }
 }
