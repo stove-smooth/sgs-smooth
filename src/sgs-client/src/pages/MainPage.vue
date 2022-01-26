@@ -28,6 +28,7 @@
     <channel-setting-modal></channel-setting-modal>
     <community-delete-modal></community-delete-modal>
     <channel-delete-modal></channel-delete-modal>
+    <community-exit-modal></community-exit-modal>
     <!-- </template> -->
     <!-- <template v-else> <loading-spinner /> </template> -->
   </div>
@@ -55,6 +56,7 @@ import InviteCommunityModal from "../components/InviteCommunityModal.vue";
 import ChannelSettingModal from "../components/ChannelSettingModal.vue";
 import CommunityDeleteModal from "../components/CommunityDeleteModal.vue";
 import ChannelDeleteModal from "../components/ChannelDeleteModal.vue";
+import CommunityExitModal from "../components/CommunityExitModal.vue";
 
 export default {
   name: "App",
@@ -77,6 +79,7 @@ export default {
     ChannelSettingModal,
     CommunityDeleteModal,
     ChannelDeleteModal,
+    CommunityExitModal,
   },
   data() {
     return {

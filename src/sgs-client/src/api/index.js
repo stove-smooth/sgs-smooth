@@ -123,6 +123,11 @@ function createInvitation(invitationData) {
 function deleteChannel(channelId) {
   return instance.delete(`community-server/channel/${channelId}`);
 }
+function exitCommunity(communityId, userId) {
+  return instance.delete(
+    `community-server/community/${communityId}/member?id=` + userId
+  );
+}
 export {
   registerUser,
   loginUser,
@@ -147,4 +152,5 @@ export {
   deleteCommunity,
   createInvitation,
   deleteChannel,
+  exitCommunity,
 };

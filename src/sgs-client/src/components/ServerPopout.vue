@@ -24,7 +24,10 @@
             <div class="plus-action-label">알림 설정</div>
             <svg class="alarms"></svg>
           </div>
-          <div class="plus-action-label-container hover-white">
+          <div
+            class="plus-action-label-container hover-white"
+            @click="setCommunityReadyToExit(openServerPopout)"
+          >
             <div class="plus-action-label red-color">서버 나가기</div>
             <svg class="exit-server"></svg>
           </div>
@@ -45,6 +48,7 @@ export default {
       "setCreateCategory",
       "setServerSettingModal",
       "setCommunityInviteModal",
+      "setCommunityReadyToExit",
     ]),
     createNewCategory() {
       this.setCreateCategory(this.openServerPopout);

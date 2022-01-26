@@ -16,6 +16,7 @@ const server = {
     categoryReadyToDelete: false,
     communityReadyToDelete: false,
     channelReadyToDelete: false,
+    communityReadyToExit: false,
     communityList: [],
     communityInfo: null,
     communityOnlineMemberList: [],
@@ -77,6 +78,9 @@ const server = {
     setCommunityOwner(state, communityOwner) {
       state.communityOwner = communityOwner;
       console.log("주인이냐?", state.communityOwner);
+    },
+    setCommunityReadyToExit(state, communityReadyToExit) {
+      state.communityReadyToExit = communityReadyToExit;
     },
   },
   actions: {

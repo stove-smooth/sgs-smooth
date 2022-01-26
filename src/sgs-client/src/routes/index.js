@@ -26,6 +26,11 @@ export const router = new VueRouter({
       component: RegisterPage,
     },
     {
+      path: "/invite/:invitePath/:communityId",
+      name: "InvitePage",
+      component: InvitePage,
+    },
+    {
       path: "/",
       name: "MainPage",
       component: MainPage,
@@ -57,10 +62,6 @@ export const router = new VueRouter({
           path: "channels/:serverid",
           name: "ServerWelcomePage",
           component: ServerWelcomePage,
-        },
-        {
-          path: "invite/:invitePath/:communityId",
-          name: InvitePage,
         },
       ],
     },
