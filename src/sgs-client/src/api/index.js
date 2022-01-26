@@ -128,6 +128,9 @@ function exitCommunity(communityId, userId) {
     `community-server/community/${communityId}/member?id=` + userId
   );
 }
+function joinCommunity(communityHashCode) {
+  return instance.post(`community-server/community/member`, communityHashCode);
+}
 export {
   registerUser,
   loginUser,
@@ -153,4 +156,5 @@ export {
   createInvitation,
   deleteChannel,
   exitCommunity,
+  joinCommunity,
 };

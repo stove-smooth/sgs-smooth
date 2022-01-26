@@ -1,6 +1,7 @@
 <template>
   <div>
-    <login-form></login-form>
+    <login-form :path="this.path" :communityId="this.communityId"></login-form>
+    <div>path:{{ this.path }}communityId:{{ this.communityId }}</div>
   </div>
 </template>
 
@@ -9,6 +10,12 @@ import { mapGetters } from "vuex";
 import LoginForm from "../components/LoginForm.vue";
 export default {
   components: { LoginForm },
+  data() {
+    return {
+      path: this.$route.query.path,
+      communityId: this.$route.query.communityId,
+    };
+  },
   computed: {
     ...mapGetters("user", ["getEmail"]),
   },
@@ -16,6 +23,8 @@ export default {
     if (this.getEmail) {
       this.$router.push("/channels/@me");
     }
+    console.log(this.$route.query);
+    console.log(this.path);
   },
   mounted() {
     if (this.$route.params?.message) {
@@ -25,6 +34,8 @@ export default {
         );
       }
     }
+    console.log(this.$route.query);
+    console.log(this.path);
   },
 };
 </script>
