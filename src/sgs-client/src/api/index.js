@@ -117,9 +117,9 @@ async function sendImageChatting(userData) {
 function deleteCommunity(communityId) {
   return instance.delete(`community-server/community/${communityId}`);
 }
-/* function createInvitation(){
-  return instance.post("community-server/community/invitation")
-} */
+function createInvitation(invitationData) {
+  return instance.post("community-server/community/invitation", invitationData);
+}
 function deleteChannel(channelId) {
   return instance.delete(`community-server/channel/${channelId}`);
 }
@@ -145,6 +145,6 @@ export {
   moveCategory,
   sendImageChatting,
   deleteCommunity,
-  //createInvitation,
+  createInvitation,
   deleteChannel,
 };

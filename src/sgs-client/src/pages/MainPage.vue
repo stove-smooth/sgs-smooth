@@ -21,7 +21,10 @@
     <category-setting-modal></category-setting-modal>
     <category-delete-modal></category-delete-modal>
     <server-setting-modal></server-setting-modal>
-    <invite-community-modal></invite-community-modal>
+    <template v-if="communityInviteModal">
+      <invite-community-modal></invite-community-modal>
+    </template>
+
     <channel-setting-modal></channel-setting-modal>
     <community-delete-modal></community-delete-modal>
     <channel-delete-modal></channel-delete-modal>
@@ -106,6 +109,7 @@ export default {
   computed: {
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
     ...mapGetters("user", ["getEmail", "getUserId", "getAccessToken"]),
+    ...mapState("server", ["communityInviteModal"]),
   },
   methods: {
     ...mapMutations("utils", [

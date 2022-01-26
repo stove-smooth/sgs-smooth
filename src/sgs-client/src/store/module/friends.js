@@ -65,7 +65,6 @@ const friends = {
           friendsBan.push(result.data.result[i]);
         }
       }
-      console.log("친구", friendsAccept, friendsAccept);
       commit("setRequestFriends", friendsRequest);
       commit("setWaitingFriends", friendsWait);
       commit("setAllFriends", friendsAccept);

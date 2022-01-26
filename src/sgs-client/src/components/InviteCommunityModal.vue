@@ -1,5 +1,5 @@
 <template>
-  <div class="modal" v-if="communityInviteModal">
+  <div class="modal">
     <div class="blurred-background" @click="closeModal"></div>
     <div class="modal-container">
       <modal @exit="closeModal">
@@ -35,7 +35,7 @@
           <div
             class="community-invite-container align-items-center justify-content-center"
           >
-            <div class="server-link-wrapper">www.discord.com</div>
+            <div class="server-link-wrapper">{{ this.invitationUrl }}</div>
             <button class="middle-button">복사</button>
           </div>
         </template>
@@ -48,17 +48,35 @@
 import { mapState, mapMutations, mapActions } from "vuex";
 import Modal from "../components/common/Modal.vue";
 import SearchBar from "./common/SearchBar.vue";
+import { createInvitation } from "../api/index.js";
 export default {
   components: {
     Modal,
     SearchBar,
   },
+  data() {
+    return {
+      invitationUrl: "",
+    };
+  },
   async created() {
     await this.FETCH_FRIENDSLIST();
-    console.log("되나?");
+    let icon;
+    for (var i = 0; i < this.communityList.length; i++) {
+      if (this.communityList[i].id == this.communityInviteModal.serverId) {
+        icon = this.communityList[i].icon;
+        break;
+      }
+    }
+    const invitationData = {
+      id: this.communityInviteModal.serverId,
+      icon: icon,
+    };
+    const result = await createInvitation(invitationData);
+    this.invitationUrl = result.data.result.url;
   },
   computed: {
-    ...mapState("server", ["communityInviteModal"]),
+    ...mapState("server", ["communityInviteModal", "communityList"]),
     ...mapState("friends", ["friendsAccept"]),
   },
   methods: {

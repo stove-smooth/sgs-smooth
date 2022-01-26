@@ -195,16 +195,16 @@ export default {
     ]),
     log: async function (evt) {
       if (evt.moved) {
-        if (evt.moved.element.channels != "undefined") {
-          console.log(evt);
+        console.log("communityinfo", this.communityInfo);
+        console.log(evt);
+        if (evt.moved.element.channels) {
+          console.log("카테고리 단위로 움직임");
           console.log("카테고리아이디", evt.moved.element.id);
-
           if (evt.moved.newIndex == 0) {
             this.new = 0;
           } else {
             this.new = this.communityInfo.categories[evt.moved.newIndex - 1].id;
           }
-
           const movedCategoryInfo = {
             id: evt.moved.element.id,
             next: this.new,
@@ -215,7 +215,25 @@ export default {
           } catch (err) {
             console.log(err.response);
           }
+        } else {
+          console.log(
+            "채널이 카테고리 내에서 움직임,채널 아이디, 변경할 위치 위에 있는 채널 아이디."
+          );
+          console.log(evt);
+          console.log("채널아이디", evt.moved.element.id);
+          if (evt.moved.newIndex == 0) {
+            //맨위일경우.
+            this.new = 0;
+          } else {
+            //아닐경우.
+            console.log(
+              "맨위가 아닐땐 ,this.communityInfo.categories[?][evt.moved.newIndex-1].id 이걸로 해야하는디.?"
+            );
+          }
         }
+      } else {
+        console.log("채널이 카테고리를 건너 움직임");
+        console.log(evt);
       }
     },
     happy() {
