@@ -41,9 +41,10 @@ class HomeViewController: BaseViewController, CoordinatorContext {
     
     private func addChildVCs() {
         // Menu VC
+        menuViewController.coordinator = self.coordinator
         addChild(menuViewController)
         view.addSubview(menuViewController.view)
-        menuViewController.didMove(toParent: self)
+//        menuViewController.didMove(toParent: self)
         
         // Container VC
         containerViewController.delegate = self

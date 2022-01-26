@@ -52,11 +52,19 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             .disposed(by: disposeBag)
         
         menuView.serverView.tableView.rx.itemSelected
-            .map { $0.row }
+            .map { $0 }
             .bind(to: self.viewModel.input.tapServer)
+            .disposed(by: disposeBag)
+        
+        self.viewModel.output.goToAddServer
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: self.goToAddServer)
             .disposed(by: disposeBag)
     }
     
+    func goToAddServer() {
+        self.coordinator?.goToAddServer()
+    }
 }
 
 extension MenuViewController: UITableViewDelegate {

@@ -18,7 +18,7 @@ class MenuViewModel: BaseViewModel {
     
     struct Input {
         let fetch = PublishSubject<Void>()
-        let tapServer = PublishSubject<Int>()
+        let tapServer = PublishSubject<IndexPath>()
     }
     
     struct Output {
@@ -26,6 +26,7 @@ class MenuViewModel: BaseViewModel {
         
         let servers = PublishRelay<[Server]>()
         let categories = PublishRelay<[Category]>()
+        let goToAddServer = PublishRelay<Void>()
     }
     
     struct Model {
@@ -47,7 +48,11 @@ class MenuViewModel: BaseViewModel {
             }
             
             self.model.servers = servers
-            self.fetchChannel(server: servers[0])
+            
+            if (servers.count > 0) {
+                self.fetchChannel(server: servers[0])
+            }
+            
             self.output.servers.accept(servers)
             self.output.showLoading.accept(false)
         }
@@ -76,8 +81,19 @@ class MenuViewModel: BaseViewModel {
             .disposed(by: disposeBag)
         
         self.input.tapServer
-            .map { self.model.servers![$0] }
-            .bind(onNext: self.fetchChannel(server:))
+            .bind(onNext: { indexPath in
+                switch indexPath.section {
+                case 0:
+                    // TODO: 다이렉트 메시지 홈 + 다이렉트 메시지 함
+                    print("홈")
+                case 1:
+                    let server = self.model.servers![indexPath.row]
+                    self.fetchChannel(server: server)
+                case 2:
+                    self.output.goToAddServer.accept(())
+                default: break
+                }
+            })
             .disposed(by: disposeBag)
     }
 }
