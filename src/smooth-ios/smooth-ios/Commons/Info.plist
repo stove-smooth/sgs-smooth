@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCameraUsageDescription</key>
+	<string>사진을 찍기 위해 카메라가 사용됩니다.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>사진을 불러오기 위해 앨범이 사용됩니다.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>사진을 불러오기 위해 앨범이 사용 됩니다.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>ABCGintoNord-Black-Trial.otf</string>

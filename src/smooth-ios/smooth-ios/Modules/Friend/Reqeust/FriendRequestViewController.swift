@@ -10,7 +10,7 @@ import Then
 import RxSwift
 import RxCocoa
 
-protocol FriendRequestDelegate: class {
+protocol FriendRequestDelegate: AnyObject {
     func onClose()
 }
 
