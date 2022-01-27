@@ -31,6 +31,7 @@
       <fix-message-modal></fix-message-modal>
       <fixed-messages-modal></fixed-messages-modal>
       <server-members-plus-action></server-members-plus-action>
+      <community-banish-modal></community-banish-modal>
     </template>
     <template v-else> <loading-spinner /> </template>
   </div>
@@ -62,6 +63,7 @@ import CommunityExitModal from "../components/CommunityExitModal.vue";
 import FixMessageModal from "../components/FixMessageModal.vue";
 import FixedMessagesModal from "../components/FixedMessagesModal.vue";
 import ServerMembersPlusAction from "../components/ServerMembersPlusAction.vue";
+import CommunityBanishModal from "../components/CommunityBanishModal.vue";
 
 export default {
   name: "App",
@@ -88,6 +90,7 @@ export default {
     FixMessageModal,
     FixedMessagesModal,
     ServerMembersPlusAction,
+    CommunityBanishModal,
   },
   data() {
     return {

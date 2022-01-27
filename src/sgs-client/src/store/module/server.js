@@ -17,6 +17,7 @@ const server = {
     communityReadyToDelete: false,
     channelReadyToDelete: false,
     communityReadyToExit: false,
+    communityReadyToBanish: false,
     communityList: [],
     communityInfo: null,
     communityOnlineMemberList: [],
@@ -86,6 +87,9 @@ const server = {
     },
     setCommunityReadyToExit(state, communityReadyToExit) {
       state.communityReadyToExit = communityReadyToExit;
+    },
+    setCommunityReadyToBanish(state, communityReadyToBanish) {
+      state.communityReadyToBanish = communityReadyToBanish;
     },
     setMessageReplyId(state, messageReplyId) {
       state.messageReplyId = messageReplyId;

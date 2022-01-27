@@ -11,7 +11,10 @@
         <div class="plus-action-label-container">
           <div class="plus-action-label">통화</div>
         </div>
-        <div class="plus-action-label-container hover-white">
+        <div
+          class="plus-action-label-container hover-white"
+          @click="setCommunityReadyToBanish(serverMemberPlusMenu)"
+        >
           <div class="plus-action-label red-color">추방하기</div>
         </div>
       </div>
@@ -20,7 +23,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 export default {
   computed: {
     ...mapState("utils", ["clientX", "clientY"]),
@@ -31,6 +34,13 @@ export default {
         "--ypoint": this.clientY + "px",
       };
     },
+  },
+  methods: {
+    ...mapMutations("server", [
+      "setCommunityReadyToExit",
+      "setCommunityList",
+      "setCommunityReadyToBanish",
+    ]),
   },
 };
 </script>
