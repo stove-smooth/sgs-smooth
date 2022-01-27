@@ -63,20 +63,23 @@
                       </div>
                     </div>
                     <div v-else class="message-content">
-                      {{ item.message }}
+                      <template v-if="item.message.includes('img')"
+                        ><div v-html="item.message"></div
+                      ></template>
+                      <template v-else>{{ item.message }}</template>
                     </div>
                   </div>
-                  <div class="chat-message-accessories">
+                  <!-- <div class="chat-message-accessories">
                     <div class="chat-message-attachment" v-if="false">
                       <a
                         class="chat-message-image-wrapper"
                         href="https://cdn.discordapp.com/attachments/933212892466118726/934732073661509642/axios-logo.png"
                         ><img
-                          alt="이미지"
-                          src="https://media.discordapp.net/attachments/933212892466118726/934732073661509642/axios-logo.png?width=550&height=275"
+                        alt="이미지"
+                        src="https://sgs-smooth.s3.ap-northeast-2.amazonaws.com/dicord_green.png"
                       /></a>
                     </div>
-                  </div>
+                  </div> -->
                   <div
                     class="chat-message-plus-action-container"
                     v-show="messageHovered === idx || messagePlusMenu === idx"
@@ -328,6 +331,7 @@ export default {
         const result = this.convertFromStringToDate(JSON.parse(res.body).time);
         const receivedForm = JSON.parse(res.body);
         receivedForm.time = result;
+        receivedForm.message = this.urlify(receivedForm.message);
         this.receiveList.push(receivedForm);
       }
     );
@@ -346,11 +350,9 @@ export default {
           return;
         }
         if (this.images.length > 0) {
-          console.log("imagesend&&&&&&&&&&&&&&&");
           this.sendPicture();
         }
-        if (this.text != undefined) {
-          console.log("textsend&&&&&&&&&&&&&&&");
+        if (this.text) {
           this.send();
         }
       }
@@ -461,6 +463,12 @@ export default {
     },
     openEmojiPopout() {
       this.emojiPopout = !this.emojiPopout;
+    },
+    urlify(text) {
+      var urlRegex = /(https?:\/\/[^\s]+)/g;
+      return text.replace(urlRegex, function (url) {
+        return `<img alt="이미지" src="${url}"/>`;
+      });
     },
   },
 };

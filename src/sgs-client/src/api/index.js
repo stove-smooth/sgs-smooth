@@ -100,7 +100,7 @@ async function sendImageChatting(userData, channelId) {
   try {
     const accesstoken = await store.getters["user/getAccessToken"];
     const response = await axios.post(
-      `http://52.79.229.100:8000/chat-server/channel/file/${channelId}`,
+      `http://52.79.229.100:8000/chat-server/channel/file?ch_id=${channelId}`,
       userData,
       {
         headers: {
