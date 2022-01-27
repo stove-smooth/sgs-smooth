@@ -1,11 +1,13 @@
 package com.example.signalingserver.config;
 
 import io.jsonwebtoken.Jwts;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Configuration
-public class JwtTokenFilter {
+@Slf4j
+@Component
+public class JwtFilter {
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -17,14 +19,13 @@ public class JwtTokenFilter {
             subject = Jwts.parser().setSigningKey(secretKey)
                     .parseClaimsJws(jwt).getBody()
                     .getSubject();
-        } catch (Exception ex) {
+        } catch (Exception e) {
             returnValue = false;
         }
 
         if (subject == null || subject.isEmpty()) {
             returnValue = false;
         }
-
         return returnValue;
     }
 }
