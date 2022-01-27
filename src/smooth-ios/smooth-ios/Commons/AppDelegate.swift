@@ -23,15 +23,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillEnterForeground(_ application: UIApplication) {}
     func applicationDidBecomeActive(_ application: UIApplication) {}
     func applicationWillTerminate(_ application: UIApplication) {}
-    
-    
-    func goToMain() {
-            window?.rootViewController = HomeViewController.instance()
-            window?.makeKeyAndVisible()
-        }
-        
-    func goToSignIn() {
-            window?.rootViewController = SignInViewController.instance()
-            window?.makeKeyAndVisible()
-    }
 }
