@@ -5,12 +5,18 @@
         <server-side-bar></server-side-bar>
         <user-section></user-section>
       </div>
-      <div class="server-activity-container">
-        <server-chatting-menu-bar></server-chatting-menu-bar>
-        <div class="server-activity-container1">
-          <server-activity-area></server-activity-area>
-          <server-member-list></server-member-list>
-        </div>
+
+      <div class="server-activity-container" :key="$route.params.channelid">
+        <template v-if="true">
+          <server-chatting-menu-bar></server-chatting-menu-bar>
+          <div class="server-activity-container1">
+            <server-activity-area></server-activity-area>
+            <server-member-list></server-member-list>
+          </div>
+        </template>
+        <template v-else>
+          <server-voice-sharing-area></server-voice-sharing-area>
+        </template>
       </div>
     </div>
   </div>
@@ -23,6 +29,7 @@ import UserSection from "../components/common/UserSection.vue";
 import ServerChattingMenuBar from "../components/ServerChattingMenuBar.vue";
 import ServerActivityArea from "../components/ServerActivityArea.vue";
 import ServerMemberList from "../components/ServerMemberList.vue";
+import ServerVoiceSharingArea from "../components/ServerVoiceSharingArea.vue";
 export default {
   components: {
     ServerSideBar,
@@ -30,6 +37,7 @@ export default {
     ServerChattingMenuBar,
     ServerActivityArea,
     ServerMemberList,
+    ServerVoiceSharingArea,
   },
   methods: {
     ...mapActions("server", [

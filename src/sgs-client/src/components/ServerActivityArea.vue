@@ -2,14 +2,14 @@
   <div class="server-chatting-container">
     <div class="message-container">
       <div class="thin-scrollbar server-chat-scroller">
+        <VEmojiPicker
+          v-show="this.emojiPopout"
+          class="emoji-picker-popout"
+          labelSearch="Search"
+          lang="pt-BR"
+          @select="onSelectEmoji"
+        />
         <div class="scroller-content">
-          <VEmojiPicker
-            v-show="this.emojiPopout"
-            class="emoji-picker-popout"
-            labelSearch="Search"
-            lang="pt-BR"
-            @select="onSelectEmoji"
-          />
           <ol class="scroller-inner">
             <div v-for="(item, idx) in receiveList" :key="idx">
               <li
@@ -24,7 +24,7 @@
                 <div
                   class="primary-chat-message-wrapper others-chat-message-wrapper"
                   v-bind:class="{
-                    'message-replying': replyId === idx,
+                    'message-replying': messageReplyId === idx,
                   }"
                 >
                   <div class="chat-message-content">
@@ -37,19 +37,49 @@
                       <span class="chat-user-name">{{ item.name }}</span>
                       <span class="chat-time-stamp">{{ item.time }}</span>
                     </h2>
-                    <div class="message-content">{{ item.message }}</div>
+                    <div v-if="messageEditId === idx">
+                      <div class="channel-message-edit-area">
+                        <div class="channel-message-input-area">
+                          <textarea
+                            id="input-text-wrapper"
+                            class="channel-message-input-wrapper"
+                            aria-haspopup="listbox"
+                            placeholder="item.message"
+                          ></textarea>
+                        </div>
+                      </div>
+                      <div class="channel-message-edit-tool-area">
+                        댓글 수정
+                        <span
+                          class="highlight-text contents clickable"
+                          @click="setMessageEditId('')"
+                        >
+                          취소
+                        </span>
+                        • 댓글 수정
+                        <span class="highlight-text contents clickable">
+                          저장
+                        </span>
+                      </div>
+                    </div>
+                    <div v-else class="message-content">
+                      <template v-if="item.message.includes('img')"
+                        ><div v-html="item.message"></div
+                      ></template>
+                      <template v-else>{{ item.message }}</template>
+                    </div>
                   </div>
-                  <div class="chat-message-accessories">
+                  <!-- <div class="chat-message-accessories">
                     <div class="chat-message-attachment" v-if="false">
                       <a
                         class="chat-message-image-wrapper"
                         href="https://cdn.discordapp.com/attachments/933212892466118726/934732073661509642/axios-logo.png"
                         ><img
-                          alt="이미지"
-                          src="https://media.discordapp.net/attachments/933212892466118726/934732073661509642/axios-logo.png?width=550&height=275"
+                        alt="이미지"
+                        src="https://sgs-smooth.s3.ap-northeast-2.amazonaws.com/dicord_green.png"
                       /></a>
                     </div>
-                  </div>
+                  </div> -->
                   <div
                     class="chat-message-plus-action-container"
                     v-show="messageHovered === idx || messagePlusMenu === idx"
@@ -65,6 +95,7 @@
                       </div>
                       <!--내꺼면 수정아니면 답장-->
                       <div
+                        @click="setMessageEditId(idx)"
                         v-show="false"
                         class="chat-action-button"
                         aria-label="수정하기"
@@ -74,7 +105,7 @@
                         <svg class="edit-pencil"></svg>
                       </div>
                       <div
-                        @click="selectReplying(idx)"
+                        @click="setMessageReplyId(idx)"
                         class="chat-action-button"
                         aria-label="답장하기"
                         role="button"
@@ -111,7 +142,7 @@
     </div>
     <div class="channel-message-input-form">
       <div class="channel-message-area">
-        <div class="attached-bar" v-if="replyId !== ''">
+        <div class="attached-bar" v-if="messageReplyId !== ''">
           <div>
             <div class="clip-container">
               <div class="base-container">
@@ -123,7 +154,10 @@
                     </div>
                   </div>
                   <div class="align-items-center">
-                    <div class="reply-close-button" @click="selectReplying('')">
+                    <div
+                      class="reply-close-button"
+                      @click="setMessageReplyId('')"
+                    >
                       <svg class="small-close-button"></svg>
                     </div>
                   </div>
@@ -209,7 +243,8 @@
                 aria-haspopup="listbox"
                 aria-label="#잡담에서 메시지보내기"
                 v-model="text"
-                @keyup="sendMessage"
+                @keydown="sendMessage"
+                @keyup="initialMessage"
                 placeholder="#잡담에 메세지 보내기"
               ></textarea>
             </div>
@@ -246,7 +281,26 @@ export default {
   },
   data() {
     return {
-      replyId: "",
+      happyList: [
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+      ],
       messageHovered: "",
       text: "",
       images: [],
@@ -261,25 +315,36 @@ export default {
   computed: {
     ...mapState("user", ["nickname"]),
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
-    ...mapState("server", ["messagePlusMenu"]),
+    ...mapState("server", [
+      "messagePlusMenu",
+      "messageReplyId",
+      "messageEditId",
+    ]),
     ...mapGetters("user", ["getUserId"]),
   },
   created() {
-    this.stompSocketClient.subscribe("/topic/group", (res) => {
-      console.log("구독으로 받은 메시지 입니다.", res.body);
-      const result = this.convertFromStringToDate(JSON.parse(res.body).time);
-      const receivedForm = JSON.parse(res.body);
-      receivedForm.time = result;
-      this.receiveList.push(receivedForm);
-    });
+    console.log(this.$route.params.channelid);
+    this.stompSocketClient.subscribe(
+      "/topic/group/" + this.$route.params.channelid,
+      (res) => {
+        console.log("구독으로 받은 메시지 입니다.", res.body);
+        const result = this.convertFromStringToDate(JSON.parse(res.body).time);
+        const receivedForm = JSON.parse(res.body);
+        receivedForm.time = result;
+        receivedForm.message = this.urlify(receivedForm.message);
+        this.receiveList.push(receivedForm);
+      }
+    );
   },
   methods: {
     ...mapMutations("utils", ["setClientX", "setClientY"]),
-    ...mapMutations("server", ["setMessagePlusMenu"]),
-    selectReplying(idx) {
-      this.replyId = idx;
-    },
+    ...mapMutations("server", [
+      "setMessagePlusMenu",
+      "setMessageReplyId",
+      "setMessageEditId",
+    ]),
     sendMessage(e) {
+      console.log("text", this.text);
       if (e.keyCode == 13 && !e.shiftKey && this.stompSocketConnected) {
         if (this.text.trim().length == 0 && this.images.length == 0) {
           return;
@@ -287,10 +352,14 @@ export default {
         if (this.images.length > 0) {
           this.sendPicture();
         }
-        if (this.text != undefined) {
+        if (this.text) {
           this.send();
-          this.text = "";
         }
+      }
+    },
+    initialMessage(e) {
+      if (e.keyCode == 13 && !e.shiftKey && this.stompSocketConnected) {
+        this.text = "";
       }
     },
     async uploadImage() {
@@ -306,12 +375,12 @@ export default {
     },
     send() {
       console.log("Send message:" + this.text);
+      console.log("chid", this.$route.params.channelid);
       if (this.stompSocketClient && this.stompSocketClient.connected) {
         const msg = {
-          userName: this.nickname,
           content: this.text,
-          channel_id: this.$route.params.channelid,
-          account_id: this.getUserId,
+          channelId: this.$route.params.channelid,
+          accountId: this.getUserId,
         };
         this.stompSocketClient.send(
           "/kafka/send-channel-message",
@@ -327,7 +396,10 @@ export default {
         formData.append("image", this.images[i]);
       }
       try {
-        const result = await sendImageChatting(formData);
+        const result = await sendImageChatting(
+          formData,
+          this.$route.params.channelid
+        );
         console.log("sendpictureresult", result);
       } catch (err) {
         console.log("errrr", err.response);
@@ -347,6 +419,21 @@ export default {
       if (this.messagePlusMenu != null) {
         if (!e.target.parentNode.dataset.key) {
           this.setMessagePlusMenu(null);
+        }
+      }
+      if (this.emojiPopout) {
+        var condition1 = e.target.parentNode.childNodes[0]._prevClass;
+        var condition2 = e.target.parentNode.className;
+        if (
+          condition2 !== "container-search" &&
+          condition2 !== "container-emoji" &&
+          condition2 !== "emoji-picker-popout" &&
+          condition2 !== "svg" &&
+          condition2 !== "emoji-button" &&
+          condition2 !== "emoji-picker-popout emoji-picker" &&
+          condition1 !== "category"
+        ) {
+          this.emojiPopout = false;
         }
       }
     },
@@ -377,11 +464,33 @@ export default {
     openEmojiPopout() {
       this.emojiPopout = !this.emojiPopout;
     },
+    urlify(text) {
+      var urlRegex = /(https?:\/\/[^\s]+)/g;
+      return text.replace(urlRegex, function (url) {
+        return `<img alt="이미지" src="${url}"/>`;
+      });
+    },
   },
 };
 </script>
 
 <style>
+/**메세지 수정 */
+.channel-message-edit-area {
+  position: relative;
+  width: 100%;
+  text-indent: 0;
+  border-radius: 8px;
+  margin-top: 8px;
+  background-color: #40444b;
+}
+.channel-message-edit-tool-area {
+  padding: 7px 0;
+  font-size: 12px;
+  font-weight: 400;
+  text-indent: 0;
+  color: #dcddde;
+}
 .server-chatting-container {
   position: relative;
   display: flex;
@@ -500,7 +609,7 @@ export default {
 .message-content {
   user-select: text;
   margin-left: -72px;
-  padding-left: 72px;
+  padding-left: 66px;
   overflow: hidden;
   position: relative;
   text-indent: 0;
@@ -898,5 +1007,6 @@ export default {
   position: absolute;
   bottom: 0;
   right: 0;
+  z-index: 10;
 }
 </style>

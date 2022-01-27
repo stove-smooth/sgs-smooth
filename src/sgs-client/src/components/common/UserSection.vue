@@ -1,6 +1,42 @@
 <template>
   <div>
     <section class="my-section">
+      <div class="primary-container">
+        <div class="media-connected-container">
+          <div class="display-flex">
+            <div class="media-connected-title-inner">
+              <div class="rtc-connection-status">
+                <svg class="ping"></svg>
+                <div class="rtc-connection-description">영상 연결됨</div>
+              </div>
+              <div class="subtext">라운지/스무th</div>
+            </div>
+            <div class="device-controll-wrapper">
+              <button
+                class="device-controll-button"
+                aria-label="연결끊기"
+                type="button"
+              >
+                <svg class="no-connect"></svg>
+              </button>
+            </div>
+          </div>
+          <div class="media-action-button">
+            <button aria-label="영상" type="button" class="camera-share-button">
+              <div class="primary-text-content">
+                <svg class="video-camera"></svg>
+                영상
+              </div>
+            </button>
+            <button aria-label="화면" type="button" class="camera-share-button">
+              <div class="primary-text-content">
+                <svg class="video-camera"></svg>
+                영상
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
       <div class="my-section-container">
         <div
           class="margin-right-8px"
@@ -86,6 +122,79 @@ export default {
 </script>
 
 <style>
+.media-connected-container {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  border-bottom: 1px solid hsla(0, 0%, 100%, 0.06);
+}
+
+.media-action-button {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  grid-gap: 8px;
+  padding-top: 4px;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+.media-connected-title-inner {
+  flex: 1;
+}
+.rtc-connection-status {
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding-bottom: 2px;
+}
+.no-connect {
+  width: 20px;
+  height: 20px;
+  background-image: url("../../assets/no-connect.svg");
+}
+.ping {
+  width: 16px;
+  height: 16px;
+  background-image: url("../../assets/ping.svg");
+}
+.rtc-connection-description {
+  font-weight: 600;
+  width: auto;
+  color: #3ba55c;
+}
+.device-controll-wrapper {
+  flex: 0 0 auto;
+  margin-right: 0;
+  margin-left: 10px;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  display: flex;
+}
+.camera-share-button {
+  box-sizing: border-box;
+  background: none;
+  border: none;
+  border-radius: 3px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 16px;
+  padding: 2px 16px;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  position: relative;
+  background-color: #58f287;
+}
 .my-section {
   -webkit-box-flex: 0;
   flex: 0 0 auto;
@@ -188,5 +297,10 @@ export default {
   background-image: url("../../assets/settings.svg");
   width: 16px;
   height: 16px;
+}
+.video-camera {
+  background-image: url("../../assets/video-camera.svg");
+  width: 20px;
+  height: 20px;
 }
 </style>

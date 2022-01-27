@@ -17,6 +17,7 @@ const server = {
     communityReadyToDelete: false,
     channelReadyToDelete: false,
     communityReadyToExit: false,
+    communityReadyToBanish: false,
     communityList: [],
     communityInfo: null,
     communityOnlineMemberList: [],
@@ -25,6 +26,11 @@ const server = {
     messagePlusMenu: null,
     communityInviteModal: false,
     communityOwner: false,
+    messageReplyId: "",
+    messageEditId: "",
+    messageFixId: "",
+    openFixedMessagesModal: false,
+    serverMemberPlusMenu: null,
   },
   mutations: {
     setCreateServer(state, createServer) {
@@ -77,10 +83,27 @@ const server = {
     },
     setCommunityOwner(state, communityOwner) {
       state.communityOwner = communityOwner;
-      console.log("주인이냐?", state.communityOwner);
     },
     setCommunityReadyToExit(state, communityReadyToExit) {
       state.communityReadyToExit = communityReadyToExit;
+    },
+    setCommunityReadyToBanish(state, communityReadyToBanish) {
+      state.communityReadyToBanish = communityReadyToBanish;
+    },
+    setMessageReplyId(state, messageReplyId) {
+      state.messageReplyId = messageReplyId;
+    },
+    setMessageEditId(state, messageEditId) {
+      state.messageEditId = messageEditId;
+    },
+    setMessageFixId(state, messageFixId) {
+      state.messageFixId = messageFixId;
+    },
+    setOpenFixedMessagesModal(state, openFixedMessagesModal) {
+      state.openFixedMessagesModal = openFixedMessagesModal;
+    },
+    setServerMemberPlusMenu(state, serverMemberPlusMenu) {
+      state.serverMemberPlusMenu = serverMemberPlusMenu;
     },
   },
   actions: {

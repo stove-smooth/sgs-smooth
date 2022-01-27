@@ -1,7 +1,7 @@
 <template>
   <nav class="server-sidebar-container">
     <div
-      class="tutorial-container clickable"
+      class="primary-container clickable"
       @click="clickServerPopout()"
       :data-container="true"
     >
@@ -20,7 +20,7 @@
         </div>
       </header>
     </div>
-    <div class="tutorial-container" v-show="false">
+    <div class="primary-container" v-show="false">
       <div class="unread-container">
         <div class="unread-bar">
           <span>읽지 않은 메시지</span>

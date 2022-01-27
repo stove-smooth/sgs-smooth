@@ -335,17 +335,6 @@ export default {
   background-color: #36393f;
   border: none;
 }
-.contents {
-  margin: 0 auto;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  font-weight: 600;
-}
-.highlight-text {
-  color: #00aff4;
-  font-size: 14px;
-}
 
 .large-button {
   color: var(--white-color);

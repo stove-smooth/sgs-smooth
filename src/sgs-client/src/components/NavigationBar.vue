@@ -2,7 +2,7 @@
   <nav class="nav-wrapper" aria-label="서버 사이드바.">
     <ul role="tree" tabindex="0" data-list-id="guildnav" class="tree">
       <div class="thin-scrollbar nav-scroller">
-        <div class="tutorial-container">
+        <div class="primary-container">
           <div
             class="listItem"
             @mouseover="hover('@me')"
@@ -78,7 +78,7 @@
             </div>
           </div>
         </div>
-        <div class="tutorial-container">
+        <div class="primary-container">
           <div class="listItem" @click="setCreateServer(true)">
             <div claass="listItem-wrapper">
               <div class="circleIcon-button">
@@ -174,7 +174,7 @@ export default {
   padding-right: 0px;
   background-color: var(--dark-grey-color);
 }
-.tutorial-container {
+.primary-container {
   position: relative;
 }
 .listItem {
