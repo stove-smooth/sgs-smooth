@@ -83,7 +83,6 @@ const server = {
     },
     setCommunityOwner(state, communityOwner) {
       state.communityOwner = communityOwner;
-      console.log("주인이냐?", state.communityOwner);
     },
     setCommunityReadyToExit(state, communityReadyToExit) {
       state.communityReadyToExit = communityReadyToExit;
