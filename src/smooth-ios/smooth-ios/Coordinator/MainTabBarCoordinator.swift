@@ -74,7 +74,7 @@ class MainTabBarCoordinator: NSObject, Coordinator {
         let controllers = tabBarItems.map { getTabController(item: $0) }
         prepareTabBarController(withTabControllers: controllers)
         
-        getTabController(item: .home)
+        childCoordinators[0].start()
     }
     
     func getTabController(item: TabBarItem) -> UINavigationController {
