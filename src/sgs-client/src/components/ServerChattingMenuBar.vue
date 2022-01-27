@@ -28,8 +28,9 @@
         role="button"
         tabindex="0"
         class="primary-icon-wrapper align-items-center"
+        @click="setOpenFixedMessagesModal(true)"
       >
-        <svg class="fixed-icon"></svg>
+        <svg class="fixed-icon clickable"></svg>
       </div>
       <div class="server-chatting-searchbar"><search-bar></search-bar></div>
       <div
@@ -46,9 +47,13 @@
 
 <script>
 import SearchBar from "./common/SearchBar.vue";
+import { mapMutations } from "vuex";
 export default {
   components: {
     SearchBar,
+  },
+  methods: {
+    ...mapMutations("server", ["setOpenFixedMessagesModal"]),
   },
 };
 </script>

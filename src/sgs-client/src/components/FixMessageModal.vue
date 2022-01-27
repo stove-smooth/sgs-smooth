@@ -1,5 +1,5 @@
 <template>
-  <div class="modal" v-if="messageFixId">
+  <div class="modal" v-if="messageFixId !== ''">
     <div class="blurred-background" @click="exitModal"></div>
     <div class="modal-container">
       <modal @exit="exitModal">
@@ -26,7 +26,9 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import Modal from "./common/Modal.vue";
 export default {
+  components: { Modal },
   computed: {
     ...mapState("server", ["messageFixId"]),
   },

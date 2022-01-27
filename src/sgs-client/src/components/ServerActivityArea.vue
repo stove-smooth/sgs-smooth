@@ -11,7 +11,7 @@
         />
         <div class="scroller-content">
           <ol class="scroller-inner">
-            <div v-for="(item, idx) in happyList" :key="idx">
+            <div v-for="(item, idx) in receiveList" :key="idx">
               <li
                 class="chat-message-wrapper"
                 @mouseover="messageHover(idx)"

@@ -28,6 +28,8 @@
       <community-delete-modal></community-delete-modal>
       <channel-delete-modal></channel-delete-modal>
       <community-exit-modal></community-exit-modal>
+      <fix-message-modal></fix-message-modal>
+      <fixed-messages-modal></fixed-messages-modal>
     </template>
     <template v-else> <loading-spinner /> </template>
   </div>
@@ -56,6 +58,8 @@ import ChannelSettingModal from "../components/ChannelSettingModal.vue";
 import CommunityDeleteModal from "../components/CommunityDeleteModal.vue";
 import ChannelDeleteModal from "../components/ChannelDeleteModal.vue";
 import CommunityExitModal from "../components/CommunityExitModal.vue";
+import FixMessageModal from "../components/FixMessageModal.vue";
+import FixedMessagesModal from "../components/FixedMessagesModal.vue";
 
 export default {
   name: "App",
@@ -79,6 +83,8 @@ export default {
     CommunityDeleteModal,
     ChannelDeleteModal,
     CommunityExitModal,
+    FixMessageModal,
+    FixedMessagesModal,
   },
   data() {
     return {
