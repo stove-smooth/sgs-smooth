@@ -8,16 +8,9 @@
 import Foundation
 import UIKit
 
-class ServerButtonCell: UITableViewCell {
-    static let identifier = "ServerButtonCell"
-    
+class ServerButtonCell: BaseTableViewCell {
+    static let identifier = "\(ServerButtonCell.self)"
     var type: ServerCellType?
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        
-        iconImge.image = nil
-    }
     
     let iconView = UIView().then {
         $0.backgroundColor = .messageBarDarkGray
@@ -30,23 +23,22 @@ class ServerButtonCell: UITableViewCell {
         $0.contentMode = .scaleAspectFit
     }
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        layout()
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        iconImge.image = nil
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func layout() {
+    override func setup() {
         self.backgroundColor = .clear
         self.selectionStyle = .none
         
         [
             iconView, iconImge
         ].forEach {self.contentView.addSubview($0)}
-        
+    }
+    
+    override func bindConstraints() {
         iconView.snp.makeConstraints {
             $0.centerX.centerY.equalToSuperview()
             $0.width.height.equalTo(60)
@@ -56,9 +48,8 @@ class ServerButtonCell: UITableViewCell {
             $0.centerX.centerY.equalToSuperview()
             $0.width.height.equalTo(40)
         }
-        
     }
-    
+
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         

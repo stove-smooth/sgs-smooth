@@ -35,3 +35,7 @@ struct ServerRequest: Codable {
     let `public`: Bool
     let icon: Data?
 }
+
+struct InvitationResponse: Codable {
+    let url: String
+}

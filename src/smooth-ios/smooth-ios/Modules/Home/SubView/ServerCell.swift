@@ -10,17 +10,8 @@ import Then
 import SnapKit
 import Kingfisher
 
-class ServerCell: UITableViewCell {
-    static let identifier = "ServerCell"
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        
-        self.serverImg.image = nil
-        self.textView.text = nil
-        self.textView.isHidden = true
-        self.selectedView.isHidden = true
-    }
+class ServerCell: BaseTableViewCell {
+    static let identifier = "\(ServerCell.self)"
     
     let serverImg = UIImageView().then {
         $0.backgroundColor = .messageBarDarkGray
@@ -41,16 +32,16 @@ class ServerCell: UITableViewCell {
         $0.textColor = .white
     }
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        layout()
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        self.serverImg.image = nil
+        self.textView.text = nil
+        self.textView.isHidden = true
+        self.selectedView.isHidden = true
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func layout() {
+    override func setup() {
         self.backgroundColor = .clear
         self.selectionStyle = .none
         
@@ -59,7 +50,9 @@ class ServerCell: UITableViewCell {
         ].forEach {self.contentView.addSubview($0)}
         
         serverImg.addSubview(textView)
-        
+    }
+    
+    override func bindConstraints() {
         serverImg.snp.makeConstraints {
             $0.centerX.centerY.equalToSuperview()
             $0.width.height.equalTo(60)

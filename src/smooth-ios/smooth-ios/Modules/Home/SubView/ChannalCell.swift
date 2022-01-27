@@ -11,27 +11,12 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-class ChannelCell: UITableViewCell {
-    static let identifier = "ChannelCell"
+class ChannelCell: BaseTableViewCell {
+    static let identifier = "\(ChannelCell.self)"
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-    }
-    
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setup()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func setup() {
+    override func setup() {
         self.backgroundColor = .clear
         self.textLabel?.textColor = .white
-//        self.selectionStyle = .none
-        
         self.tintColor = .white
         self.clipsToBounds = true
     }
