@@ -68,4 +68,12 @@ class AddServerCoordinator: NSObject, Coordinator {
         modalNav.isNavigationBarHidden = false
         modalNav.pushViewController(registerVC, animated: true)
     }
+    
+    func goToInvite(serverId: Int) {
+        let inviteVC = InviteServerViewController.instance(serverId: serverId)
+        
+        inviteVC.coordinator = self
+        modalNav.isNavigationBarHidden = true
+        modalNav.pushViewController(inviteVC, animated: true)
+    }
 }
