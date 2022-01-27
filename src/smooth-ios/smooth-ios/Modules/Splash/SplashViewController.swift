@@ -6,10 +6,7 @@ class SplashViewConroller: BaseViewController {
     weak var coordinator: MainCoordinator?
     
     private let splashView = SplashView()
-    private let viewModel = SplashViewModel(
-        userDefaults: UserDefaultsUtil(),
-        userRepository: UserRepository()
-    )
+    private let viewModel = SplashViewModel()
     
     static func instance() -> SplashViewConroller {
         return SplashViewConroller.init(nibName: nil, bundle: nil)
@@ -45,13 +42,6 @@ class SplashViewConroller: BaseViewController {
          }) */
         
         // MARK: input
-        self.viewModel.input.viewDidLoad
-            .debug()
-            .subscribe { _ in
-                self.viewModel.hasToken()
-            }
-            .disposed(by: disposeBag)
-
         self.splashView.signInButton.rx.tap
             .bind(to: self.viewModel.input.tapSignInButton)
             .disposed(by: disposeBag)
@@ -65,23 +55,13 @@ class SplashViewConroller: BaseViewController {
             .observe(on: MainScheduler.instance)
             .bind(onNext: self.goToSignIn)
             .disposed(by: disposeBag)
-
+        
         self.viewModel.output.goToSignUp
             .observe(on: MainScheduler.instance)
             .bind(onNext: self.goToSignUp)
             .disposed(by: disposeBag)
-        
-        self.viewModel.output.goToMain
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: self.goToMain)
-            .disposed(by: disposeBag)
     }
     
-    
-    // MARK: 네비게이터로 분리 하기
-    func goToMain() {
-        self.coordinator?.goToMain()
-    }
     
     func goToSignIn() {
         self.coordinator?.goToSigIn()

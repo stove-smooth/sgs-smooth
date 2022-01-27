@@ -26,8 +26,6 @@ struct UserRepository: Networkable, UserRepositoryProtocol {
                 guard let response = response else {
                     return
                 }
-                
-                UserDefaultsUtil.setUserToken(token: response.result.accessToken)
                 return completion(response, nil)
             case .failure(let error):
                 print("🆘 error! \(error)")
@@ -72,8 +70,12 @@ struct UserRepository: Networkable, UserRepositoryProtocol {
     
     func fetchUserInfo(_ completion: @escaping (User?, Error?) -> Void) {
         makeProvider().request(.fetchUserInfo) { result in
-            switch BaseResponse<User>.processJSONResponse(result) {
+            switch BaseResponse<User>.processResponse(result) {
             case .success(let response):
+                guard let response = response else {
+                    return
+                }
+
                 return completion(response, nil)
             case .failure(let error):
                 return completion(nil, error)
