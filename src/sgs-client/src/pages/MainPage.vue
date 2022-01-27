@@ -30,6 +30,7 @@
       <community-exit-modal></community-exit-modal>
       <fix-message-modal></fix-message-modal>
       <fixed-messages-modal></fixed-messages-modal>
+      <server-members-plus-action></server-members-plus-action>
     </template>
     <template v-else> <loading-spinner /> </template>
   </div>
@@ -43,7 +44,7 @@ import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import NavigationBar from "../components/NavigationBar.vue";
 import CreateServerModal from "../components/CreateServerModal.vue";
 import CreateChannelModal from "../components/CreateChannelModal.vue";
-import FriendsPlusAction from "../components/common/FriendsPlusAction.vue";
+import FriendsPlusAction from "../components/FriendsPlusAction.vue";
 import FriendsDeleteModal from "../components/FriendsDeleteModal.vue";
 import ServerPopout from "../components/ServerPopout.vue";
 import FriendsBlockModal from "../components/FriendsBlockModal.vue";
@@ -60,6 +61,7 @@ import ChannelDeleteModal from "../components/ChannelDeleteModal.vue";
 import CommunityExitModal from "../components/CommunityExitModal.vue";
 import FixMessageModal from "../components/FixMessageModal.vue";
 import FixedMessagesModal from "../components/FixedMessagesModal.vue";
+import ServerMembersPlusAction from "../components/ServerMembersPlusAction.vue";
 
 export default {
   name: "App",
@@ -85,6 +87,7 @@ export default {
     CommunityExitModal,
     FixMessageModal,
     FixedMessagesModal,
+    ServerMembersPlusAction,
   },
   data() {
     return {

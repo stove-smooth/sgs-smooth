@@ -29,6 +29,7 @@ const server = {
     messageEditId: "",
     messageFixId: "",
     openFixedMessagesModal: false,
+    serverMemberPlusMenu: null,
   },
   mutations: {
     setCreateServer(state, createServer) {
@@ -97,6 +98,9 @@ const server = {
     },
     setOpenFixedMessagesModal(state, openFixedMessagesModal) {
       state.openFixedMessagesModal = openFixedMessagesModal;
+    },
+    setServerMemberPlusMenu(state, serverMemberPlusMenu) {
+      state.serverMemberPlusMenu = serverMemberPlusMenu;
     },
   },
   actions: {

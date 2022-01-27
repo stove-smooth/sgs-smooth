@@ -15,7 +15,11 @@
             온라인 - 5
           </h2>
           <div v-for="item in communityOnlineMemberList" :key="item.id">
-            <div class="primary-member-container clickable" role="listitem">
+            <div
+              class="primary-member-container clickable"
+              role="listitem"
+              @click="clickMemberPlusAction($event, item)"
+            >
               <div class="primary-member-layout">
                 <div class="avatar-container">
                   <div class="profile-wrapper" aria-label="칭구1">
@@ -90,13 +94,42 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 export default {
+  mounted() {
+    window.addEventListener("click", this.onClick);
+  },
   computed: {
     ...mapState("server", [
       "communityOnlineMemberList",
       "communityOfflineMemberList",
+      "serverMemberPlusMenu",
     ]),
+  },
+  methods: {
+    ...mapMutations("server", ["setServerMemberPlusMenu"]),
+    ...mapMutations("utils", ["setClientX", "setClientY"]),
+    clickMemberPlusAction(event, memberInfo) {
+      const x = event.clientX;
+      const y = event.clientY;
+      this.setClientX(x);
+      this.setClientY(y);
+      this.setServerMemberPlusMenu(memberInfo);
+    },
+
+    onClick(e) {
+      if (this.serverMemberPlusMenu != null) {
+        console.log(e.target.className);
+        if (
+          e.target.className !== "friends-name" &&
+          e.target.className !== "avatar-wrapper" &&
+          e.target.className !== "primary-member-layout" &&
+          e.target.className !== "friends-name-decorator"
+        ) {
+          this.setServerMemberPlusMenu(null);
+        }
+      }
+    },
   },
 };
 </script>

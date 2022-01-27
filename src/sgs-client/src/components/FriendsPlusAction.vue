@@ -20,14 +20,14 @@
           <svg class="small-right-arrow"></svg>
         </div>
         <div
-          class="plus-action-label-container"
+          class="plus-action-label-container hover-white"
           @click="setFriendsReadyToDelete(friendsPlusMenu)"
           @mouseover="hover('remove')"
         >
           <div class="plus-action-label red-color">친구 삭제하기</div>
         </div>
         <div
-          class="plus-action-label-container"
+          class="plus-action-label-container hover-white"
           @click="setFriendsReadyToBlock(friendsPlusMenu)"
           @mouseover="hover('block')"
         >
@@ -149,6 +149,6 @@ export default {
 .small-right-arrow {
   width: 12px;
   height: 12px;
-  background-image: url("../../assets/small-right-arrow.svg");
+  background-image: url("../assets/small-right-arrow.svg");
 }
 </style>
