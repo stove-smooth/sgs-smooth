@@ -12,7 +12,7 @@ enum ServerTarget {
     case fetchServer
     case getServerById(param: Int)
     case createServer(param: ServerRequest)
-    case createInvitation
+    case createInvitation(param: Int)
 }
 
 extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
@@ -66,8 +66,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
             
             print(multipartFromData)
             return .uploadMultipart(multipartFromData)
-        case .createInvitation:
-            return .requestPlain
+        case .createInvitation(let serverId):
+            return .requestParameters(parameters: ["id": serverId], encoding: JSONEncoding.default)
         }
     }
     

@@ -13,6 +13,7 @@ protocol ServerRepositoryProtocol {
     func fetchServer(_ completion: @escaping ([Server]?, Error?) -> Void)
     func getServerById(_ request: Int, _ completion: @escaping (CommunityResponse?, Error?) -> Void)
     func createServer(_ request: ServerRequest, _ completion: @escaping (Server?, Error?) -> Void)
+    func createInvitation(_ serverId: Int, _ completion: @escaping (String?, Error?) -> Void)
 }
 
 struct ServerRepository: Networkable, ServerRepositoryProtocol {
@@ -58,6 +59,21 @@ struct ServerRepository: Networkable, ServerRepositoryProtocol {
                 }
 
                 return completion(response, nil)
+            case .failure(let error):
+                return completion(nil, error)
+            }
+        }
+    }
+    
+    func createInvitation(_ serverId: Int, _ completion: @escaping (String?, Error?) -> Void) {
+        makeProvider().request(.createInvitation(param: serverId)) { result in
+            switch BaseResponse<InvitationResponse>.processResponse(result) {
+            case .success(let response):
+                guard let response = response else {
+                    return
+                }
+                
+                return completion(response.url, nil)
             case .failure(let error):
                 return completion(nil, error)
             }

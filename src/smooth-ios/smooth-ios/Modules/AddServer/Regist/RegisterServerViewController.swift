@@ -18,7 +18,6 @@ class RegisterServerViewController: BaseViewController {
     private let viewModel: RegisterServerViewModel
     private let userDefault: UserDefaultsUtil
     
-    
     init(isPrivate: Bool) {
         self.viewModel = RegisterServerViewModel(
             isPrivate: isPrivate,
@@ -26,7 +25,6 @@ class RegisterServerViewController: BaseViewController {
         )
         self.userDefault = UserDefaultsUtil()
         
-        print("isPrivate \(isPrivate)")
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -90,11 +88,11 @@ class RegisterServerViewController: BaseViewController {
         
         self.viewModel.output.goToInvitation
             .observe(on: MainScheduler.instance)
-            .bind(onNext: self.goToInvitation)
+            .bind(onNext: self.goToInvitation(serverId:))
             .disposed(by: disposeBag)
     }
     
-    func goToInvitation() {
-        print("코디네이터 움직이기")
+    func goToInvitation(serverId: Int) {
+        self.coordinator?.goToInvite(serverId: serverId)
     }
 }

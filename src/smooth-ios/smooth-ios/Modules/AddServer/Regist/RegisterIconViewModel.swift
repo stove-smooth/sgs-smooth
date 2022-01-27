@@ -26,7 +26,7 @@ class RegisterServerViewModel: BaseViewModel {
     
     struct Output {
         let icon = PublishRelay<UIImage>()
-        let goToInvitation = PublishRelay<Void>()
+        let goToInvitation = PublishRelay<Int>()
     }
     
     init(isPrivate: Bool, serverRepository: ServerRepositoryProtocol) {
@@ -60,7 +60,7 @@ class RegisterServerViewModel: BaseViewModel {
                 return
             }
             
-            self.output.goToInvitation.accept(())
+            self.output.goToInvitation.accept(server.id)
             if (error != nil) {
                 print("network error 처리")
             }
