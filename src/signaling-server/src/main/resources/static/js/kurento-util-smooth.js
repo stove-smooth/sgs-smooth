@@ -39,7 +39,7 @@ const iceServers = [
             audio: true,
             video: {
                 width: 640,
-                framerate: 15
+                framerate: 30
             }
         };
         var ua = typeof window !== 'undefined' && window.navigator ? window.navigator.userAgent : '';
@@ -176,9 +176,11 @@ const iceServers = [
             callback = (callback || noop).bind(this);
             var self = this;
             var localVideo = options.localVideo;
+            var localScreen = options.localScreen;
             var remoteVideo = options.remoteVideo;
             var videoStream = options.videoStream;
             var audioStream = options.audioStream;
+            var screenStream = options.screenStream;
             var mediaConstraints = options.mediaConstraints;
             var pc = options.peerConnection;
             var sendSource = options.sendSource || 'webcam';
@@ -217,6 +219,11 @@ const iceServers = [
                 'localVideo': {
                     get: function () {
                         return localVideo;
+                    }
+                },
+                'localScreen': {
+                    get: function () {
+                        return localScreen;
                     }
                 },
                 'dataChannel': {
@@ -403,6 +410,13 @@ const iceServers = [
                     localVideo = attachMediaStream(localVideo, videoStream);
                 }
             };
+            this.showLocalScreen = function () {
+                localScreen.srcObject = screenStream;
+                localScreen.muted = true;
+                if (typeof AdapterJS !== 'undefined' && AdapterJS.webrtcDetectedBrowser === 'IE' && AdapterJS.webrtcDetectedVersion >= 9) {
+                    localScreen = attachMediaStream(localScreen, screenStream);
+                }
+            }
             this.send = function (data) {
                 if (dataChannel && dataChannel.readyState === 'open') {
                     dataChannel.send(data);
@@ -494,6 +508,14 @@ const iceServers = [
                         pc.addTrack(track, audioStream);
                     });
                 }
+                if (screenStream && localScreen) {
+                    self.showLocalScreen();
+                }
+                if (screenStream) {
+                    screenStream.getTracks().forEach(function (track) {
+                        pc.addTrack(track, screenStream);
+                    });
+                }
                 callback();
             }
             if (mode !== 'recvonly' && !videoStream && !audioStream) {
@@ -527,6 +549,40 @@ const iceServers = [
             } else {
                 setTimeout(start, 0);
             }
+
+            if (mode !== 'recvonly' && !screenStream) {
+                function getScreen(constraints) {
+                    if (constraints === undefined) {
+                        constraints = MEDIA_CONSTRAINTS;
+                    }
+
+                    if (typeof AdapterJS !== 'undefined' && AdapterJS.webrtcDetectedBrowser === 'IE' && AdapterJS.webrtcDetectedVersion >= 9) {
+                        navigator.getDisplayMedia({ video: true }, function (stream) {
+                            screenStream = stream;
+                            start();
+                        }, callback);
+                    } else {
+                        navigator.mediaDevices.getDisplayMedia({ video: true }).then(function (stream) {
+                            screenStream = stream;
+                            start();
+                        }).catch(callback);
+                    }
+                }
+                if (sendSource === 'webcam') {
+                    getScreen(mediaConstraints);
+                } else {
+                    getScreenConstraints(sendSource, function (error, constraints_) {
+                        if (error)
+                            return callback(error);
+                        constraints = [mediaConstraints];
+                        constraints.unshift(constraints_);
+                        getScreen(recursive.apply(undefined, constraints));
+                    }, guid);
+                }
+            } else {
+                setTimeout(start, 0);
+            }
+
             this.on('_dispose', function () {
                 if (localVideo) {
                     localVideo.pause();
@@ -535,6 +591,14 @@ const iceServers = [
                         localVideo.load();
                     }
                     localVideo.muted = false;
+                }
+                if (localScreen) {
+                    localScreen.pause();
+                    localScreen.srcObject = null;
+                    if (typeof AdapterJS === 'undefined') {
+                        localScreen.load();
+                    }
+                    localScreen.muted = false;
                 }
                 if (remoteVideo) {
                     remoteVideo.pause();
