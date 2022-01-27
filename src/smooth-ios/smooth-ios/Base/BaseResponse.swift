@@ -16,6 +16,9 @@ struct DefaultResponse: Codable {
 
 struct BaseResponse<Model: Codable>{
     struct CommonResponse: Codable {
+        let isSuccess: Bool
+        let code: Int
+        let message: String
         let result: Model
     }
     

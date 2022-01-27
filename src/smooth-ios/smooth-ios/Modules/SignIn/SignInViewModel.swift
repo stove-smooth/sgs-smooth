@@ -63,10 +63,29 @@ class SignInViewModel: BaseViewModel {
     private func signIn(request: SignInRequest) {
         self.userRepository.signIn(request) { response, error in
             if error == nil {
+                
+                guard let response = response else {
+                    return
+                }
+                
+                self.userDefaults.setUserToken(token: response.result.accessToken)
+                self.fetchUserInfo()
+                
                 self.output.goToMain.accept(())
             } else {
                 print("🆘 error!")
             }
+        }
+    }
+    
+    private func fetchUserInfo() {
+        self.userRepository.fetchUserInfo { user, _ in
+            
+            guard let user = user else {
+                return
+            }
+            
+            self.userDefaults.setUserInfo(user: user)
         }
     }
 }

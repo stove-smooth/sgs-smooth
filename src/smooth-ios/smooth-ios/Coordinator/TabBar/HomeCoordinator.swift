@@ -21,12 +21,31 @@ class HomeCoordinator: NSObject, Coordinator {
     func start() {
         let homeVC = HomeViewController.instance()
         homeVC.coordinator = self
+        
+        navigationController.setNavigationBarHidden(true, animated: false)
         navigationController.pushViewController(homeVC, animated: true)
     }
     
     func goToContainer() {
         let vc = ContainerViewController.instance()
+        let homeVC = HomeViewController.instance()
+        
         vc.coordinator = self
-        navigationController.pushViewController(vc, animated: true)
+        
+        vc.didMove(toParent: homeVC)
+    }
+    
+    func goToMenu() {
+        let vc = MenuViewController.instance()
+        let homeVC = HomeViewController.instance()
+        
+        vc.coordinator = self
+        vc.didMove(toParent: homeVC)
+    }
+    
+    func goToAddServer() {
+        let coordinator = AddServerCoordinator(navigationController: navigationController)
+        childCoordinators.append(coordinator)
+        coordinator.start()
     }
 }

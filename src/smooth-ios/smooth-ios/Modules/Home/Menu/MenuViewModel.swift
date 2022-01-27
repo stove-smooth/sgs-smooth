@@ -9,58 +9,91 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-struct Input {
-    let value: Observable<(id: UUID, value: Int)>
-    let selectedChanged: Observable<(id: UUID, selected: Bool)>
-    //    let add: Observable<Void>
-    //    let delete: Observable<UUID>
-}
-
-struct ViewModel {
-    let counters: Driver<[Model]>
-    let fetchServer = BehaviorRelay<String>(value: "")
-}
-
-extension ViewModel {
-    private enum Action {
-        //        case add(model: [Model])
-        case value(id: UUID, value: Int)
-        case selectedChanged(id: UUID, selected: Bool)
-        //        case delete(id: UUID)
+class MenuViewModel: BaseViewModel {
+    let input = Input()
+    let output = Output()
+    var model = Model()
+    
+    let serverRepository: ServerRepository
+    
+    struct Input {
+        let fetch = PublishSubject<Void>()
+        let tapServer = PublishSubject<IndexPath>()
     }
     
-    init(_ input: Input, refreshTask: @escaping () -> Observable<[Model]>) {
-        //        let addAction = input.add
-        //            .flatMapLatest(refreshTask)
-        //            .map(Action.add)
-        let valueAction = input.value.map(Action.value)
-        let selectedChangedAction = input.selectedChanged.map(Action.selectedChanged)
-        //        let deleteAction = input.delete.map(Action.delete)
+    struct Output {
+        let showLoading = PublishRelay<Bool>()
         
-        self.fetchServer
-            .asObservable()
-            .subscribe(onNext: { value in
-                print("self.roomViewModel.data[indexPath.row] \(value)")
-            }) .disposed(by: DisposeBag())
-        
-        counters = Observable.merge(valueAction, selectedChangedAction)
-            .scan(into: []) { model, new in
-                switch new {
-                //                case .add(let values):
-                //                    model = values
-                case .value(let id, let value):
-                    if let index = model.firstIndex(where: { $0.id == id }) {
-                        model[index].value = value
-                    }
-                case .selectedChanged(let id, let selected):
-                    if let index = model.firstIndex(where: { $0.id == id }) {
-                        model[index].selected = selected
-                    }
-                //                case .delete(let id):
-                //                    if let index = model.index(where: { $0.id == id }) {
-                //                        model.remove(at: index)
-                }
+        let servers = PublishRelay<[Server]>()
+        let categories = PublishRelay<[Category]>()
+        let goToAddServer = PublishRelay<Void>()
+    }
+    
+    struct Model {
+        var servers: [Server]?
+        var categories: [Category]?
+    }
+    
+    init(serverRepository: ServerRepository) {
+        self.serverRepository = serverRepository
+        super.init()
+    }
+    
+    private func fetchServer() {
+        self.showLoading.accept(true)
+        self.serverRepository.fetchServer { servers, _ in
+            
+            guard let servers = servers else {
+                return
             }
-            .asDriver(onErrorDriveWith: .empty())
+            
+            self.model.servers = servers
+            
+            if (servers.count > 0) {
+                self.fetchChannel(server: servers[0])
+            }
+            
+            self.output.servers.accept(servers)
+            self.output.showLoading.accept(false)
+        }
+    }
+    
+    private func fetchChannel(server: Server){
+        self.showLoading.accept(true)
+        self.serverRepository.getServerById(server.id) { response, error in
+            
+            guard let response = response else {
+                return
+            }
+
+            
+            self.model.categories = response.categories
+            
+            self.output.categories.accept(response.categories)
+            self.output.showLoading.accept(false)
+            
+        }
+    }
+
+    override func bind() {
+        self.input.fetch
+            .bind(onNext: self.fetchServer)
+            .disposed(by: disposeBag)
+        
+        self.input.tapServer
+            .bind(onNext: { indexPath in
+                switch indexPath.section {
+                case 0:
+                    // TODO: 다이렉트 메시지 홈 + 다이렉트 메시지 함
+                    print("홈")
+                case 1:
+                    let server = self.model.servers![indexPath.row]
+                    self.fetchChannel(server: server)
+                case 2:
+                    self.output.goToAddServer.accept(())
+                default: break
+                }
+            })
+            .disposed(by: disposeBag)
     }
 }
