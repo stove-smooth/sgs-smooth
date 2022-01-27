@@ -1,5 +1,5 @@
 //
-//  RegisterIconView.swift
+//  RegisterServerView.swift
 //  smooth-ios
 //
 //  Created by 김두리 on 2022/01/25.
@@ -8,7 +8,7 @@
 import UIKit
 import Photos
 
-class RegisterIconView: BaseView {
+class RegisterServerView: BaseView {
     let titleLabel = UILabel().then {
         $0.text = "서버를 만들어보세요"
         $0.textColor = .white
@@ -43,7 +43,6 @@ class RegisterIconView: BaseView {
         $0.returnKeyType = .next
         $0.layer.cornerRadius = 5
         $0.clearButtonMode = .whileEditing
-        $0.text = "두리님의 서버"
     }
     
     let registerButton = UIButton().then {
@@ -102,6 +101,9 @@ class RegisterIconView: BaseView {
         }
     }
     
+    func set(name: String) {
+        self.serverNameLabelField.text = "\(name)님의 서버"
+    }
     func bind(image: UIImage?) {
         self.uploadButton.setImage(image, for: .normal)
     }

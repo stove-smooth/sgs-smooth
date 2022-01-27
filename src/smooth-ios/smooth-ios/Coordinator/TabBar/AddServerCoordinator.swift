@@ -61,8 +61,8 @@ class AddServerCoordinator: NSObject, Coordinator {
         modalNav.pushViewController(makeVC, animated: true)
     }
     
-    func goToRegisterIcon(isPrivate: Bool) {
-        let registerVC = RegisterIconViewController.instance(isPrivate: isPrivate)
+    func goToRegister(isPrivate: Bool) {
+        let registerVC = RegisterServerViewController.instance(isPrivate: isPrivate)
         registerVC.coordinator = self
         
         modalNav.isNavigationBarHidden = false

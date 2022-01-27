@@ -27,6 +27,7 @@ class JoinServerViewController: BaseViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        self.coordinator?.modalNav.isNavigationBarHidden = true
     }
     
     override func bindViewModel() {

@@ -33,5 +33,5 @@ struct Server: Codable, Equatable, IdentifiableType {
 struct ServerRequest: Codable {
     let name: String
     let `public`: Bool
-    let icon: Data
+    let icon: Data?
 }
