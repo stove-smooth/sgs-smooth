@@ -9,9 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class JoinRequest {
+public class ReceiveVideoRequest {
     private String id;
-    private String token;
     private String userId;
-    private String roomId;
+    private String sdpOffer;
 }
