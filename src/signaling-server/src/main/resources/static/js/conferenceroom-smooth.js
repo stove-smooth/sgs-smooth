@@ -1,6 +1,8 @@
+const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYWs3MzgwMUBuYXZlci5jb20iLCJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOjYsImlhdCI6MTY0MzI2OTU4NywiZXhwIjoxNjUxOTA5NTg3fQ.uTvrk45DfbhIWRk0Vt7HchvdE1XPujni-ZU1saMZKMU";
 // Local
-var ws = new SockJS('/rtc');
-
+var ws = new SockJS('/rtc', null, {
+    transports: ["websocket", "xhr-streaming", "xhr-polling"]
+});
 // Prod
 // var ws = new SockJS('https://sig.yoloyolo.org/rtc', null, {
 //     transports: ["websocket", "xhr-streaming", "xhr-polling"]
@@ -33,7 +35,7 @@ ws.onmessage = function(message) {
             receiveVideoResponse(parsedMessage);
             break;
         case 'iceCandidate':
-            participants[parsedMessage.name].rtcPeer.addIceCandidate(parsedMessage.candidate, function (error) {
+            participants[parsedMessage.userId].rtcPeer.addIceCandidate(parsedMessage.candidate, function (error) {
                 if (error) {
                     console.error("Error adding candidate: " + error);
                     return;
@@ -55,18 +57,19 @@ function register() {
 
     var message = {
         id : 'joinRoom',
-        name : name,
-        room : room,
+        token : token,
+        userId : name,
+        roomId : room
     }
     sendMessage(message);
 }
 
 function onNewParticipant(request) {
-    receiveVideo(request.name);
+    receiveVideo(request.userId);
 }
 
 function receiveVideoResponse(result) {
-    participants[result.name].rtcPeer.processAnswer (result.sdpAnswer, function (error) {
+    participants[result.userId].rtcPeer.processAnswer (result.sdpAnswer, function (error) {
         if (error) return console.error (error);
     });
 }
@@ -88,8 +91,8 @@ function onExistingParticipants(msg) {
         video : {
             mandatory : {
                 maxWidth : 320,
-                maxFrameRate : 15,
-                minFrameRate : 15
+                maxFrameRate : 30,
+                minFrameRate : 30
             }
         }
     };
@@ -111,7 +114,7 @@ function onExistingParticipants(msg) {
             this.generateOffer (participant.offerToReceiveVideo.bind(participant));
         });
 
-    msg.data.forEach(receiveVideo);
+    msg.members.forEach(receiveVideo);
 }
 
 function leaveRoom() {
@@ -149,10 +152,10 @@ function receiveVideo(sender) {
 }
 
 function onParticipantLeft(request) {
-    console.log('Participant ' + request.name + ' left');
-    var participant = participants[request.name];
+    console.log('Participant ' + request.userId + ' left');
+    var participant = participants[request.userId];
     participant.dispose();
-    delete participants[request.name];
+    delete participants[request.userId];
 }
 
 function sendMessage(message) {
