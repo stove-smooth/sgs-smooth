@@ -240,7 +240,8 @@
                 aria-haspopup="listbox"
                 aria-label="#잡담에서 메시지보내기"
                 v-model="text"
-                @keyup="sendMessage"
+                @keydown="sendMessage"
+                @keyup="initialMessage"
                 placeholder="#잡담에 메세지 보내기"
               ></textarea>
             </div>
@@ -339,17 +340,24 @@ export default {
       "setMessageEditId",
     ]),
     sendMessage(e) {
+      console.log("text", this.text);
       if (e.keyCode == 13 && !e.shiftKey && this.stompSocketConnected) {
         if (this.text.trim().length == 0 && this.images.length == 0) {
           return;
         }
         if (this.images.length > 0) {
+          console.log("imagesend&&&&&&&&&&&&&&&");
           this.sendPicture();
         }
         if (this.text != undefined) {
+          console.log("textsend&&&&&&&&&&&&&&&");
           this.send();
-          this.text = "";
         }
+      }
+    },
+    initialMessage(e) {
+      if (e.keyCode == 13 && !e.shiftKey && this.stompSocketConnected) {
+        this.text = "";
       }
     },
     async uploadImage() {
@@ -593,7 +601,7 @@ export default {
 .message-content {
   user-select: text;
   margin-left: -72px;
-  padding-left: 72px;
+  padding-left: 66px;
   overflow: hidden;
   position: relative;
   text-indent: 0;
