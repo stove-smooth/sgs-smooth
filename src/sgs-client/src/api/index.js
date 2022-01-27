@@ -96,11 +96,11 @@ function createNewChannel(channelData) {
 function moveCategory(categoryData) {
   return instance.patch("community-server/category/location", categoryData);
 }
-async function sendImageChatting(userData) {
+async function sendImageChatting(userData, channelId) {
   try {
     const accesstoken = await store.getters["user/getAccessToken"];
     const response = await axios.post(
-      "http://52.79.229.100:8000/chat-server/file",
+      `http://52.79.229.100:8000/chat-server/channel/file/${channelId}`,
       userData,
       {
         headers: {

@@ -6,8 +6,8 @@
         <user-section></user-section>
       </div>
 
-      <div class="server-activity-container">
-        <template v-if="false">
+      <div class="server-activity-container" :key="$route.params.channelid">
+        <template v-if="true">
           <server-chatting-menu-bar></server-chatting-menu-bar>
           <div class="server-activity-container1">
             <server-activity-area></server-activity-area>

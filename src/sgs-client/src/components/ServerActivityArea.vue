@@ -2,16 +2,16 @@
   <div class="server-chatting-container">
     <div class="message-container">
       <div class="thin-scrollbar server-chat-scroller">
+        <VEmojiPicker
+          v-show="this.emojiPopout"
+          class="emoji-picker-popout"
+          labelSearch="Search"
+          lang="pt-BR"
+          @select="onSelectEmoji"
+        />
         <div class="scroller-content">
-          <VEmojiPicker
-            v-show="this.emojiPopout"
-            class="emoji-picker-popout"
-            labelSearch="Search"
-            lang="pt-BR"
-            @select="onSelectEmoji"
-          />
           <ol class="scroller-inner">
-            <div v-for="(item, idx) in receiveList" :key="idx">
+            <div v-for="(item, idx) in happyList" :key="idx">
               <li
                 class="chat-message-wrapper"
                 @mouseover="messageHover(idx)"
@@ -246,6 +246,26 @@ export default {
   },
   data() {
     return {
+      happyList: [
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
+      ],
       replyId: "",
       messageHovered: "",
       text: "",
@@ -265,13 +285,17 @@ export default {
     ...mapGetters("user", ["getUserId"]),
   },
   created() {
-    this.stompSocketClient.subscribe("/topic/group", (res) => {
-      console.log("구독으로 받은 메시지 입니다.", res.body);
-      const result = this.convertFromStringToDate(JSON.parse(res.body).time);
-      const receivedForm = JSON.parse(res.body);
-      receivedForm.time = result;
-      this.receiveList.push(receivedForm);
-    });
+    console.log(this.$route.params.channelid);
+    this.stompSocketClient.subscribe(
+      "/topic/group/" + this.$route.params.channelid,
+      (res) => {
+        console.log("구독으로 받은 메시지 입니다.", res.body);
+        const result = this.convertFromStringToDate(JSON.parse(res.body).time);
+        const receivedForm = JSON.parse(res.body);
+        receivedForm.time = result;
+        this.receiveList.push(receivedForm);
+      }
+    );
   },
   methods: {
     ...mapMutations("utils", ["setClientX", "setClientY"]),
@@ -306,12 +330,12 @@ export default {
     },
     send() {
       console.log("Send message:" + this.text);
+      console.log("chid", this.$route.params.channelid);
       if (this.stompSocketClient && this.stompSocketClient.connected) {
         const msg = {
-          userName: this.nickname,
           content: this.text,
-          channel_id: this.$route.params.channelid,
-          account_id: this.getUserId,
+          channelId: this.$route.params.channelid,
+          accountId: this.getUserId,
         };
         this.stompSocketClient.send(
           "/kafka/send-channel-message",
@@ -327,7 +351,10 @@ export default {
         formData.append("image", this.images[i]);
       }
       try {
-        const result = await sendImageChatting(formData);
+        const result = await sendImageChatting(
+          formData,
+          this.$route.params.channelid
+        );
         console.log("sendpictureresult", result);
       } catch (err) {
         console.log("errrr", err.response);
@@ -347,6 +374,21 @@ export default {
       if (this.messagePlusMenu != null) {
         if (!e.target.parentNode.dataset.key) {
           this.setMessagePlusMenu(null);
+        }
+      }
+      if (this.emojiPopout) {
+        var condition1 = e.target.parentNode.childNodes[0]._prevClass;
+        var condition2 = e.target.parentNode.className;
+        if (
+          condition2 !== "container-search" &&
+          condition2 !== "container-emoji" &&
+          condition2 !== "emoji-picker-popout" &&
+          condition2 !== "svg" &&
+          condition2 !== "emoji-button" &&
+          condition2 !== "emoji-picker-popout emoji-picker" &&
+          condition1 !== "category"
+        ) {
+          this.emojiPopout = false;
         }
       }
     },
@@ -898,5 +940,6 @@ export default {
   position: absolute;
   bottom: 0;
   right: 0;
+  z-index: 10;
 }
 </style>
