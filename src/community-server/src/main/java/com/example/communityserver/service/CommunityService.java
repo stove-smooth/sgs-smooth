@@ -269,6 +269,7 @@ public class CommunityService {
 
     private void isContains(Community community, Long userId) {
         boolean isContains = community.getMembers().stream()
+                .filter(cm -> cm.getStatus().equals(CommunityMemberStatus.NORMAL))
                 .map(CommunityMember::getUserId)
                 .collect(Collectors.toList())
                 .contains(userId);

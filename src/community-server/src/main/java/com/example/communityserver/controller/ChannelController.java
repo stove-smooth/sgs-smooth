@@ -105,7 +105,7 @@ public class ChannelController {
     @PatchMapping("/location")
     public CommonResponse locateChannel(
             @RequestHeader(ID) String userId,
-            @Valid @RequestBody LocateRequest request
+            @Valid @RequestBody LocateChannelRequest request
     ) {
         log.info("PATCH /community-server/channel/location");
         channelService.locateChannel(Long.parseLong(userId), request);

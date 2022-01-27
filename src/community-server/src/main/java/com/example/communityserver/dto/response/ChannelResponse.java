@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class ChannelResponse {
     private Long id;
+    private Long categoryId;
     private String username;
     private String name;
     @Enumerated(EnumType.STRING)
@@ -32,6 +33,7 @@ public class ChannelResponse {
     public static ChannelResponse fromEntity(Channel channel) {
         ChannelResponse channelResponse = new ChannelResponse();
         channelResponse.setId(channel.getId());
+        channelResponse.setCategoryId(channel.getCategory().getId());
         channelResponse.setUsername(channel.getUsername());
         channelResponse.setName(channel.getName());
         channelResponse.setType(channel.getType());
