@@ -16,6 +16,9 @@ class ServerView: BaseView, UIScrollViewDelegate {
         $0.separatorStyle = .none
         $0.rowHeight = 80
         
+        $0.showsVerticalScrollIndicator = false
+        $0.showsHorizontalScrollIndicator = false
+        
         $0.cellLayoutMarginsFollowReadableWidth = true
         $0.separatorInsetReference = .fromAutomaticInsets
         

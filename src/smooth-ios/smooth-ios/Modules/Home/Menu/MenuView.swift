@@ -20,16 +20,19 @@ class MenuView: BaseView {
     }
     
     override func bindConstraints() {
+        
         serverView.snp.makeConstraints {
             $0.width.equalTo(80)
             $0.left.equalToSuperview()
-            $0.top.bottom.equalTo(safeAreaLayoutGuide)
+            $0.top.equalTo(safeAreaLayoutGuide)
+            $0.bottom.equalTo(safeAreaLayoutGuide).offset(-49.0)
         }
         
         channelView.snp.makeConstraints {
             $0.left.equalTo(serverView.snp.right)
             $0.trailing.equalToSuperview().offset(-60)
             $0.top.bottom.equalTo(safeAreaLayoutGuide)
+            $0.bottom.equalTo(safeAreaLayoutGuide).offset(-49.0)
         }
     }
 }

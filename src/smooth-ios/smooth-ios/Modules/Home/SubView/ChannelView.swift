@@ -14,9 +14,15 @@ class ChannelView: BaseView {
     let tableView = UITableView().then {
         $0.backgroundColor = .clear
         $0.tintColor = .white
+        
         $0.dragInteractionEnabled = true
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.cellLayoutMarginsFollowReadableWidth = true
+        $0.showsVerticalScrollIndicator = false
+        $0.showsHorizontalScrollIndicator = false
+        
+        $0.contentInset = UIEdgeInsets.symmetric(vertical: 10, horizontal: 0)
+        
         $0.register(ChannelCell.self, forCellReuseIdentifier: ChannelCell.identifier)
     }
     
@@ -75,7 +81,7 @@ class ChannelView: BaseView {
             .disposed(by: disposeBag)
         
         
-        tableView.rx.itemMoved
+        tableView.rx.itemSelected
             .subscribe(onNext: { indexPath in
                 print(indexPath)
             })
