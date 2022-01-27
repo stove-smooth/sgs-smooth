@@ -25,6 +25,9 @@ const server = {
     messagePlusMenu: null,
     communityInviteModal: false,
     communityOwner: false,
+    messageReplyId: "",
+    messageEditId: "",
+    messageFixId: "",
   },
   mutations: {
     setCreateServer(state, createServer) {
@@ -81,6 +84,15 @@ const server = {
     },
     setCommunityReadyToExit(state, communityReadyToExit) {
       state.communityReadyToExit = communityReadyToExit;
+    },
+    setMessageReplyId(state, messageReplyId) {
+      state.messageReplyId = messageReplyId;
+    },
+    setMessageEditId(state, messageEditId) {
+      state.messageEditId = messageEditId;
+    },
+    setMessageFixId(state, messageFixId) {
+      state.messageFixId = messageFixId;
     },
   },
   actions: {

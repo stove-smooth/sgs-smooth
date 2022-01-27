@@ -24,7 +24,7 @@
                 <div
                   class="primary-chat-message-wrapper others-chat-message-wrapper"
                   v-bind:class="{
-                    'message-replying': replyId === idx,
+                    'message-replying': messageReplyId === idx,
                   }"
                 >
                   <div class="chat-message-content">
@@ -37,7 +37,34 @@
                       <span class="chat-user-name">{{ item.name }}</span>
                       <span class="chat-time-stamp">{{ item.time }}</span>
                     </h2>
-                    <div class="message-content">{{ item.message }}</div>
+                    <div v-if="messageEditId === idx">
+                      <div class="channel-message-edit-area">
+                        <div class="channel-message-input-area">
+                          <textarea
+                            id="input-text-wrapper"
+                            class="channel-message-input-wrapper"
+                            aria-haspopup="listbox"
+                            placeholder="item.message"
+                          ></textarea>
+                        </div>
+                      </div>
+                      <div class="channel-message-edit-tool-area">
+                        댓글 수정
+                        <span
+                          class="highlight-text contents clickable"
+                          @click="setMessageEditId('')"
+                        >
+                          취소
+                        </span>
+                        • 댓글 수정
+                        <span class="highlight-text contents clickable">
+                          저장
+                        </span>
+                      </div>
+                    </div>
+                    <div v-else class="message-content">
+                      {{ item.message }}
+                    </div>
                   </div>
                   <div class="chat-message-accessories">
                     <div class="chat-message-attachment" v-if="false">
@@ -65,6 +92,7 @@
                       </div>
                       <!--내꺼면 수정아니면 답장-->
                       <div
+                        @click="setMessageEditId(idx)"
                         v-show="false"
                         class="chat-action-button"
                         aria-label="수정하기"
@@ -74,7 +102,7 @@
                         <svg class="edit-pencil"></svg>
                       </div>
                       <div
-                        @click="selectReplying(idx)"
+                        @click="setMessageReplyId(idx)"
                         class="chat-action-button"
                         aria-label="답장하기"
                         role="button"
@@ -111,7 +139,7 @@
     </div>
     <div class="channel-message-input-form">
       <div class="channel-message-area">
-        <div class="attached-bar" v-if="replyId !== ''">
+        <div class="attached-bar" v-if="messageReplyId !== ''">
           <div>
             <div class="clip-container">
               <div class="base-container">
@@ -123,7 +151,10 @@
                     </div>
                   </div>
                   <div class="align-items-center">
-                    <div class="reply-close-button" @click="selectReplying('')">
+                    <div
+                      class="reply-close-button"
+                      @click="setMessageReplyId('')"
+                    >
                       <svg class="small-close-button"></svg>
                     </div>
                   </div>
@@ -266,7 +297,6 @@ export default {
         { profileImage: "null", name: "dd", time: "12시", message: "dd" },
         { profileImage: "null", name: "dd", time: "12시", message: "dd" },
       ],
-      replyId: "",
       messageHovered: "",
       text: "",
       images: [],
@@ -281,7 +311,11 @@ export default {
   computed: {
     ...mapState("user", ["nickname"]),
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
-    ...mapState("server", ["messagePlusMenu"]),
+    ...mapState("server", [
+      "messagePlusMenu",
+      "messageReplyId",
+      "messageEditId",
+    ]),
     ...mapGetters("user", ["getUserId"]),
   },
   created() {
@@ -299,10 +333,11 @@ export default {
   },
   methods: {
     ...mapMutations("utils", ["setClientX", "setClientY"]),
-    ...mapMutations("server", ["setMessagePlusMenu"]),
-    selectReplying(idx) {
-      this.replyId = idx;
-    },
+    ...mapMutations("server", [
+      "setMessagePlusMenu",
+      "setMessageReplyId",
+      "setMessageEditId",
+    ]),
     sendMessage(e) {
       if (e.keyCode == 13 && !e.shiftKey && this.stompSocketConnected) {
         if (this.text.trim().length == 0 && this.images.length == 0) {
@@ -424,6 +459,22 @@ export default {
 </script>
 
 <style>
+/**메세지 수정 */
+.channel-message-edit-area {
+  position: relative;
+  width: 100%;
+  text-indent: 0;
+  border-radius: 8px;
+  margin-top: 8px;
+  background-color: #40444b;
+}
+.channel-message-edit-tool-area {
+  padding: 7px 0;
+  font-size: 12px;
+  font-weight: 400;
+  text-indent: 0;
+  color: #dcddde;
+}
 .server-chatting-container {
   position: relative;
   display: flex;

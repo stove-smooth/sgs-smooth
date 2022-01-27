@@ -1,36 +1,35 @@
 <template>
   <div>
-    <!-- <template v-if="this.stompSocketConnected"> -->
-    <div class="wrapper2">
-      <div class="wrapper">
-        <div class="container">
-          <navigation-bar v-if="navbar"></navigation-bar>
-          <router-view></router-view>
+    <template v-if="this.stompSocketConnected">
+      <div class="wrapper2">
+        <div class="wrapper">
+          <div class="container">
+            <navigation-bar v-if="navbar"></navigation-bar>
+            <router-view></router-view>
+          </div>
         </div>
       </div>
-    </div>
-    <server-popout></server-popout>
-    <friends-plus-action></friends-plus-action>
-    <message-plus-action></message-plus-action>
-    <create-server-modal></create-server-modal>
-    <create-channel-modal></create-channel-modal>
-    <friends-delete-modal></friends-delete-modal>
-    <friends-block-modal></friends-block-modal>
-    <friends-profile-modal></friends-profile-modal>
-    <create-category-modal></create-category-modal>
-    <category-setting-modal></category-setting-modal>
-    <category-delete-modal></category-delete-modal>
-    <server-setting-modal></server-setting-modal>
-    <template v-if="communityInviteModal">
-      <invite-community-modal></invite-community-modal>
+      <server-popout></server-popout>
+      <friends-plus-action></friends-plus-action>
+      <message-plus-action></message-plus-action>
+      <create-server-modal></create-server-modal>
+      <create-channel-modal></create-channel-modal>
+      <friends-delete-modal></friends-delete-modal>
+      <friends-block-modal></friends-block-modal>
+      <friends-profile-modal></friends-profile-modal>
+      <create-category-modal></create-category-modal>
+      <category-setting-modal></category-setting-modal>
+      <category-delete-modal></category-delete-modal>
+      <server-setting-modal></server-setting-modal>
+      <template v-if="communityInviteModal">
+        <invite-community-modal></invite-community-modal>
+      </template>
+      <channel-setting-modal></channel-setting-modal>
+      <community-delete-modal></community-delete-modal>
+      <channel-delete-modal></channel-delete-modal>
+      <community-exit-modal></community-exit-modal>
     </template>
-
-    <channel-setting-modal></channel-setting-modal>
-    <community-delete-modal></community-delete-modal>
-    <channel-delete-modal></channel-delete-modal>
-    <community-exit-modal></community-exit-modal>
-    <!-- </template> -->
-    <!-- <template v-else> <loading-spinner /> </template> -->
+    <template v-else> <loading-spinner /> </template>
   </div>
 </template>
 
@@ -38,7 +37,7 @@
 import Stomp from "webstomp-client";
 import SockJS from "sockjs-client";
 import { mapGetters, mapMutations, mapState } from "vuex";
-//import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
+import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import NavigationBar from "../components/NavigationBar.vue";
 import CreateServerModal from "../components/CreateServerModal.vue";
 import CreateChannelModal from "../components/CreateChannelModal.vue";
@@ -73,7 +72,7 @@ export default {
     CategorySettingModal,
     CategoryDeleteModal,
     ServerSettingModal,
-    //LoadingSpinner,
+    LoadingSpinner,
     MessagePlusAction,
     InviteCommunityModal,
     ChannelSettingModal,

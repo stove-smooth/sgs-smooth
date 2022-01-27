@@ -2,15 +2,24 @@
   <div :style="cssProps" v-show="messagePlusMenu != null">
     <div class="message-plus-action-container">
       <div class="plus-action-wrapper">
-        <div class="plus-action-label-container">
+        <div
+          class="plus-action-label-container"
+          @click="setMessageEditId(messagePlusMenu)"
+        >
           <div class="plus-action-label">메시지 수정하기</div>
           <svg class="edit-pencil"></svg>
         </div>
-        <div class="plus-action-label-container">
+        <div
+          class="plus-action-label-container"
+          @click="setMessageFixId(messagePlusMenu)"
+        >
           <div class="plus-action-label">메시지 고정하기</div>
           <svg class="fixed-icon"></svg>
         </div>
-        <div class="plus-action-label-container">
+        <div
+          class="plus-action-label-container"
+          @click="setMessageReplyId(messagePlusMenu)"
+        >
           <div class="plus-action-label">답장</div>
           <svg class="reply-button"></svg>
         </div>
@@ -28,11 +37,15 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 export default {
   computed: {
     ...mapState("utils", ["clientX", "clientY"]),
-    ...mapState("server", ["messagePlusMenu"]),
+    ...mapState("server", [
+      "messagePlusMenu",
+      "messageReplyId",
+      "messageEditId",
+    ]),
     cssProps() {
       return {
         "--xpoint": this.clientX + "px",
@@ -40,7 +53,13 @@ export default {
       };
     },
   },
-  methods: {},
+  methods: {
+    ...mapMutations("server", [
+      "setMessageReplyId",
+      "setMessageEditId",
+      "setMessageFixId",
+    ]),
+  },
 };
 </script>
 <style>

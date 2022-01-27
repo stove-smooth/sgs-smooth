@@ -225,6 +225,17 @@
   color: var(--white-color);
 }
 
+.contents {
+  margin: 0 auto;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-weight: 600;
+}
+.highlight-text {
+  color: #00aff4;
+  font-size: 14px;
+}
 /**modal*/
 .modal {
   position: fixed;
