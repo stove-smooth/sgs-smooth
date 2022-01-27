@@ -12,6 +12,7 @@ import RxSwift
 protocol ServerRepositoryProtocol {
     func fetchServer(_ completion: @escaping ([Server]?, Error?) -> Void)
     func getServerById(_ request: Int, _ completion: @escaping (CommunityResponse?, Error?) -> Void)
+    func createServer(_ request: ServerRequest, _ completion: @escaping (Server?, Error?) -> Void)
 }
 
 struct ServerRepository: Networkable, ServerRepositoryProtocol {
@@ -42,6 +43,21 @@ struct ServerRepository: Networkable, ServerRepositoryProtocol {
                 
                 return completion(response, nil)
             
+            case .failure(let error):
+                return completion(nil, error)
+            }
+        }
+    }
+    
+    func createServer(_ request: ServerRequest, _ completion: @escaping (Server?, Error?) -> Void) {
+        makeProvider().request(.createServer(param: request)) { result in
+            switch BaseResponse<Server>.processResponse(result) {
+            case .success(let response):
+                guard let response = response else {
+                    return
+                }
+
+                return completion(response, nil)
             case .failure(let error):
                 return completion(nil, error)
             }
