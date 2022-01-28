@@ -20,7 +20,6 @@ class MenuView: BaseView {
     }
     
     override func bindConstraints() {
-        
         serverView.snp.makeConstraints {
             $0.width.equalTo(80)
             $0.left.equalToSuperview()
@@ -43,9 +42,9 @@ extension Reactive where Base: MenuView {
         }
     }
     
-    var categories: Binder<[Category]> {
-        return Binder(self.base) { view, categoryList in
-            view.channelView.bind(categoryList: categoryList)
+    var communityInfo: Binder<CommunityInfo> {
+        return Binder(self.base) { view, communityInfo in
+            view.channelView.bind(communityInfo: communityInfo)
         }
     }
 }

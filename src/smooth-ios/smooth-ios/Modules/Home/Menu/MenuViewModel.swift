@@ -25,13 +25,13 @@ class MenuViewModel: BaseViewModel {
         let showLoading = PublishRelay<Bool>()
         
         let servers = PublishRelay<[Server]>()
-        let categories = PublishRelay<[Category]>()
+        let communityInfo = PublishRelay<CommunityInfo>()
         let goToAddServer = PublishRelay<Void>()
     }
     
     struct Model {
         var servers: [Server]?
-        var categories: [Category]?
+        var communityInfo: CommunityInfo?
     }
     
     init(serverRepository: ServerRepository) {
@@ -66,12 +66,10 @@ class MenuViewModel: BaseViewModel {
                 return
             }
 
+            self.model.communityInfo = response
             
-            self.model.categories = response.categories
-            
-            self.output.categories.accept(response.categories)
+            self.output.communityInfo.accept(response)
             self.output.showLoading.accept(false)
-            
         }
     }
 
