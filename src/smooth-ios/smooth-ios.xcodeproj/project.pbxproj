@@ -63,6 +63,7 @@
 		C1786DFA27A2625600170D4F /* InviteServerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1786DF927A2625600170D4F /* InviteServerViewModel.swift */; };
 		C1786DFD27A27CDB00170D4F /* InviteFriendListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1786DFC27A27CDB00170D4F /* InviteFriendListCell.swift */; };
 		C1786DFF27A27FAA00170D4F /* BaseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1786DFE27A27FAA00170D4F /* BaseTableViewCell.swift */; };
+		C1786E0127A2D3ED00170D4F /* JoinServerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1786E0027A2D3ED00170D4F /* JoinServerViewModel.swift */; };
 		C1B63F5827A104F900382BF6 /* ImagePickerController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B63F5727A104F900382BF6 /* ImagePickerController+Rx.swift */; };
 		C1D47EC32779570000DBA3CA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EC22779570000DBA3CA /* AppDelegate.swift */; };
 		C1D47ECC2779570200DBA3CA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C1D47ECB2779570200DBA3CA /* Assets.xcassets */; };
@@ -164,6 +165,7 @@
 		C1786DF927A2625600170D4F /* InviteServerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteServerViewModel.swift; sourceTree = "<group>"; };
 		C1786DFC27A27CDB00170D4F /* InviteFriendListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteFriendListCell.swift; sourceTree = "<group>"; };
 		C1786DFE27A27FAA00170D4F /* BaseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTableViewCell.swift; sourceTree = "<group>"; };
+		C1786E0027A2D3ED00170D4F /* JoinServerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinServerViewModel.swift; sourceTree = "<group>"; };
 		C1B63F5727A104F900382BF6 /* ImagePickerController+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ImagePickerController+Rx.swift"; sourceTree = "<group>"; };
 		C1D47EBF2779570000DBA3CA /* smooth-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "smooth-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C1D47EC22779570000DBA3CA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -335,6 +337,7 @@
 			children = (
 				C102416A279FBAE400B702DB /* JoinServerViewController.swift */,
 				C102416C279FBBA100B702DB /* JoinServerView.swift */,
+				C1786E0027A2D3ED00170D4F /* JoinServerViewModel.swift */,
 			);
 			path = Join;
 			sourceTree = "<group>";
@@ -775,6 +778,7 @@
 				C1D47EEE27795D1300DBA3CA /* BaseView.swift in Sources */,
 				2709161E27912DA300A0772D /* FriendListViewModel.swift in Sources */,
 				C102416B279FBAE400B702DB /* JoinServerViewController.swift in Sources */,
+				C1786E0127A2D3ED00170D4F /* JoinServerViewModel.swift in Sources */,
 				C102417E27A005E300B702DB /* RegisterIconViewModel.swift in Sources */,
 				C1786DF427A2390100170D4F /* Data+Extension.swift in Sources */,
 				C1786DFD27A27CDB00170D4F /* InviteFriendListCell.swift in Sources */,

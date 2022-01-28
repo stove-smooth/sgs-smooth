@@ -7,12 +7,14 @@
 
 import Foundation
 import Moya
+import UIKit
 
 enum ServerTarget {
     case fetchServer
     case getServerById(param: Int)
     case createServer(param: ServerRequest)
     case createInvitation(param: Int)
+    case joinServer(param: String)
 }
 
 extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
@@ -27,6 +29,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
             return "/community-server/community"
         case .createInvitation:
             return "/community-server/community/invitation"
+        case .joinServer:
+            return "/community-server/community/member"
         }
     }
     
@@ -36,6 +40,7 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
         case .getServerById: return .get
         case .createServer: return .post
         case .createInvitation: return .post
+        case .joinServer: return .post
         }
     }
 
@@ -68,6 +73,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
             return .uploadMultipart(multipartFromData)
         case .createInvitation(let serverId):
             return .requestParameters(parameters: ["id": serverId], encoding: JSONEncoding.default)
+        case .joinServer(let serverCode):
+            return .requestParameters(parameters: ["code": serverCode], encoding: JSONEncoding.default)
         }
     }
     
@@ -80,6 +87,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
         case .createServer:
             return .custom("")
         case .createInvitation:
+            return .custom("")
+        case .joinServer:
             return .custom("")
         }
     }
