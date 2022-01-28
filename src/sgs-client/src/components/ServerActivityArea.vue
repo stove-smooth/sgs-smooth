@@ -1,7 +1,11 @@
 <template>
   <div class="server-chatting-container">
-    <div class="message-container">
-      <div class="thin-scrollbar server-chat-scroller">
+    <div
+      id="server-chat-scroll"
+      class="thin-scrollbar server-chat-scroller"
+      ref="messageContainer"
+    >
+      <div>
         <VEmojiPicker
           v-show="this.emojiPopout"
           class="emoji-picker-popout"
@@ -272,16 +276,16 @@
 <script>
 import { VEmojiPicker } from "v-emoji-picker";
 
-import { converToThumbnail } from "../utils/common.js";
+import { converToThumbnail, dataUrlToFile } from "../utils/common.js";
 import { mapState, mapMutations, mapGetters } from "vuex";
-import { sendImageChatting } from "../api/index";
+import { sendImageChatting, readChatMessage } from "../api/index";
 export default {
   components: {
     VEmojiPicker,
   },
   data() {
     return {
-      happyList: [
+      /* happyList: [
         { profileImage: "null", name: "dd", time: "12시", message: "dd" },
         { profileImage: "null", name: "dd", time: "12시", message: "dd" },
         { profileImage: "null", name: "dd", time: "12시", message: "dd" },
@@ -300,17 +304,19 @@ export default {
         { profileImage: "null", name: "dd", time: "12시", message: "dd" },
         { profileImage: "null", name: "dd", time: "12시", message: "dd" },
         { profileImage: "null", name: "dd", time: "12시", message: "dd" },
-      ],
+      ], */
       messageHovered: "",
       text: "",
       images: [],
       thumbnails: [],
       receiveList: [],
+      thumbnailFiles: [],
       emojiPopout: false,
     };
   },
   mounted() {
     window.addEventListener("click", this.onClick);
+    this.scrollToBottom();
   },
   computed: {
     ...mapState("user", ["nickname"]),
@@ -322,8 +328,22 @@ export default {
     ]),
     ...mapGetters("user", ["getUserId"]),
   },
-  created() {
-    console.log(this.$route.params.channelid);
+  async created() {
+    const result = await readChatMessage(
+      this.$route.params.channelid,
+      this.getUserId
+    );
+    for (var i = 0; i < result.data.result.length; i++) {
+      const translatedTime = this.convertFromStringToDate(
+        result.data.result[i].time
+      );
+      result.data.result[i].time = translatedTime;
+      result.data.result[i].message = this.urlify(
+        result.data.result[i].message
+      );
+      this.receiveList.push(result.data.result[i]);
+    }
+    this.scrollToBottom();
     this.stompSocketClient.subscribe(
       "/topic/group/" + this.$route.params.channelid,
       (res) => {
@@ -344,7 +364,6 @@ export default {
       "setMessageEditId",
     ]),
     sendMessage(e) {
-      console.log("text", this.text);
       if (e.keyCode == 13 && !e.shiftKey && this.stompSocketConnected) {
         if (this.text.trim().length == 0 && this.images.length == 0) {
           return;
@@ -366,7 +385,12 @@ export default {
       for (var i = 0; i < this.$refs["images"].files.length; i++) {
         this.images.push(this.$refs["images"].files[i]);
         let thumbnail = await converToThumbnail(this.$refs["images"].files[i]);
+
+        let thumbnailFile = await dataUrlToFile(thumbnail);
         this.thumbnails.push(thumbnail);
+        this.thumbnailFiles.push(thumbnailFile);
+
+        console.log("image", this.images, "thumbnail", this.thumbnails);
       }
     },
     deleteAttachment(index) {
@@ -374,8 +398,6 @@ export default {
       this.images.splice(index, 1);
     },
     send() {
-      console.log("Send message:" + this.text);
-      console.log("chid", this.$route.params.channelid);
       if (this.stompSocketClient && this.stompSocketClient.connected) {
         const msg = {
           content: this.text,
@@ -390,17 +412,18 @@ export default {
       }
     },
     async sendPicture() {
-      console.log("보내는 이미지", this.images);
       const formData = new FormData();
       for (let i = 0; i < this.images.length; i++) {
-        formData.append("image", this.images[i]);
+        formData.append("image", this.thumbnailFiles[i]);
       }
       try {
-        const result = await sendImageChatting(
+        await sendImageChatting(
           formData,
-          this.$route.params.channelid
+          this.$route.params.channelid,
+          this.getUserId
         );
-        console.log("sendpictureresult", result);
+        this.images = [];
+        this.thumbnails = [];
       } catch (err) {
         console.log("errrr", err.response);
       }
@@ -439,17 +462,9 @@ export default {
     },
     convertFromStringToDate(responseDate) {
       var time = {};
-      console.log(responseDate);
       let dateComponents = responseDate.split("T");
-      let datePieces = dateComponents[0].split("-");
+      dateComponents[0].split("-");
       let timePieces = dateComponents[1].split(":");
-      console.log(
-        datePieces[0],
-        datePieces[1],
-        datePieces[2],
-        timePieces[0],
-        timePieces[1]
-      );
       if (parseInt(timePieces[0]) + 9 < 24) {
         time.hour = parseInt(timePieces[0]) + 9;
       } else {
@@ -469,6 +484,14 @@ export default {
       return text.replace(urlRegex, function (url) {
         return `<img alt="이미지" src="${url}"/>`;
       });
+    },
+    scrollToBottom() {
+      let messageContainer = document.getElementById("server-chat-scroll");
+      /* let messageContainer = this.$refs["messageContainer"]; */
+      /* console.log(messageContainer.scrollHeight); */
+      //messageContainer.scroll(0, 20000);
+      /* messageContainer.scrollTop = messageContainer.scrollHeight; */
+      messageContainer.scrollIntoView({ behavior: "smooth", block: "end" });
     },
   },
 };

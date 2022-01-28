@@ -96,11 +96,11 @@ function createNewChannel(channelData) {
 function moveCategory(categoryData) {
   return instance.patch("community-server/category/location", categoryData);
 }
-async function sendImageChatting(userData, channelId) {
+async function sendImageChatting(userData, channelId, userId) {
   try {
     const accesstoken = await store.getters["user/getAccessToken"];
     const response = await axios.post(
-      `http://52.79.229.100:8000/chat-server/channel/file?ch_id=${channelId}`,
+      `http://52.79.229.100:8000/chat-server/channel/file?ch_id=${channelId}&user_id=${userId}`,
       userData,
       {
         headers: {
@@ -131,6 +131,11 @@ function exitCommunity(communityId, userId) {
 function joinCommunity(communityHashCode) {
   return instance.post(`community-server/community/member`, communityHashCode);
 }
+function readChatMessage(ch_id, user_id) {
+  return instance.get(
+    `chat-server/community?ch_id=${ch_id}&user_id=${user_id}`
+  );
+}
 export {
   registerUser,
   loginUser,
@@ -157,4 +162,5 @@ export {
   deleteChannel,
   exitCommunity,
   joinCommunity,
+  readChatMessage,
 };
