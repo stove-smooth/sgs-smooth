@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import static com.example.signalingserver.util.type.Property.*;
+import static com.example.signalingserver.SignalingServerApplication.IP;
 
 @Slf4j
 @Component
@@ -47,6 +48,7 @@ public class MessageHandler extends TextWebSocketHandler {
 
     public static final String ID = "id";
     public static final String PIPELINE = "-pipeline";
+    private static final String SERVER = "server-";
     private static final long TIME = 24 * 60 * 60 * 1000L;
 
     @Override
@@ -123,6 +125,8 @@ public class MessageHandler extends TextWebSocketHandler {
         registry.register(user);
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
         setOperations.add(roomId, userId);
+
+        setOperations.add(SERVER + IP, roomId);
     }
 
     private void leave(UserSession user) throws IOException {
@@ -141,5 +145,7 @@ public class MessageHandler extends TextWebSocketHandler {
                     .filter(pipeline -> pipeline.getId().equals(room.getPipeLineId()))
                     .findAny().ifPresent(pipeline -> pipeline.release());
         }
+
+        setOperations.remove(SERVER + IP, room.getRoomId());
     }
 }

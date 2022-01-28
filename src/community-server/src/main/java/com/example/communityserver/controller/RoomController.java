@@ -149,4 +149,14 @@ public class RoomController {
         roomService.deleteMember(Long.parseLong(userId), roomId, memberId);
         return responseService.getSuccessResponse();
     }
+
+    @GetMapping("{roomId}/address")
+    public DataResponse<AddressResponse> getConnectAddress(
+            @RequestHeader(ID) String userId,
+            @PathVariable Long roomId
+    ) {
+        log.info("GET /community-server/room/{}/address", roomId);
+        AddressResponse response = roomService.getConnectAddress(Long.parseLong(userId), roomId);
+        return responseService.getDataResponse(response);
+    }
 }

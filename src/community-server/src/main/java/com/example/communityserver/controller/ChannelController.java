@@ -1,10 +1,7 @@
 package com.example.communityserver.controller;
 
 import com.example.communityserver.dto.request.*;
-import com.example.communityserver.dto.response.ChannelDetailResponse;
-import com.example.communityserver.dto.response.ChannelResponse;
-import com.example.communityserver.dto.response.CommonResponse;
-import com.example.communityserver.dto.response.DataResponse;
+import com.example.communityserver.dto.response.*;
 import com.example.communityserver.service.ChannelService;
 import com.example.communityserver.service.ResponseService;
 import lombok.RequiredArgsConstructor;
@@ -162,6 +159,19 @@ public class ChannelController {
     ) {
         log.info("POST /community-server/channel/copy");
         ChannelResponse response = channelService.copy(Long.parseLong(userId), request);
+        return responseService.getDataResponse(response);
+    }
+
+    /**
+     * TODO 연결해야 할 시그널링 서버 알려주기
+     */
+    @GetMapping("/{channelId}/address")
+    public DataResponse<AddressResponse> getConnectAddress(
+            @RequestHeader(ID) String userId,
+            @PathVariable Long channelId
+    ) {
+        log.info("GET /community-server/channel/{}/address", channelId);
+        AddressResponse response = channelService.getConnectAddress(Long.parseLong(userId), channelId);
         return responseService.getDataResponse(response);
     }
 

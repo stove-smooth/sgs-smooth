@@ -12,10 +12,8 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import static com.example.signalingserver.config.MessageHandler.ID;
 import static com.example.signalingserver.util.type.Message.iceCandidate;
 import static com.example.signalingserver.util.type.Message.receiveVideoAnswer;
-import static com.example.signalingserver.util.type.Property.*;
 
 @Slf4j
 public class UserSession implements Closeable {
