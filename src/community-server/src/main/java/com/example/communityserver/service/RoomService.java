@@ -15,6 +15,8 @@ import com.example.communityserver.util.AmazonS3Connector;
 import com.example.communityserver.util.Base62;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +34,8 @@ public class RoomService {
     @Value("${smooth.url}")
     private String HOST_ADDRESS;
     private String ROOM_INVITATION_PREFIX = "/r/";
+
+    private final RedisTemplate redisTemplate;
 
     private final RoomRepository roomRepository;
     private final RoomMemberRepository roomMemberRepository;
@@ -353,5 +357,34 @@ public class RoomService {
                 .getUserId();
 
         return ownerId.equals(userId);
+    }
+
+    public AddressResponse getConnectAddress(Long userId, Long roomId) {
+       roomRepository.findById(roomId)
+                .filter(r -> r.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_ROOM));
+
+        String address = getInstance(roomId);
+
+        return new AddressResponse("https://sig.yoloyolo.org/rtc");
+    }
+
+    private String getInstance(Long roomId) {
+        List<String> keys = (List<String>) redisTemplate.keys("*").stream()
+                .filter(k -> String.valueOf(k).contains("server"))
+                .collect(Collectors.toList());
+
+        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+        String leastUsedInstance = keys.get(0);
+        int min = -1;
+        for (String key: keys) {
+            if (setOperations.members(key).contains("r" + roomId))
+                return key.split("-")[1];
+            if (min < setOperations.members(key).size()) {
+                leastUsedInstance = key;
+                min = setOperations.members(key).size();
+            }
+        }
+        return leastUsedInstance.split("-")[1];
     }
 }

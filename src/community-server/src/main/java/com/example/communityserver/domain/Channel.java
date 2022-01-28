@@ -135,23 +135,6 @@ public class Channel extends BaseTimeEntity {
         return thread;
     }
 
-    public void locate(Channel tobe, Channel first) {
-        if (Objects.isNull(this.beforeNode)) {
-            this.nextNode.setBeforeNode(null);
-            this.setNextNode(tobe.getNextNode());
-            tobe.setNextNode(this);
-        } else {
-            this.beforeNode.setNextNode(this.nextNode);
-            if (Objects.isNull(tobe)) {
-                this.setBeforeNode(null);
-                this.setNextNode(first);
-            } else {
-                this.setNextNode(tobe.getNextNode());
-                tobe.setNextNode(this);
-            }
-        }
-    }
-
     public void delete() {
         if (Objects.isNull(this.beforeNode)) {
             if (!Objects.isNull(this.nextNode)) {
