@@ -11,7 +11,7 @@ import RxSwift
 
 protocol ServerRepositoryProtocol {
     func fetchServer(_ completion: @escaping ([Server]?, MoyaError?) -> Void)
-    func getServerById(_ request: Int, _ completion: @escaping (CommunityResponse?, MoyaError?) -> Void)
+    func getServerById(_ request: Int, _ completion: @escaping (CommunityInfo?, MoyaError?) -> Void)
     func createServer(_ request: ServerRequest, _ completion: @escaping (Server?, MoyaError?) -> Void)
     
     func createInvitation(_ serverId: Int, _ completion: @escaping (String?, MoyaError?) -> Void)
@@ -36,9 +36,9 @@ struct ServerRepository: Networkable, ServerRepositoryProtocol {
         }
     }
     
-    func getServerById(_ request: Int, _ completion: @escaping (CommunityResponse?, MoyaError?) -> Void) {
+    func getServerById(_ request: Int, _ completion: @escaping (CommunityInfo?, MoyaError?) -> Void) {
         makeProvider().request(.getServerById(param: request)) { result in
-            switch BaseResponse<CommunityResponse>.processResponse(result) {
+            switch BaseResponse<CommunityInfo>.processResponse(result) {
             case .success(let response):
                 guard let response = response else {
                     return
