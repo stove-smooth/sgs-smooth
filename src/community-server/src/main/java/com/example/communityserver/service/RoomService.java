@@ -366,7 +366,7 @@ public class RoomService {
 
         String address = getInstance(roomId);
 
-        return new AddressResponse(address);
+        return new AddressResponse("https://sig.yoloyolo.org/rtc");
     }
 
     private String getInstance(Long roomId) {
