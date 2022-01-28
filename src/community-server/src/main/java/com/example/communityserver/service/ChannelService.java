@@ -2,20 +2,21 @@ package com.example.communityserver.service;
 
 import com.example.communityserver.client.UserClient;
 import com.example.communityserver.domain.*;
-import com.example.communityserver.domain.type.ChannelStatus;
-import com.example.communityserver.domain.type.CommonStatus;
-import com.example.communityserver.domain.type.CommunityMemberStatus;
-import com.example.communityserver.domain.type.CommunityRole;
+import com.example.communityserver.domain.type.*;
 import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.CategoryRepository;
 import com.example.communityserver.repository.ChannelRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.example.communityserver.dto.response.MemberResponse.fromEntity;
@@ -25,6 +26,8 @@ import static com.example.communityserver.exception.CustomExceptionStatus.*;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ChannelService {
+
+    private final RedisTemplate redisTemplate;
 
     private final CategoryRepository categoryRepository;
     private final ChannelRepository channelRepository;
@@ -246,19 +249,18 @@ public class ChannelService {
 
         for (Long memberId: request.getMembers()) {
             isMemberInCommunity(community, memberId);
-            isContains(channel, memberId);
+            if (isContains(channel, memberId))
+                throw new CustomException(ALREADY_INVITED);
             channel.addMember(new ChannelMember(memberId));
         }
     }
 
-    private void isContains(Channel channel, Long memberId) {
-        boolean isContains = channel.getMembers().stream()
+    private boolean isContains(Channel channel, Long memberId) {
+        return channel.getMembers().stream()
                 .filter(member -> member.isStatus())
                 .map(ChannelMember::getUserId)
                 .collect(Collectors.toList())
                 .contains(memberId);
-        if (isContains)
-            throw new CustomException(ALREADY_INVITED);
     }
 
     private void isMemberInCommunity(Community community, Long memberId) {
@@ -411,5 +413,35 @@ public class ChannelService {
                 }
             }
         }
+    }
+
+    public AddressResponse getConnectAddress(Long userId, Long channelId) {
+        channelRepository.findById(channelId)
+                .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
+                .filter(c -> c.getType().equals(ChannelType.VOICE))
+                .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
+
+        String address = getInstance(channelId);
+
+        return new AddressResponse(address);
+    }
+
+    private String getInstance(Long channelId) {
+        List<String> keys = (List<String>) redisTemplate.keys("*").stream()
+                .filter(k -> String.valueOf(k).contains("server"))
+                .collect(Collectors.toList());
+
+        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+        String leastUsedInstance = keys.get(0);
+        int min = -1;
+        for (String key: keys) {
+            if (setOperations.members(key).contains("c" + channelId))
+                return key.split("-")[1];
+            if (min < setOperations.members(key).size()) {
+                leastUsedInstance = key;
+                min = setOperations.members(key).size();
+            }
+        }
+        return leastUsedInstance.split("-")[1];
     }
 }
