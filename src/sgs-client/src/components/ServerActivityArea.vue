@@ -1,20 +1,16 @@
 <template>
   <div class="server-chatting-container">
-    <div
-      id="server-chat-scroll"
-      class="thin-scrollbar server-chat-scroller"
-      ref="messageContainer"
-    >
+    <div class="thin-scrollbar server-chat-scroller">
+      <VEmojiPicker
+        v-show="this.emojiPopout"
+        class="emoji-picker-popout"
+        labelSearch="Search"
+        lang="pt-BR"
+        @select="onSelectEmoji"
+      />
       <div>
-        <VEmojiPicker
-          v-show="this.emojiPopout"
-          class="emoji-picker-popout"
-          labelSearch="Search"
-          lang="pt-BR"
-          @select="onSelectEmoji"
-        />
         <div class="scroller-content">
-          <ol class="scroller-inner">
+          <ol id="server-chat-scroll-bottom" class="scroller-inner">
             <div v-for="(item, idx) in receiveList" :key="idx">
               <li
                 class="chat-message-wrapper"
@@ -73,17 +69,6 @@
                       <template v-else>{{ item.message }}</template>
                     </div>
                   </div>
-                  <!-- <div class="chat-message-accessories">
-                    <div class="chat-message-attachment" v-if="false">
-                      <a
-                        class="chat-message-image-wrapper"
-                        href="https://cdn.discordapp.com/attachments/933212892466118726/934732073661509642/axios-logo.png"
-                        ><img
-                        alt="이미지"
-                        src="https://sgs-smooth.s3.ap-northeast-2.amazonaws.com/dicord_green.png"
-                      /></a>
-                    </div>
-                  </div> -->
                   <div
                     class="chat-message-plus-action-container"
                     v-show="messageHovered === idx || messagePlusMenu === idx"
@@ -140,6 +125,7 @@
                 </div>
               </li>
             </div>
+            <div ref="bottomRef"></div>
           </ol>
         </div>
       </div>
@@ -285,26 +271,6 @@ export default {
   },
   data() {
     return {
-      /* happyList: [
-        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
-        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
-        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
-        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
-        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
-        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
-        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
-        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
-        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
-        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
-        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
-        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
-        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
-        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
-        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
-        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
-        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
-        { profileImage: "null", name: "dd", time: "12시", message: "dd" },
-      ], */
       messageHovered: "",
       text: "",
       images: [],
@@ -316,7 +282,6 @@ export default {
   },
   mounted() {
     window.addEventListener("click", this.onClick);
-    this.scrollToBottom();
   },
   computed: {
     ...mapState("user", ["nickname"]),
@@ -343,7 +308,6 @@ export default {
       );
       this.receiveList.push(result.data.result[i]);
     }
-    this.scrollToBottom();
     this.stompSocketClient.subscribe(
       "/topic/group/" + this.$route.params.channelid,
       (res) => {
@@ -355,6 +319,14 @@ export default {
         this.receiveList.push(receivedForm);
       }
     );
+  },
+  watch: {
+    receiveList: function (newVal, oldVal) {
+      console.log("값이 변경되었습니다.", newVal, oldVal);
+      setTimeout(() => {
+        this.scrollToBottom();
+      }, 1000);
+    },
   },
   methods: {
     ...mapMutations("utils", ["setClientX", "setClientY"]),
@@ -486,12 +458,9 @@ export default {
       });
     },
     scrollToBottom() {
-      let messageContainer = document.getElementById("server-chat-scroll");
-      /* let messageContainer = this.$refs["messageContainer"]; */
-      /* console.log(messageContainer.scrollHeight); */
-      //messageContainer.scroll(0, 20000);
-      /* messageContainer.scrollTop = messageContainer.scrollHeight; */
-      messageContainer.scrollIntoView({ behavior: "smooth", block: "end" });
+      console.log("웨 안바끼냐 ㅋ");
+      let bottomRef = this.$refs["bottomRef"];
+      bottomRef.scrollIntoView({ behavior: "smooth" });
     },
   },
 };
@@ -539,6 +508,9 @@ export default {
   overflow: hidden scroll;
   padding-right: 0px;
   width: 100%;
+  flex: 1;
+  align-items: flex-end;
+  display: flex;
 }
 .scroller-content {
   overflow-anchor: none;
@@ -1028,7 +1000,7 @@ export default {
 .emoji-picker-popout {
   background-color: #2f3136 !important;
   position: absolute;
-  bottom: 0;
+  bottom: 70px;
   right: 0;
   z-index: 10;
 }
