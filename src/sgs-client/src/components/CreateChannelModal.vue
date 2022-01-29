@@ -100,7 +100,9 @@
             >
               <div>채널 만들기</div>
             </button>
-            <button class="back-button" @click="closeModal">취소</button>
+            <button class="back-button" @click="closeModal" type="button">
+              취소
+            </button>
           </div>
         </template>
       </modal>

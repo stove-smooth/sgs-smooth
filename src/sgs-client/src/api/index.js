@@ -96,6 +96,12 @@ function createNewChannel(channelData) {
 function moveCategory(categoryData) {
   return instance.patch("community-server/category/location", categoryData);
 }
+function moveChannel(channelData) {
+  return instance.patch("community-server/channel/location", channelData);
+}
+function moveCommunity(communityData) {
+  return instance.patch("community-server/community/location", communityData);
+}
 async function sendImageChatting(userData, channelId, userId) {
   try {
     const accesstoken = await store.getters["user/getAccessToken"];
@@ -156,6 +162,7 @@ export {
   deleteCategory,
   createNewChannel,
   moveCategory,
+  moveChannel,
   sendImageChatting,
   deleteCommunity,
   createInvitation,
@@ -163,4 +170,5 @@ export {
   exitCommunity,
   joinCommunity,
   readChatMessage,
+  moveCommunity,
 };

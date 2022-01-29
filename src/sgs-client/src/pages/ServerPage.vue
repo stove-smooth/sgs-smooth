@@ -7,7 +7,7 @@
       </div>
 
       <div class="server-activity-container" :key="$route.params.channelid">
-        <template v-if="true">
+        <template v-if="false">
           <server-chatting-menu-bar></server-chatting-menu-bar>
           <div class="server-activity-container1">
             <server-activity-area></server-activity-area>
