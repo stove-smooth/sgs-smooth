@@ -36,47 +36,49 @@
         </div>
         <div aria-label="서버">
           <!--서버 개수만큼 만들기.-->
-          <div v-for="community in communityList" :key="community.id">
-            <div
-              class="listItem"
-              @mouseover="hover(community.id)"
-              @mouseleave="hover('')"
-              @click="enterServer(community.id)"
-            >
+          <draggable :list="communityList" @change="log" group="community">
+            <div v-for="community in communityList" :key="community.id">
               <div
-                class="selected-wrapper"
-                v-show="hovered == community.id || selected == community.id"
+                class="listItem"
+                @mouseover="hover(community.id)"
+                @mouseleave="hover('')"
+                @click="enterServer(community.id)"
               >
-                <span class="selected-item"></span>
-              </div>
-              <div draggable="true">
-                <div class="listItem-wrapper">
-                  <div class="server-wrapper" v-if="community.icon">
-                    <img
-                      :src="community.icon"
-                      alt="image"
-                      class="server-nav-image"
-                      v-bind:class="{
-                        'selected-border-radius':
-                          hovered == community.id || selected == community.id,
-                      }"
-                    />
-                  </div>
-                  <div class="server-wrapper" v-else>
-                    <div
-                      class="server"
-                      v-bind:class="{
-                        'selected-border-radius':
-                          hovered == community.id || selected == community.id,
-                      }"
-                    >
-                      {{ community.name }}
+                <div
+                  class="selected-wrapper"
+                  v-show="hovered == community.id || selected == community.id"
+                >
+                  <span class="selected-item"></span>
+                </div>
+                <div draggable="true">
+                  <div class="listItem-wrapper">
+                    <div class="server-wrapper" v-if="community.icon">
+                      <img
+                        :src="community.icon"
+                        alt="image"
+                        class="server-nav-image"
+                        v-bind:class="{
+                          'selected-border-radius':
+                            hovered == community.id || selected == community.id,
+                        }"
+                      />
+                    </div>
+                    <div class="server-wrapper" v-else>
+                      <div
+                        class="server"
+                        v-bind:class="{
+                          'selected-border-radius':
+                            hovered == community.id || selected == community.id,
+                        }"
+                      >
+                        {{ community.name }}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          </draggable>
         </div>
         <div class="primary-container">
           <div class="listItem" @click="setCreateServer(true)">
@@ -96,15 +98,18 @@
 </template>
 
 <script>
+import draggable from "vuedraggable";
 import { mapState, mapMutations, mapActions } from "vuex";
+import { moveCommunity } from "../api";
 import NumberBadge from "./common/NumberBadge.vue";
 export default {
-  components: { NumberBadge },
+  components: { NumberBadge, draggable },
   data() {
     return {
       hovered: "",
       selected: "@me",
       images: "",
+      new: 0,
     };
   },
   methods: {
@@ -128,6 +133,22 @@ export default {
     enterMe(index) {
       this.$router.push("/channels/@me");
       this.select(index);
+    },
+    log: async function (evt) {
+      if (evt.moved.newIndex == 0) {
+        this.new = 0;
+      } else {
+        this.new = this.communityList[evt.moved.newIndex - 1].id;
+      }
+      const communityInfo = {
+        id: evt.moved.element.id,
+        next: this.new,
+      };
+      try {
+        await moveCommunity(communityInfo);
+      } catch (err) {
+        console.log(err.response);
+      }
     },
   },
   computed: {

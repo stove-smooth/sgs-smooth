@@ -170,7 +170,7 @@
 <script>
 import draggable from "vuedraggable";
 import { mapState, mapMutations } from "vuex";
-import { moveCategory } from "../api/index.js";
+import { moveCategory, moveChannel } from "../api/index.js";
 export default {
   components: {
     draggable,
@@ -219,16 +219,42 @@ export default {
           console.log(
             "채널이 카테고리 내에서 움직임,채널 아이디, 변경할 위치 위에 있는 채널 아이디."
           );
-          console.log(evt);
+          console.log("카테고리아이디", evt.moved.element.categoryId);
           console.log("채널아이디", evt.moved.element.id);
           if (evt.moved.newIndex == 0) {
             //맨위일경우.
             this.new = 0;
           } else {
+            for (var i = 0; i < this.communityInfo.categories.length; i++) {
+              console.log(this.communityInfo.categories[i].id);
+              if (
+                evt.moved.element.categoryId ==
+                this.communityInfo.categories[i].id
+              ) {
+                this.new =
+                  this.communityInfo.categories[i].channels[
+                    evt.moved.newIndex - 1
+                  ].id;
+                break;
+              }
+            }
+            console.log(this.new);
             //아닐경우.
-            console.log(
-              "맨위가 아닐땐 ,this.communityInfo.categories[?][evt.moved.newIndex-1].id 이걸로 해야하는디.?"
-            );
+            /* this.new =
+              this.communityInfo.categories[evt.moved.element.categoryId][
+                evt.moved.newIndex - 1
+              ].id; */
+          }
+          const movedChannelInfo = {
+            id: evt.moved.element.id,
+            next: this.new,
+          };
+          console.log(movedChannelInfo.id, movedChannelInfo.next);
+          try {
+            const result = await moveChannel(movedChannelInfo);
+            console.log(result);
+          } catch (err) {
+            console.log(err.response);
           }
         }
       } else {

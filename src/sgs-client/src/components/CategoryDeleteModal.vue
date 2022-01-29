@@ -36,16 +36,26 @@ import { deleteCategory } from "../api/index.js";
 export default {
   components: { Modal },
   computed: {
-    ...mapState("server", ["categoryReadyToDelete"]),
+    ...mapState("server", ["categoryReadyToDelete", "communityInfo"]),
   },
   methods: {
-    ...mapMutations("server", ["setCategoryReadyToDelete"]),
+    ...mapMutations("server", [
+      "setCategoryReadyToDelete",
+      "setCategorySettingModal",
+      "setCommunityInfo",
+    ]),
     exitModal() {
-      this.setCategoryReadyToDelete(null);
+      this.setCategoryReadyToDelete(false);
     },
     async deleteCategory(categoryId) {
+      let tempCommunityInfo = this.communityInfo;
       await deleteCategory(categoryId);
-      this.setCategoryReadyToDelete(null);
+      let array = this.communityInfo.categories.filter(
+        (element) => element.id !== categoryId
+      );
+      tempCommunityInfo.categories = array;
+      this.setCategoryReadyToDelete(false);
+      this.setCategorySettingModal(false);
     },
   },
 };
