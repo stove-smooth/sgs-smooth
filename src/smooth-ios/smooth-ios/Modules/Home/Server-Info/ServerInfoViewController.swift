@@ -86,7 +86,7 @@ class ServerInfoViewController: BaseViewController, PanModalPresentable {
             .when(.recognized)
             .asDriver { _ in .never() }
             .drive(onNext: { _ in
-                self.coordinator?.goToEditServerInfo(server: self.server)
+                self.goToEditServerInfo(server: self.server)
             })
             .disposed(by: disposeBag)
     }
@@ -100,7 +100,6 @@ class ServerInfoViewController: BaseViewController, PanModalPresentable {
     }
     
     private func showLeaveServer() {
-        print("showLeaveServer")
         AlertUtils.showWithCancel(
             controller: self,
             title: "서버 퇴장",
@@ -108,6 +107,11 @@ class ServerInfoViewController: BaseViewController, PanModalPresentable {
         ) {
             self.viewModel.input.tapLeaveServer.onNext(())
         }
+    }
+    
+    private func goToEditServerInfo(server: Server) {
+        self.dismiss(animated: true, completion: nil)
+        self.coordinator?.goToEditServerInfo(server: self.server)
     }
 }
 

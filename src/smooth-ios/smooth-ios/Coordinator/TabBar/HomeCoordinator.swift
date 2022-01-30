@@ -50,10 +50,17 @@ class HomeCoordinator: NSObject, Coordinator {
         coordinator.start()
     }
     
-    func showServerInfoModal(communityInfo: CommunityInfo) {
-        let serverInfoVC = ServerInfoViewController.instance(communityInfo: communityInfo)
+    func showServerInfoModal(server: Server, member: Member) {
+        let serverInfoVC = ServerInfoViewController.instance(server: server, member: member)
         serverInfoVC.coordinator = self
         
         navigationController.presentPanModal(serverInfoVC)
+    }
+    
+    func goToEditServerInfo(server: Server) {
+        let editVC = EditServerInfoViewController.instance(server: server)
+        
+        editVC.modalPresentationStyle = .fullScreen
+        navigationController.present(editVC, animated: true, completion: nil)
     }
 }

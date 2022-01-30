@@ -9,6 +9,7 @@ target 'smooth-ios' do
   pod 'RxSwift', '~> 6'
   pod 'RxCocoa', '~> 6'
   pod 'RxDataSources', '~> 5'
+  pod 'RxGesture'
   
   pod 'Moya', '~> 15.0.0'
   pod 'Moya/RxSwift'
