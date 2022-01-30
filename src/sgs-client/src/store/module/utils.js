@@ -5,6 +5,7 @@ const utils = {
     clientY: 0,
     stompSocketClient: null,
     stompSocketConnected: false,
+    navigationSelected: "@me",
   },
   getters: {
     getStompSocketClient: (state) => {
@@ -23,6 +24,9 @@ const utils = {
     },
     setStompSocketConnected(state, stompSocketConnected) {
       state.stompSocketConnected = stompSocketConnected;
+    },
+    setNavigationSelected(state, navigationSelected) {
+      state.navigationSelected = navigationSelected;
     },
   },
 };

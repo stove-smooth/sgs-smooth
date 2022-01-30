@@ -26,11 +26,12 @@ const server = {
     messagePlusMenu: null,
     communityInviteModal: false,
     communityOwner: false,
-    messageReplyId: "",
+    communityMessageReplyId: "",
     messageEditId: "",
     messageFixId: "",
     openFixedMessagesModal: false,
     serverMemberPlusMenu: null,
+    messageReadyToDelete: false,
   },
   mutations: {
     setCreateServer(state, createServer) {
@@ -90,8 +91,8 @@ const server = {
     setCommunityReadyToBanish(state, communityReadyToBanish) {
       state.communityReadyToBanish = communityReadyToBanish;
     },
-    setMessageReplyId(state, messageReplyId) {
-      state.messageReplyId = messageReplyId;
+    setCommunityMessageReplyId(state, communityMessageReplyId) {
+      state.communityMessageReplyId = communityMessageReplyId;
     },
     setMessageEditId(state, messageEditId) {
       state.messageEditId = messageEditId;
@@ -104,6 +105,9 @@ const server = {
     },
     setServerMemberPlusMenu(state, serverMemberPlusMenu) {
       state.serverMemberPlusMenu = serverMemberPlusMenu;
+    },
+    setMessageReadyToDelete(state, messageReadyToDelete) {
+      state.messageReadyToDelete = messageReadyToDelete;
     },
   },
   actions: {

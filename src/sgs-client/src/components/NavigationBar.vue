@@ -7,11 +7,11 @@
             class="listItem"
             @mouseover="hover('@me')"
             @mouseleave="hover('')"
-            @click="enterMe('@me')"
+            @click="enter('@me')"
           >
             <div
               class="selected-wrapper"
-              v-show="hovered === '@me' || selected === '@me'"
+              v-show="hovered === '@me' || navigationSelected === '@me'"
             >
               <span class="selected-item"></span>
             </div>
@@ -20,7 +20,7 @@
                 class="circleIcon-button"
                 v-bind:class="{
                   'circleIcon-button-hovered':
-                    hovered === '@me' || selected === '@me',
+                    hovered === '@me' || navigationSelected === '@me',
                 }"
               >
                 <svg class="discord-logo"></svg>
@@ -42,11 +42,14 @@
                 class="listItem"
                 @mouseover="hover(community.id)"
                 @mouseleave="hover('')"
-                @click="enterServer(community.id)"
+                @click="enter(community.id)"
               >
                 <div
                   class="selected-wrapper"
-                  v-show="hovered == community.id || selected == community.id"
+                  v-show="
+                    hovered == community.id ||
+                    navigationSelected == community.id
+                  "
                 >
                   <span class="selected-item"></span>
                 </div>
@@ -59,7 +62,8 @@
                         class="server-nav-image"
                         v-bind:class="{
                           'selected-border-radius':
-                            hovered == community.id || selected == community.id,
+                            hovered == community.id ||
+                            navigationSelected == community.id,
                         }"
                       />
                     </div>
@@ -68,7 +72,8 @@
                         class="server"
                         v-bind:class="{
                           'selected-border-radius':
-                            hovered == community.id || selected == community.id,
+                            hovered == community.id ||
+                            navigationSelected == community.id,
                         }"
                       >
                         {{ community.name }}
@@ -107,7 +112,6 @@ export default {
   data() {
     return {
       hovered: "",
-      selected: "@me",
       images: "",
       new: 0,
     };
@@ -115,24 +119,21 @@ export default {
   methods: {
     ...mapActions("server", ["FETCH_COMMUNITYLIST"]),
     ...mapMutations("server", ["setCreateServer"]),
+    ...mapMutations("utils", ["setNavigationSelected"]),
     hover(index) {
       this.hovered = index;
     },
     select(index) {
-      this.selected = index;
+      this.setNavigationSelected(index);
     },
     unselect() {
-      this.selected = "";
+      this.setNavigationSelected("");
     },
-    enterServer(index) {
+    enter(index) {
       if (this.$route.path !== "/channels/" + index) {
         this.$router.push("/channels/" + index);
       }
-      this.select(index);
-    },
-    enterMe(index) {
-      this.$router.push("/channels/@me");
-      this.select(index);
+      this.setNavigationSelected(index);
     },
     log: async function (evt) {
       if (evt.moved.newIndex == 0) {
@@ -154,18 +155,19 @@ export default {
   computed: {
     ...mapState("friends", ["friendsWaitNumber"]),
     ...mapState("server", ["communityList"]),
+    ...mapState("utils", ["navigationSelected"]),
   },
   async created() {
     const currentUrl = window.location.pathname;
     let array = currentUrl.split("/");
-    this.selected = array[2];
+    this.setNavigationSelected(array[2]);
     await this.FETCH_COMMUNITYLIST();
   },
   watch: {
     // 라우터의 변경을 감시
     async $route(to) {
       if (to.path == "/channels/@me") {
-        this.selected = "@me";
+        this.setNavigationSelected("@me");
       }
     },
   },

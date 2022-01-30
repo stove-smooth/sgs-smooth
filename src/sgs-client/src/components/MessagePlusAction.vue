@@ -1,24 +1,25 @@
 <template>
-  <div :style="cssProps" v-show="messagePlusMenu != null">
+  <div :style="cssProps" v-if="messagePlusMenu != null">
     <div class="message-plus-action-container">
       <div class="plus-action-wrapper">
         <div
+          v-if="messagePlusMenu.userId == getUserId"
           class="plus-action-label-container"
-          @click="setMessageEditId(messagePlusMenu)"
+          @click="setMessageEditId(messagePlusMenu.id)"
         >
           <div class="plus-action-label">메시지 수정하기</div>
           <svg class="edit-pencil"></svg>
         </div>
         <div
           class="plus-action-label-container"
-          @click="setMessageFixId(messagePlusMenu)"
+          @click="setMessageFixId(messagePlusMenu.id)"
         >
           <div class="plus-action-label">메시지 고정하기</div>
           <svg class="fixed-icon"></svg>
         </div>
         <div
           class="plus-action-label-container"
-          @click="setMessageReplyId(messagePlusMenu)"
+          @click="MessageReply(messagePlusMenu)"
         >
           <div class="plus-action-label">답장</div>
           <svg class="reply-button"></svg>
@@ -27,7 +28,10 @@
           <div class="plus-action-label">스레드 만들기</div>
           <svg class="thread-icon"></svg>
         </div>
-        <div class="plus-action-label-container hover-white">
+        <div
+          class="plus-action-label-container hover-white"
+          @click="setMessageReadyToDelete(messagePlusMenu.id)"
+        >
           <div class="plus-action-label red-color">메시지 삭제하기</div>
           <svg class="trashcan"></svg>
         </div>
@@ -37,28 +41,42 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapGetters } from "vuex";
 export default {
   computed: {
     ...mapState("utils", ["clientX", "clientY"]),
-    ...mapState("server", [
-      "messagePlusMenu",
-      "messageReplyId",
-      "messageEditId",
-    ]),
+    ...mapState("server", ["messagePlusMenu"]),
+    ...mapGetters("user", ["getUserId"]),
     cssProps() {
       return {
-        "--xpoint": this.clientX + "px",
+        "--xpoint": this.clientX - 200 + "px",
         "--ypoint": this.clientY + "px",
       };
     },
   },
   methods: {
     ...mapMutations("server", [
-      "setMessageReplyId",
+      "setCommunityMessageReplyId",
       "setMessageEditId",
       "setMessageFixId",
+      "setMessageReadyToDelete",
     ]),
+    ...mapMutations("dm", ["setDirectMessageReplyId"]),
+    MessageReply(messagePlusMenu) {
+      if (!this.$route.params.channelid) {
+        const message = {
+          channel: this.$route.params.id,
+          messageInfo: messagePlusMenu,
+        };
+        this.setDirectMessageReplyId(message);
+      } else {
+        const message = {
+          channel: this.$route.params.channelid,
+          messageInfo: messagePlusMenu,
+        };
+        this.setCommunityMessageReplyId(message);
+      }
+    },
   },
 };
 </script>

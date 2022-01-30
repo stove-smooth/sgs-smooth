@@ -2,7 +2,7 @@
   <div class="server-chatting-container">
     <div
       class="thin-scrollbar server-chat-scroller"
-      ref="scrollRef"
+      ref="bottomRef"
       @scroll="handleScroll"
     >
       <VEmojiPicker
@@ -30,8 +30,8 @@
                   v-bind:class="{
                     'others-chat-message-wrapper': item.isOther,
                     'message-replying':
-                      communityMessageReplyId !== '' &&
-                      communityMessageReplyId.messageInfo.id == item.id,
+                      directMessageReplyId !== '' &&
+                      directMessageReplyId.messageInfo.id == item.id,
                   }"
                 >
                   <div class="chat-message-content">
@@ -125,15 +125,6 @@
                         <svg class="reply-button"></svg>
                       </div>
                       <div
-                        v-show="false"
-                        class="chat-action-button"
-                        aria-label="스레드 만들기"
-                        role="button"
-                        tabindex="0"
-                      >
-                        <svg class="thread-icon"></svg>
-                      </div>
-                      <div
                         :data-key="item.id"
                         @click="clickPlusAction($event, item)"
                         class="chat-action-button"
@@ -148,6 +139,7 @@
                 </div>
               </li>
             </div>
+            <!-- <div ref="bottomRef"></div> -->
           </ol>
         </div>
       </div>
@@ -157,8 +149,8 @@
         <div
           class="attached-bar"
           v-if="
-            communityMessageReplyId !== '' &&
-            communityMessageReplyId.channel == this.$route.params.channelid
+            directMessageReplyId !== '' &&
+            directMessageReplyId.channel == this.$route.params.id
           "
         >
           <div>
@@ -168,7 +160,7 @@
                   <div role="button" tabindex="0">
                     <div class="reply-label-container">
                       <span class="large-description">
-                        {{ communityMessageReplyId.messageInfo.name }}
+                        {{ directMessageReplyId.messageInfo.name }}
                       </span>
                       님에게 답장하는 중
                     </div>
@@ -176,7 +168,7 @@
                   <div class="align-items-center">
                     <div
                       class="reply-close-button"
-                      @click="setCommunityMessageReplyId('')"
+                      @click="setDirectMessageReplyId('')"
                     >
                       <svg class="small-close-button"></svg>
                     </div>
@@ -294,7 +286,7 @@ import { VEmojiPicker } from "v-emoji-picker";
 
 import { converToThumbnail, dataUrlToFile } from "../utils/common.js";
 import { mapState, mapMutations, mapGetters } from "vuex";
-import { sendImageChatting, readChatMessage } from "../api/index";
+import { sendImageChatting, readDMChatMessage } from "../api/index";
 export default {
   components: {
     VEmojiPicker,
@@ -320,17 +312,14 @@ export default {
   computed: {
     ...mapState("user", ["nickname"]),
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
-    ...mapState("server", [
-      "messagePlusMenu",
-      "communityMessageReplyId",
-      "messageEditId",
-    ]),
+    ...mapState("server", ["messagePlusMenu", "messageEditId"]),
+    ...mapState("dm", ["directMessageReplyId"]),
     ...mapGetters("user", ["getUserId"]),
   },
   async created() {
     await this.readChannelMessage();
     this.stompSocketClient.subscribe(
-      "/topic/group/" + this.$route.params.channelid,
+      "/topic/direct/" + this.$route.params.id,
       (res) => {
         console.log("구독으로 받은 메시지 입니다.", res.body);
         const translatedTime = this.convertFromStringToDate(
@@ -365,11 +354,8 @@ export default {
   },
   methods: {
     ...mapMutations("utils", ["setClientX", "setClientY"]),
-    ...mapMutations("server", [
-      "setMessagePlusMenu",
-      "setCommunityMessageReplyId",
-      "setMessageEditId",
-    ]),
+    ...mapMutations("server", ["setMessagePlusMenu", "setMessageEditId"]),
+    ...mapMutations("dm", ["setDirectMessageReplyId"]),
     sendMessage(e) {
       if (e.keyCode == 13 && !e.shiftKey && this.stompSocketConnected) {
         if (this.text.trim().length == 0 && this.images.length == 0) {
@@ -406,11 +392,11 @@ export default {
       if (this.stompSocketClient && this.stompSocketConnected) {
         const msg = {
           content: this.text,
-          channelId: this.$route.params.channelid,
-          accountId: this.getUserId,
+          channelId: this.$route.params.id,
+          userId: this.getUserId,
         };
         this.stompSocketClient.send(
-          "/kafka/send-channel-message",
+          "/kafka/send-direct-message",
           JSON.stringify(msg),
           {}
         );
@@ -426,7 +412,6 @@ export default {
         const msg = {
           id: id,
           content: content,
-          accountId: this.getUserId,
         };
         this.stompSocketClient.send(
           "/kafka/send-channel-modify",
@@ -442,10 +427,10 @@ export default {
     },
     MessageReply(messagePlusMenu) {
       const message = {
-        channel: this.$route.params.channelid,
+        channel: this.$route.params.id,
         messageInfo: messagePlusMenu,
       };
-      this.setCommunityMessageReplyId(message);
+      this.setDirectMessageReplyId(message);
     },
     async sendPicture() {
       const formData = new FormData();
@@ -455,7 +440,7 @@ export default {
       try {
         await sendImageChatting(
           formData,
-          this.$route.params.channelid,
+          this.$route.params.id,
           this.getUserId
         );
         this.images = [];
@@ -523,12 +508,11 @@ export default {
       });
     },
     scrollToBottom() {
-      let scrollRef = this.$refs["scrollRef"];
-      scrollRef.scrollTop = scrollRef.scrollHeight;
+      let bottomRef = this.$refs["bottomRef"];
+      bottomRef.scrollTop = bottomRef.scrollHeight;
     },
     async handleScroll(e) {
-      const { scrollHeight, scrollTop, clientHeight } = e.target;
-      console.log("scroll", scrollTop, scrollHeight, clientHeight);
+      const { scrollHeight, scrollTop } = e.target;
       if (scrollTop == 0) {
         if (this.more) {
           this.prevScrollHeight = scrollHeight;
@@ -538,53 +522,59 @@ export default {
       }
     },
     async readChannelMessage() {
-      const result = await readChatMessage(
-        this.$route.params.channelid,
-        this.page
-      );
-      if (result.data.result.length == 50) {
-        this.more = true;
-      } else {
-        this.more = false;
-      }
-      var array = [];
-      for (var i = 0; i < result.data.result.length; i++) {
-        const translatedTime = this.convertFromStringToDate(
-          result.data.result[i].time
+      try {
+        const result = await readDMChatMessage(
+          this.$route.params.id,
+          this.page
         );
-        result.data.result[i].date = translatedTime[0];
-        result.data.result[i].time = translatedTime[1];
-        result.data.result[i].message = this.urlify(
-          result.data.result[i].message
-        );
-        let isOther = true;
-        if (i != 0) {
-          const timeResult = this.isSameTime(
-            result.data.result[i - 1],
-            result.data.result[i]
-          );
-          if (
-            timeResult &&
-            result.data.result[i - 1].userId == result.data.result[i].userId
-          ) {
-            isOther = false;
-          }
+
+        if (result.data.result.length == 50) {
+          this.more = true;
+        } else {
+          this.more = false;
         }
-        result.data.result[i].isOther = isOther;
-        array.push(result.data.result[i]);
-      }
-      let newarray = array.concat(this.receiveList);
-      this.receiveList = newarray;
-      if (this.page == 0) {
-        this.$nextTick(function () {
-          this.scrollToBottom();
-        });
-      }
-      if (this.prevScrollHeight != 0) {
-        this.$nextTick(function () {
-          let scrollRef = this.$refs["scrollRef"];
-          scrollRef.scrollTop = scrollRef.scrollHeight - this.prevScrollHeight;
-        });
+        var array = [];
+        for (var i = 0; i < result.data.result.length; i++) {
+          const translatedTime = this.convertFromStringToDate(
+            result.data.result[i].time
+          );
+          result.data.result[i].date = translatedTime[0];
+          result.data.result[i].time = translatedTime[1];
+          result.data.result[i].message = this.urlify(
+            result.data.result[i].message
+          );
+          let isOther = true;
+          if (i != 0) {
+            const timeResult = this.isSameTime(
+              result.data.result[i - 1],
+              result.data.result[i]
+            );
+            if (
+              timeResult &&
+              result.data.result[i - 1].userId == result.data.result[i].userId
+            ) {
+              isOther = false;
+            }
+          }
+          result.data.result[i].isOther = isOther;
+          array.push(result.data.result[i]);
+        }
+        let newarray = array.concat(this.receiveList);
+        this.receiveList = newarray;
+        if (this.prevScrollHeight != 0) {
+          this.$nextTick(function () {
+            let bottomRef = this.$refs["bottomRef"];
+            bottomRef.scrollTop =
+              bottomRef.scrollHeight - this.prevScrollHeight;
+          });
+        }
+        if (this.page == 0) {
+          this.$nextTick(function () {
+            this.scrollToBottom();
+          });
+        }
+      } catch (err) {
+        console.log(err.response);
       }
     },
     isSameTime(prevv, currentt) {
@@ -595,7 +585,7 @@ export default {
           parseInt(currentTime[0]) * 60 +
           parseInt(currentTime[1]) -
           (parseInt(prevTime[0]) * 60 + parseInt(prevTime[1]));
-        if (interval <= 1) {
+        if (interval <= 15) {
           return true;
         } else {
           return false;
@@ -608,541 +598,4 @@ export default {
 };
 </script>
 
-<style>
-/**메세지 수정 */
-.channel-message-edit-area {
-  position: relative;
-  width: 100%;
-  text-indent: 0;
-  border-radius: 8px;
-  margin-top: 8px;
-  background-color: #40444b;
-}
-.channel-message-edit-tool-area {
-  padding: 7px 0;
-  font-size: 12px;
-  font-weight: 400;
-  text-indent: 0;
-  color: #dcddde;
-}
-.server-chatting-container {
-  position: relative;
-  display: flex;
-  height: 100%;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  flex-direction: column;
-  min-width: 0;
-  min-height: 0;
-  -webkit-box-flex: 1;
-  flex: 1 1 auto;
-}
-.message-container {
-  display: flex;
-  position: relative;
-  -webkit-box-flex: 1;
-  flex: 1 1 auto;
-  min-height: 0;
-  min-width: 0;
-  z-index: 0;
-}
-.server-chat-scroller {
-  overflow: hidden scroll;
-  padding-right: 0px;
-  width: 100%;
-  flex: 1;
-  align-items: flex-end;
-}
-.scroller-content {
-  overflow-anchor: none;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  flex-direction: column;
-  -webkit-box-pack: end;
-  justify-content: flex-end;
-  -webkit-box-align: stretch;
-  align-items: stretch;
-  min-height: 100%;
-  display: flex;
-  position: relative;
-}
-.scroller-inner {
-  min-height: 0;
-  list-style: none;
-  padding: 0px;
-}
-.chat-message-wrapper {
-  outline: none;
-}
-.others-chat-message-wrapper {
-  margin-top: 1.0625rem;
-  min-height: 2.75rem;
-}
-.primary-chat-message-wrapper {
-  padding-left: 72px;
-  padding-top: 0.125rem;
-  padding-bottom: 0.125rem;
-  padding-right: 48px !important;
-  position: relative;
-  word-wrap: break-word;
-  user-select: text;
-  -webkit-box-flex: 0;
-  flex: 0 0 auto;
-}
-.chat-message-content {
-  position: static;
-  margin-left: 0;
-  padding-left: 0;
-  text-indent: 0;
-}
-.chat-avatar {
-  pointer-events: auto;
-  position: absolute;
-  left: 16px;
-  margin-top: calc(4px - 0.125rem);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  overflow: hidden;
-  cursor: pointer;
-  user-select: none;
-  -webkit-box-flex: 0;
-  flex: 0 0 auto;
-  z-index: 1;
-}
-.chat-avatar-header {
-  display: block;
-  position: relative;
-  line-height: 1.375rem;
-  min-height: 1.375rem;
-  color: #72767d;
-  white-space: break-spaces;
-  margin: 0px;
-}
-.chat-user-name {
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: 1.375rem;
-  color: var(--white-color);
-  display: inline;
-  vertical-align: baseline;
-  position: relative;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-.chat-time-stamp {
-  font-size: 0.75rem;
-  line-height: 1.375rem;
-  color: #72767d;
-  vertical-align: baseline;
-  margin-left: 0.25rem;
-  display: inline-block;
-  height: 1.25rem;
-  cursor: default;
-  pointer-events: none;
-  font-weight: 500;
-}
-.message-content {
-  user-select: text;
-  margin-left: -72px;
-  padding-left: 66px;
-  overflow: hidden;
-  position: relative;
-  text-indent: 0;
-  font-size: 1rem;
-  line-height: 1.375rem;
-  white-space: break-spaces;
-  word-wrap: break-word;
-  color: #dcddde;
-  font-weight: 400;
-}
-.channel-message-input-form {
-  position: relative;
-  flex-shrink: 0;
-  padding-left: 16px;
-  padding-right: 16px;
-}
-.channel-message-area {
-  margin-bottom: 24px;
-  background-color: #36393f;
-  position: relative;
-  width: 100%;
-  text-indent: 0;
-  border-radius: 8px;
-}
-.attached-bar {
-  background: #2f3136;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-}
-.channel-message-scrollbar-container {
-  background-color: #40444b;
-  border-radius: 8px;
-  max-height: 350px;
-}
-.scrollbar-ghost::-webkit-scrollbar {
-  width: 14px;
-  height: 14px;
-}
-.scrollbar-ghost::-webkit-scrollbar-corner {
-  border: none;
-  background: none;
-}
-.scrollbar-ghost::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.4);
-  border-width: 3px;
-  border-radius: 7px;
-  background-clip: padding-box;
-}
-.scrollbar-ghost::-webkit-scrollbar-track {
-  border-width: initial;
-  border-color: transparent;
-  background-color: rgba(0, 0, 0, 0.1);
-}
-
-.channel-message-form-inner-button {
-  display: flex;
-  position: relative;
-  padding-left: 16px;
-}
-.message-attachment-divider {
-  z-index: 1;
-  height: 0;
-  border-top: thin solid hsla(0, 0%, 100%, 0.06);
-  display: flex;
-  -webkit-box-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  justify-content: center;
-  position: relative;
-  -webkit-box-flex: 0;
-  flex: 0 0 auto;
-  pointer-events: none;
-  box-sizing: border-box;
-  --divider-color: hsl(359, calc(var(1, 1) * 82.6%), 59.4%);
-}
-.channel-attachment-area {
-  gap: 24px;
-  margin: 0 0 2px 6px;
-  padding: 20px 10px 10px;
-  overflow-x: auto;
-  display: flex;
-}
-.upload-attachments {
-  display: inline-flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  flex-direction: column;
-  background-color: #2f3136;
-  border-radius: 4px;
-  margin: 0;
-  padding: 8px;
-  position: relative;
-  min-width: 200px;
-  max-width: 200px;
-  max-height: 200px;
-}
-.message-upload-container {
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  flex-direction: column;
-  height: 100%;
-}
-.message-upload-image-container {
-  margin-top: auto;
-  position: relative;
-  min-height: 0;
-}
-.message-upload-filename-container {
-  margin-top: auto;
-}
-.message-upload-actionbar-container {
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-.message-upload-input {
-  position: relative;
-  width: 0;
-  height: 0;
-  pointer-events: none;
-}
-.message-attach-button-wrapper {
-  position: sticky;
-  -webkit-box-flex: 0;
-  flex: 0 0 auto;
-  align-self: stretch;
-}
-.message-attach-button {
-  height: 44px;
-  padding: 10px 16px;
-  position: sticky;
-  top: 0;
-  cursor: pointer;
-  margin-left: -16px;
-  width: auto;
-  background: transparent;
-  border: 0;
-  margin: 0;
-  display: flex;
-  -webkit-box-pack: center;
-  justify-content: center;
-  -webkit-box-align: center;
-  align-items: center;
-  box-sizing: border-box;
-  border-radius: 3px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 16px;
-}
-.attach-button-inner {
-  height: 24px;
-}
-.attach-button {
-  width: 24px;
-  height: 24px;
-  background-image: url("../assets/attach-button.svg");
-}
-.channel-message-input-area {
-  padding: 0px;
-  background-color: transparent;
-  resize: none;
-  border: none;
-  appearance: none;
-  box-sizing: border-box;
-  font-weight: 400;
-  font-size: 1rem;
-  line-height: 1.375rem;
-  width: 100%;
-  min-height: 44px;
-  color: #dcddde;
-  position: relative;
-  margin-left: 24px;
-}
-.channel-message-input-wrapper {
-  outline: none;
-  overflow-wrap: break-word;
-  -webkit-user-modify: read-write-plaintext-only;
-  caret-color: #dcddde;
-  position: absolute;
-  left: 0;
-  right: 10px;
-  text-align: left;
-  word-break: break-word;
-  white-space: break-spaces !important;
-  font-size: 1rem;
-  line-height: 1.375rem;
-  user-select: text;
-  color: #dcddde;
-  font-weight: 400;
-  width: 100%;
-  background-color: transparent;
-  border: none;
-  height: 90%;
-  resize: none;
-}
-.upload-chat-image-icon {
-  height: 24px;
-  position: relative;
-  width: 24px;
-}
-.spoiler-wrapper {
-  display: flex;
-  -webkit-box-pack: center;
-  justify-content: center;
-  height: 100%;
-}
-.attach-image {
-  border-radius: 3px;
-  max-width: 100%;
-  object-fit: contain;
-}
-.filename-wrapper {
-  margin-top: 8px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 14px;
-  line-height: 18px;
-  color: #dcddde;
-}
-.actionbar-wrapper {
-  position: absolute;
-  right: 0;
-  z-index: 1;
-  transform: translate(25%, -25%);
-  padding: 0;
-}
-.actionbar-wrapper2 {
-  background-color: #36393f;
-  box-shadow: 0 0 0 1px rgba(4, 4, 5, 0.15);
-  display: grid;
-  grid-auto-flow: column;
-  box-sizing: border-box;
-  height: 32px;
-  border-radius: 4px;
-  -webkit-box-align: center;
-  align-items: center;
-  -webkit-box-pack: start;
-  justify-content: flex-start;
-  user-select: none;
-  transition: box-shadow 0.1s ease-out, -webkit-box-shadow 0.1s ease-out;
-  position: relative;
-  overflow: hidden;
-}
-.chat-action-button {
-  display: flex;
-  -webkit-box-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  justify-content: center;
-  height: 24px;
-  padding: 4px;
-  min-width: 24px;
-  -webkit-box-flex: 0;
-  flex: 0 0 auto;
-  cursor: pointer;
-  position: relative;
-}
-.chat-action-button:hover {
-  background-color: #40444b;
-}
-.trashcan {
-  width: 24px;
-  height: 24px;
-  background-image: url("../assets/trashcan.svg");
-}
-.chat-message-accessories {
-  display: grid;
-  grid-auto-flow: row;
-  grid-row-gap: 0.25rem;
-  text-indent: 0;
-  min-height: 0;
-  min-width: 0;
-  padding-top: 0.125rem;
-  padding-bottom: 0.125rem;
-  position: relative;
-}
-.chat-message-attachment {
-  justify-self: start;
-  align-self: start;
-  position: relative;
-}
-.chat-message-image-wrapper {
-  width: 400px;
-  height: 200px;
-  cursor: pointer;
-}
-.chat-message-plus-action-container {
-  position: absolute;
-  right: 0;
-  z-index: 1;
-  top: -25px;
-  padding: 0 14px 0 32px;
-  opacity: 1;
-  pointer-events: auto;
-}
-.add-emotion {
-  width: 24px;
-  height: 24px;
-  background-image: url("../assets/add-emotion.svg");
-}
-.edit-pencil {
-  width: 24px;
-  height: 24px;
-  background-image: url("../assets/edit-pencil.svg");
-}
-.row-plus-action {
-  width: 20px;
-  height: 20px;
-  background-image: url("../assets/row-plus-action.svg");
-}
-.selected-message-area {
-  background-color: #2f3136;
-}
-.message-replying {
-  position: relative;
-  background-color: rgba(53, 68, 129, 0.1);
-  border-left: 1mm solid var(--discord-primary);
-}
-.clip-container {
-  overflow: hidden;
-  padding-top: 3px;
-  margin-top: -3px;
-}
-.reply-bar {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  -webkit-box-align: center;
-  align-items: center;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  background: #2f3136;
-  cursor: pointer;
-}
-.reply-label-container {
-  -webkit-box-flex: 1;
-  flex: 1 1 auto;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  margin-left: 16px;
-  font-size: 14px;
-  line-height: 18px;
-  color: #b9bbbe;
-}
-.reply-close-button {
-  flex: 0 0 auto;
-  cursor: pointer;
-  color: #b9bbbe;
-  line-height: 0;
-  padding: 8px 18px 8px 16px;
-}
-.small-close-button {
-  width: 15px;
-  height: 15px;
-  background-image: url("../assets/small-close-button.svg");
-}
-.reply-button {
-  width: 20px;
-  height: 20px;
-  background-image: url("../assets/reply-button.svg");
-}
-.channel-message-button-wrapper {
-  margin-right: -6px;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-  flex-direction: row;
-  height: 44px;
-  position: sticky;
-  top: 0;
-}
-.emoji-button {
-  cursor: pointer;
-  max-height: 50px;
-  display: flex;
-  -webkit-box-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  justify-content: center;
-  padding: 4px;
-  margin-left: 4px;
-  margin-right: 4px;
-  border-radius: 5px;
-  background: none;
-}
-.yellow-emotion {
-  width: 24px;
-  height: 24px;
-  background-image: url("../assets/yellow-emotion.svg");
-}
-.emoji-picker-popout {
-  background-color: #2f3136 !important;
-  position: absolute;
-  bottom: 70px;
-  right: 0;
-  z-index: 10;
-}
-</style>
+<style></style>

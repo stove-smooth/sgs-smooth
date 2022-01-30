@@ -82,15 +82,18 @@
   padding: 0 8px;
   cursor: pointer;
 }
+.primary-member-layout-hover {
+  background-color: rgb(79 84 92 / 32%);
+}
 .primary-member-layout:hover {
   background-color: rgb(79 84 92 / 32%);
 }
-.primary-member-layout:active {
+/* .primary-member-layout:active {
   background-color: rgb(79 84 92 / 32%);
 }
 .primary-member-layout:visited {
   background-color: rgb(79 84 92 / 32%);
-}
+} */
 
 /**프로필 상태 */
 .status-ring {
@@ -294,6 +297,9 @@
 }
 .width-100 {
   width: 100%;
+}
+.height-100 {
+  height: 100%;
 }
 .red-color {
   color: #ed4245;
