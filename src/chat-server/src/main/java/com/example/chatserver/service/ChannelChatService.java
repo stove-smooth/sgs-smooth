@@ -3,6 +3,7 @@ package com.example.chatserver.service;
 import com.example.chatserver.client.UserClient;
 import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.dto.response.MessageResponse;
+import com.example.chatserver.dto.response.UserInfoFeignResponse;
 import com.example.chatserver.dto.response.UserInfoListFeignResponse;
 import com.example.chatserver.exception.CustomException;
 import com.example.chatserver.exception.CustomExceptionStatus;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -83,6 +85,29 @@ public class ChannelChatService {
         HashMap<String,String> msg = new HashMap<>();
         msg.put("id",result.getId());
         msg.put("delete", "yes");
+        return msg;
+    }
+
+    public HashMap<String, String> replyMessage(ChannelMessage channelMessage) {
+
+        UserInfoFeignResponse userInfo = userClient.getUserInfo(channelMessage.getAccountId());
+
+        ChannelMessage save = ChannelMessage.builder()
+                .channelId(channelMessage.getChannelId())
+                .accountId(channelMessage.getAccountId())
+                .content(channelMessage.getContent())
+                .parentId(channelMessage.getParentId())
+                .localDateTime(LocalDateTime.now()).build();
+        ChannelMessage result = channelChatRepository.save(save);
+
+        HashMap<String,String> msg = new HashMap<>();
+        msg.put("id",result.getId());
+        msg.put("userId", String.valueOf(result.getAccountId()));
+        msg.put("name",userInfo.getResult().getName());
+        msg.put("profileImage",userInfo.getResult().getProfileImage());
+        msg.put("message",result.getContent());
+        msg.put("time", String.valueOf(result.getLocalDateTime()));
+
         return msg;
     }
 }

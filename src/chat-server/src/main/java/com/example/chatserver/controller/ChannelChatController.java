@@ -47,6 +47,14 @@ public class ChannelChatController {
         messageSender.send2(topicName, channelMessage);
     }
 
+    @MessageMapping("/send-channel-reply")
+    public void sendReplyMessage(@Payload ChannelMessage channelMessage) throws JsonProcessingException {
+        HashMap<String, String> msg = channelChatService.replyMessage(channelMessage);
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(msg);
+        template.convertAndSend("/topic/group/" + channelMessage.getChannelId(), json);
+    }
+
     @MessageMapping("/send-channel-modify")
     public void sendModifyMessage(@Payload ChannelMessage channelMessage) throws JsonProcessingException {
         HashMap<String, String> msg = channelChatService.modifyMessage(channelMessage);

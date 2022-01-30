@@ -28,6 +28,8 @@ public class ChannelMessage {
 
     private Long accountId;
 
+    private String parentId;
+
     private String content;
 
     private LocalDateTime localDateTime;
