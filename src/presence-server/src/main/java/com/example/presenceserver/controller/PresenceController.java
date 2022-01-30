@@ -4,12 +4,13 @@ import com.example.presenceserver.dto.request.LoginSessionRequest;
 import com.example.presenceserver.dto.response.CommonResponse;
 import com.example.presenceserver.service.PresenceService;
 import com.example.presenceserver.service.ResponseService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -28,10 +29,23 @@ public class PresenceController {
     }
 
     @PostMapping("/logout-state")
-    public CommonResponse deleteState(@RequestBody LoginSessionRequest loginSessionRequest) {
+    public CommonResponse deleteState(@RequestBody LoginSessionRequest loginSessionRequest) throws JsonProcessingException {
 
         presenceService.deleteState(loginSessionRequest);
 
         return responseService.getSuccessResponse();
     }
+
+    @PostMapping("/change-state")
+    public CommonResponse changeState(@RequestBody LoginSessionRequest loginSessionRequest) throws JsonProcessingException {
+        presenceService.changeState(loginSessionRequest);
+
+        return responseService.getSuccessResponse();
+    }
+
+    @PostMapping("/read")
+    public Map<Long,Boolean> read(@RequestBody List<Long> requestAccountIds) {
+        return presenceService.findRead(requestAccountIds);
+    }
+
 }

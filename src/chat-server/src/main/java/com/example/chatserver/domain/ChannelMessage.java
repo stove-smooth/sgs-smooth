@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-@Document(collation = "channel-message")
+@Document(collection = "channelMessage")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -18,18 +18,19 @@ import java.util.Map;
 public class ChannelMessage {
 
     @Id
-    @Field("id")
     private String id;
 
-    private Long channel_id;
+    private Long communityId;
 
-    private Long account_id;
+    private Long categoryId;
+
+    private Long channelId;
+
+    private Long accountId;
 
     private String content;
 
     private LocalDateTime localDateTime;
-
-    private List<Long> ids;
 
     private Map<Long,Boolean> read;
 }

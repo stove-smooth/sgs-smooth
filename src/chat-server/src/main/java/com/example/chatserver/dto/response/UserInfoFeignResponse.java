@@ -12,6 +12,8 @@ public class UserInfoFeignResponse extends CommonResponse {
     private UserInfoResponse result;
 
     @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class UserInfoResponse {
         private String name;
         private String profileImage;
