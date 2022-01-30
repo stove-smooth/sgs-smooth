@@ -13,7 +13,7 @@ class EditServerInfoViewController: BaseViewController {
     
     weak var coordinator: HomeCoordinator?
     
-    private let editView = EditServerInfoView()
+    private var editView = EditServerInfoView()
     private let viewModel: EditServerInfoViewModel
     
     let server: Server
@@ -70,8 +70,23 @@ class EditServerInfoViewController: BaseViewController {
                 return info[.editedImage] as? UIImage
             }.subscribe(onNext: { image in
                 self.editView.upload(image: image)
+                self.viewModel.output.image.accept(image)
             }).disposed(by: disposeBag)
         
+        self.editView.serverNameLabelField.rx.text
+            .orEmpty
+            .bind(to: self.viewModel.input.serverTextField)
+            .disposed(by: disposeBag)
+        
+        self.viewModel.output.showSaveButton
+            .asDriver()
+            .drive(onNext: {value in
+                self.editView.saveButton.isHidden = !value
+            }).disposed(by: disposeBag)
+            
+        self.editView.saveButton.rx.tap
+            .bind(to: self.viewModel.input.tapSaveButton)
+            .disposed(by: disposeBag)
         
         self.editView.deleteButton.rx.tap
             .bind(onNext: self.showDeleteServer)
@@ -83,6 +98,14 @@ class EditServerInfoViewController: BaseViewController {
                 self.dismiss()
                 self.coordinator?.goToMenu()
             }).disposed(by: disposeBag)
+        
+        // MARK: toast message
+        self.viewModel.showToastMessage
+            .asDriver(onErrorJustReturn: "")
+            .drive(onNext: { message in
+                self.showToast(message: message, isWarning: false)
+            })
+            .disposed(by: disposeBag)
     }
     
     private func showDeleteServer() {

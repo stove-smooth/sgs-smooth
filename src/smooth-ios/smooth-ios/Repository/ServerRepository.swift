@@ -10,14 +10,22 @@ import Moya
 import RxSwift
 
 protocol ServerRepositoryProtocol {
+    // MARK: GET
     func fetchServer(_ completion: @escaping ([Server]?, MoyaError?) -> Void)
     func getServerById(_ request: Int, _ completion: @escaping (CommunityInfo?, MoyaError?) -> Void)
-    func createServer(_ request: ServerRequest, _ completion: @escaping (Server?, MoyaError?) -> Void)
     func getMemberFromServer(_ serverId: Int, _ completion: @escaping ([Member]?, MoyaError?) -> Void)
     
+    // MARK: POST
+    func createServer(_ request: ServerRequest, _ completion: @escaping (Server?, MoyaError?) -> Void)
     func createInvitation(_ serverId: Int, _ completion: @escaping (String?, MoyaError?) -> Void)
     func joinServer(_ serverCode: String, _ completion: @escaping (Server?, MoyaError?) -> Void)
     
+    // MARK: PATCH
+    func updateServerIcon(serverId: Int, imageData: Data?, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
+    func updateServerName(serverId: Int, name: String, _  completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
+    
+    
+    // MARK: DELETE
     func leaveServer(serverId: Int, memberId: Int, _  completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
     func deleteServer(_ serverId: Int, _  completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
 }
@@ -111,6 +119,40 @@ struct ServerRepository: Networkable, ServerRepositoryProtocol {
                 }
                 return completion(response, nil)
                 
+            case .failure(let error):
+                return completion(nil, error)
+            }
+        }
+    }
+    
+    func updateServerIcon(serverId: Int, imageData: Data?, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void) {
+        makeProvider().request(.updateServerIcon(serverId: serverId, imageData: imageData)) {
+            result in
+            switch BaseResponse<DefaultResponse>.processJSONResponse(result) {
+            case .success(let response):
+                guard let response = response else {
+                    return
+                }
+                
+                return completion(response, nil)
+            
+            case .failure(let error):
+                return completion(nil, error)
+            }
+        }
+    }
+    
+    func updateServerName(serverId: Int, name: String, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void) {
+        makeProvider().request(.updateServerName(serverId: serverId, name: name)) {
+            result in
+            switch BaseResponse<DefaultResponse>.processJSONResponse(result) {
+            case .success(let response):
+                guard let response = response else {
+                    return
+                }
+                
+                return completion(response, nil)
+            
             case .failure(let error):
                 return completion(nil, error)
             }

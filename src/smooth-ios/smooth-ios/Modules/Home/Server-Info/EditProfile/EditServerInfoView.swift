@@ -22,9 +22,10 @@ class EditServerInfoView: BaseView {
         $0.text = "서버 설정"
     }
     
-    let saveButton = UIButton().then {
+    var saveButton = UIButton().then {
         $0.setTitle("저장", for: .normal)
         $0.tintColor = .white
+        $0.isHidden = true
     }
     
     let imgUploadButton = UIButton().then {
@@ -105,6 +106,11 @@ class EditServerInfoView: BaseView {
             $0.bottom.equalTo(navigationView).offset(-10)
         }
         
+        saveButton.snp.makeConstraints {
+            $0.right.equalToSuperview().offset(-24)
+            $0.centerY.equalTo(naviTitleLabel)
+        }
+        
         imgUploadButton.snp.makeConstraints {
             $0.top.equalTo(naviTitleLabel.snp.bottom).offset(20)
             $0.centerX.equalTo(safeAreaLayoutGuide)
@@ -156,5 +162,6 @@ class EditServerInfoView: BaseView {
     
     func upload(image: UIImage?) {
         self.imgUploadButton.setImage(image!, for: .normal)
+        self.textView.isHidden = true
     }
 }

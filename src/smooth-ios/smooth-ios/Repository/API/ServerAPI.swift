@@ -20,6 +20,10 @@ enum ServerTarget {
     case createInvitation(param: Int)
     case joinServer(param: String)
     
+    // MARK: PATCH
+    case updateServerIcon(serverId: Int, imageData: Data?)
+    case updateServerName(serverId: Int, name: String)
+    
     // MARK: DELETE
     case leaveServer(serverId: Int, memberId: Int)
     case deleteServer(serverId: Int)
@@ -43,6 +47,11 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
         case .joinServer:
             return "/community-server/community/member"
             
+        case .updateServerIcon:
+            return "/community-server/community/icon"
+        case .updateServerName:
+            return "/community-server/community/name"
+            
         case .leaveServer(let serverId, _):
             return "/community-server/community/\(serverId)/member"
         case .deleteServer(let serverId):
@@ -59,6 +68,9 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
         case .createServer: return .post
         case .createInvitation: return .post
         case .joinServer: return .post
+            
+        case .updateServerIcon: return .patch
+        case .updateServerName: return .patch
             
         case .leaveServer: return .delete
         case .deleteServer: return .delete
@@ -93,12 +105,35 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
             multipartFromData.append(MultipartFormData(provider: .data(nameData), name: "name"))
             multipartFromData.append(MultipartFormData(provider: .data(publicData), name: "public"))
             
-            print(multipartFromData)
             return .uploadMultipart(multipartFromData)
         case .createInvitation(let serverId):
             return .requestParameters(parameters: ["id": serverId], encoding: JSONEncoding.default)
         case .joinServer(let serverCode):
             return .requestParameters(parameters: ["code": serverCode], encoding: JSONEncoding.default)
+        
+        case .updateServerIcon(let serverId, let imgData):
+            var multipartFromData: [MultipartFormData] = []
+            
+            let idData = serverId.description.data(using: .utf8) ?? Data()
+            multipartFromData.append(MultipartFormData(provider: .data(idData), name: "id"))
+            
+            if (imgData != nil) {
+                multipartFromData.append(
+                    MultipartFormData(
+                        provider: .data(imgData!),
+                        name: "icon",
+                        fileName: "new-server-icon",
+                        mimeType: imgData!.mimeType
+                    )
+                )
+            }
+           
+            return .uploadMultipart(multipartFromData)
+            
+        case .updateServerName(let serverId, let name):
+            return .requestParameters(
+                parameters: ["id": serverId, "name" : name],
+                encoding: JSONEncoding.default)
             
         case .leaveServer(_, let memberId):
             return .requestParameters(parameters: ["id": memberId], encoding: URLEncoding.queryString)
@@ -121,6 +156,11 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
         case .createInvitation:
             return .custom("")
         case .joinServer:
+            return .custom("")
+            
+        case .updateServerIcon:
+            return .custom("")
+        case .updateServerName:
             return .custom("")
             
         case .leaveServer:
