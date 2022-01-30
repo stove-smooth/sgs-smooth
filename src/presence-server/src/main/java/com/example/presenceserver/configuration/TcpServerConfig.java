@@ -10,7 +10,7 @@ import org.springframework.integration.ip.tcp.connection.TcpNioServerConnectionF
 import org.springframework.integration.ip.tcp.serializer.ByteArrayCrLfSerializer;
 import org.springframework.messaging.MessageChannel;
 
-@Configuration
+//@Configuration
 public class TcpServerConfig {
 
     @Value("${tcp.server.port}")

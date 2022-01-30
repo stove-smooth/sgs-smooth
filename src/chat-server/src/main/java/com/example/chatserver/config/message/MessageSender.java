@@ -21,6 +21,7 @@ public class MessageSender {
     }
 
     public void send2(String topic,ChannelMessage channelMessage) {
+        log.info("sender");
         kafkaTemplate2.send(topic,channelMessage);
     }
 }

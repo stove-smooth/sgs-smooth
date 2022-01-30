@@ -9,9 +9,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommonResponse {
-
-    protected Boolean isSuccess;
-    protected int code;
-    protected String message;
+public class UserResponse {
+    private Long id;
+    private String name;
+    private String code;
+    private String image;
+    private String state;
 }

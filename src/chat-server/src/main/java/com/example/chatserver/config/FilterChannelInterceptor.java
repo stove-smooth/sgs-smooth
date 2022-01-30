@@ -1,5 +1,6 @@
 package com.example.chatserver.config;
 
+import com.example.chatserver.client.PresenceClient;
 import com.example.chatserver.config.message.JwtTokenFilter;
 import com.example.chatserver.dto.request.LoginSessionRequest;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +23,8 @@ import java.util.Objects;
 public class FilterChannelInterceptor implements ChannelInterceptor {
 
     private final JwtTokenFilter jwtTokenFilter;
-//    private final RedisTemplate<String, Object> redisTemplate;
-//    private final PresenceClient presenceClient;
-    private final TcpClientGateway tcpClientGateway;
+    private final PresenceClient presenceClient;
+//    private final TcpClientGateway tcpClientGateway;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -50,7 +50,7 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
                 LoginSessionRequest loginSessionRequest = LoginSessionRequest.builder()
                                 .type("login")
                                 .session_id(session_id).user_id(user_id).build();
-                tcpClientGateway.send(loginSessionRequest.toString());
+//                tcpClientGateway.send(loginSessionRequest.toString());
 //                presenceClient.uploadState(loginSessionRequest);
                 break;
             case DISCONNECT:
@@ -58,7 +58,7 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
                 LoginSessionRequest logoutSessionRequest = LoginSessionRequest.builder()
                                 .type("logout")
                                 .session_id(sessionId).build();
-                tcpClientGateway.send(logoutSessionRequest.toString());
+//                tcpClientGateway.send(logoutSessionRequest.toString());
 //                presenceClient.deleteState(logoutSessionRequest);
                 break;
             default:

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-@Document(collation = "direct-chat")
+@Document(collection = "directChat")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -18,20 +18,19 @@ import java.util.Map;
 public class DirectChat {
 
     @Id
-    @Field("id")
     private String id;
 
-    private Long community_id;
+    private Long communityId;
 
-    private Long category_id;
+    private Long categoryId;
 
-    private Long channel_id;
+    private Long channelId;
 
-    private Long user_id;
+    private Long userId;
 
     private String content;
 
-    private LocalDateTime dateTime;
+    private LocalDateTime localDateTime;
 
     private Map<Long,Boolean> read;
 

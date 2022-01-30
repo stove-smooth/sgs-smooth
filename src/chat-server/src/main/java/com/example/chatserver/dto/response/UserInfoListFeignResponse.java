@@ -5,13 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Map;
+
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class CommonResponse {
+@NoArgsConstructor
+public class UserInfoListFeignResponse extends CommonResponse{
 
-    protected Boolean isSuccess;
-    protected int code;
-    protected String message;
+    private Map<Long,UserResponse> result;
 }

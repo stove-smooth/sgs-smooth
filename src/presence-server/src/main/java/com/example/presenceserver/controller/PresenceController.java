@@ -4,6 +4,7 @@ import com.example.presenceserver.dto.request.LoginSessionRequest;
 import com.example.presenceserver.dto.response.CommonResponse;
 import com.example.presenceserver.service.PresenceService;
 import com.example.presenceserver.service.ResponseService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +29,16 @@ public class PresenceController {
     }
 
     @PostMapping("/logout-state")
-    public CommonResponse deleteState(@RequestBody LoginSessionRequest loginSessionRequest) {
+    public CommonResponse deleteState(@RequestBody LoginSessionRequest loginSessionRequest) throws JsonProcessingException {
 
         presenceService.deleteState(loginSessionRequest);
+
+        return responseService.getSuccessResponse();
+    }
+
+    @PostMapping("/change-state")
+    public CommonResponse changeState(@RequestBody LoginSessionRequest loginSessionRequest) throws JsonProcessingException {
+        presenceService.changeState(loginSessionRequest);
 
         return responseService.getSuccessResponse();
     }
