@@ -21,6 +21,8 @@ class MainCoordinator: NSObject, Coordinator {
         
         let navigationController = UINavigationController()
         navigationController.navigationBar.tintColor = .white
+        navigationController.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white!]
+        
         navigationController.navigationBar.barTintColor = UIColor.backgroundDarkGray
         navigationController.navigationBar.shadowImage = UIImage()
         navigationController.navigationBar.isTranslucent = false

@@ -22,8 +22,8 @@ class ServerSettingCoordinator: NSObject, Coordinator {
         self.navigationController.tabBarController?.tabBar.isHidden = true
         
         self.modalNav.navigationBar.tintColor = .white
+        self.modalNav.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white!]
         self.modalNav.navigationItem.backButtonDisplayMode = .minimal
-        self.modalNav.navigationBar.isTranslucent = false
         self.modalNav.navigationBar.shadowImage = UIImage()
         self.modalNav.navigationBar.barTintColor = .backgroundDarkGray
         
@@ -55,6 +55,14 @@ class ServerSettingCoordinator: NSObject, Coordinator {
         modalNav.isNavigationBarHidden = false
         navigationController.isNavigationBarHidden = true
         modalNav.pushViewController(editVC, animated: true)
+    }
+    
+    func goToInvite(server: Server) {
+        let inviteVC = ServerInviteListViewController.instance(server: server)
+        
+        modalNav.isNavigationBarHidden = false
+        navigationController.isNavigationBarHidden = true
+        modalNav.pushViewController(inviteVC, animated: true)
     }
     
 }

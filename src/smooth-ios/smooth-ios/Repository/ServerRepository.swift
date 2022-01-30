@@ -14,6 +14,7 @@ protocol ServerRepositoryProtocol {
     func fetchServer(_ completion: @escaping ([Server]?, MoyaError?) -> Void)
     func getServerById(_ request: Int, _ completion: @escaping (CommunityInfo?, MoyaError?) -> Void)
     func getMemberFromServer(_ serverId: Int, _ completion: @escaping ([Member]?, MoyaError?) -> Void)
+    func getInvitByServer(_ serverId: Int, _ completion: @escaping ([Invitation]?, MoyaError?) -> Void)
     
     // MARK: POST
     func createServer(_ request: ServerRequest, _ completion: @escaping (Server?, MoyaError?) -> Void)
@@ -73,6 +74,22 @@ struct ServerRepository: Networkable, ServerRepositoryProtocol {
                 }
                 
                 return completion(response.members, nil)
+            
+            case .failure(let error):
+                return completion(nil, error)
+            }
+        }
+    }
+    
+    func getInvitByServer(_ serverId: Int, _ completion: @escaping ([Invitation]?, MoyaError?) -> Void) {
+        makeProvider().request(.getInvitByServer(serverId: serverId)) { result in
+            switch BaseResponse<InvitaionList>.processResponse(result) {
+            case .success(let response):
+                guard let response = response else {
+                    return
+                }
+                
+                return completion(response.invitations, nil)
             
             case .failure(let error):
                 return completion(nil, error)

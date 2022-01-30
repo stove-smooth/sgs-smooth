@@ -115,23 +115,23 @@ extension ServerSettingViewController: UITableViewDelegate, UITableViewDataSourc
         
         return headerCell
     }
-    
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print(indexPath)
         if indexPath.section == 0 {
             switch indexPath.row {
-            case 1:
-                self.coordinator?.goToEditServerInfo(server: self.server)
             case 0:
+                self.coordinator?.goToEditServerInfo(server: self.server)
+            case 1:
                 break
             default: break
             }
         } else {
             switch indexPath.row {
             case 0:
-                self.coordinator?.goToEditServerInfo(server: self.server)
-            case 1:
                 break
+            case 1:
+                self.coordinator?.goToInvite(server: self.server)
             default: break
             }
         }

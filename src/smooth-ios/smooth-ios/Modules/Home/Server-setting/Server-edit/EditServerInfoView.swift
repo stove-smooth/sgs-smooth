@@ -86,7 +86,7 @@ class EditServerInfoView: BaseView {
         }
         
         imgUploadButton.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(20)
+            $0.top.equalTo(safeAreaLayoutGuide).offset(15)
             $0.centerX.equalTo(safeAreaLayoutGuide)
             $0.width.height.equalTo(80)
         }
