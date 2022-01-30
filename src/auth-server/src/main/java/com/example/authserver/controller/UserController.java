@@ -84,7 +84,7 @@ public class UserController {
         return responseService.getDataResponse(accountService.checkRefreshToken(token,refreshToken));
     }
 
-    @PostMapping("/auth/find-id-list")
+    @PostMapping("/find-id-list")
     public DataResponse<Map<Long, AccountInfoResponse>> findIdList(@RequestBody List<Long> requestAccountIds) {
         return responseService.getDataResponse(accountService.findIdList(requestAccountIds));
     }

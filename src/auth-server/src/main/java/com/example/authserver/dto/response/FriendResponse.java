@@ -16,6 +16,8 @@ public class FriendResponse {
 
     private Long id;
 
+    private Long userId;
+
     private String name;
 
     private String code;
