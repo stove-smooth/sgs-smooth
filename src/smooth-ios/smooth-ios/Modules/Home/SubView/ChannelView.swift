@@ -11,6 +11,17 @@ import RxSwift
 import RxCocoa
 
 class ChannelView: BaseView {
+    
+    let serverInfoIcon = UIImageView().then {
+        $0.image = UIImage(systemName: "ellipsis")?.withTintColor(.white!, renderingMode: .alwaysOriginal)
+    }
+    
+    let serverInfoButton = UIButton().then {
+        $0.titleLabel?.textColor = .white
+        $0.titleLabel?.textAlignment = .left
+        $0.contentHorizontalAlignment = .left
+    }
+    
     let tableView = UITableView().then {
         $0.backgroundColor = .clear
         $0.tintColor = .white
@@ -20,8 +31,7 @@ class ChannelView: BaseView {
         $0.cellLayoutMarginsFollowReadableWidth = true
         $0.showsVerticalScrollIndicator = false
         $0.showsHorizontalScrollIndicator = false
-        
-        $0.contentInset = UIEdgeInsets.symmetric(vertical: 10, horizontal: 0)
+        $0.separatorStyle = .none
         
         $0.register(ChannelCell.self, forCellReuseIdentifier: ChannelCell.identifier)
     }
@@ -35,7 +45,6 @@ class ChannelView: BaseView {
                 return cell
             }
         )
-        
         
         ds.titleForHeaderInSection = { dataSource, index in
             return "\(dataSource.sectionModels[index].header)"
@@ -57,20 +66,44 @@ class ChannelView: BaseView {
         self.layer.cornerRadius = 20
         self.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        self.addSubview(tableView)
+        [
+            tableView,
+            serverInfoButton
+        ].forEach { self.addSubview($0) }
+        
+        serverInfoButton.addSubview(serverInfoIcon)
+        
     }
     
     override func bindConstraints() {
+        serverInfoButton.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(15)
+            $0.left.right.equalToSuperview().inset(15)
+        }
+        
+        serverInfoIcon.snp.makeConstraints {
+            $0.right.equalToSuperview()
+            $0.centerY.equalToSuperview()
+        }
+        
         tableView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.equalTo(serverInfoButton.snp.bottom).offset(5)
+            $0.bottom.equalToSuperview()
+            $0.left.equalToSuperview().offset(5)
+            $0.right.equalToSuperview().offset(-5)
         }
     }
     
-    func bind(categoryList: [Category]) {
+    func bind(communityInfo: CommunityInfo) {
         self.disposeBag = DisposeBag()
+        let categoryList = communityInfo.categories
         
         tableView.rx.setDelegate(self).disposed(by: disposeBag)
+
+        // MARK: title
+        self.serverInfoButton.setTitle(communityInfo.name, for: .normal)
         
+        // MARK: tableView
         var channelSection: [ChannelSection] = []
         channelSection = categoryList.compactMap {
             ChannelSection(header: $0.name, id: $0.id, items: $0.channels ?? [])
@@ -79,7 +112,6 @@ class ChannelView: BaseView {
         Observable.just(channelSection)
             .bind(to: tableView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
-        
         
         tableView.rx.itemSelected
             .subscribe(onNext: { indexPath in

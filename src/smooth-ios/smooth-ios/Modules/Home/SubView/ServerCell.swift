@@ -66,6 +66,7 @@ class ServerCell: BaseTableViewCell {
         
         textView.snp.makeConstraints {
             $0.centerX.centerY.equalToSuperview()
+            $0.edges.equalToSuperview()
         }
     }
     
@@ -116,15 +117,7 @@ class ServerCell: BaseTableViewCell {
             textView.isHidden = true
         } else {
             textView.isHidden = false
-            if (server.name.count > 5) {
-                let subIdx: String.Index = server.name.index(server.name.startIndex, offsetBy: 2)
-                let result = "\(server.name[...subIdx])"+"..."
-                
-                textView.text = result
-            } else {
-                textView.text = "\(server.name)"
-            }
-            
+            textView.text = "\(server.name)"
         }
 
         contentView.addSubview(serverImg)

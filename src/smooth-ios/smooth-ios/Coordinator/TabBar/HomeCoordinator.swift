@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import PanModal
 
 class HomeCoordinator: NSObject, Coordinator {
     var delegate: CoordinatorDelegate?
@@ -47,5 +48,19 @@ class HomeCoordinator: NSObject, Coordinator {
         let coordinator = AddServerCoordinator(navigationController: navigationController)
         childCoordinators.append(coordinator)
         coordinator.start()
+    }
+    
+    func showServerInfoModal(server: Server, member: Member) {
+        let serverInfoVC = ServerInfoViewController.instance(server: server, member: member)
+        serverInfoVC.coordinator = self
+        
+        navigationController.presentPanModal(serverInfoVC)
+    }
+    
+    func goToEditServerInfo(server: Server) {
+        let editVC = EditServerInfoViewController.instance(server: server)
+        
+        editVC.modalPresentationStyle = .fullScreen
+        navigationController.present(editVC, animated: true, completion: nil)
     }
 }

@@ -19,10 +19,24 @@ class ChannelCell: BaseTableViewCell {
         self.textLabel?.textColor = .white
         self.tintColor = .white
         self.clipsToBounds = true
+        self.selectionStyle = .none
     }
     
     func bind(channel: Channel) {
         self.textLabel?.text = "\(channel.name)"
         self.imageView?.image = UIImage(named: "Channel+\(channel.type)")?.resizeImage(size: CGSize(width: 20, height: 20))
+    }
+    
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        if selected {
+            self.textLabel?.font = UIFont.systemFont(ofSize: UIFont.buttonFontSize, weight: .bold)
+            self.backgroundColor = UIColor(hex: "0x3A3C41")
+            self.layer.cornerRadius = 5
+            
+        } else {
+            self.textLabel?.font = UIFont.systemFont(ofSize: UIFont.buttonFontSize, weight: .regular)
+            self.backgroundColor = .clear
+            self.layer.cornerRadius = 0
+        }
     }
 }

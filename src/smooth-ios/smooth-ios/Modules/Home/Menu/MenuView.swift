@@ -20,19 +20,16 @@ class MenuView: BaseView {
     }
     
     override func bindConstraints() {
-        
         serverView.snp.makeConstraints {
             $0.width.equalTo(80)
             $0.left.equalToSuperview()
-            $0.top.equalTo(safeAreaLayoutGuide)
-            $0.bottom.equalTo(safeAreaLayoutGuide).offset(-49.0)
+            $0.top.bottom.equalTo(safeAreaLayoutGuide)
         }
         
         channelView.snp.makeConstraints {
             $0.left.equalTo(serverView.snp.right)
             $0.trailing.equalToSuperview().offset(-60)
             $0.top.bottom.equalTo(safeAreaLayoutGuide)
-            $0.bottom.equalTo(safeAreaLayoutGuide).offset(-49.0)
         }
     }
 }
@@ -45,9 +42,9 @@ extension Reactive where Base: MenuView {
         }
     }
     
-    var categories: Binder<[Category]> {
-        return Binder(self.base) { view, categoryList in
-            view.channelView.bind(categoryList: categoryList)
+    var communityInfo: Binder<CommunityInfo> {
+        return Binder(self.base) { view, communityInfo in
+            view.channelView.bind(communityInfo: communityInfo)
         }
     }
 }
