@@ -31,7 +31,7 @@ extension UIColor {
     
     static let toolTip_UserProfile = UIColor(hex: "0x18191c")
     
-    static let messageBarDarkGray = UIColor(hex: "0x40444b")
+    static let messageBarDarkGray = UIColor(hex: "0x36393E")
     static let messageBarLightGray = UIColor(hex: "0xf0ecf4")
     
     static let textChannelDarkGray = UIColor(hex: "0x36393f")

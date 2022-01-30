@@ -60,6 +60,7 @@
 		C118D2CC27A6D716009CB96C /* ServerInviteListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C118D2CB27A6D716009CB96C /* ServerInviteListViewController.swift */; };
 		C118D2CE27A6DDF9009CB96C /* Invitation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C118D2CD27A6DDF9009CB96C /* Invitation.swift */; };
 		C118D2D027A6EB7E009CB96C /* ServerInviteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C118D2CF27A6EB7E009CB96C /* ServerInviteCell.swift */; };
+		C118D2D227A70062009CB96C /* ServerInviteEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C118D2D127A70062009CB96C /* ServerInviteEmptyView.swift */; };
 		C1244F7627A61A5C00BEC173 /* ServerInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1244F7527A61A5C00BEC173 /* ServerInfoCell.swift */; };
 		C1244F7827A624FC00BEC173 /* AlertUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1244F7727A624FC00BEC173 /* AlertUtils.swift */; };
 		C1244F8027A63D4000BEC173 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1244F7F27A63D4000BEC173 /* Member.swift */; };
@@ -182,6 +183,7 @@
 		C118D2CB27A6D716009CB96C /* ServerInviteListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerInviteListViewController.swift; sourceTree = "<group>"; };
 		C118D2CD27A6DDF9009CB96C /* Invitation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Invitation.swift; sourceTree = "<group>"; };
 		C118D2CF27A6EB7E009CB96C /* ServerInviteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerInviteCell.swift; sourceTree = "<group>"; };
+		C118D2D127A70062009CB96C /* ServerInviteEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerInviteEmptyView.swift; sourceTree = "<group>"; };
 		C1244F7527A61A5C00BEC173 /* ServerInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerInfoCell.swift; sourceTree = "<group>"; };
 		C1244F7727A624FC00BEC173 /* AlertUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertUtils.swift; sourceTree = "<group>"; };
 		C1244F7F27A63D4000BEC173 /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
@@ -410,6 +412,7 @@
 				C118D2BF27A6B232009CB96C /* ServerSettingCell.swift */,
 				C118D2C327A6BA5D009CB96C /* ServerSettingHeaderCell.swift */,
 				C118D2CF27A6EB7E009CB96C /* ServerInviteCell.swift */,
+				C118D2D127A70062009CB96C /* ServerInviteEmptyView.swift */,
 			);
 			path = SubView;
 			sourceTree = "<group>";
@@ -885,6 +888,7 @@
 				270916202791603D00A0772D /* FriendAPI.swift in Sources */,
 				272189072782EB7500ABEF60 /* UserAPI.swift in Sources */,
 				C102417927A0041D00B702DB /* RegisterServerViewController.swift in Sources */,
+				C118D2D227A70062009CB96C /* ServerInviteEmptyView.swift in Sources */,
 				C1024169279F91A600B702DB /* AddServerViewModel.swift in Sources */,
 				C1AA6AFB27A4031F003A32A4 /* ServerInfoViewController.swift in Sources */,
 				C1D47EEE27795D1300DBA3CA /* BaseView.swift in Sources */,

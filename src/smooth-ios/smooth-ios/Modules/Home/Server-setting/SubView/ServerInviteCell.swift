@@ -25,9 +25,13 @@ class ServerInviteCell: BaseTableViewCell {
         $0.textColor = .iconDefault
     }
     
-    let inviteCodeLabel = UILabel().then {
-        $0.textColor = .iconDefault
-        $0.font = UIFont.systemFont(ofSize: UIFont.smallSystemFontSize, weight: .bold)
+    let rightButton = UIImageView().then {
+        $0.image = UIImage(systemName: "ellipsis")?.withTintColor(.iconDefault!, renderingMode: .alwaysOriginal)
+    }
+    
+    let deleteButton = UIButton().then {
+        $0.setTitle("삭제", for: .normal)
+        $0.backgroundColor = .serverListDarkGray
     }
     
     
@@ -51,7 +55,8 @@ class ServerInviteCell: BaseTableViewCell {
         self.selectionStyle = .gray
         
         [
-            profileImg, userNameLabel, userCodeLabel, inviteCodeLabel
+            profileImg, userNameLabel, userCodeLabel, rightButton,
+            deleteButton
         ].forEach {self.addSubview($0)}
     }
     
@@ -72,7 +77,7 @@ class ServerInviteCell: BaseTableViewCell {
             $0.left.equalTo(userNameLabel.snp.right)
         }
         
-        inviteCodeLabel.snp.makeConstraints {
+        rightButton.snp.makeConstraints {
             $0.centerY.equalTo(userNameLabel)
             $0.right.equalToSuperview().offset(-24)
         }
@@ -81,7 +86,6 @@ class ServerInviteCell: BaseTableViewCell {
     func bind(inviteUser: Invitation) {
         self.userNameLabel.text = inviteUser.nickname
         self.userCodeLabel.text = "#\(inviteUser.userCode)"
-        self.inviteCodeLabel.text = inviteUser.inviteCode
         
         if (inviteUser.profileImage != nil) {
             profileImg.setImage(URL(string: inviteUser.profileImage!)!)

@@ -14,14 +14,17 @@ class ServerInviteListViewModel: BaseViewModel {
     
     let serverRepository: ServerRepositoryProtocol
     let server: Server
+    var invitations: [Invitation] = []
     
     struct Input {
         let viewDidLoad = PublishSubject<Void>()
+        let tapDeleteButton = PublishRelay<Invitation>()
     }
     
     struct Output {
         let invitations = PublishRelay<[Invitation]>()
         let pastedBoard = PublishRelay<Invitation>()
+        let showEmpty = PublishRelay<Bool>()
     }
     
     init(
@@ -34,8 +37,7 @@ class ServerInviteListViewModel: BaseViewModel {
     }
     
     override func bind() {
-        self.input.viewDidLoad
-            .bind(onNext: self.fetch)
+        self.input.viewDidLoad.bind(onNext: self.fetch)
             .disposed(by: disposeBag)
         
         self.output.pastedBoard
@@ -44,6 +46,12 @@ class ServerInviteListViewModel: BaseViewModel {
                 self.showToastMessage.accept("클립보드 복사완료")
             })
             .disposed(by: disposeBag)
+        
+        self.input.tapDeleteButton
+            .subscribe(onNext: { invitation in
+                self.deleteInvitation(invitation: invitation)
+
+            }).disposed(by: disposeBag)
         
     }
     
@@ -58,7 +66,32 @@ class ServerInviteListViewModel: BaseViewModel {
                 let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
                 self.showErrorMessage.accept(body.message)
             }
+            
+            self.output.showEmpty.accept(response.count == 0)
+            self.invitations = response
+            
             self.output.invitations.accept(response)
+        }
+    }
+    
+    private func deleteInvitation(invitation: Invitation) {
+        serverRepository.deleteinvitation(invitation.id) {
+            response, error in
+            
+            if (error?.response != nil) {
+                let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
+                self.showErrorMessage.accept(body.message)
+            }
+            
+            let index = self.invitations.firstIndex(of: invitation)
+            
+            self.invitations.remove(at: index!)
+            self.output.showEmpty.accept(self.invitations.count == 0)
+            
+            self.output.invitations.accept(self.invitations)
+            
+            
+            self.showToastMessage.accept("초대장 취소 완료")
         }
     }
 }
