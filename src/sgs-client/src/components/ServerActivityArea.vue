@@ -15,7 +15,7 @@
       <div class="height-100">
         <div class="scroller-content">
           <ol id="server-chat-scroll-bottom" class="scroller-inner">
-            <div v-for="(item, index) in receiveList" :key="item.id">
+            <div v-for="item in receiveList" :key="item.id">
               <li
                 class="chat-message-wrapper"
                 @mouseover="messageHover(item.id)"
@@ -28,25 +28,12 @@
                 <div
                   class="primary-chat-message-wrapper"
                   v-bind:class="{
-                    'others-chat-message-wrapper':
-                      (index - 1 >= 0 && !isSameTime(index - 1, index)) ||
-                      index - 1 == -1 ||
-                      (index - 1 >= 0 &&
-                        receiveList[index - 1].userId !==
-                          receiveList[index].userId),
+                    'others-chat-message-wrapper': item.isOther,
                     'message-replying': messageReplyId === item.id,
                   }"
                 >
                   <div class="chat-message-content">
-                    <template
-                      v-if="
-                        (index - 1 >= 0 && !isSameTime(index - 1, index)) ||
-                        index - 1 == -1 ||
-                        (index - 1 >= 0 &&
-                          receiveList[index - 1].userId !==
-                            receiveList[index].userId)
-                      "
-                    >
+                    <template v-if="item.isOther">
                       <img
                         :src="item.profileImage"
                         class="chat-avatar clickable"
@@ -332,6 +319,22 @@ export default {
         receivedForm.date = translatedTime[0];
         receivedForm.time = translatedTime[1];
         receivedForm.message = this.urlify(receivedForm.message);
+        let isOther = true;
+        if (this.receiveList.length > 0) {
+          const timeResult = this.isSameTime(
+            this.receiveList[this.receiveList.length - 1],
+            receivedForm
+          );
+          if (
+            timeResult &&
+            this.receiveList[this.receiveList.length - 1].userId ==
+              receivedForm.userId
+          ) {
+            isOther = false;
+          }
+        }
+        receivedForm.isOther = isOther;
+
         this.receiveList.push(receivedForm);
         this.$nextTick(function () {
           this.scrollToBottom();
@@ -368,11 +371,9 @@ export default {
       for (var i = 0; i < this.$refs["images"].files.length; i++) {
         this.images.push(this.$refs["images"].files[i]);
         let thumbnail = await converToThumbnail(this.$refs["images"].files[i]);
-
         let thumbnailFile = await dataUrlToFile(thumbnail);
         this.thumbnails.push(thumbnail);
         this.thumbnailFiles.push(thumbnailFile);
-
         console.log("image", this.images, "thumbnail", this.thumbnails);
       }
     },
@@ -471,16 +472,10 @@ export default {
     },
     scrollToBottom() {
       let bottomRef = this.$refs["bottomRef"];
-      console.log(
-        "호출이 안되니ㅏ?",
-        bottomRef.scrollTop,
-        bottomRef.scrollHeight
-      );
       bottomRef.scrollTop = bottomRef.scrollHeight;
     },
     async handleScroll(e) {
-      const { scrollHeight, scrollTop, clientHeight } = e.target;
-      console.log(scrollHeight, scrollTop, clientHeight);
+      const { scrollHeight, scrollTop } = e.target;
       if (scrollTop == 0) {
         if (this.more) {
           this.prevScrollHeight = scrollHeight;
@@ -509,6 +504,20 @@ export default {
         result.data.result[i].message = this.urlify(
           result.data.result[i].message
         );
+        let isOther = true;
+        if (i != 0) {
+          const timeResult = this.isSameTime(
+            result.data.result[i - 1],
+            result.data.result[i]
+          );
+          if (
+            timeResult &&
+            result.data.result[i - 1].userId == result.data.result[i].userId
+          ) {
+            isOther = false;
+          }
+        }
+        result.data.result[i].isOther = isOther;
         array.push(result.data.result[i]);
       }
       let newarray = array.concat(this.receiveList);
@@ -525,18 +534,14 @@ export default {
         });
       }
     },
-    isSameTime(prev, current) {
-      let prevv = this.receiveList[prev];
-      let currentt = this.receiveList[current];
+    isSameTime(prevv, currentt) {
       let prevTime = prevv.time.split(":");
       let currentTime = currentt.time.split(":");
-      console.log("prevcurrent", prevv, currentt);
       if (prevv.date == currentt.date) {
         let interval =
           parseInt(currentTime[0]) * 60 +
           parseInt(currentTime[1]) -
           (parseInt(prevTime[0]) * 60 + parseInt(prevTime[1]));
-
         if (interval <= 15) {
           return true;
         } else {
