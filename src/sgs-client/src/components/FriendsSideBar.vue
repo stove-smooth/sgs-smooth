@@ -6,7 +6,13 @@
     <div class="thin-scrollbar dm-scroller">
       <div class="side-content">
         <div class="primary-member-container">
-          <div class="primary-member-layout" @click="routeMypage">
+          <div
+            class="primary-member-layout"
+            @click="routeMypage"
+            v-bind:class="{
+              'primary-member-layout-hover': navigationSelected == '@me',
+            }"
+          >
             <div class="avatar-container">
               <svg class="friends-icon"></svg>
             </div>
@@ -40,6 +46,7 @@ export default {
   components: { DmListForm, NumberBadge },
   computed: {
     ...mapState("friends", ["friendsWaitNumber"]),
+    ...mapState("utils", ["navigationSelected"]),
   },
   methods: {
     routeMypage() {
