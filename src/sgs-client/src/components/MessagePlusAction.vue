@@ -18,7 +18,7 @@
         </div>
         <div
           class="plus-action-label-container"
-          @click="setMessageReplyId(messagePlusMenu)"
+          @click="MessageReply(messagePlusMenu)"
         >
           <div class="plus-action-label">답장</div>
           <svg class="reply-button"></svg>
@@ -44,26 +44,37 @@ import { mapState, mapMutations } from "vuex";
 export default {
   computed: {
     ...mapState("utils", ["clientX", "clientY"]),
-    ...mapState("server", [
-      "messagePlusMenu",
-      "messageReplyId",
-      "messageEditId",
-      "messageReadyToDelete",
-    ]),
+    ...mapState("server", ["messagePlusMenu"]),
     cssProps() {
       return {
-        "--xpoint": this.clientX + "px",
+        "--xpoint": this.clientX - 200 + "px",
         "--ypoint": this.clientY + "px",
       };
     },
   },
   methods: {
     ...mapMutations("server", [
-      "setMessageReplyId",
+      "setCommunityMessageReplyId",
       "setMessageEditId",
       "setMessageFixId",
       "setMessageReadyToDelete",
     ]),
+    ...mapMutations("dm", ["setDirectMessageReplyId"]),
+    MessageReply(messagePlusMenu) {
+      if (!this.$route.params.channelid) {
+        const message = {
+          channel: this.$route.params.id,
+          messageInfo: messagePlusMenu,
+        };
+        this.setDirectMessageReplyId(message);
+      } else {
+        const message = {
+          channel: this.$route.params.channelid,
+          messageInfo: messagePlusMenu,
+        };
+        this.setCommunityMessageReplyId(message);
+      }
+    },
   },
 };
 </script>

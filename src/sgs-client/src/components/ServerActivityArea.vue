@@ -29,7 +29,9 @@
                   class="primary-chat-message-wrapper"
                   v-bind:class="{
                     'others-chat-message-wrapper': item.isOther,
-                    'message-replying': messageReplyId.id === item.id,
+                    'message-replying':
+                      communityMessageReplyId !== '' &&
+                      communityMessageReplyId.messageInfo.id == item.id,
                   }"
                 >
                   <div class="chat-message-content">
@@ -112,7 +114,7 @@
                         <svg class="edit-pencil"></svg>
                       </div>
                       <div
-                        @click="setMessageReplyId(item)"
+                        @click="MessageReply(item)"
                         class="chat-action-button"
                         aria-label="답장하기"
                         role="button"
@@ -149,7 +151,13 @@
     </div>
     <div class="channel-message-input-form">
       <div class="channel-message-area">
-        <div class="attached-bar" v-if="messageReplyId !== ''">
+        <div
+          class="attached-bar"
+          v-if="
+            communityMessageReplyId !== '' &&
+            communityMessageReplyId.channel == this.$route.params.channelid
+          "
+        >
           <div>
             <div class="clip-container">
               <div class="base-container">
@@ -157,7 +165,7 @@
                   <div role="button" tabindex="0">
                     <div class="reply-label-container">
                       <span class="large-description">
-                        {{ messageReplyId.name }}
+                        {{ communityMessageReplyId.messageInfo.name }}
                       </span>
                       님에게 답장하는 중
                     </div>
@@ -165,7 +173,7 @@
                   <div class="align-items-center">
                     <div
                       class="reply-close-button"
-                      @click="setMessageReplyId('')"
+                      @click="setCommunityMessageReplyId('')"
                     >
                       <svg class="small-close-button"></svg>
                     </div>
@@ -311,7 +319,7 @@ export default {
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
     ...mapState("server", [
       "messagePlusMenu",
-      "messageReplyId",
+      "communityMessageReplyId",
       "messageEditId",
     ]),
     ...mapGetters("user", ["getUserId"]),
@@ -356,7 +364,7 @@ export default {
     ...mapMutations("utils", ["setClientX", "setClientY"]),
     ...mapMutations("server", [
       "setMessagePlusMenu",
-      "setMessageReplyId",
+      "setCommunityMessageReplyId",
       "setMessageEditId",
     ]),
     sendMessage(e) {
@@ -427,6 +435,13 @@ export default {
     cancelModify() {
       this.setMessageEditId("");
       this.modifyLogMessage = "";
+    },
+    MessageReply(messagePlusMenu) {
+      const message = {
+        channel: this.$route.params.channelid,
+        messageInfo: messagePlusMenu,
+      };
+      this.setCommunityMessageReplyId(message);
     },
     async sendPicture() {
       const formData = new FormData();

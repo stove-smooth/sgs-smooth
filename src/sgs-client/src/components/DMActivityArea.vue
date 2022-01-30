@@ -29,7 +29,9 @@
                   class="primary-chat-message-wrapper"
                   v-bind:class="{
                     'others-chat-message-wrapper': item.isOther,
-                    'message-replying': messageReplyId.id === item.id,
+                    'message-replying':
+                      directMessageReplyId !== '' &&
+                      directMessageReplyId.messageInfo.id == item.id,
                   }"
                 >
                   <div class="chat-message-content">
@@ -112,7 +114,7 @@
                         <svg class="edit-pencil"></svg>
                       </div>
                       <div
-                        @click="setMessageReplyId(item)"
+                        @click="MessageReply(item)"
                         class="chat-action-button"
                         aria-label="답장하기"
                         role="button"
@@ -142,7 +144,13 @@
     </div>
     <div class="channel-message-input-form">
       <div class="channel-message-area">
-        <div class="attached-bar" v-if="messageReplyId !== ''">
+        <div
+          class="attached-bar"
+          v-if="
+            directMessageReplyId !== '' &&
+            directMessageReplyId.channel == this.$route.params.id
+          "
+        >
           <div>
             <div class="clip-container">
               <div class="base-container">
@@ -150,7 +158,7 @@
                   <div role="button" tabindex="0">
                     <div class="reply-label-container">
                       <span class="large-description">
-                        {{ messageReplyId.name }}
+                        {{ directMessageReplyId.messageInfo.name }}
                       </span>
                       님에게 답장하는 중
                     </div>
@@ -158,7 +166,7 @@
                   <div class="align-items-center">
                     <div
                       class="reply-close-button"
-                      @click="setMessageReplyId('')"
+                      @click="setDirectMessageReplyId('')"
                     >
                       <svg class="small-close-button"></svg>
                     </div>
@@ -302,11 +310,8 @@ export default {
   computed: {
     ...mapState("user", ["nickname"]),
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
-    ...mapState("server", [
-      "messagePlusMenu",
-      "messageReplyId",
-      "messageEditId",
-    ]),
+    ...mapState("server", ["messagePlusMenu", "messageEditId"]),
+    ...mapState("dm", ["directMessageReplyId"]),
     ...mapGetters("user", ["getUserId"]),
   },
   async created() {
@@ -347,11 +352,8 @@ export default {
   },
   methods: {
     ...mapMutations("utils", ["setClientX", "setClientY"]),
-    ...mapMutations("server", [
-      "setMessagePlusMenu",
-      "setMessageReplyId",
-      "setMessageEditId",
-    ]),
+    ...mapMutations("server", ["setMessagePlusMenu", "setMessageEditId"]),
+    ...mapMutations("dm", ["setDirectMessageReplyId"]),
     sendMessage(e) {
       if (e.keyCode == 13 && !e.shiftKey && this.stompSocketConnected) {
         if (this.text.trim().length == 0 && this.images.length == 0) {
@@ -421,6 +423,13 @@ export default {
       this.setMessageEditId("");
       this.modifyLogMessage = "";
     },
+    MessageReply(messagePlusMenu) {
+      const message = {
+        channel: this.$route.params.id,
+        messageInfo: messagePlusMenu,
+      };
+      this.setDirectMessageReplyId(message);
+    },
     async sendPicture() {
       const formData = new FormData();
       for (let i = 0; i < this.images.length; i++) {
@@ -442,12 +451,11 @@ export default {
       this.messageHovered = idx;
     },
     clickPlusAction(event, messageInfo) {
-      console.log("clickplusaction", event, messageInfo);
-      /* const x = event.clientX;
+      const x = event.clientX;
       const y = event.clientY;
       this.setClientX(x);
       this.setClientY(y);
-      this.setMessagePlusMenu(messageInfo); */
+      this.setMessagePlusMenu(messageInfo);
     },
     onClick(e) {
       if (this.messagePlusMenu != null) {
@@ -525,7 +533,6 @@ export default {
         }
         var array = [];
         for (var i = 0; i < result.data.result.length; i++) {
-          console.log("채팅 메시지", result.data.result);
           const translatedTime = this.convertFromStringToDate(
             result.data.result[i].time
           );
