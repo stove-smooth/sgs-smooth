@@ -137,9 +137,9 @@ function exitCommunity(communityId, userId) {
 function joinCommunity(communityHashCode) {
   return instance.post(`community-server/community/member`, communityHashCode);
 }
-function readChatMessage(ch_id, user_id) {
+function readChatMessage(channelId, pageId) {
   return instance.get(
-    `chat-server/community?ch_id=${ch_id}&user_id=${user_id}`
+    `chat-server/community?ch_id=${channelId}&page=${pageId}`
   );
 }
 export {

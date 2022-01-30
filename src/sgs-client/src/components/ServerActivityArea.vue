@@ -1,6 +1,10 @@
 <template>
   <div class="server-chatting-container">
-    <div class="thin-scrollbar server-chat-scroller">
+    <div
+      class="thin-scrollbar server-chat-scroller"
+      ref="bottomRef"
+      @scroll="handleScroll"
+    >
       <VEmojiPicker
         v-show="this.emojiPopout"
         class="emoji-picker-popout"
@@ -8,23 +12,23 @@
         lang="pt-BR"
         @select="onSelectEmoji"
       />
-      <div>
+      <div class="height-100">
         <div class="scroller-content">
           <ol id="server-chat-scroll-bottom" class="scroller-inner">
-            <div v-for="(item, idx) in receiveList" :key="idx">
+            <div v-for="item in receiveList" :key="item.id">
               <li
                 class="chat-message-wrapper"
-                @mouseover="messageHover(idx)"
+                @mouseover="messageHover(item.id)"
                 @mouseleave="messageHover('')"
                 v-bind:class="{
                   'selected-message-area':
-                    messageHovered === idx || messagePlusMenu === idx,
+                    messageHovered === item.id || messagePlusMenu === item.id,
                 }"
               >
                 <div
                   class="primary-chat-message-wrapper others-chat-message-wrapper"
                   v-bind:class="{
-                    'message-replying': messageReplyId === idx,
+                    'message-replying': messageReplyId === item.id,
                   }"
                 >
                   <div class="chat-message-content">
@@ -37,7 +41,7 @@
                       <span class="chat-user-name">{{ item.name }}</span>
                       <span class="chat-time-stamp">{{ item.time }}</span>
                     </h2>
-                    <div v-if="messageEditId === idx">
+                    <div v-if="messageEditId === item.id">
                       <div class="channel-message-edit-area">
                         <div class="channel-message-input-area">
                           <textarea
@@ -71,7 +75,9 @@
                   </div>
                   <div
                     class="chat-message-plus-action-container"
-                    v-show="messageHovered === idx || messagePlusMenu === idx"
+                    v-show="
+                      messageHovered === item.id || messagePlusMenu === item.id
+                    "
                   >
                     <div class="actionbar-wrapper2">
                       <div
@@ -84,7 +90,7 @@
                       </div>
                       <!--내꺼면 수정아니면 답장-->
                       <div
-                        @click="setMessageEditId(idx)"
+                        @click="setMessageEditId(item.id)"
                         v-show="false"
                         class="chat-action-button"
                         aria-label="수정하기"
@@ -94,7 +100,7 @@
                         <svg class="edit-pencil"></svg>
                       </div>
                       <div
-                        @click="setMessageReplyId(idx)"
+                        @click="setMessageReplyId(item.id)"
                         class="chat-action-button"
                         aria-label="답장하기"
                         role="button"
@@ -111,8 +117,8 @@
                         <svg class="thread-icon"></svg>
                       </div>
                       <div
-                        :data-key="idx"
-                        @click="clickPlusAction($event, idx)"
+                        :data-key="item.id"
+                        @click="clickPlusAction($event, item.id)"
                         class="chat-action-button"
                         aria-label="추가 기능"
                         role="button"
@@ -125,7 +131,7 @@
                 </div>
               </li>
             </div>
-            <div ref="bottomRef"></div>
+            <!-- <div ref="bottomRef"></div> -->
           </ol>
         </div>
       </div>
@@ -278,6 +284,9 @@ export default {
       receiveList: [],
       thumbnailFiles: [],
       emojiPopout: false,
+      page: 0,
+      more: false,
+      prevScrollHeight: 0,
     };
   },
   mounted() {
@@ -294,20 +303,7 @@ export default {
     ...mapGetters("user", ["getUserId"]),
   },
   async created() {
-    const result = await readChatMessage(
-      this.$route.params.channelid,
-      this.getUserId
-    );
-    for (var i = 0; i < result.data.result.length; i++) {
-      const translatedTime = this.convertFromStringToDate(
-        result.data.result[i].time
-      );
-      result.data.result[i].time = translatedTime;
-      result.data.result[i].message = this.urlify(
-        result.data.result[i].message
-      );
-      this.receiveList.push(result.data.result[i]);
-    }
+    await this.readChannelMessage();
     this.stompSocketClient.subscribe(
       "/topic/group/" + this.$route.params.channelid,
       (res) => {
@@ -317,16 +313,11 @@ export default {
         receivedForm.time = result;
         receivedForm.message = this.urlify(receivedForm.message);
         this.receiveList.push(receivedForm);
+        setTimeout(() => {
+          this.scrollToBottom();
+        }, 1000);
       }
     );
-  },
-  watch: {
-    receiveList: function (newVal, oldVal) {
-      console.log("값이 변경되었습니다.", newVal, oldVal);
-      setTimeout(() => {
-        this.scrollToBottom();
-      }, 1000);
-    },
   },
   methods: {
     ...mapMutations("utils", ["setClientX", "setClientY"]),
@@ -458,9 +449,54 @@ export default {
       });
     },
     scrollToBottom() {
-      console.log("웨 안바끼냐 ㅋ");
       let bottomRef = this.$refs["bottomRef"];
-      bottomRef.scrollIntoView({ behavior: "smooth" });
+      bottomRef.scrollTop = bottomRef.scrollHeight;
+    },
+    async handleScroll(e) {
+      const { scrollHeight, scrollTop, clientHeight } = e.target;
+      console.log(scrollHeight, scrollTop, clientHeight);
+      if (scrollTop == 0) {
+        if (this.more) {
+          this.prevScrollHeight = scrollHeight;
+          this.page++;
+          await this.readChannelMessage();
+        }
+      }
+    },
+    async readChannelMessage() {
+      const result = await readChatMessage(
+        this.$route.params.channelid,
+        this.page
+      );
+      if (result.data.result.length == 50) {
+        this.more = true;
+      } else {
+        this.more = false;
+      }
+      var array = [];
+      for (var i = 0; i < result.data.result.length; i++) {
+        const translatedTime = this.convertFromStringToDate(
+          result.data.result[i].time
+        );
+        result.data.result[i].time = translatedTime;
+        result.data.result[i].message = this.urlify(
+          result.data.result[i].message
+        );
+        array.push(result.data.result[i]);
+      }
+      let newarray = array.concat(this.receiveList);
+      this.receiveList = newarray;
+      if (this.prevScrollHeight != 0) {
+        this.$nextTick(function () {
+          let bottomRef = this.$refs["bottomRef"];
+          bottomRef.scrollTop = bottomRef.scrollHeight - this.prevScrollHeight;
+        });
+      }
+      if (this.page == 0) {
+        this.$nextTick(function () {
+          this.scrollToBottom();
+        });
+      }
     },
   },
 };
@@ -510,7 +546,6 @@ export default {
   width: 100%;
   flex: 1;
   align-items: flex-end;
-  display: flex;
 }
 .scroller-content {
   overflow-anchor: none;
