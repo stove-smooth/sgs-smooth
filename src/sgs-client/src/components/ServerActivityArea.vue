@@ -417,7 +417,7 @@ export default {
           content: content,
         };
         this.stompSocketClient.send(
-          "/kafka//send-channel-modify",
+          "/kafka/send-channel-modify",
           JSON.stringify(msg),
           {}
         );
@@ -508,7 +508,8 @@ export default {
       scrollRef.scrollTop = scrollRef.scrollHeight;
     },
     async handleScroll(e) {
-      const { scrollHeight, scrollTop } = e.target;
+      const { scrollHeight, scrollTop, clientHeight } = e.target;
+      console.log("scroll", scrollTop, scrollHeight, clientHeight);
       if (scrollTop == 0) {
         if (this.more) {
           this.prevScrollHeight = scrollHeight;
@@ -555,15 +556,15 @@ export default {
       }
       let newarray = array.concat(this.receiveList);
       this.receiveList = newarray;
+      if (this.page == 0) {
+        this.$nextTick(function () {
+          this.scrollToBottom();
+        });
+      }
       if (this.prevScrollHeight != 0) {
         this.$nextTick(function () {
           let scrollRef = this.$refs["scrollRef"];
           scrollRef.scrollTop = scrollRef.scrollHeight - this.prevScrollHeight;
-        });
-      }
-      if (this.page == 0) {
-        this.$nextTick(function () {
-          this.scrollToBottom();
         });
       }
     },
@@ -575,7 +576,7 @@ export default {
           parseInt(currentTime[0]) * 60 +
           parseInt(currentTime[1]) -
           (parseInt(prevTime[0]) * 60 + parseInt(prevTime[1]));
-        if (interval <= 15) {
+        if (interval <= 1) {
           return true;
         } else {
           return false;

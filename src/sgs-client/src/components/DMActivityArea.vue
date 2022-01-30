@@ -410,7 +410,7 @@ export default {
           content: content,
         };
         this.stompSocketClient.send(
-          "/kafka//send-channel-modify",
+          "/kafka/send-channel-modify",
           JSON.stringify(msg),
           {}
         );
