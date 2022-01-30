@@ -8,6 +8,10 @@
 import UIKit
 
 class AddServerView: BaseView {
+    let navigationView = UIView().then {
+        $0.backgroundColor = .backgroundDarkGray
+    }
+    
     let closeButton = UIButton().then {
         $0.setTitle("닫기", for: .normal)
         $0.tintColor = .white
@@ -53,8 +57,10 @@ class AddServerView: BaseView {
     override func setup() {
         self.backgroundColor = .backgroundDarkGray
         
+        navigationView.addSubview(closeButton)
+        
         [
-            closeButton, titleLabel, titleDescriptionLabel,
+            navigationView, titleLabel, titleDescriptionLabel,
             makeButton, joinButton
             
         ].forEach { self.addSubview($0) }
@@ -62,13 +68,18 @@ class AddServerView: BaseView {
     
     
     override func bindConstraints() {
+        navigationView.snp.makeConstraints {
+            $0.left.right.top.equalToSuperview()
+            $0.bottom.equalTo(safeAreaLayoutGuide.snp.top).offset(40)
+        }
+        
         closeButton.snp.makeConstraints {
-            $0.left.equalToSuperview().offset(20)
-            $0.top.equalTo(safeAreaLayoutGuide).offset(-15)
+            $0.left.equalToSuperview().offset(24)
+            $0.bottom.equalToSuperview()
         }
         
         titleLabel.snp.makeConstraints {
-            $0.top.equalTo(safeAreaLayoutGuide).offset(15)
+            $0.top.equalTo(navigationView.snp.bottom).offset(15)
             $0.centerX.equalToSuperview()
         }
         

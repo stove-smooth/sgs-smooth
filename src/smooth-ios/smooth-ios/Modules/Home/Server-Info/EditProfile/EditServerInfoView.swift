@@ -19,7 +19,7 @@ class EditServerInfoView: BaseView {
     
     let naviTitleLabel = UILabel().then {
         $0.textColor = .white
-        $0.text = "서버 설정"
+        $0.text = "일반"
     }
     
     var saveButton = UIButton().then {
@@ -80,8 +80,10 @@ class EditServerInfoView: BaseView {
     override func setup() {
         self.backgroundColor = UIColor.backgroundDarkGray
         
+        [closeButton, naviTitleLabel, saveButton].forEach {navigationView.addSubview($0)}
+        
         [
-            navigationView, closeButton, naviTitleLabel, saveButton,
+            navigationView,
             imgUploadButton, uploadIcon,
             serverNameLabel, serverNameLabelField,
             deleteButton
@@ -98,17 +100,17 @@ class EditServerInfoView: BaseView {
         
         closeButton.snp.makeConstraints {
             $0.left.equalToSuperview().offset(24)
-            $0.centerY.equalTo(naviTitleLabel)
+            $0.bottom.equalToSuperview()
         }
         
         naviTitleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.bottom.equalTo(navigationView).offset(-10)
+            $0.bottom.equalToSuperview()
         }
         
         saveButton.snp.makeConstraints {
             $0.right.equalToSuperview().offset(-24)
-            $0.centerY.equalTo(naviTitleLabel)
+            $0.bottom.equalToSuperview()
         }
         
         imgUploadButton.snp.makeConstraints {
