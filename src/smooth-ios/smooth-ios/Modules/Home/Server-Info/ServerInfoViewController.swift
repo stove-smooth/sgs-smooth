@@ -8,6 +8,7 @@
 import Foundation
 import PanModal
 import UIKit
+import RxGesture
 
 class ServerInfoViewController: BaseViewController, PanModalPresentable {
     var panScrollable: UIScrollView?
@@ -17,12 +18,19 @@ class ServerInfoViewController: BaseViewController, PanModalPresentable {
     private lazy var serverInfoView = ServerInfoView(frame: self.view.frame)
     private let viewModel: ServerInfoViewModel
     
-    let communityInfo: CommunityInfo
+    let server: Server
+    let member: Member
     
-    init(communityInfo: CommunityInfo) {
-        self.communityInfo = communityInfo
+    init(
+        server: Server,
+        member: Member
+    ) {
+        self.server = server
+        self.member = member
+        
         self.viewModel = ServerInfoViewModel(
-            communityInfo: communityInfo,
+            server: server,
+            member: member,
             serverRepository: ServerRepository()
         )
         
@@ -33,8 +41,8 @@ class ServerInfoViewController: BaseViewController, PanModalPresentable {
         fatalError("init(coder:) has not been implemented")
     }
     
-    static func instance(communityInfo: CommunityInfo) -> ServerInfoViewController {
-        return ServerInfoViewController(communityInfo: communityInfo).then {
+    static func instance(server: Server, member: Member) -> ServerInfoViewController {
+        return ServerInfoViewController(server: server, member: member).then {
             $0.modalPresentationStyle = .overCurrentContext
         }
     }
@@ -53,7 +61,10 @@ class ServerInfoViewController: BaseViewController, PanModalPresentable {
         super.viewDidLoad()
         
         self.view = serverInfoView
-        serverInfoView.bind(communityInfo: self.communityInfo)
+        serverInfoView.bind(
+            server: self.server,
+            owner: member.role == .owner
+        )
         self.setTableView()
     }
     
@@ -68,6 +79,14 @@ class ServerInfoViewController: BaseViewController, PanModalPresentable {
             .drive(onNext: {
                 self.dismiss(animated: true, completion: nil)
                 self.coordinator?.goToMenu()
+            })
+            .disposed(by: disposeBag)
+        
+        self.serverInfoView.settingButton.rx.tapGesture()
+            .when(.recognized)
+            .asDriver { _ in .never() }
+            .drive(onNext: { _ in
+                self.coordinator?.goToEditServerInfo(server: self.server)
             })
             .disposed(by: disposeBag)
     }
@@ -85,10 +104,10 @@ class ServerInfoViewController: BaseViewController, PanModalPresentable {
         AlertUtils.showWithCancel(
             controller: self,
             title: "서버 퇴장",
-            message: "이 서버에서 나가면 다시 초대를 받아야하는데 정말 \(self.communityInfo.name)에서 나갈건가요?"
+            message: "이 서버에서 나가면 다시 초대를 받아야하는데 정말 나갈건가요?"
         ) {
             self.viewModel.input.tapLeaveServer.onNext(())
-       }
+        }
     }
 }
 

@@ -13,7 +13,8 @@ class ServerInfoViewModel: BaseViewModel {
     let output = Output()
 
     let serverRepository: ServerRepository
-    let communityInfo: CommunityInfo
+    let server: Server
+    let member: Member
     
     struct Input {
         let tapLeaveServer = PublishSubject<Void>()
@@ -24,10 +25,12 @@ class ServerInfoViewModel: BaseViewModel {
     }
     
     init(
-        communityInfo: CommunityInfo,
+        server: Server,
+        member: Member,
         serverRepository: ServerRepository
     ) {
-        self.communityInfo = communityInfo
+        self.server = server
+        self.member = member
         self.serverRepository = serverRepository
         super.init()
     }
@@ -35,13 +38,13 @@ class ServerInfoViewModel: BaseViewModel {
     override func bind() {
         self.input.tapLeaveServer
             .bind(onNext: {
-                self.leaveServer(serverId: self.communityInfo.id)
+                self.leaveServer(serverId: self.server.id, memberId: self.member.id)
             })
             .disposed(by: disposeBag)
     }
     
-    private func leaveServer(serverId: Int) {
-        serverRepository.leaveServer(serverId) { response, error in 
+    private func leaveServer(serverId: Int, memberId: Int) {
+        serverRepository.leaveServer(serverId: serverId, memberId: memberId) { response, error in
             if (error?.response != nil) {
                 let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
                 self.showErrorMessage.accept(body.message)

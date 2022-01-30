@@ -24,6 +24,10 @@ class ServerInfoView: BaseView {
         $0.backgroundColor = .blurple
     }
     
+    let textView = UILabel().then {
+        $0.textColor = .white
+    }
+    
     let nameLabel = UILabel().then {
         $0.font = UIFont.systemFont(ofSize: 30, weight: .bold)
         $0.textColor = .white
@@ -72,6 +76,7 @@ class ServerInfoView: BaseView {
         $0.axis = .vertical
         $0.distribution = .equalCentering
         $0.alignment = .center
+        $0.isUserInteractionEnabled = false 
     }
     let settingLabel = UILabel().then {
         $0.text = "설정"
@@ -112,6 +117,8 @@ class ServerInfoView: BaseView {
         }
         
         tableBackView.addSubview(tableView)
+        profileImg.addSubview(textView)
+        
         self.addSubview(containerView)
     }
     
@@ -124,6 +131,11 @@ class ServerInfoView: BaseView {
             $0.top.equalToSuperview().offset(20)
             $0.left.equalToSuperview().offset(10)
             $0.width.height.equalTo(60)
+        }
+        
+        textView.snp.makeConstraints {
+            $0.centerX.centerY.equalToSuperview()
+            $0.edges.equalToSuperview()
         }
         
         nameLabel.snp.makeConstraints {
@@ -155,13 +167,23 @@ class ServerInfoView: BaseView {
         }
         
         tableView.snp.makeConstraints {
-            $0.left.equalToSuperview().offset(24)
-            $0.right.equalToSuperview().offset(-24)
+            $0.left.equalToSuperview().offset(10)
+            $0.right.equalToSuperview().offset(-10)
             $0.top.bottom.equalToSuperview().inset(10)
         }
     }
     
-    func bind(communityInfo: CommunityInfo) {
-        nameLabel.text = communityInfo.name
+    func bind(server: Server, owner: Bool) {
+        settingButton.isHidden = !owner
+        
+        nameLabel.text = server.name
+        
+        if server.icon != nil {
+            profileImg.setImage(URL(string: server.icon!)!)
+            textView.isHidden = true
+        } else {
+            textView.isHidden = false
+            textView.text = "\(server.name)"
+        }
     }
 }
