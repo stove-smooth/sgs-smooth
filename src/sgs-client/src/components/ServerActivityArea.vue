@@ -15,7 +15,7 @@
       <div class="height-100">
         <div class="scroller-content">
           <ol id="server-chat-scroll-bottom" class="scroller-inner">
-            <div v-for="item in receiveList" :key="item.id">
+            <div v-for="(item, index) in receiveList" :key="item.id">
               <li
                 class="chat-message-wrapper"
                 @mouseover="messageHover(item.id)"
@@ -26,21 +26,38 @@
                 }"
               >
                 <div
-                  class="primary-chat-message-wrapper others-chat-message-wrapper"
+                  class="primary-chat-message-wrapper"
                   v-bind:class="{
+                    'others-chat-message-wrapper':
+                      (index - 1 >= 0 && !isSameTime(index - 1, index)) ||
+                      index - 1 == -1 ||
+                      (index - 1 >= 0 &&
+                        receiveList[index - 1].userId !==
+                          receiveList[index].userId),
                     'message-replying': messageReplyId === item.id,
                   }"
                 >
                   <div class="chat-message-content">
-                    <img
-                      :src="item.profileImage"
-                      class="chat-avatar clickable"
-                      alt="image"
-                    />
-                    <h2 class="chat-avatar-header">
-                      <span class="chat-user-name">{{ item.name }}</span>
-                      <span class="chat-time-stamp">{{ item.time }}</span>
-                    </h2>
+                    <template
+                      v-if="
+                        (index - 1 >= 0 && !isSameTime(index - 1, index)) ||
+                        index - 1 == -1 ||
+                        (index - 1 >= 0 &&
+                          receiveList[index - 1].userId !==
+                            receiveList[index].userId)
+                      "
+                    >
+                      <img
+                        :src="item.profileImage"
+                        class="chat-avatar clickable"
+                        alt="image"
+                      />
+                      <h2 class="chat-avatar-header">
+                        <span class="chat-user-name">{{ item.name }}</span>
+                        <span class="chat-time-stamp">{{ item.time }}</span>
+                      </h2>
+                    </template>
+
                     <div v-if="messageEditId === item.id">
                       <div class="channel-message-edit-area">
                         <div class="channel-message-input-area">
@@ -308,14 +325,17 @@ export default {
       "/topic/group/" + this.$route.params.channelid,
       (res) => {
         console.log("구독으로 받은 메시지 입니다.", res.body);
-        const result = this.convertFromStringToDate(JSON.parse(res.body).time);
+        const translatedTime = this.convertFromStringToDate(
+          JSON.parse(res.body).time
+        );
         const receivedForm = JSON.parse(res.body);
-        receivedForm.time = result;
+        receivedForm.date = translatedTime[0];
+        receivedForm.time = translatedTime[1];
         receivedForm.message = this.urlify(receivedForm.message);
         this.receiveList.push(receivedForm);
-        setTimeout(() => {
+        this.$nextTick(function () {
           this.scrollToBottom();
-        }, 1000);
+        });
       }
     );
   },
@@ -428,13 +448,14 @@ export default {
       let dateComponents = responseDate.split("T");
       dateComponents[0].split("-");
       let timePieces = dateComponents[1].split(":");
+
       if (parseInt(timePieces[0]) + 9 < 24) {
         time.hour = parseInt(timePieces[0]) + 9;
       } else {
         time.hour = parseInt(timePieces[0]) + 9 - 24;
       }
       time.minutes = parseInt(timePieces[1]);
-      return time.hour + ":" + time.minutes;
+      return [dateComponents[0], time.hour + ":" + time.minutes];
     },
     onSelectEmoji(emoji) {
       this.text += emoji.data;
@@ -450,6 +471,11 @@ export default {
     },
     scrollToBottom() {
       let bottomRef = this.$refs["bottomRef"];
+      console.log(
+        "호출이 안되니ㅏ?",
+        bottomRef.scrollTop,
+        bottomRef.scrollHeight
+      );
       bottomRef.scrollTop = bottomRef.scrollHeight;
     },
     async handleScroll(e) {
@@ -478,7 +504,8 @@ export default {
         const translatedTime = this.convertFromStringToDate(
           result.data.result[i].time
         );
-        result.data.result[i].time = translatedTime;
+        result.data.result[i].date = translatedTime[0];
+        result.data.result[i].time = translatedTime[1];
         result.data.result[i].message = this.urlify(
           result.data.result[i].message
         );
@@ -496,6 +523,27 @@ export default {
         this.$nextTick(function () {
           this.scrollToBottom();
         });
+      }
+    },
+    isSameTime(prev, current) {
+      let prevv = this.receiveList[prev];
+      let currentt = this.receiveList[current];
+      let prevTime = prevv.time.split(":");
+      let currentTime = currentt.time.split(":");
+      console.log("prevcurrent", prevv, currentt);
+      if (prevv.date == currentt.date) {
+        let interval =
+          parseInt(currentTime[0]) * 60 +
+          parseInt(currentTime[1]) -
+          (parseInt(prevTime[0]) * 60 + parseInt(prevTime[1]));
+
+        if (interval <= 15) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
       }
     },
   },
