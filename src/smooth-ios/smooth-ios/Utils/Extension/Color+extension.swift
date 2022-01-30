@@ -27,6 +27,8 @@ extension UIColor {
     
     static let iconsLightGray = UIColor(hex: "0xc0bcbc")
     static let iconsDarkGray = UIColor(hex: "0x4f5660")
+    static let iconDefault = UIColor(hex:"0xB9BBBD")
+    
     static let toolTip_UserProfile = UIColor(hex: "0x18191c")
     
     static let messageBarDarkGray = UIColor(hex: "0x40444b")

@@ -86,7 +86,7 @@ class ServerInfoViewController: BaseViewController, PanModalPresentable {
             .when(.recognized)
             .asDriver { _ in .never() }
             .drive(onNext: { _ in
-                self.goToEditServerInfo(server: self.server)
+                self.goToServerInfo(server: self.server)
             })
             .disposed(by: disposeBag)
     }
@@ -109,9 +109,10 @@ class ServerInfoViewController: BaseViewController, PanModalPresentable {
         }
     }
     
-    private func goToEditServerInfo(server: Server) {
+    private func goToServerInfo(server: Server) {
         self.dismiss(animated: true, completion: nil)
-        self.coordinator?.goToEditServerInfo(server: self.server)
+//        self.coordinator?.goToServerInfo(server: self.server)
+        self.coordinator?.goToServerSetting(server: self.server)
     }
 }
 

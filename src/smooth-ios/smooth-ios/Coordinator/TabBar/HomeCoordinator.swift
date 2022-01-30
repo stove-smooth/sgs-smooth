@@ -24,7 +24,7 @@ class HomeCoordinator: NSObject, Coordinator {
         homeVC.coordinator = self
         
         navigationController.setNavigationBarHidden(true, animated: false)
-        navigationController.pushViewController(homeVC, animated: true)
+        navigationController.pushViewController(homeVC, animated: false)
     }
     
     func goToContainer() {
@@ -57,10 +57,9 @@ class HomeCoordinator: NSObject, Coordinator {
         navigationController.presentPanModal(serverInfoVC)
     }
     
-    func goToEditServerInfo(server: Server) {
-        let editVC = EditServerInfoViewController.instance(server: server)
-        
-        editVC.modalPresentationStyle = .fullScreen
-        navigationController.present(editVC, animated: true, completion: nil)
+    func goToServerSetting(server: Server) {
+        let coordinator = ServerSettingCoordinator(navigationController: navigationController)
+        childCoordinators.append(coordinator)
+        coordinator.start(server: server)
     }
 }
