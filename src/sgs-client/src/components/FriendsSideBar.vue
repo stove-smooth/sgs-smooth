@@ -10,7 +10,8 @@
             class="primary-member-layout"
             @click="routeMypage"
             v-bind:class="{
-              'primary-member-layout-hover': navigationSelected == '@me',
+              'primary-member-layout-hover':
+                navigationSelected == '@me' && !this.$route.params.id,
             }"
           >
             <div class="avatar-container">

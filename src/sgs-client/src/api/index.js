@@ -142,6 +142,9 @@ function readChatMessage(channelId, pageId) {
     `chat-server/community?ch_id=${channelId}&page=${pageId}`
   );
 }
+function readDMChatMessage(channelId, pageId) {
+  return instance.get(`chat-server/direct?ch_id=${channelId}&page=${pageId}`);
+}
 export {
   registerUser,
   loginUser,
@@ -171,4 +174,5 @@ export {
   joinCommunity,
   readChatMessage,
   moveCommunity,
+  readDMChatMessage,
 };
