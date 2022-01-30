@@ -16,7 +16,10 @@ class MenuViewController: BaseViewController, CoordinatorContext {
     private let viewModel: MenuViewModel
     
     init() {
-        self.viewModel = MenuViewModel(serverRepository: ServerRepository())
+        self.viewModel = MenuViewModel(
+            serverRepository: ServerRepository(),
+            userDefaults: UserDefaultsUtil()
+        )
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -51,7 +54,12 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             .rx.tap
             .asDriver()
             .drive(onNext: {
-                self.showServerInfoModal(communityInfo: self.viewModel.model.communityInfo!)
+                let index = self.viewModel.model.selectedServerIndex!
+                
+                self.showServerInfoModal(
+                    server: self.viewModel.model.servers![index],
+                    member: self.viewModel.model.me!
+                )
             })
             .disposed(by: disposeBag)
         
@@ -78,8 +86,8 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         self.coordinator?.goToAddServer()
     }
     
-    func showServerInfoModal(communityInfo: CommunityInfo) {
-        self.coordinator?.showServerInfoModal(communityInfo: communityInfo)
+    func showServerInfoModal(server: Server, member: Member) {
+        self.coordinator?.showServerInfoModal(server: server, member: member)
     }
 }
 
