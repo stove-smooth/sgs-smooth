@@ -423,6 +423,7 @@ export default {
         const msg = {
           id: id,
           content: content,
+          accountId: this.getUserId,
         };
         this.stompSocketClient.send(
           "/kafka/send-channel-modify",

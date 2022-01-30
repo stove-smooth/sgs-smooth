@@ -27,13 +27,14 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapGetters } from "vuex";
 import Modal from "./common/Modal.vue";
 export default {
   components: { Modal },
   computed: {
     ...mapState("server", ["messageReadyToDelete"]),
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
+    ...mapGetters("user", ["getUserId"]),
   },
   methods: {
     ...mapMutations("server", ["setMessageReadyToDelete"]),
@@ -44,6 +45,7 @@ export default {
       if (this.stompSocketClient && this.stompSocketConnected) {
         const msg = {
           id: this.messageReadyToDelete,
+          accountId: this.getUserId,
         };
         this.stompSocketClient.send(
           "/kafka/send-channel-delete",
