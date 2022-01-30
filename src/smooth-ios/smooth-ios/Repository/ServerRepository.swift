@@ -16,6 +16,7 @@ protocol ServerRepositoryProtocol {
     
     func createInvitation(_ serverId: Int, _ completion: @escaping (String?, MoyaError?) -> Void)
     func joinServer(_ serverCode: String, _ completion: @escaping (Server?, MoyaError?) -> Void)
+    func leaveServer(_ serverId: Int, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
 }
 
 struct ServerRepository: Networkable, ServerRepositoryProtocol {
@@ -97,4 +98,19 @@ struct ServerRepository: Networkable, ServerRepositoryProtocol {
         }
     }
 
+    func leaveServer(_ serverId: Int, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void) {
+        makeProvider().request(.leaveServer(param: serverId)) { result in
+            switch BaseResponse<DefaultResponse>.processJSONResponse(result) {
+            case .success(let response):
+                guard let response = response else {
+                    return
+                }
+                
+                return completion(response, nil)
+            
+            case .failure(let error):
+                return completion(nil, error)
+            }
+        }
+    }
 }

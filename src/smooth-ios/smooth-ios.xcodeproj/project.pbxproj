@@ -52,6 +52,8 @@
 		C102417927A0041D00B702DB /* RegisterServerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C102417827A0041D00B702DB /* RegisterServerViewController.swift */; };
 		C102417C27A0050B00B702DB /* RegisterServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C102417B27A0050B00B702DB /* RegisterServerView.swift */; };
 		C102417E27A005E300B702DB /* RegisterIconViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C102417D27A005E300B702DB /* RegisterIconViewModel.swift */; };
+		C1244F7627A61A5C00BEC173 /* ServerInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1244F7527A61A5C00BEC173 /* ServerInfoCell.swift */; };
+		C1244F7827A624FC00BEC173 /* AlertUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1244F7727A624FC00BEC173 /* AlertUtils.swift */; };
 		C15A22C2279A33E00009095E /* FriendRequestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C15A22C1279A33E00009095E /* FriendRequestViewController.swift */; };
 		C15A22C4279A37230009095E /* Image+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C15A22C3279A37230009095E /* Image+Extension.swift */; };
 		C176604E279A639E0062D0CB /* FriendInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C176604D279A639E0062D0CB /* FriendInfoView.swift */; };
@@ -157,6 +159,8 @@
 		C102417827A0041D00B702DB /* RegisterServerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterServerViewController.swift; sourceTree = "<group>"; };
 		C102417B27A0050B00B702DB /* RegisterServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterServerView.swift; sourceTree = "<group>"; };
 		C102417D27A005E300B702DB /* RegisterIconViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterIconViewModel.swift; sourceTree = "<group>"; };
+		C1244F7527A61A5C00BEC173 /* ServerInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerInfoCell.swift; sourceTree = "<group>"; };
+		C1244F7727A624FC00BEC173 /* AlertUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertUtils.swift; sourceTree = "<group>"; };
 		C15A22C1279A33E00009095E /* FriendRequestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendRequestViewController.swift; sourceTree = "<group>"; };
 		C15A22C3279A37230009095E /* Image+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Image+Extension.swift"; sourceTree = "<group>"; };
 		C176604D279A639E0062D0CB /* FriendInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendInfoView.swift; sourceTree = "<group>"; };
@@ -305,6 +309,7 @@
 			isa = PBXGroup;
 			children = (
 				C1D47EF427795D7E00DBA3CA /* UserDefaultsUtil.swift */,
+				C1244F7727A624FC00BEC173 /* AlertUtils.swift */,
 				C1D47F252783CA0C00DBA3CA /* NetworkLoggerPlugin.swift */,
 				C1D47F342784488200DBA3CA /* CustomComponent.swift */,
 				C1024144279D9D1900B702DB /* Extension */,
@@ -409,6 +414,7 @@
 				C1AA6AFA27A4031F003A32A4 /* ServerInfoViewController.swift */,
 				C1AA6AFC27A4032B003A32A4 /* ServerInfoViewModel.swift */,
 				C1AA6AF827A40312003A32A4 /* ServerInfoView.swift */,
+				C1244F7527A61A5C00BEC173 /* ServerInfoCell.swift */,
 			);
 			path = "Server-Info";
 			sourceTree = "<group>";
@@ -774,6 +780,7 @@
 				C1D47EE927795CCB00DBA3CA /* SignInViewModel.swift in Sources */,
 				270916272791749100A0772D /* FriendRequestViewModel.swift in Sources */,
 				C1D47EC32779570000DBA3CA /* AppDelegate.swift in Sources */,
+				C1244F7827A624FC00BEC173 /* AlertUtils.swift in Sources */,
 				272189012782E99500ABEF60 /* BaseRepository.swift in Sources */,
 				C1D47F4A2785DCF700DBA3CA /* VerifyCodeViewModel.swift in Sources */,
 				C1D47F2427833DB800DBA3CA /* BaseResponse.swift in Sources */,
@@ -786,6 +793,7 @@
 				2709161927912BBA00A0772D /* FriendListViewController.swift in Sources */,
 				C1D47EE727795CAD00DBA3CA /* SignInView.swift in Sources */,
 				C1D47F352784488200DBA3CA /* CustomComponent.swift in Sources */,
+				C1244F7627A61A5C00BEC173 /* ServerInfoCell.swift in Sources */,
 				C102413B279C602200B702DB /* AlertController+Rx.swift in Sources */,
 				C1024162279F26B000B702DB /* ServerButtonCell.swift in Sources */,
 				270916202791603D00A0772D /* FriendAPI.swift in Sources */,

@@ -25,12 +25,14 @@ class ServerInfoView: BaseView {
     }
     
     let nameLabel = UILabel().then {
-        $0.text = "두리짱"
         $0.font = UIFont.systemFont(ofSize: 30, weight: .bold)
         $0.textColor = .white
     }
     
     let buttonStackView = UIStackView().then {
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = UIColor.serverListDarkGray?.cgColor
+        
         $0.axis = .horizontal
         $0.distribution = .fillEqually
         $0.alignment = .fill
@@ -38,35 +40,57 @@ class ServerInfoView: BaseView {
     
     let inviteButton = UIStackView().then {
         $0.axis = .vertical
-        $0.distribution = .fillEqually
+        $0.distribution = .equalCentering
         $0.alignment = .center
     }
-    let inviteLabel = UILabel().then { $0.text = "초대" }
+    let inviteLabel = UILabel().then {
+        $0.text = "초대"
+        $0.textColor = .white
+        $0.font = UIFont.systemFont(ofSize: UIFont.smallSystemFontSize)
+    }
     let inviteIcon = UIImageView().then {
-        $0.frame.size = CGSize(width: 30, height: 30)
-        $0.image = UIImage(systemName: "person.fill.badge.plus")?.resizeImage(size: CGSize(width: 30, height: 30)).withTintColor(.white!, renderingMode: .alwaysOriginal)
+        $0.frame.size = CGSize(width: 20, height: 20)
+        $0.image = UIImage(systemName: "person.fill.badge.plus")?.withTintColor(.white!, renderingMode: .alwaysOriginal)
     }
     
     let notiButton = UIStackView().then {
         $0.axis = .vertical
-        $0.distribution = .fillEqually
+        $0.distribution = .equalCentering
         $0.alignment = .center
     }
-    let notiLabel = UILabel().then { $0.text = "알림" }
+    let notiLabel = UILabel().then {
+        $0.text = "알림"
+        $0.textColor = .white
+        $0.font = UIFont.systemFont(ofSize: UIFont.smallSystemFontSize)
+    }
     let notiIcon = UIImageView().then {
-        $0.frame.size = CGSize(width: 30, height: 30)
-        $0.image = UIImage(systemName: "bell.fill")?.resizeImage(size: CGSize(width: 30, height: 30)).withTintColor(.white!, renderingMode: .alwaysOriginal)
+        $0.frame.size = CGSize(width: 20, height: 20)
+        $0.image = UIImage(systemName: "bell.fill")?.withTintColor(.white!, renderingMode: .alwaysOriginal)
     }
     
     let settingButton = UIStackView().then {
         $0.axis = .vertical
-        $0.distribution = .fillEqually
+        $0.distribution = .equalCentering
         $0.alignment = .center
     }
-    let settingLabel = UILabel().then { $0.text = "설정" }
+    let settingLabel = UILabel().then {
+        $0.text = "설정"
+        $0.textColor = .white
+        $0.font = UIFont.systemFont(ofSize: UIFont.smallSystemFontSize)
+    }
     let settingIcon = UIImageView().then {
-        $0.frame.size = CGSize(width: 30, height: 30)
-        $0.image = UIImage(systemName: "gearshape.fill")?.resizeImage(size: CGSize(width: 30, height: 30)).withTintColor(.white!, renderingMode: .alwaysOriginal)
+        $0.frame.size = CGSize(width: 20, height: 20)
+        $0.image = UIImage(systemName: "gearshape.fill")?.withTintColor(.white!, renderingMode: .alwaysOriginal)
+    }
+    
+    let tableBackView = UIView().then {
+        $0.backgroundColor = .channelListDarkGray
+    }
+    
+    let tableView = UITableView().then {
+        $0.backgroundColor = .clear
+        $0.register(ServerInfoCell.self, forCellReuseIdentifier: ServerInfoCell.identifier)
+        $0.layer.cornerRadius = 5
     }
     
     override func setup() {
@@ -82,11 +106,12 @@ class ServerInfoView: BaseView {
         
         [
             profileImg, nameLabel,
-            buttonStackView
+            buttonStackView, tableBackView
         ].forEach {
             containerView.addSubview($0)
         }
         
+        tableBackView.addSubview(tableView)
         self.addSubview(containerView)
     }
     
@@ -107,9 +132,9 @@ class ServerInfoView: BaseView {
         }
         
         buttonStackView.snp.makeConstraints {
-            $0.top.equalTo(nameLabel.snp.bottom).offset(20)
+            $0.top.equalTo(nameLabel.snp.bottom).offset(10)
             $0.left.right.equalToSuperview().offset(10)
-            $0.height.equalTo(50)
+            $0.height.equalTo(40)
         }
         
         inviteButton.snp.makeConstraints {
@@ -123,9 +148,20 @@ class ServerInfoView: BaseView {
         settingButton.snp.makeConstraints {
             $0.height.equalToSuperview()
         }
+        
+        tableBackView.snp.makeConstraints {
+            $0.left.right.bottom.equalToSuperview()
+            $0.top.equalTo(buttonStackView.snp.bottom).offset(10)
+        }
+        
+        tableView.snp.makeConstraints {
+            $0.left.equalToSuperview().offset(24)
+            $0.right.equalToSuperview().offset(-24)
+            $0.top.bottom.equalToSuperview().inset(10)
+        }
     }
     
     func bind(communityInfo: CommunityInfo) {
-        print(communityInfo)
+        nameLabel.text = communityInfo.name
     }
 }

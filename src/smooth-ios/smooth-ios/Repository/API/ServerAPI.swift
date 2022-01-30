@@ -15,6 +15,7 @@ enum ServerTarget {
     case createServer(param: ServerRequest)
     case createInvitation(param: Int)
     case joinServer(param: String)
+    case leaveServer(param: Int)
 }
 
 extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
@@ -31,6 +32,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
             return "/community-server/community/invitation"
         case .joinServer:
             return "/community-server/community/member"
+        case .leaveServer(let communityId):
+            return "/community-server/community/\(communityId)"
         }
     }
     
@@ -41,6 +44,7 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
         case .createServer: return .post
         case .createInvitation: return .post
         case .joinServer: return .post
+        case .leaveServer: return .delete
         }
     }
 
@@ -75,6 +79,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
             return .requestParameters(parameters: ["id": serverId], encoding: JSONEncoding.default)
         case .joinServer(let serverCode):
             return .requestParameters(parameters: ["code": serverCode], encoding: JSONEncoding.default)
+        case .leaveServer:
+            return .requestPlain
         }
     }
     
@@ -89,6 +95,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
         case .createInvitation:
             return .custom("")
         case .joinServer:
+            return .custom("")
+        case .leaveServer:
             return .custom("")
         }
     }

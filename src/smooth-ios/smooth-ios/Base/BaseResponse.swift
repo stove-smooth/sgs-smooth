@@ -38,14 +38,14 @@ struct BaseResponse<Model: Codable>{
         }
     }
     
-    static func processJSONResponse(_ result: Result<Response, MoyaError>) -> Result<Model?, Error> {
+    static func processJSONResponse(_ result: Result<Response, MoyaError>) -> Result<Model?, MoyaError> {
         switch result {
         case .success(let response):
             do {
                 let model = try JSONDecoder().decode(Model.self, from: response.data)
                 return .success(model)
             } catch {
-                return .failure(error)
+                return .failure(error as! MoyaError)
             }
         case .failure(let error):
             return .failure(error)
