@@ -28,6 +28,7 @@ enum ServerTarget {
     // MARK: DELETE
     case leaveServer(serverId: Int, memberId: Int)
     case deleteServer(serverId: Int)
+    case deleteinvitation(invitationId: Int)
 }
 
 extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
@@ -59,6 +60,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
             return "/community-server/community/\(serverId)/member"
         case .deleteServer(let serverId):
             return "/community-server/community/\(serverId)"
+        case .deleteinvitation:
+            return "/community-server/community/invitation"
         }
     }
     
@@ -78,6 +81,7 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
             
         case .leaveServer: return .delete
         case .deleteServer: return .delete
+        case .deleteinvitation: return .delete
         }
     }
     
@@ -145,6 +149,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
             return .requestParameters(parameters: ["id": memberId], encoding: URLEncoding.queryString)
         case .deleteServer:
             return .requestPlain
+        case .deleteinvitation(let invitationId):
+            return .requestParameters(parameters: ["id": invitationId], encoding: URLEncoding.queryString)
         }
     }
     
@@ -174,6 +180,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
         case .leaveServer:
             return .custom("")
         case .deleteServer:
+            return .custom("")
+        case .deleteinvitation:
             return .custom("")
         }
     }
