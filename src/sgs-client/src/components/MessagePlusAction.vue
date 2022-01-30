@@ -4,14 +4,14 @@
       <div class="plus-action-wrapper">
         <div
           class="plus-action-label-container"
-          @click="setMessageEditId(messagePlusMenu)"
+          @click="setMessageEditId(messagePlusMenu.id)"
         >
           <div class="plus-action-label">메시지 수정하기</div>
           <svg class="edit-pencil"></svg>
         </div>
         <div
           class="plus-action-label-container"
-          @click="setMessageFixId(messagePlusMenu)"
+          @click="setMessageFixId(messagePlusMenu.id)"
         >
           <div class="plus-action-label">메시지 고정하기</div>
           <svg class="fixed-icon"></svg>
@@ -27,7 +27,10 @@
           <div class="plus-action-label">스레드 만들기</div>
           <svg class="thread-icon"></svg>
         </div>
-        <div class="plus-action-label-container hover-white">
+        <div
+          class="plus-action-label-container hover-white"
+          @click="setMessageReadyToDelete(messagePlusMenu.id)"
+        >
           <div class="plus-action-label red-color">메시지 삭제하기</div>
           <svg class="trashcan"></svg>
         </div>
@@ -45,6 +48,7 @@ export default {
       "messagePlusMenu",
       "messageReplyId",
       "messageEditId",
+      "messageReadyToDelete",
     ]),
     cssProps() {
       return {
@@ -58,6 +62,7 @@ export default {
       "setMessageReplyId",
       "setMessageEditId",
       "setMessageFixId",
+      "setMessageReadyToDelete",
     ]),
   },
 };

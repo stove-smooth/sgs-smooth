@@ -118,8 +118,7 @@ export default {
     },
 
     onClick(e) {
-      if (this.serverMemberPlusMenu != null) {
-        console.log(e.target.className);
+      if (this.serverMemberPlusMenu) {
         if (
           e.target.className !== "friends-name" &&
           e.target.className !== "avatar-wrapper" &&

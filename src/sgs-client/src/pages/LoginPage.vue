@@ -1,7 +1,6 @@
 <template>
   <div>
     <login-form :path="this.path" :communityId="this.communityId"></login-form>
-    <div>path:{{ this.path }}communityId:{{ this.communityId }}</div>
   </div>
 </template>
 

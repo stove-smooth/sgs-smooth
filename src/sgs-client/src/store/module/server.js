@@ -31,6 +31,7 @@ const server = {
     messageFixId: "",
     openFixedMessagesModal: false,
     serverMemberPlusMenu: null,
+    messageReadyToDelete: false,
   },
   mutations: {
     setCreateServer(state, createServer) {
@@ -104,6 +105,9 @@ const server = {
     },
     setServerMemberPlusMenu(state, serverMemberPlusMenu) {
       state.serverMemberPlusMenu = serverMemberPlusMenu;
+    },
+    setMessageReadyToDelete(state, messageReadyToDelete) {
+      state.messageReadyToDelete = messageReadyToDelete;
     },
   },
   actions: {

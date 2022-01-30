@@ -7,9 +7,7 @@
             <div class="center-wrapper">
               <form @submit.prevent="submitForm" class="auth-container layer">
                 <div class="header">
-                  <h3 class="title-welcome">
-                    {{ this.path }}돌아오신 걸 환영해요!
-                  </h3>
+                  <h3 class="title-welcome">돌아오신 걸 환영해요!</h3>
                   <div class="large-description">
                     다시 만나다니 너무 반가워요!
                   </div>

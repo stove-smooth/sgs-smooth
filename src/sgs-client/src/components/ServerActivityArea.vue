@@ -29,7 +29,7 @@
                   class="primary-chat-message-wrapper"
                   v-bind:class="{
                     'others-chat-message-wrapper': item.isOther,
-                    'message-replying': messageReplyId === item.id,
+                    'message-replying': messageReplyId.id === item.id,
                   }"
                 >
                   <div class="chat-message-content">
@@ -52,7 +52,7 @@
                             id="input-text-wrapper"
                             class="channel-message-input-wrapper"
                             aria-haspopup="listbox"
-                            placeholder="item.message"
+                            v-model="item.message"
                           ></textarea>
                         </div>
                       </div>
@@ -60,21 +60,29 @@
                         댓글 수정
                         <span
                           class="highlight-text contents clickable"
-                          @click="setMessageEditId('')"
+                          @click="cancelModify()"
                         >
                           취소
                         </span>
                         • 댓글 수정
-                        <span class="highlight-text contents clickable">
+                        <span
+                          class="highlight-text contents clickable"
+                          @click="modify(item.id, item.message)"
+                        >
                           저장
                         </span>
                       </div>
+                      <p class="warning" v-show="modifyLogMessage">
+                        {{ modifyLogMessage }}
+                      </p>
                     </div>
                     <div v-else class="message-content">
                       <template v-if="item.message.includes('img')"
                         ><div v-html="item.message"></div
                       ></template>
-                      <template v-else>{{ item.message }}</template>
+                      <template v-else
+                        ><div>{{ item.message }}</div></template
+                      >
                     </div>
                   </div>
                   <div
@@ -104,7 +112,7 @@
                         <svg class="edit-pencil"></svg>
                       </div>
                       <div
-                        @click="setMessageReplyId(item.id)"
+                        @click="setMessageReplyId(item)"
                         class="chat-action-button"
                         aria-label="답장하기"
                         role="button"
@@ -122,7 +130,7 @@
                       </div>
                       <div
                         :data-key="item.id"
-                        @click="clickPlusAction($event, item.id)"
+                        @click="clickPlusAction($event, item)"
                         class="chat-action-button"
                         aria-label="추가 기능"
                         role="button"
@@ -149,7 +157,9 @@
                 <div class="reply-bar">
                   <div role="button" tabindex="0">
                     <div class="reply-label-container">
-                      <span class="large-description"> 두리짱 </span>
+                      <span class="large-description">
+                        {{ messageReplyId.name }}
+                      </span>
                       님에게 답장하는 중
                     </div>
                   </div>
@@ -291,6 +301,7 @@ export default {
       page: 0,
       more: false,
       prevScrollHeight: 0,
+      modifyLogMessage: "",
     };
   },
   mounted() {
@@ -382,7 +393,7 @@ export default {
       this.images.splice(index, 1);
     },
     send() {
-      if (this.stompSocketClient && this.stompSocketClient.connected) {
+      if (this.stompSocketClient && this.stompSocketConnected) {
         const msg = {
           content: this.text,
           channelId: this.$route.params.channelid,
@@ -394,6 +405,29 @@ export default {
           {}
         );
       }
+    },
+    modify(id, content) {
+      this.modifyLogMessage = "";
+      if (this.stompSocketClient && this.stompSocketConnected) {
+        console.log(id, content);
+        if (content.trim().length == 0) {
+          this.modifyLogMessage = "내용을 입력한 후 수정해주세요.";
+        }
+        const msg = {
+          id: id,
+          content: content,
+        };
+        this.stompSocketClient.send(
+          "/kafka//send-channel-modify",
+          JSON.stringify(msg),
+          {}
+        );
+        this.setMessageEditId("");
+      }
+    },
+    cancelModify() {
+      this.setMessageEditId("");
+      this.modifyLogMessage = "";
     },
     async sendPicture() {
       const formData = new FormData();
@@ -415,12 +449,12 @@ export default {
     messageHover(idx) {
       this.messageHovered = idx;
     },
-    clickPlusAction(event, idx) {
+    clickPlusAction(event, messageInfo) {
       const x = event.clientX;
       const y = event.clientY;
       this.setClientX(x);
       this.setClientY(y);
-      this.setMessagePlusMenu(idx);
+      this.setMessagePlusMenu(messageInfo);
     },
     onClick(e) {
       if (this.messagePlusMenu != null) {
