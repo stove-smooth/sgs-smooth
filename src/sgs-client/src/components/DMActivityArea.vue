@@ -95,6 +95,7 @@
                   >
                     <div class="actionbar-wrapper2">
                       <div
+                        v-show="false"
                         class="chat-action-button"
                         aria-label="반응 추가하기"
                         role="button"
@@ -104,8 +105,8 @@
                       </div>
                       <!--내꺼면 수정아니면 답장-->
                       <div
+                        v-if="item.userId == getUserId"
                         @click="setMessageEditId(item.id)"
-                        v-show="false"
                         class="chat-action-button"
                         aria-label="수정하기"
                         role="button"
@@ -114,6 +115,7 @@
                         <svg class="edit-pencil"></svg>
                       </div>
                       <div
+                        v-else
                         @click="MessageReply(item)"
                         class="chat-action-button"
                         aria-label="답장하기"

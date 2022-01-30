@@ -1,8 +1,9 @@
 <template>
-  <div :style="cssProps" v-show="messagePlusMenu != null">
+  <div :style="cssProps" v-if="messagePlusMenu != null">
     <div class="message-plus-action-container">
       <div class="plus-action-wrapper">
         <div
+          v-if="messagePlusMenu.userId == getUserId"
           class="plus-action-label-container"
           @click="setMessageEditId(messagePlusMenu.id)"
         >
@@ -40,11 +41,12 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapGetters } from "vuex";
 export default {
   computed: {
     ...mapState("utils", ["clientX", "clientY"]),
     ...mapState("server", ["messagePlusMenu"]),
+    ...mapGetters("user", ["getUserId"]),
     cssProps() {
       return {
         "--xpoint": this.clientX - 200 + "px",
