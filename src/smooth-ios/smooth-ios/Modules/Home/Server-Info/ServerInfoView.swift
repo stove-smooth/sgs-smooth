@@ -49,12 +49,12 @@ class ServerInfoView: BaseView {
     }
     let inviteLabel = UILabel().then {
         $0.text = "초대"
-        $0.textColor = .white
+        $0.textColor = .iconDefault
         $0.font = UIFont.systemFont(ofSize: UIFont.smallSystemFontSize)
     }
     let inviteIcon = UIImageView().then {
         $0.frame.size = CGSize(width: 20, height: 20)
-        $0.image = UIImage(systemName: "person.fill.badge.plus")?.withTintColor(.white!, renderingMode: .alwaysOriginal)
+        $0.image = UIImage(systemName: "person.fill.badge.plus")?.withTintColor(.iconDefault!, renderingMode: .alwaysOriginal)
     }
     
     let notiButton = UIStackView().then {
@@ -64,12 +64,12 @@ class ServerInfoView: BaseView {
     }
     let notiLabel = UILabel().then {
         $0.text = "알림"
-        $0.textColor = .white
+        $0.textColor = .iconDefault
         $0.font = UIFont.systemFont(ofSize: UIFont.smallSystemFontSize)
     }
     let notiIcon = UIImageView().then {
         $0.frame.size = CGSize(width: 20, height: 20)
-        $0.image = UIImage(systemName: "bell.fill")?.withTintColor(.white!, renderingMode: .alwaysOriginal)
+        $0.image = UIImage(systemName: "bell.fill")?.withTintColor(.iconDefault!, renderingMode: .alwaysOriginal)
     }
     
     let settingButton = UIStackView().then {
@@ -80,12 +80,12 @@ class ServerInfoView: BaseView {
     }
     let settingLabel = UILabel().then {
         $0.text = "설정"
-        $0.textColor = .white
+        $0.textColor = .iconDefault
         $0.font = UIFont.systemFont(ofSize: UIFont.smallSystemFontSize)
     }
     let settingIcon = UIImageView().then {
         $0.frame.size = CGSize(width: 20, height: 20)
-        $0.image = UIImage(systemName: "gearshape.fill")?.withTintColor(.white!, renderingMode: .alwaysOriginal)
+        $0.image = UIImage(systemName: "gearshape.fill")?.withTintColor(.iconDefault!, renderingMode: .alwaysOriginal)
     }
     
     let tableBackView = UIView().then {
@@ -94,6 +94,7 @@ class ServerInfoView: BaseView {
     
     let tableView = UITableView(frame: .zero, style: .insetGrouped).then {
         $0.backgroundColor = .clear
+        $0.contentInset = UIEdgeInsets(top: 12.5, left: 0, bottom: 0, right: 0)
         $0.register(ServerInfoCell.self, forCellReuseIdentifier: ServerInfoCell.identifier)
         $0.layer.cornerRadius = 5
     }
@@ -144,7 +145,7 @@ class ServerInfoView: BaseView {
         }
         
         buttonStackView.snp.makeConstraints {
-            $0.top.equalTo(nameLabel.snp.bottom).offset(10)
+            $0.top.equalTo(nameLabel.snp.bottom).offset(20)
             $0.left.right.equalToSuperview().offset(10)
             $0.height.equalTo(40)
         }
@@ -163,12 +164,11 @@ class ServerInfoView: BaseView {
         
         tableBackView.snp.makeConstraints {
             $0.left.right.bottom.equalToSuperview()
-            $0.top.equalTo(buttonStackView.snp.bottom).offset(10)
+            $0.top.equalTo(buttonStackView.snp.bottom).offset(20)
         }
         
         tableView.snp.makeConstraints {
-            $0.left.equalToSuperview().offset(10)
-            $0.right.equalToSuperview().offset(-10)
+            $0.right.left.equalToSuperview()
             $0.top.bottom.equalToSuperview().inset(10)
         }
     }
