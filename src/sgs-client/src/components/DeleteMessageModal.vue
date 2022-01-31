@@ -43,17 +43,31 @@ export default {
     },
     deleteMessage() {
       if (this.stompSocketClient && this.stompSocketConnected) {
-        const msg = {
-          id: this.messageReadyToDelete,
-          accountId: this.getUserId,
-        };
-        this.stompSocketClient.send(
-          "/kafka/send-channel-delete",
-          JSON.stringify(msg),
-          {}
-        );
-        this.setMessageReadyToDelete(false);
-        window.location.reload();
+        if (!this.$route.params.serverid) {
+          const msg = {
+            id: this.messageReadyToDelete,
+            userId: this.getUserId,
+          };
+          this.stompSocketClient.send(
+            "/kafka/send-direct-delete",
+            JSON.stringify(msg),
+            {}
+          );
+          this.setMessageReadyToDelete(false);
+          window.location.reload();
+        } else {
+          const msg = {
+            id: this.messageReadyToDelete,
+            accountId: this.getUserId,
+          };
+          this.stompSocketClient.send(
+            "/kafka/send-channel-delete",
+            JSON.stringify(msg),
+            {}
+          );
+          this.setMessageReadyToDelete(false);
+          window.location.reload();
+        }
       }
     },
   },

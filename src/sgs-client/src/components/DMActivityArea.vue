@@ -412,9 +412,10 @@ export default {
         const msg = {
           id: id,
           content: content,
+          userId: this.getUserId,
         };
         this.stompSocketClient.send(
-          "/kafka/send-channel-modify",
+          "/kafka/send-direct-modify",
           JSON.stringify(msg),
           {}
         );
