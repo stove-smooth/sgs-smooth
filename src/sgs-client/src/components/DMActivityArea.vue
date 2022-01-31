@@ -22,7 +22,17 @@
       <div class="height-100">
         <div class="scroller-content">
           <ol id="server-chat-scroll-bottom" class="scroller-inner">
-            <div v-for="item in receiveList" :key="item.id">
+            <div v-for="(item, index) in receiveList" :key="item.id">
+              <div
+                class="message-date-divider"
+                v-if="
+                  index == 0 ||
+                  (index > 0 &&
+                    receiveList[index - 1].date != receiveList[index].date)
+                "
+              >
+                <span class="date-content">{{ receiveList[index].date }}</span>
+              </div>
               <li
                 class="chat-message-wrapper"
                 @mouseover="messageHover(item.id)"

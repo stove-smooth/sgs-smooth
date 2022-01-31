@@ -22,7 +22,17 @@
       <div class="height-100">
         <div class="scroller-content">
           <ol id="server-chat-scroll-bottom" class="scroller-inner">
-            <div v-for="item in receiveList" :key="item.id">
+            <div v-for="(item, index) in receiveList" :key="item.id">
+              <div
+                class="message-date-divider"
+                v-if="
+                  index == 0 ||
+                  (index > 0 &&
+                    receiveList[index - 1].date != receiveList[index].date)
+                "
+              >
+                <span class="date-content">{{ receiveList[index].date }}</span>
+              </div>
               <li
                 class="chat-message-wrapper"
                 @mouseover="messageHover(item.id)"
@@ -744,6 +754,41 @@ export default {
   min-height: 0;
   list-style: none;
   padding: 0px;
+}
+.message-date-divider {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  position: relative;
+  left: auto;
+  right: auto;
+  z-index: 1;
+  height: 0;
+  border-top: thin solid hsla(0, 0%, 100%, 0.06);
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-flex: 0;
+  flex: 0 0 auto;
+  pointer-events: none;
+  box-sizing: border-box;
+  --divider-color: hsl(359, calc(var(1, 1) * 82.6%), 59.4%);
+  margin-left: 1rem;
+  margin-right: 0.875rem;
+}
+.date-content {
+  display: block;
+  -webkit-box-flex: 0;
+  flex: 0 0 auto;
+  padding: 2px 4px;
+  color: #72767d;
+  background: #36393f;
+  line-height: 13px;
+  font-size: 12px;
+  margin-top: -1px;
+  font-weight: 600;
+  border-radius: 8px;
 }
 .chat-message-wrapper {
   outline: none;
