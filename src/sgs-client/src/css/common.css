@@ -239,6 +239,13 @@
   color: #00aff4;
   font-size: 14px;
 }
+.header-title {
+  margin: 8px 0 16px;
+  font-weight: 700;
+  color: #fff;
+  font-size: 20px;
+  line-height: 24px;
+}
 /**modal*/
 .modal {
   position: fixed;
@@ -311,6 +318,12 @@
   margin: 8px 10px;
   height: 1px;
   background-color: hsla(0, 0%, 100%, 0.06);
+}
+.primary-divider {
+  box-sizing: border-box;
+  height: 1px;
+  background-color: hsla(0, 0%, 100%, 0.06);
+  margin-bottom: 12px;
 }
 :root {
   --white-color: #fff;
