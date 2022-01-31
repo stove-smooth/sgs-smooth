@@ -385,7 +385,7 @@ export default {
         if (this.text.trim().length == 0 && this.images.length == 0) {
           return;
         }
-        if (this.communityMessageReplyId) {
+        if (this.directMessageReplyId) {
           this.reply();
           return;
         }
@@ -433,7 +433,7 @@ export default {
     reply() {
       const msg = {
         content: this.text,
-        channelId: this.$route.params.channelid,
+        channelId: this.$route.params.id,
         userId: this.getUserId,
         parentId: this.directMessageReplyId.messageInfo.id,
       };
