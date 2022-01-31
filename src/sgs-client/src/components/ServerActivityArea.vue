@@ -375,6 +375,10 @@ export default {
         if (this.text.trim().length == 0 && this.images.length == 0) {
           return;
         }
+        if (this.communityMessageReplyId) {
+          this.reply();
+          return;
+        }
         if (this.images.length > 0) {
           this.sendPicture();
         }
@@ -403,18 +407,30 @@ export default {
       this.images.splice(index, 1);
     },
     send() {
-      if (this.stompSocketClient && this.stompSocketConnected) {
-        const msg = {
-          content: this.text,
-          channelId: this.$route.params.channelid,
-          accountId: this.getUserId,
-        };
-        this.stompSocketClient.send(
-          "/kafka/send-channel-message",
-          JSON.stringify(msg),
-          {}
-        );
-      }
+      const msg = {
+        content: this.text,
+        channelId: this.$route.params.channelid,
+        accountId: this.getUserId,
+      };
+      this.stompSocketClient.send(
+        "/kafka/send-channel-message",
+        JSON.stringify(msg),
+        {}
+      );
+    },
+    reply() {
+      const msg = {
+        content: this.text,
+        channelId: this.$route.params.channelid,
+        accountId: this.getUserId,
+        parentId: this.communityMessageReplyId.messageInfo.id,
+      };
+      this.stompSocketClient.send(
+        "/kafka/send-channel-reply",
+        JSON.stringify(msg),
+        {}
+      );
+      this.setCommunityMessageReplyId("");
     },
     modify(id, content) {
       this.modifyLogMessage = "";

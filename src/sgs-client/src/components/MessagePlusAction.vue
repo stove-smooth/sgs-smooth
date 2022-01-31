@@ -29,6 +29,7 @@
           <svg class="thread-icon"></svg>
         </div>
         <div
+          v-if="messagePlusMenu.userId == getUserId"
           class="plus-action-label-container hover-white"
           @click="setMessageReadyToDelete(messagePlusMenu.id)"
         >

@@ -1,5 +1,5 @@
 <template>
-  <div class="modal" v-if="messageReadyToDelete != ''">
+  <div class="modal" v-if="messageReadyToDelete">
     <div class="blurred-background" @click="exitModal"></div>
     <div class="modal-container">
       <modal @exit="exitModal">
@@ -39,7 +39,7 @@ export default {
   methods: {
     ...mapMutations("server", ["setMessageReadyToDelete"]),
     exitModal() {
-      this.setMessageReadyToDelete("");
+      this.setMessageReadyToDelete(false);
     },
     deleteMessage() {
       if (this.stompSocketClient && this.stompSocketConnected) {
@@ -52,6 +52,8 @@ export default {
           JSON.stringify(msg),
           {}
         );
+        this.setMessageReadyToDelete(false);
+        window.location.reload();
       }
     },
   },
