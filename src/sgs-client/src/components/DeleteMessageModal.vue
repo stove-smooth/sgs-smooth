@@ -1,5 +1,5 @@
 <template>
-  <div class="modal" v-if="messageReadyToDelete != ''">
+  <div class="modal" v-if="messageReadyToDelete">
     <div class="blurred-background" @click="exitModal"></div>
     <div class="modal-container">
       <modal @exit="exitModal">
@@ -39,19 +39,35 @@ export default {
   methods: {
     ...mapMutations("server", ["setMessageReadyToDelete"]),
     exitModal() {
-      this.setMessageReadyToDelete("");
+      this.setMessageReadyToDelete(false);
     },
     deleteMessage() {
       if (this.stompSocketClient && this.stompSocketConnected) {
-        const msg = {
-          id: this.messageReadyToDelete,
-          accountId: this.getUserId,
-        };
-        this.stompSocketClient.send(
-          "/kafka/send-channel-delete",
-          JSON.stringify(msg),
-          {}
-        );
+        if (!this.$route.params.serverid) {
+          const msg = {
+            id: this.messageReadyToDelete,
+            userId: this.getUserId,
+          };
+          this.stompSocketClient.send(
+            "/kafka/send-direct-delete",
+            JSON.stringify(msg),
+            {}
+          );
+          this.setMessageReadyToDelete(false);
+          window.location.reload();
+        } else {
+          const msg = {
+            id: this.messageReadyToDelete,
+            accountId: this.getUserId,
+          };
+          this.stompSocketClient.send(
+            "/kafka/send-channel-delete",
+            JSON.stringify(msg),
+            {}
+          );
+          this.setMessageReadyToDelete(false);
+          window.location.reload();
+        }
       }
     },
   },

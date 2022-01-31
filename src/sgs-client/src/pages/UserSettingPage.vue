@@ -54,7 +54,7 @@
                       </div>
                     </div>
                     <div class="profile-info">
-                      <div class="profile-divider" />
+                      <div class="primary-divider" />
                       <div class="margin-bottom-16px">
                         <div class="justify-content-space-between">
                           <div class="subtext">내 소개</div>
@@ -251,11 +251,5 @@ export default {
 .profile-info {
   padding: 0 16px 16px;
   box-sizing: border-box;
-}
-.profile-divider {
-  box-sizing: border-box;
-  height: 1px;
-  background-color: hsla(0, 0%, 100%, 0.06);
-  margin-bottom: 12px;
 }
 </style>

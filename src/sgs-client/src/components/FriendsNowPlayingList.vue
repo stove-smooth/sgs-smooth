@@ -187,13 +187,6 @@ export default {};
   position: relative;
   border-radius: 50%;
 }
-.header-title {
-  margin: 8px 0 16px;
-  font-weight: 700;
-  color: #fff;
-  font-size: 20px;
-  line-height: 24px;
-}
 .now-playing-scroller {
   overflow: hidden scroll;
   padding: 16px;

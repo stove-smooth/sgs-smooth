@@ -8,7 +8,7 @@
       <template slot="setting-sidebar">
         <div class="channel-default-container">
           <div class="channel-content-wrapper" role="listitem">
-            <div class="channel-content margin-right-8px">
+            <div class="channel-content margin-right-8px channel-content-hover">
               <div class="channel-main-content">
                 <div class="channel-name-wrapper">
                   <div
@@ -23,7 +23,7 @@
           <div class="primary-seperator"></div>
           <div class="channel-content-wrapper" role="listitem">
             <div
-              class="channel-content margin-right-8px"
+              class="channel-content margin-right-8px hover-selected"
               @click="setChannelReadyToDelete(channelSettingModal)"
             >
               <div class="channel-main-content">
@@ -40,15 +40,19 @@
         </div>
       </template>
       <template slot="setting-content">
-        <!-- <div class="setting-content-container">
-          <div class="primary-text-content white-color margin-bottom-16px">
-            일반
+        <form>
+          <div class="server-name-input-container">
+            <h5 class="label-id black-color">채널 이름</h5>
+            <div class="friends-state-text">
+              <input
+                width="100%"
+                type="text"
+                maxlength="100"
+                class="channel-name-input"
+              />
+            </div>
           </div>
-          <h2 class="small-title-text">카테고리 이름</h2>
-          <div class="input-wrapper">
-            <input class="input-default" />
-          </div>
-        </div> -->
+        </form>
       </template>
     </setting-modal>
   </div>
@@ -73,4 +77,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.hover-selected:hover {
+  background-color: rgba(79, 84, 92, 0.32);
+}
+</style>
