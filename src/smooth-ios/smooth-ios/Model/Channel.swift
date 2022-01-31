@@ -31,12 +31,6 @@ struct Channel: Codable, Equatable, IdentifiableType {
     }
 }
 
-struct Category: Codable {
-    let id: Int
-    let name: String
-    let channels: [Channel]?
-}
-
 struct Thread: Codable {
     let id: Int
     let name: String
