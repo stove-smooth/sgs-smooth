@@ -65,4 +65,23 @@ class ServerSettingCoordinator: NSObject, Coordinator {
         modalNav.pushViewController(inviteVC, animated: true)
     }
     
+    func goToChannel(server: Server) {
+        let channelVC = ChannelSettingViewContrller.instance(server: server)
+        
+        channelVC.coordinator = self
+        
+        modalNav.isNavigationBarHidden = false
+        navigationController.isNavigationBarHidden = true
+        modalNav.pushViewController(channelVC, animated: true)
+    }
+    
+    func showEditCategory(category: Category) {
+        let editCategoryVC = EditCategoryViewController.instance(categoryId: category.id, categoryName: category.name)
+        
+        editCategoryVC.coordinator = self
+        
+        modalNav.isNavigationBarHidden = false
+        navigationController.isNavigationBarHidden = true
+        modalNav.present(editCategoryVC, animated: true, completion: nil)
+    }
 }

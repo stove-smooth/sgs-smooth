@@ -98,6 +98,14 @@
 		C1C44F1C27A6A02A00A408A4 /* ServerSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C44F1B27A6A02A00A408A4 /* ServerSettingView.swift */; };
 		C1C44F1F27A6A05900A408A4 /* ServerSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C44F1E27A6A05900A408A4 /* ServerSettingViewController.swift */; };
 		C1C44F2127A6A06200A408A4 /* ServerSettingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C44F2027A6A06200A408A4 /* ServerSettingViewModel.swift */; };
+		C1C8B21027A8138600E8758E /* ChannelSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C8B20F27A8138600E8758E /* ChannelSettingView.swift */; };
+		C1C8B21327A813CB00E8758E /* ChannelSettingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C8B21227A813CB00E8758E /* ChannelSettingViewModel.swift */; };
+		C1C8B21527A813EF00E8758E /* ChannelSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C8B21427A813EF00E8758E /* ChannelSettingViewController.swift */; };
+		C1C8B21727A81BA300E8758E /* ChannelEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C8B21627A81BA300E8758E /* ChannelEmptyView.swift */; };
+		C1C8B21927A81E1600E8758E /* ChannelSettingHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C8B21827A81E1600E8758E /* ChannelSettingHeaderCell.swift */; };
+		C1C8B21D27A82F9C00E8758E /* EditCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C8B21C27A82F9C00E8758E /* EditCategoryView.swift */; };
+		C1C8B22027A82FD200E8758E /* EditCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C8B21F27A82FD200E8758E /* EditCategoryViewController.swift */; };
+		C1C8B22227A82FDB00E8758E /* EditCategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C8B22127A82FDB00E8758E /* EditCategoryViewModel.swift */; };
 		C1D47EC32779570000DBA3CA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EC22779570000DBA3CA /* AppDelegate.swift */; };
 		C1D47ECC2779570200DBA3CA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C1D47ECB2779570200DBA3CA /* Assets.xcassets */; };
 		C1D47ECF2779570200DBA3CA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C1D47ECD2779570200DBA3CA /* LaunchScreen.storyboard */; };
@@ -233,6 +241,14 @@
 		C1C44F1B27A6A02A00A408A4 /* ServerSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSettingView.swift; sourceTree = "<group>"; };
 		C1C44F1E27A6A05900A408A4 /* ServerSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSettingViewController.swift; sourceTree = "<group>"; };
 		C1C44F2027A6A06200A408A4 /* ServerSettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSettingViewModel.swift; sourceTree = "<group>"; };
+		C1C8B20F27A8138600E8758E /* ChannelSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelSettingView.swift; sourceTree = "<group>"; };
+		C1C8B21227A813CB00E8758E /* ChannelSettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelSettingViewModel.swift; sourceTree = "<group>"; };
+		C1C8B21427A813EF00E8758E /* ChannelSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelSettingViewController.swift; sourceTree = "<group>"; };
+		C1C8B21627A81BA300E8758E /* ChannelEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEmptyView.swift; sourceTree = "<group>"; };
+		C1C8B21827A81E1600E8758E /* ChannelSettingHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelSettingHeaderCell.swift; sourceTree = "<group>"; };
+		C1C8B21C27A82F9C00E8758E /* EditCategoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCategoryView.swift; sourceTree = "<group>"; };
+		C1C8B21F27A82FD200E8758E /* EditCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCategoryViewController.swift; sourceTree = "<group>"; };
+		C1C8B22127A82FDB00E8758E /* EditCategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCategoryViewModel.swift; sourceTree = "<group>"; };
 		C1D47EBF2779570000DBA3CA /* smooth-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "smooth-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C1D47EC22779570000DBA3CA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C1D47ECB2779570200DBA3CA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -401,6 +417,7 @@
 				C1D47F51278B0F4900DBA3CA /* ChannalCell.swift */,
 				C118D2F027A7B61A009CB96C /* ChannelCategoryCell.swift */,
 				C1024157279E4B3B00B702DB /* ChannelView.swift */,
+				C1C8B21627A81BA300E8758E /* ChannelEmptyView.swift */,
 			);
 			path = SubView;
 			sourceTree = "<group>";
@@ -438,8 +455,9 @@
 		C118D2C527A6D5A6009CB96C /* SubView */ = {
 			isa = PBXGroup;
 			children = (
-				C118D2BF27A6B232009CB96C /* ServerSettingCell.swift */,
 				C118D2C327A6BA5D009CB96C /* ServerSettingHeaderCell.swift */,
+				C118D2BF27A6B232009CB96C /* ServerSettingCell.swift */,
+				C1C8B21827A81E1600E8758E /* ChannelSettingHeaderCell.swift */,
 				C118D2CF27A6EB7E009CB96C /* ServerInviteCell.swift */,
 				C118D2D127A70062009CB96C /* ServerInviteEmptyView.swift */,
 			);
@@ -544,6 +562,8 @@
 			isa = PBXGroup;
 			children = (
 				C118D2C527A6D5A6009CB96C /* SubView */,
+				C1C8B21127A8139400E8758E /* Channel-setting */,
+				C1C8B21E27A82FA100E8758E /* Category-edit */,
 				C1244F8327A64AD500BEC173 /* Server-edit */,
 				C118D2C627A6D5CA009CB96C /* Server-Invite */,
 				C1C44F1B27A6A02A00A408A4 /* ServerSettingView.swift */,
@@ -551,6 +571,26 @@
 				C1C44F2027A6A06200A408A4 /* ServerSettingViewModel.swift */,
 			);
 			path = "Server-setting";
+			sourceTree = "<group>";
+		};
+		C1C8B21127A8139400E8758E /* Channel-setting */ = {
+			isa = PBXGroup;
+			children = (
+				C1C8B20F27A8138600E8758E /* ChannelSettingView.swift */,
+				C1C8B21227A813CB00E8758E /* ChannelSettingViewModel.swift */,
+				C1C8B21427A813EF00E8758E /* ChannelSettingViewController.swift */,
+			);
+			path = "Channel-setting";
+			sourceTree = "<group>";
+		};
+		C1C8B21E27A82FA100E8758E /* Category-edit */ = {
+			isa = PBXGroup;
+			children = (
+				C1C8B21C27A82F9C00E8758E /* EditCategoryView.swift */,
+				C1C8B21F27A82FD200E8758E /* EditCategoryViewController.swift */,
+				C1C8B22127A82FDB00E8758E /* EditCategoryViewModel.swift */,
+			);
+			path = "Category-edit";
 			sourceTree = "<group>";
 		};
 		C1D47EB62779570000DBA3CA = {
@@ -878,6 +918,7 @@
 				C1244F8227A64AD200BEC173 /* EditServerInfoView.swift in Sources */,
 				C1024148279DA8C300B702DB /* ServerRepository.swift in Sources */,
 				C1D47EE527795C9600DBA3CA /* SignInViewController.swift in Sources */,
+				C1C8B21D27A82F9C00E8758E /* EditCategoryView.swift in Sources */,
 				C1024152279E346000B702DB /* MenuView.swift in Sources */,
 				C1786DF627A2622900170D4F /* InviteServerViewController.swift in Sources */,
 				C118D2E527A78D40009CB96C /* MakeCategoryView.swift in Sources */,
@@ -892,8 +933,10 @@
 				C118D2DF27A789A0009CB96C /* CategoryAPI.swift in Sources */,
 				C102415E279F17E700B702DB /* ServerSection.swift in Sources */,
 				27F2BE72278FBBEA00A0F0A8 /* HomeCoordinator.swift in Sources */,
+				C1C8B22027A82FD200E8758E /* EditCategoryViewController.swift in Sources */,
 				C102417C27A0050B00B702DB /* RegisterServerView.swift in Sources */,
 				272189052782EA8000ABEF60 /* UserRepository.swift in Sources */,
+				C1C8B21727A81BA300E8758E /* ChannelEmptyView.swift in Sources */,
 				2709161C27912CB000A0772D /* FriendEmptyView.swift in Sources */,
 				C118D2C827A6D6E3009CB96C /* ServerInviteListView.swift in Sources */,
 				C1244F8027A63D4000BEC173 /* Member.swift in Sources */,
@@ -901,6 +944,8 @@
 				C102414A279DAA5700B702DB /* Channel.swift in Sources */,
 				C1D47EF527795D7E00DBA3CA /* UserDefaultsUtil.swift in Sources */,
 				C1D47F13277A0BCE00DBA3CA /* ServerViewController.swift in Sources */,
+				C1C8B21327A813CB00E8758E /* ChannelSettingViewModel.swift in Sources */,
+				C1C8B21527A813EF00E8758E /* ChannelSettingViewController.swift in Sources */,
 				C1244F8527A64B0800BEC173 /* EditServerInfoViewController.swift in Sources */,
 				C1D47EDA277959BA00DBA3CA /* MainCoordinator.swift in Sources */,
 				C1D47F3E278485F200DBA3CA /* SignUpInfoView.swift in Sources */,
@@ -944,12 +989,14 @@
 				C1B63F5827A104F900382BF6 /* ImagePickerController+Rx.swift in Sources */,
 				C1D47F112779D6FD00DBA3CA /* ContainerViewController.swift in Sources */,
 				C1D47F3C278474AA00DBA3CA /* SignUpViewController.swift in Sources */,
+				C1C8B21027A8138600E8758E /* ChannelSettingView.swift in Sources */,
 				2709162927917FA600A0772D /* FriendRepository.swift in Sources */,
 				C1024156279E482100B702DB /* ServerView.swift in Sources */,
 				2709161927912BBA00A0772D /* FriendListViewController.swift in Sources */,
 				C118D2D027A6EB7E009CB96C /* ServerInviteCell.swift in Sources */,
 				C1D47EE727795CAD00DBA3CA /* SignInView.swift in Sources */,
 				C1D47F352784488200DBA3CA /* CustomComponent.swift in Sources */,
+				C1C8B22227A82FDB00E8758E /* EditCategoryViewModel.swift in Sources */,
 				C1244F7627A61A5C00BEC173 /* ServerInfoCell.swift in Sources */,
 				C102413B279C602200B702DB /* AlertController+Rx.swift in Sources */,
 				C1024162279F26B000B702DB /* ServerButtonCell.swift in Sources */,
@@ -966,6 +1013,7 @@
 				C1AA6AFD27A4032B003A32A4 /* ServerInfoViewModel.swift in Sources */,
 				C118D2F127A7B61A009CB96C /* ChannelCategoryCell.swift in Sources */,
 				C102416B279FBAE400B702DB /* JoinServerViewController.swift in Sources */,
+				C1C8B21927A81E1600E8758E /* ChannelSettingHeaderCell.swift in Sources */,
 				C118D2CE27A6DDF9009CB96C /* Invitation.swift in Sources */,
 				C1786E0127A2D3ED00170D4F /* JoinServerViewModel.swift in Sources */,
 				C102417E27A005E300B702DB /* RegisterIconViewModel.swift in Sources */,

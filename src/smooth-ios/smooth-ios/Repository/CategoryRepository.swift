@@ -10,6 +10,7 @@ import Moya
 
 protocol CategoryRepositoryProtocol {
     func createCategory(request: CategoryReqeust, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
+    func updateCategoryName(categoryId: Int, name: String, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
 }
 
 struct CategoryRepository: Networkable, CategoryRepositoryProtocol {
@@ -19,6 +20,22 @@ struct CategoryRepository: Networkable, CategoryRepositoryProtocol {
         makeProvider().request(.createCategory(request: request)) {
             result in
             
+            switch BaseResponse<DefaultResponse>.processJSONResponse(result) {
+            case .success(let response):
+                guard let response = response else {
+                    return
+                }
+                
+                return completion(response, nil)
+                
+            case .failure(let error):
+                return completion(nil, error)
+            }
+        }
+    }
+    
+    func updateCategoryName(categoryId: Int, name: String, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void) {
+        makeProvider().request(.updateCategoryName(categoryId: categoryId, name: name)) { result in
             switch BaseResponse<DefaultResponse>.processJSONResponse(result) {
             case .success(let response):
                 guard let response = response else {
