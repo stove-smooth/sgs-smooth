@@ -72,6 +72,7 @@
 		C118D2E527A78D40009CB96C /* MakeCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C118D2E427A78D40009CB96C /* MakeCategoryView.swift */; };
 		C118D2E827A78D61009CB96C /* MakeCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C118D2E727A78D61009CB96C /* MakeCategoryViewController.swift */; };
 		C118D2EA27A78D70009CB96C /* MakeCategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C118D2E927A78D70009CB96C /* MakeCategoryViewModel.swift */; };
+		C118D2F127A7B61A009CB96C /* ChannelCategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C118D2F027A7B61A009CB96C /* ChannelCategoryCell.swift */; };
 		C1244F7627A61A5C00BEC173 /* ServerInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1244F7527A61A5C00BEC173 /* ServerInfoCell.swift */; };
 		C1244F7827A624FC00BEC173 /* AlertUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1244F7727A624FC00BEC173 /* AlertUtils.swift */; };
 		C1244F8027A63D4000BEC173 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1244F7F27A63D4000BEC173 /* Member.swift */; };
@@ -206,6 +207,7 @@
 		C118D2E427A78D40009CB96C /* MakeCategoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeCategoryView.swift; sourceTree = "<group>"; };
 		C118D2E727A78D61009CB96C /* MakeCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeCategoryViewController.swift; sourceTree = "<group>"; };
 		C118D2E927A78D70009CB96C /* MakeCategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeCategoryViewModel.swift; sourceTree = "<group>"; };
+		C118D2F027A7B61A009CB96C /* ChannelCategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelCategoryCell.swift; sourceTree = "<group>"; };
 		C1244F7527A61A5C00BEC173 /* ServerInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerInfoCell.swift; sourceTree = "<group>"; };
 		C1244F7727A624FC00BEC173 /* AlertUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertUtils.swift; sourceTree = "<group>"; };
 		C1244F7F27A63D4000BEC173 /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
@@ -397,6 +399,7 @@
 				C1024161279F26B000B702DB /* ServerButtonCell.swift */,
 				C1024155279E482100B702DB /* ServerView.swift */,
 				C1D47F51278B0F4900DBA3CA /* ChannalCell.swift */,
+				C118D2F027A7B61A009CB96C /* ChannelCategoryCell.swift */,
 				C1024157279E4B3B00B702DB /* ChannelView.swift */,
 			);
 			path = SubView;
@@ -961,6 +964,7 @@
 				C1C44F1C27A6A02A00A408A4 /* ServerSettingView.swift in Sources */,
 				2709161E27912DA300A0772D /* FriendListViewModel.swift in Sources */,
 				C1AA6AFD27A4032B003A32A4 /* ServerInfoViewModel.swift in Sources */,
+				C118D2F127A7B61A009CB96C /* ChannelCategoryCell.swift in Sources */,
 				C102416B279FBAE400B702DB /* JoinServerViewController.swift in Sources */,
 				C118D2CE27A6DDF9009CB96C /* Invitation.swift in Sources */,
 				C1786E0127A2D3ED00170D4F /* JoinServerViewModel.swift in Sources */,

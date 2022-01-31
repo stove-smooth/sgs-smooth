@@ -10,7 +10,7 @@ import Moya
 
 enum ChannelTarget {
     // MARK: POST
-    case createChannel(categoryId: Int, channel: Channel)
+    case createChannel(request: ChannelRequest)
 }
 
 extension ChannelTarget: BaseAPI, AccessTokenAuthorizable {
@@ -29,13 +29,13 @@ extension ChannelTarget: BaseAPI, AccessTokenAuthorizable {
     
     var task: Task {
         switch self {
-        case .createChannel(let categoryId, let channel):
+        case .createChannel(let request):
             return .requestParameters(
                 parameters: [
-                    "id": categoryId,
-                    "name": channel.name,
-                    "type": channel.type,
-                    "public": channel.public
+                    "id": request.id,
+                    "name": request.name,
+                    "type": request.type,
+                    "public": request.public
                 ], encoding: JSONEncoding.default)
         }
     }

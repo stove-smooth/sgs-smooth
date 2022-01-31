@@ -35,3 +35,10 @@ struct Thread: Codable {
     let id: Int
     let name: String
 }
+
+struct ChannelRequest: Codable {
+    let id: Int // 카테고리 ID
+    let name: String
+    let type: String
+    let `public`: Bool
+}

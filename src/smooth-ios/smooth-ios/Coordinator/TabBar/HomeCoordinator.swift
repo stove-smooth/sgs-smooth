@@ -67,7 +67,7 @@ class HomeCoordinator: NSObject, Coordinator {
         let makeChannelVC = MakeChannelViewController.instance(categoryId: categoryId)
         makeChannelVC.coordinator = self
         
-        navigationController.presentPanModal(makeChannelVC)
+        navigationController.present(makeChannelVC, animated: true, completion: nil)
     }
     
     func showMakeCategory(server: Server) {

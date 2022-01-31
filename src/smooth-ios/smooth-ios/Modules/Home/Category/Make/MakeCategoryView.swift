@@ -31,17 +31,20 @@ class MakeCategoryView: BaseView {
     let categoryNameLabel = UILabel().then {
         $0.textColor = .iconDefault
         $0.text = "카테고리 이름"
-        $0.font = UIFont.systemFont(ofSize: UIFont.systemFontSize, weight: .bold)
     }
     
     let categoryNameInput = InputTextField().then {
         $0.backgroundColor = .backgroundDarkGray
         $0.textColor = .white
         $0.tintColor = .white
+        $0.layer.borderWidth = 0.5
+        $0.layer.borderColor = UIColor.serverListDarkGray?.cgColor
     }
     
     let accessView = UIView().then {
         $0.backgroundColor = .backgroundDarkGray
+        $0.layer.borderWidth = 0.5
+        $0.layer.borderColor = UIColor.serverListDarkGray?.cgColor
     }
     
     let accessIcon = UIImageView().then {
@@ -51,7 +54,6 @@ class MakeCategoryView: BaseView {
     let accessLabel = UILabel().then {
         $0.text = "비공개 카테고리"
         $0.textColor = .white
-        $0.font = UIFont.systemFont(ofSize: UIFont.systemFontSize-1)
     }
     
     let accessButton = UISwitch().then {
@@ -112,13 +114,13 @@ class MakeCategoryView: BaseView {
         
         categoryNameInput.snp.makeConstraints {
             $0.top.equalTo(categoryNameLabel.snp.bottom).offset(3)
-            $0.height.equalTo(40)
+            $0.height.equalTo(50)
             $0.left.right.equalToSuperview()
         }
         
         accessView.snp.makeConstraints {
             $0.top.equalTo(categoryNameInput.snp.bottom).offset(15)
-            $0.height.equalTo(40)
+            $0.height.equalTo(50)
             $0.left.right.equalToSuperview()
         }
         

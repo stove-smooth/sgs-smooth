@@ -15,14 +15,14 @@ class MakeChannelViewController: BaseViewController, PanModalPresentable {
     
     weak var coordinator: HomeCoordinator?
     
-    private let makeView = MakeServerView()
-    private let viewModel: MakeServerViewModel
+    private let makeView = MakeChannelView()
+    private let viewModel: MakeChannelViewModel
     
     let categoryId: Int
     
     init(categoryId: Int) {
         self.categoryId = categoryId
-        self.viewModel = MakeServerViewModel(channelRepository: ChannelRepository())
+        self.viewModel = MakeChannelViewModel(categoryId: categoryId, channelRepository: ChannelRepository())
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -38,7 +38,7 @@ class MakeChannelViewController: BaseViewController, PanModalPresentable {
     
     private func dismiss() {
         self.dismiss(animated: true, completion: nil)
-        self.coordinator?.goToMenu()
+//        self.coordinator?.goToMenu()
     }
     
     override func loadView() {
@@ -46,13 +46,50 @@ class MakeChannelViewController: BaseViewController, PanModalPresentable {
     }
     
     override func viewDidLoad() {
-        
+        super.viewDidLoad()
     }
     
     override func bindViewModel() {
-//        self.makeView.closeButton.rx.tap
-//            .observe(on: MainScheduler.instance)
-//            .bind(onNext: self.dismiss)
-//            .disposed(by: disposeBag)
+        self.makeView.closeButton.rx.tap
+            .observe(on: MainScheduler.instance)
+            .bind(onNext: self.dismiss)
+            .disposed(by: disposeBag)
+        
+        self.makeView.channelNameInput.rx.text
+            .orEmpty
+            .bind(to: self.viewModel.input.channelNameInput)
+            .disposed(by: disposeBag)
+        
+        self.makeView.chattingButton.rx.tap
+            .asDriver()
+            .drive(onNext: {
+                self.makeView.setType(chat: true)
+                self.viewModel.input.isChat.accept(true)
+            })
+            .disposed(by: disposeBag)
+        
+        self.makeView.voiceButton.rx.tap
+            .asDriver()
+            .drive(onNext: {
+                self.makeView.setType(chat: false)
+                self.viewModel.input.isChat.accept(false)
+            })
+            .disposed(by: disposeBag)
+        
+        self.makeView.accessButton.rx.isOn
+            .bind(to: self.viewModel.input.isPublic)
+            .disposed(by: disposeBag)
+        
+        self.makeView.makeButton.rx.tap
+            .bind(to: self.viewModel.input.tapMakeButton)
+            .disposed(by: disposeBag)
+        
+        self.viewModel.showToastMessage
+            .asDriver(onErrorJustReturn: "")
+            .drive(onNext: { message in
+                self.showToast(message: message, isWarning: false)
+            })
+            .disposed(by: disposeBag)
+        
     }
 }

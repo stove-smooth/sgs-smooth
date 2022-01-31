@@ -9,15 +9,15 @@ import Foundation
 import Moya
 
 protocol ChannelRepositoryProtocol {
-    func createChannel(categoryId: Int, channel: Channel, _ completion: @escaping (Channel?, MoyaError?) -> Void)
+    func createChannel(request: ChannelRequest, _ completion: @escaping (Channel?, MoyaError?) -> Void)
 }
 
 
 struct ChannelRepository: Networkable, ChannelRepositoryProtocol {
     typealias Target = ChannelTarget
     
-    func createChannel(categoryId: Int, channel: Channel, _ completion: @escaping (Channel?, MoyaError?) -> Void){
-        makeProvider().request(.createChannel(categoryId: categoryId, channel: channel)) { result in
+    func createChannel(request: ChannelRequest, _ completion: @escaping (Channel?, MoyaError?) -> Void){
+        makeProvider().request(.createChannel(request: request)) { result in
             switch BaseResponse<Channel>.processResponse(result) {
             case .success(let response):
                 guard let response = response else { return }
