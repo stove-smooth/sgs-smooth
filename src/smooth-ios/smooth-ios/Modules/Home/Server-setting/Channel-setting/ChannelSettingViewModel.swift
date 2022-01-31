@@ -18,7 +18,7 @@ class ChannelSettingViewModel: BaseViewModel {
     let server: Server
     
     struct Input {
-        let viewDidLoad = PublishSubject<Void>()
+        let fetch = PublishSubject<Void>()
         let tapEditCategory = PublishRelay<Category>()
     }
     
@@ -45,7 +45,7 @@ class ChannelSettingViewModel: BaseViewModel {
     }
     
     override func bind() {
-        self.input.viewDidLoad.bind(onNext: self.fetch)
+        self.input.fetch.bind(onNext: self.fetch)
             .disposed(by: disposeBag)
         
         self.input.tapEditCategory
@@ -68,11 +68,14 @@ class ChannelSettingViewModel: BaseViewModel {
             }
             
             self.output.showEmpty.accept(response.categories.count == 0)
-            response.categories.forEach {
-                self.model.section.append(ChannelSection(header: $0.name, id: $0.id, items: $0.channels ?? []))
-            }
-            self.output.section.accept(self.model.section)
             
+            var sections: [ChannelSection] = []
+            response.categories.forEach {
+                sections.append(ChannelSection(header: $0.name, id: $0.id, items: $0.channels ?? []))
+            }
+            
+            self.model.section = sections
+            self.output.section.accept(sections)
             self.showLoading.accept(false)
         }
     }

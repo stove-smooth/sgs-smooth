@@ -8,7 +8,7 @@
 import Foundation
 import RxDataSources
 
-struct ChannelSection {
+struct ChannelSection: Equatable, IdentifiableType {
     var header: String
     var id: Int
     var items: [Item]
@@ -22,6 +22,11 @@ struct ChannelSection {
     var identity: Int {
         return self.id
     }
+    
+    static func ==(lhs: ChannelSection, rhs: ChannelSection) -> Bool {
+      return lhs.id == rhs.id
+    }
+    
 }
 
 extension ChannelSection: AnimatableSectionModelType {

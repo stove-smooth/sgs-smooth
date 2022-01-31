@@ -14,6 +14,9 @@ enum CategoryTarget {
     
     // MARK: PATCH
     case updateCategoryName(categoryId: Int, name: String)
+    
+    // MARK: PATCH
+    case deleteCategory(categoryId: Int)
 }
 
 extension CategoryTarget: BaseAPI, AccessTokenAuthorizable {
@@ -23,6 +26,8 @@ extension CategoryTarget: BaseAPI, AccessTokenAuthorizable {
             return "/community-server/category"
         case .updateCategoryName:
             return "/community-server/category/name"
+        case .deleteCategory(let categoryId):
+            return "/community-server/category/\(categoryId)"
         }
     }
     
@@ -30,6 +35,7 @@ extension CategoryTarget: BaseAPI, AccessTokenAuthorizable {
         switch self {
         case .createCategory: return .post
         case .updateCategoryName: return .patch
+        case .deleteCategory: return .delete
         }
     }
     
@@ -39,6 +45,8 @@ extension CategoryTarget: BaseAPI, AccessTokenAuthorizable {
             return .requestCustomJSONEncodable(request, encoder: JSONEncoder())
         case .updateCategoryName(let categoryId, let name):
             return .requestParameters(parameters: ["id": categoryId, "name": name], encoding: JSONEncoding.default)
+        case .deleteCategory:
+            return .requestPlain
         }
     }
     
@@ -47,6 +55,8 @@ extension CategoryTarget: BaseAPI, AccessTokenAuthorizable {
         case .createCategory:
             return .custom("")
         case .updateCategoryName:
+            return .custom("")
+        case .deleteCategory:
             return .custom("")
         }
     }

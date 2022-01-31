@@ -8,6 +8,7 @@
 import UIKit
 
 class ServerSettingCoordinator: NSObject, Coordinator {
+    
     var delegate: CoordinatorDelegate?
     
     var childCoordinators: [Coordinator]
@@ -43,10 +44,7 @@ class ServerSettingCoordinator: NSObject, Coordinator {
     
     func goToMain() {
         self.coordinatorDidFinish()
-        
-        
         navigationController.popToRootViewController(animated: true)
-//        navigationController.dismiss(animated: true, completion: nil)
     }
     
     func goToEditServerInfo(server: Server) {
@@ -75,10 +73,11 @@ class ServerSettingCoordinator: NSObject, Coordinator {
         modalNav.pushViewController(channelVC, animated: true)
     }
     
-    func showEditCategory(category: Category) {
+    func showEditCategory(category: Category, delegate: AnyObject ) {
         let editCategoryVC = EditCategoryViewController.instance(categoryId: category.id, categoryName: category.name)
         
         editCategoryVC.coordinator = self
+        editCategoryVC.delegate = delegate as? EditCategoryDelegate
         
         modalNav.isNavigationBarHidden = false
         navigationController.isNavigationBarHidden = true

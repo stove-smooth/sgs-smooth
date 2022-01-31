@@ -24,6 +24,7 @@ class EditCategoryViewModel: BaseViewModel {
     
     struct Output {
         let showSaveButton = BehaviorRelay<Bool>(value: true)
+        let dismiss = PublishRelay<Void>()
     }
     
     init(
@@ -41,6 +42,7 @@ class EditCategoryViewModel: BaseViewModel {
         self.input.tapDeleteCategory
             .bind(onNext: {
                 self.deleteCategory()
+                self.output.dismiss.accept(())
             }).disposed(by: disposeBag)
         
         self.input.categoryNameInput
@@ -62,7 +64,15 @@ class EditCategoryViewModel: BaseViewModel {
     
     
     private func deleteCategory() {
-        let newName = self.input.categoryNameInput.value
+        self.showLoading.accept(true)
+        categoryRepository.deleteCategory(categoryId: self.categoryId) {
+            response, error in
+            if (error?.response != nil) {
+                let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
+                self.showErrorMessage.accept(body.message)
+            }
+        }
+        self.showLoading.accept(false)
     }
     
     private func updateCategoryName() {

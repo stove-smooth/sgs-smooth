@@ -17,8 +17,6 @@ class ChannelSettingView: BaseView {
         
         $0.rowHeight = UITableView.automaticDimension
         $0.estimatedRowHeight = 60
-        $0.register(ServerSettingCell.self, forCellReuseIdentifier: ServerSettingCell.identifier)
-        $0.register(ChannelSettingHeaderCell.self, forHeaderFooterViewReuseIdentifier: ChannelSettingHeaderCell.identifier)
     }
     
     override func setup() {

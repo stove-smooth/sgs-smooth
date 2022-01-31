@@ -10,6 +10,10 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 
+protocol EditCategoryDelegate: AnyObject {
+    func onClose()
+}
+
 class ChannelSettingViewContrller: BaseViewController, UIScrollViewDelegate {
     weak var coordinator: ServerSettingCoordinator?
     
@@ -36,15 +40,18 @@ class ChannelSettingViewContrller: BaseViewController, UIScrollViewDelegate {
         return ChannelSettingViewContrller(server: server)
     }
     
-    override func loadView() {
-        super.view = self.channelView
-        self.setupTableView()
-        title = "채널"
+    override func viewWillAppear(_ animated: Bool) {
+        self.viewModel.input.fetch.onNext(())
+        
+        super.viewWillAppear(animated)
     }
     
     override func viewDidLoad() {
+        self.setupTableView()
+        view = self.channelView
+        title = "채널"
+        
         super.viewDidLoad()
-        self.viewModel.input.viewDidLoad.onNext(())
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -69,13 +76,16 @@ class ChannelSettingViewContrller: BaseViewController, UIScrollViewDelegate {
         self.viewModel.output.showEditCateogory
             .observe(on: MainScheduler.instance)
             .bind(onNext: { category in
-                self.coordinator?.showEditCategory(category: category)
+                self.coordinator?.showEditCategory(category: category, delegate: self)
             })
             .disposed(by: disposeBag)
         
     }
     
     private func setupTableView() {
+        self.channelView.tableView.register(ServerSettingCell.self, forCellReuseIdentifier: ServerSettingCell.identifier)
+        self.channelView.tableView.register(ChannelSettingHeaderCell.self, forHeaderFooterViewReuseIdentifier: ChannelSettingHeaderCell.identifier)
+        
         self.channelView.tableView.rx.setDelegate(self)
             .disposed(by: disposeBag)
         
@@ -85,7 +95,6 @@ class ChannelSettingViewContrller: BaseViewController, UIScrollViewDelegate {
                 
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: ServerSettingCell.identifier, for: indexPath)
                         as? ServerSettingCell else { return BaseTableViewCell() }
-                print(item.type.self)
                 
                 switch item.type {
                 case .text:
@@ -116,7 +125,7 @@ extension ChannelSettingViewContrller: UITableViewDelegate {
         headerCell.editButton.rx.tap
             .bind(onNext: {
                 let section = self.channelDataSource.sectionModels[section]
-            
+                
                 self.viewModel.input.tapEditCategory
                     .accept(Category(id: section.id,
                                      name: section.header,
@@ -125,5 +134,11 @@ extension ChannelSettingViewContrller: UITableViewDelegate {
             })
             .disposed(by: disposeBag)
         return headerCell
+    }
+}
+
+extension ChannelSettingViewContrller: EditCategoryDelegate {
+    func onClose() {
+        self.viewModel.input.fetch.onNext(())
     }
 }

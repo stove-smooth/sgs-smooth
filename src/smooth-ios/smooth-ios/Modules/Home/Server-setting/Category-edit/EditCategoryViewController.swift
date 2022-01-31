@@ -12,6 +12,8 @@ import RxCocoa
 class EditCategoryViewController: BaseViewController {
     weak var coordinator: ServerSettingCoordinator?
     
+    weak var delegate: EditCategoryDelegate?
+    
     private let editView = EditCategoryView()
     private let viewModel: EditCategoryViewModel
     
@@ -47,12 +49,18 @@ class EditCategoryViewController: BaseViewController {
         super.view = self.editView
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         self.coordinator?.modalNav.isNavigationBarHidden = false
+        delegate?.onClose()
+        super.viewWillDisappear(animated)
     }
     
     override func bindViewModel() {
@@ -81,11 +89,11 @@ class EditCategoryViewController: BaseViewController {
             .bind(onNext: self.showDeleteCategory)
             .disposed(by: disposeBag)
         
-//        self.viewModel.output.deleteCategory
-//            .asDriver(onErrorJustReturn: ())
-//            .drive(onNext: {
-//                self.dismiss()
-//            }).disposed(by: disposeBag)
+        self.viewModel.output.dismiss
+            .asDriver(onErrorJustReturn: ())
+            .drive(onNext: {
+                self.dismiss()
+            }).disposed(by: disposeBag)
         
         // MARK: toast message
         self.viewModel.showToastMessage
