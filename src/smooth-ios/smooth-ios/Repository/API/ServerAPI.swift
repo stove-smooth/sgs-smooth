@@ -14,6 +14,7 @@ enum ServerTarget {
     case fetchServer
     case getServerById(param: Int)
     case getMemberFromServer(param: Int)
+    case getInvitByServer(serverId: Int)
     
     // MARK: POST
     case createServer(param: ServerRequest)
@@ -27,6 +28,7 @@ enum ServerTarget {
     // MARK: DELETE
     case leaveServer(serverId: Int, memberId: Int)
     case deleteServer(serverId: Int)
+    case deleteinvitation(invitationId: Int)
 }
 
 extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
@@ -39,6 +41,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
             return "/community-server/community/\(serverId)"
         case .getMemberFromServer(let serverId):
             return "/community-server/community/\(serverId)/member"
+        case .getInvitByServer(let serverId):
+            return "/community-server/community/\(serverId)/invitation"
             
         case .createServer:
             return "/community-server/community"
@@ -56,6 +60,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
             return "/community-server/community/\(serverId)/member"
         case .deleteServer(let serverId):
             return "/community-server/community/\(serverId)"
+        case .deleteinvitation:
+            return "/community-server/community/invitation"
         }
     }
     
@@ -64,6 +70,7 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
         case .fetchServer: return .get
         case .getServerById: return .get
         case .getMemberFromServer: return .get
+        case .getInvitByServer: return .get
             
         case .createServer: return .post
         case .createInvitation: return .post
@@ -74,6 +81,7 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
             
         case .leaveServer: return .delete
         case .deleteServer: return .delete
+        case .deleteinvitation: return .delete
         }
     }
     
@@ -85,6 +93,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
             return .requestPlain
         case .getMemberFromServer(let memberId):
             return .requestParameters(parameters: ["id": memberId], encoding: URLEncoding.queryString)
+        case .getInvitByServer:
+            return .requestPlain
             
         case .createServer(let request):
             var multipartFromData: [MultipartFormData] = []
@@ -139,6 +149,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
             return .requestParameters(parameters: ["id": memberId], encoding: URLEncoding.queryString)
         case .deleteServer:
             return .requestPlain
+        case .deleteinvitation(let invitationId):
+            return .requestParameters(parameters: ["id": invitationId], encoding: URLEncoding.queryString)
         }
     }
     
@@ -149,6 +161,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
         case .getServerById:
             return .custom("")
         case .getMemberFromServer:
+            return .custom("")
+        case .getInvitByServer:
             return .custom("")
             
         case .createServer:
@@ -166,6 +180,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
         case .leaveServer:
             return .custom("")
         case .deleteServer:
+            return .custom("")
+        case .deleteinvitation:
             return .custom("")
         }
     }

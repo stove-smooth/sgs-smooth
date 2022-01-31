@@ -23,6 +23,9 @@ class AddServerCoordinator: NSObject, Coordinator {
         
         self.modalNav.navigationBar.tintColor = .white
         self.modalNav.navigationItem.backButtonDisplayMode = .minimal
+        self.modalNav.navigationBar.isTranslucent = false
+        self.modalNav.navigationBar.shadowImage = UIImage()
+        self.modalNav.navigationBar.barTintColor = .backgroundDarkGray
         
         self.childCoordinators = []
     }

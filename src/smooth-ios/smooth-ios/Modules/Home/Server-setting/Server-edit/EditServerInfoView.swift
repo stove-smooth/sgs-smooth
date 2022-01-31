@@ -8,31 +8,19 @@
 import UIKit
 
 class EditServerInfoView: BaseView {
-    let navigationView = UIView().then {
-        $0.backgroundColor = .backgroundDarkGray
-    }
-    
-    let closeButton = UIButton().then {
-        $0.setTitle("닫기", for: .normal)
-        $0.tintColor = .white
-    }
-    
-    let naviTitleLabel = UILabel().then {
-        $0.textColor = .white
-        $0.text = "서버 설정"
-    }
-    
     var saveButton = UIButton().then {
         $0.setTitle("저장", for: .normal)
         $0.tintColor = .white
         $0.isHidden = true
+        
+        $0.backgroundColor = .blurple
+        $0.layer.cornerRadius = 5
     }
     
     let imgUploadButton = UIButton().then {
         $0.imageView?.layer.cornerRadius = 40
         $0.backgroundColor = .blurple
         $0.layer.cornerRadius = 40
-        
     }
     
     let uploadIcon = UIImageView().then {
@@ -70,18 +58,18 @@ class EditServerInfoView: BaseView {
     }
     
     let deleteButton = UIButton().then {
-        $0.backgroundColor = .red
+        $0.backgroundColor = UIColor(hex: "0xed42445", alpha: 0.3)
         $0.layer.cornerRadius = 5
         
         $0.setTitle("서버 삭제", for: .normal)
-        $0.titleLabel?.textColor = .white
+        $0.titleLabel?.textColor = UIColor(hex: "0xFFFFFF", alpha: 0.3)
     }
     
     override func setup() {
         self.backgroundColor = UIColor.backgroundDarkGray
         
         [
-            navigationView, closeButton, naviTitleLabel, saveButton,
+            saveButton,
             imgUploadButton, uploadIcon,
             serverNameLabel, serverNameLabelField,
             deleteButton
@@ -91,28 +79,14 @@ class EditServerInfoView: BaseView {
     }
     
     override func bindConstraints() {
-        navigationView.snp.makeConstraints {
-            $0.left.right.top.equalToSuperview()
-            $0.bottom.equalTo(safeAreaLayoutGuide.snp.top).offset(40)
-        }
-        
-        closeButton.snp.makeConstraints {
-            $0.left.equalToSuperview().offset(24)
-            $0.centerY.equalTo(naviTitleLabel)
-        }
-        
-        naviTitleLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.bottom.equalTo(navigationView).offset(-10)
-        }
-        
         saveButton.snp.makeConstraints {
-            $0.right.equalToSuperview().offset(-24)
-            $0.centerY.equalTo(naviTitleLabel)
+            $0.top.equalTo(serverNameLabelField.snp.bottom).offset(10)
+            $0.height.equalTo(50)
+            $0.left.right.equalToSuperview().inset(15)
         }
         
         imgUploadButton.snp.makeConstraints {
-            $0.top.equalTo(naviTitleLabel.snp.bottom).offset(20)
+            $0.top.equalTo(safeAreaLayoutGuide).offset(15)
             $0.centerX.equalTo(safeAreaLayoutGuide)
             $0.width.height.equalTo(80)
         }
@@ -140,9 +114,9 @@ class EditServerInfoView: BaseView {
         }
         
         deleteButton.snp.makeConstraints {
-            $0.top.equalTo(serverNameLabelField.snp.bottom).offset(10)
             $0.height.equalTo(50)
             $0.left.right.equalToSuperview().inset(15)
+            $0.bottom.equalTo(safeAreaLayoutGuide).offset(-10)
         }
     }
     

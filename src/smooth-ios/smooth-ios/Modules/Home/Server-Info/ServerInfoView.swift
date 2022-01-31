@@ -92,7 +92,7 @@ class ServerInfoView: BaseView {
         $0.backgroundColor = .channelListDarkGray
     }
     
-    let tableView = UITableView().then {
+    let tableView = UITableView(frame: .zero, style: .insetGrouped).then {
         $0.backgroundColor = .clear
         $0.register(ServerInfoCell.self, forCellReuseIdentifier: ServerInfoCell.identifier)
         $0.layer.cornerRadius = 5

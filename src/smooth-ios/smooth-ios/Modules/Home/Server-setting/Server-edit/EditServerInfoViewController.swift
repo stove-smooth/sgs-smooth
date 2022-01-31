@@ -11,7 +11,7 @@ import RxCocoa
 
 class EditServerInfoViewController: BaseViewController {
     
-    weak var coordinator: HomeCoordinator?
+    weak var coordinator: ServerSettingCoordinator?
     
     private var editView = EditServerInfoView()
     private let viewModel: EditServerInfoViewModel
@@ -28,17 +28,12 @@ class EditServerInfoViewController: BaseViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    static func instance(server: Server) -> UINavigationController {
-        let editVC = EditServerInfoViewController(server: server)
-        
-        return UINavigationController(rootViewController: editVC).then {
-            $0.modalPresentationStyle = .overCurrentContext
-            $0.isNavigationBarHidden = true
-        }
+    static func instance(server: Server) -> EditServerInfoViewController {
+        return EditServerInfoViewController(server: server)
     }
     
     private func dismiss() {
-        self.dismiss(animated: true, completion: nil)
+        self.navigationController?.popViewController(animated: true)
     }
     
     override func loadView() {
@@ -46,16 +41,21 @@ class EditServerInfoViewController: BaseViewController {
         editView.bind(server: self.server)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        title = "일반"
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        navigationController?.isNavigationBarHidden = true
+    }
+    
     override func bindViewModel() {
-        self.editView.closeButton.rx.tap
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: self.dismiss)
-            .disposed(by: disposeBag)
-        
         self.editView.imgUploadButton.rx.tap
             .flatMap { [weak self] _ in
                 return UIImagePickerController.rx.createWithParent(self) {
@@ -83,7 +83,7 @@ class EditServerInfoViewController: BaseViewController {
             .drive(onNext: {value in
                 self.editView.saveButton.isHidden = !value
             }).disposed(by: disposeBag)
-            
+        
         self.editView.saveButton.rx.tap
             .bind(to: self.viewModel.input.tapSaveButton)
             .disposed(by: disposeBag)
@@ -96,7 +96,7 @@ class EditServerInfoViewController: BaseViewController {
             .asDriver(onErrorJustReturn: ())
             .drive(onNext: {
                 self.dismiss()
-                self.coordinator?.goToMenu()
+                self.coordinator?.goToMain()
             }).disposed(by: disposeBag)
         
         // MARK: toast message
