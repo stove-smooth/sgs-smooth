@@ -12,6 +12,13 @@
         lang="pt-BR"
         @select="onSelectEmoji"
       />
+      <VEmojiPicker
+        v-show="this.replyEmojiPopout"
+        class="reply-emoji-picker-popout"
+        labelSearch="Search"
+        lang="pt-BR"
+        @select="onSelectReplyEmoji"
+      />
       <div class="height-100">
         <div class="scroller-content">
           <ol id="server-chat-scroll-bottom" class="scroller-inner">
@@ -56,6 +63,23 @@
                             aria-haspopup="listbox"
                             v-model="item.message"
                           ></textarea>
+                        </div>
+                        <div class="channel-message-button-wrapper">
+                          <div class="display-flex margin-right-8px">
+                            <button
+                              @click="openReplyEmojiPopout(item.id)"
+                              class="emoji-button"
+                              tabindex="0"
+                              aria-label="이모티콘 선택하기"
+                              type="button"
+                            >
+                              <svg
+                                v-if="replyEmojiPopout"
+                                class="yellow-emotion"
+                              ></svg>
+                              <svg v-else class="add-emotion"></svg>
+                            </button>
+                          </div>
                         </div>
                       </div>
                       <div class="channel-message-edit-tool-area">
@@ -308,6 +332,7 @@ export default {
       receiveList: [],
       thumbnailFiles: [],
       emojiPopout: false,
+      replyEmojiPopout: "",
       page: 0,
       more: false,
       prevScrollHeight: 0,
@@ -511,6 +536,22 @@ export default {
           this.emojiPopout = false;
         }
       }
+
+      if (this.replyEmojiPopout) {
+        var condition3 = e.target.parentNode.childNodes[0]._prevClass;
+        var condition4 = e.target.parentNode.className;
+        if (
+          condition4 !== "container-search" &&
+          condition4 !== "container-emoji" &&
+          condition4 !== "reply-emoji-picker-popout" &&
+          condition4 !== "svg" &&
+          condition4 !== "emoji-button" &&
+          condition4 !== "reply-emoji-picker-popout emoji-picker" &&
+          condition3 !== "category"
+        ) {
+          this.replyEmojiPopout = false;
+        }
+      }
     },
     convertFromStringToDate(responseDate) {
       var time = {};
@@ -529,8 +570,24 @@ export default {
     onSelectEmoji(emoji) {
       this.text += emoji.data;
     },
+    onSelectReplyEmoji(emoji) {
+      for (var i = 0; i < this.receiveList.length; i++) {
+        if (this.receiveList[i].id == this.replyEmojiPopout) {
+          this.receiveList[i].message += emoji.data;
+          break;
+        }
+      }
+    },
     openEmojiPopout() {
       this.emojiPopout = !this.emojiPopout;
+    },
+    openReplyEmojiPopout(messageId) {
+      if (this.replyEmojiPopout) {
+        this.replyEmojiPopout = "";
+      } else {
+        this.replyEmojiPopout = messageId;
+      }
+      console.log("mesage", this.replyEmojiPopout);
     },
     urlify(text) {
       var urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -633,6 +690,7 @@ export default {
   border-radius: 8px;
   margin-top: 8px;
   background-color: #40444b;
+  display: flex;
 }
 .channel-message-edit-tool-area {
   padding: 7px 0;
@@ -1155,6 +1213,13 @@ export default {
   background-image: url("../assets/yellow-emotion.svg");
 }
 .emoji-picker-popout {
+  background-color: #2f3136 !important;
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  z-index: 10;
+}
+.reply-emoji-picker-popout {
   background-color: #2f3136 !important;
   position: absolute;
   bottom: 70px;

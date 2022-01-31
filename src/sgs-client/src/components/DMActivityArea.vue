@@ -2,7 +2,7 @@
   <div class="server-chatting-container">
     <div
       class="thin-scrollbar server-chat-scroller"
-      ref="bottomRef"
+      ref="scrollRef"
       @scroll="handleScroll"
     >
       <VEmojiPicker
@@ -11,6 +11,13 @@
         labelSearch="Search"
         lang="pt-BR"
         @select="onSelectEmoji"
+      />
+      <VEmojiPicker
+        v-show="this.replyEmojiPopout"
+        class="reply-emoji-picker-popout"
+        labelSearch="Search"
+        lang="pt-BR"
+        @select="onSelectReplyEmoji"
       />
       <div class="height-100">
         <div class="scroller-content">
@@ -56,6 +63,23 @@
                             aria-haspopup="listbox"
                             v-model="item.message"
                           ></textarea>
+                        </div>
+                        <div class="channel-message-button-wrapper">
+                          <div class="display-flex margin-right-8px">
+                            <button
+                              @click="openReplyEmojiPopout(item.id)"
+                              class="emoji-button"
+                              tabindex="0"
+                              aria-label="이모티콘 선택하기"
+                              type="button"
+                            >
+                              <svg
+                                v-if="replyEmojiPopout"
+                                class="yellow-emotion"
+                              ></svg>
+                              <svg v-else class="add-emotion"></svg>
+                            </button>
+                          </div>
                         </div>
                       </div>
                       <div class="channel-message-edit-tool-area">
@@ -139,7 +163,6 @@
                 </div>
               </li>
             </div>
-            <!-- <div ref="bottomRef"></div> -->
           </ol>
         </div>
       </div>
@@ -300,6 +323,7 @@ export default {
       receiveList: [],
       thumbnailFiles: [],
       emojiPopout: false,
+      replyEmojiPopout: "",
       page: 0,
       more: false,
       prevScrollHeight: 0,
@@ -361,6 +385,10 @@ export default {
         if (this.text.trim().length == 0 && this.images.length == 0) {
           return;
         }
+        if (this.communityMessageReplyId) {
+          this.reply();
+          return;
+        }
         if (this.images.length > 0) {
           this.sendPicture();
         }
@@ -401,6 +429,20 @@ export default {
           {}
         );
       }
+    },
+    reply() {
+      const msg = {
+        content: this.text,
+        channelId: this.$route.params.channelid,
+        userId: this.getUserId,
+        parentId: this.directMessageReplyId.messageInfo.id,
+      };
+      this.stompSocketClient.send(
+        "/kafka/send-direct-reply",
+        JSON.stringify(msg),
+        {}
+      );
+      this.setDirectMessageReplyId("");
     },
     modify(id, content) {
       this.modifyLogMessage = "";
@@ -481,6 +523,21 @@ export default {
           this.emojiPopout = false;
         }
       }
+      if (this.replyEmojiPopout) {
+        var condition3 = e.target.parentNode.childNodes[0]._prevClass;
+        var condition4 = e.target.parentNode.className;
+        if (
+          condition4 !== "container-search" &&
+          condition4 !== "container-emoji" &&
+          condition4 !== "reply-emoji-picker-popout" &&
+          condition4 !== "svg" &&
+          condition4 !== "emoji-button" &&
+          condition4 !== "reply-emoji-picker-popout emoji-picker" &&
+          condition3 !== "category"
+        ) {
+          this.replyEmojiPopout = false;
+        }
+      }
     },
     convertFromStringToDate(responseDate) {
       var time = {};
@@ -499,8 +556,24 @@ export default {
     onSelectEmoji(emoji) {
       this.text += emoji.data;
     },
+    onSelectReplyEmoji(emoji) {
+      for (var i = 0; i < this.receiveList.length; i++) {
+        if (this.receiveList[i].id == this.replyEmojiPopout) {
+          this.receiveList[i].message += emoji.data;
+          break;
+        }
+      }
+    },
     openEmojiPopout() {
       this.emojiPopout = !this.emojiPopout;
+    },
+    openReplyEmojiPopout(messageId) {
+      if (this.replyEmojiPopout) {
+        this.replyEmojiPopout = "";
+      } else {
+        this.replyEmojiPopout = messageId;
+      }
+      console.log("mesage", this.replyEmojiPopout);
     },
     urlify(text) {
       var urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -509,8 +582,8 @@ export default {
       });
     },
     scrollToBottom() {
-      let bottomRef = this.$refs["bottomRef"];
-      bottomRef.scrollTop = bottomRef.scrollHeight;
+      let scrollRef = this.$refs["scrollRef"];
+      scrollRef.scrollTop = scrollRef.scrollHeight;
     },
     async handleScroll(e) {
       const { scrollHeight, scrollTop } = e.target;
@@ -564,9 +637,9 @@ export default {
         this.receiveList = newarray;
         if (this.prevScrollHeight != 0) {
           this.$nextTick(function () {
-            let bottomRef = this.$refs["bottomRef"];
-            bottomRef.scrollTop =
-              bottomRef.scrollHeight - this.prevScrollHeight;
+            let scrollRef = this.$refs["scrollRef"];
+            scrollRef.scrollTop =
+              scrollRef.scrollHeight - this.prevScrollHeight;
           });
         }
         if (this.page == 0) {
