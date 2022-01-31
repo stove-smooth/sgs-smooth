@@ -30,9 +30,9 @@ public class RoomManager {
         room.close();
     }
 
-    public MediaPipeline getMediaPipeLine(String pipelineId) {
-        return kurento.getServerManager().getPipelines().stream()
-                .filter(p -> p.getId().equals(pipelineId))
-                .findAny().orElse(kurento.createMediaPipeline());
-    }
+//    public MediaPipeline getMediaPipeLine(String pipelineId) {
+//        return kurento.getServerManager().getPipelines().stream()
+//                .filter(p -> p.getId().equals(pipelineId))
+//                .findAny().orElse(kurento.createMediaPipeline());
+//    }
 }
