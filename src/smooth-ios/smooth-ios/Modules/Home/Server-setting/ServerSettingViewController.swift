@@ -120,17 +120,19 @@ extension ServerSettingViewController: UITableViewDelegate, UITableViewDataSourc
         print(indexPath)
         if indexPath.section == 0 {
             switch indexPath.row {
-            case 0:
+            case 0: // 일반
                 self.coordinator?.goToEditServerInfo(server: self.server)
-            case 1:
-                break
+            case 1: // 채널
+                self.coordinator?.goToChannel(server: self.server)
             default: break
             }
         } else {
             switch indexPath.row {
             case 0:
+                // 멤버
                 break
             case 1:
+                // 초대
                 self.coordinator?.goToInvite(server: self.server)
             default: break
             }

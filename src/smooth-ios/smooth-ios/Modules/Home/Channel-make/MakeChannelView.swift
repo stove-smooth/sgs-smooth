@@ -20,7 +20,6 @@ class MakeChannelView: BaseView {
     let naviTitleLabel = UILabel().then {
         $0.textColor = .white
         $0.text = "채널 만들기"
-        $0.font = UIFont.systemFont(ofSize: UIFont.systemFontSize, weight: .bold)
     }
     
     let makeButton = UIButton().then {

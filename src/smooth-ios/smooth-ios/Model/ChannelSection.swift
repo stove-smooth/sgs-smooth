@@ -24,7 +24,7 @@ struct ChannelSection {
     }
 }
 
-extension ChannelSection: SectionModelType {
+extension ChannelSection: AnimatableSectionModelType {
     
     typealias Item = Channel
     
