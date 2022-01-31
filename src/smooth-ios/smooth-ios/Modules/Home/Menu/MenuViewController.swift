@@ -43,6 +43,16 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         super.viewDidLoad()
     }
     
+    override func bindEvent() {
+        // MARK: event
+        self.menuView.channelView.rx.tapAddButon.bind(onNext: {
+            section in
+            print("event \(section)")
+            self.coordinator?.showMakeChannel(categoryId: section.id)
+        })
+            .disposed(by: disposeBag)
+    }
+    
     override func bindViewModel() {
         // MARK: input
         self.menuView.serverView.tableView.rx.itemSelected

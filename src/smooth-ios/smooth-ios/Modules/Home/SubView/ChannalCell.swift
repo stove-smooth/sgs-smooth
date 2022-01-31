@@ -32,11 +32,12 @@ class ChannelCell: BaseTableViewCell {
             self.textLabel?.font = UIFont.systemFont(ofSize: UIFont.buttonFontSize, weight: .bold)
             self.backgroundColor = UIColor(hex: "0x3A3C41")
             self.layer.cornerRadius = 5
-            
+            self.textLabel?.textColor = .white
         } else {
             self.textLabel?.font = UIFont.systemFont(ofSize: UIFont.buttonFontSize, weight: .regular)
             self.backgroundColor = .clear
             self.layer.cornerRadius = 0
+            self.textLabel?.textColor = .iconDefault
         }
     }
 }

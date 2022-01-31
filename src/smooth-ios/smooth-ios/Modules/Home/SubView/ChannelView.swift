@@ -12,6 +12,8 @@ import RxCocoa
 
 class ChannelView: BaseView {
     
+    fileprivate let section = PublishSubject<ChannelSection>()
+    
     let serverInfoIcon = UIImageView().then {
         $0.image = UIImage(systemName: "ellipsis")?.withTintColor(.white!, renderingMode: .alwaysOriginal)
     }
@@ -34,6 +36,7 @@ class ChannelView: BaseView {
         $0.separatorStyle = .none
         
         $0.register(ChannelCell.self, forCellReuseIdentifier: ChannelCell.identifier)
+        $0.register(ChannelCategoryCell.self, forHeaderFooterViewReuseIdentifier: ChannelCategoryCell.identifier)
     }
     
     let dataSource: channelDataSource = {
@@ -47,7 +50,7 @@ class ChannelView: BaseView {
         )
         
         ds.titleForHeaderInSection = { dataSource, index in
-            return "\(dataSource.sectionModels[index].header)"
+            return dataSource.sectionModels[index].header
         }
         
         ds.canEditRowAtIndexPath = { dataSource, indexPath in
@@ -119,15 +122,6 @@ class ChannelView: BaseView {
             })
             .disposed(by: disposeBag)
         
-        //
-        //        tableView.rx.modelSelected(Channel.self)
-        //            .observe(on: MainScheduler.instance)
-        //            .bind(onNext: { model in
-        //                // TODO: - contentView Bindign
-        ////                self.goToContainer(channel: model)
-        //            })
-        //            .disposed(by: disposeBag)
-        
     }
 }
 
@@ -136,5 +130,41 @@ extension ChannelView: UITableViewDelegate {
         view.tintColor = .clear
         let header:UITableViewHeaderFooterView = view as! UITableViewHeaderFooterView
         header.textLabel?.textColor = .white
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard let headerCell = tableView.dequeueReusableHeaderFooterView(withIdentifier: ChannelCategoryCell.identifier) as? ChannelCategoryCell else { return UITableViewHeaderFooterView() }
+        
+        headerCell.addButton.rx.tap
+            .bind(onNext: {
+                //  채널 생성
+                self.section.onNext(self.dataSource[section])
+            }).disposed(by: disposeBag)
+    
+        return headerCell
+    }
+    
+    /* *💄 tableView headerView custom 하는 다른 방법*
+     
+     tableView.rx.delegate.methodInvoked(#selector(tableView.delegate?.tableView(_:willDisplayHeaderView:forSection:)))
+         .take(until: tableView.rx.deallocated)
+         .subscribe(onNext: { event in
+             guard let headerView = event[1] as? UITableViewHeaderFooterView else { return }
+             
+             for view in headerView.subviews {
+                 view.backgroundColor = .clear
+             }
+             
+             headerView.textLabel?.textColor = .white
+             headerView.textLabel?.font = UIFont.systemFont(ofSize: UIFont.systemFontSize-1, weight: .bold)
+             
+         })
+         .disposed(by: disposeBag)
+     */
+}
+
+extension Reactive where Base: ChannelView {
+    var tapAddButon: ControlEvent<ChannelSection> {
+        return ControlEvent(events: base.section)
     }
 }
