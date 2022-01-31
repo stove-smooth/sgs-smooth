@@ -27,9 +27,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(messageHandler, "/rtc")
-                .addInterceptors(new HttpSessionHandshakeInterceptor())
-                .setAllowedOrigins("*")
-                .withSockJS()
-                .setSupressCors(true);
+                .setAllowedOriginPatterns("*")
+                .withSockJS();
     }
 }
