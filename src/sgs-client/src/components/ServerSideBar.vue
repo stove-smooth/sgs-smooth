@@ -195,8 +195,6 @@ export default {
     ]),
     log: async function (evt) {
       if (evt.moved) {
-        console.log("communityinfo", this.communityInfo);
-        console.log(evt);
         if (evt.moved.element.channels) {
           if (evt.moved.newIndex == 0) {
             this.new = 0;
@@ -214,17 +212,11 @@ export default {
             console.log(err.response);
           }
         } else {
-          console.log(
-            "채널이 카테고리 내에서 움직임,채널 아이디, 변경할 위치 위에 있는 채널 아이디."
-          );
-          console.log("카테고리아이디", evt.moved.element.categoryId);
-          console.log("채널아이디", evt.moved.element.id);
           if (evt.moved.newIndex == 0) {
             //맨위일경우.
             this.new = 0;
           } else {
             for (var i = 0; i < this.communityInfo.categories.length; i++) {
-              console.log(this.communityInfo.categories[i].id);
               if (
                 evt.moved.element.categoryId ==
                 this.communityInfo.categories[i].id
@@ -236,7 +228,6 @@ export default {
                 break;
               }
             }
-            console.log(this.new);
           }
           const movedChannelInfo = {
             id: evt.moved.element.id,
@@ -251,10 +242,51 @@ export default {
           }
         }
       } else {
-        //if (evt.added) {
-        console.log("채널이 카테고리를 건너 움직임");
-        console.log(evt);
-        //}
+        if (evt) {
+          for (var k = 0; k < this.communityInfo.categories.length; k++) {
+            if (this.communityInfo.categories[k].channels) {
+              for (
+                var h = 0;
+                h < this.communityInfo.categories[k].channels.length;
+                h++
+              ) {
+                if (
+                  this.communityInfo.categories[k].channels[h].id ==
+                  evt.added.element.id
+                ) {
+                  if (h == 0) {
+                    const movedChannelInfo = {
+                      id: evt.added.element.id,
+                      next: 0,
+                      categoryId: this.communityInfo.categories[k].id,
+                    };
+                    try {
+                      const result = await moveChannel(movedChannelInfo);
+                      console.log(result);
+                    } catch (err) {
+                      console.log(err.response);
+                    }
+                  } else {
+                    const movedChannelInfo = {
+                      id: evt.added.element.id,
+                      next: this.communityInfo.categories[k].channels[h - 1].id,
+                      categoryId:
+                        this.communityInfo.categories[k].channels[h - 1]
+                          .categoryId,
+                    };
+                    try {
+                      const result = await moveChannel(movedChannelInfo);
+                      console.log(result);
+                    } catch (err) {
+                      console.log(err.response);
+                    }
+                  }
+                  break;
+                }
+              }
+            }
+          }
+        }
       }
     },
     happy() {
