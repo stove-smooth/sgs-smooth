@@ -50,6 +50,12 @@ class HomeCoordinator: NSObject, Coordinator {
         coordinator.start()
     }
     
+    func goToFriend() {
+        let coordinator = FriendCoordinator(navigationController: navigationController)
+        childCoordinators.append(coordinator)
+        coordinator.start()
+    }
+    
     func showServerInfoModal(server: Server, member: Member) {
         let serverInfoVC = ServerInfoViewController.instance(server: server, member: member)
         serverInfoVC.coordinator = self

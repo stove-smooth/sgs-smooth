@@ -11,12 +11,15 @@ import RxSwift
 class MenuView: BaseView {
     
     let serverView = ServerView()
-    let channelView = ChannelView()
+    let channelView = ChannelView().then { $0.isHidden = true }
+    let directView = DirectView().then { $0.isHidden = true }
     
     override func setup() {
         self.backgroundColor = .serverListDarkGray
         
-        [serverView, channelView].forEach { self.addSubview($0) }
+        [
+            serverView, channelView, directView
+        ].forEach { self.addSubview($0) }
     }
     
     override func bindConstraints() {
@@ -27,6 +30,12 @@ class MenuView: BaseView {
         }
         
         channelView.snp.makeConstraints {
+            $0.left.equalTo(serverView.snp.right)
+            $0.trailing.equalToSuperview().offset(-60)
+            $0.top.bottom.equalTo(safeAreaLayoutGuide)
+        }
+        
+        directView.snp.makeConstraints {
             $0.left.equalTo(serverView.snp.right)
             $0.trailing.equalToSuperview().offset(-60)
             $0.top.bottom.equalTo(safeAreaLayoutGuide)
@@ -44,7 +53,18 @@ extension Reactive where Base: MenuView {
     
     var communityInfo: Binder<CommunityInfo> {
         return Binder(self.base) { view, communityInfo in
+            view.channelView.isHidden = false
+            view.directView.isHidden = true
             view.channelView.bind(communityInfo: communityInfo)
+        }
+    }
+    
+    var direct: Binder<[String]> {
+        return Binder(self.base) { view, directList in
+            view.channelView.isHidden = true
+            view.directView.isHidden = false
+            
+            view.directView.bind(directList: directList)
         }
     }
 }

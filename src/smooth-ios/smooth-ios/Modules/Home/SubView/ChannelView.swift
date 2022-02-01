@@ -75,7 +75,6 @@ class ChannelView: BaseView {
         ].forEach { self.addSubview($0) }
         
         serverInfoButton.addSubview(serverInfoIcon)
-        
     }
     
     override func bindConstraints() {
@@ -105,12 +104,10 @@ class ChannelView: BaseView {
         self.serverInfoButton.setTitle(communityInfo.name, for: .normal)
         
         // MARK: tableView
-        
         let categoryList = communityInfo.categories
         
         var channelSection: [ChannelSection] = []
-        if (communityInfo.categories != nil)
-        {
+        if (communityInfo.categories != nil) {
             channelSection = categoryList!.compactMap {
                 ChannelSection(header: $0.name, id: $0.id, items: $0.channels ?? [])
             }
@@ -118,13 +115,6 @@ class ChannelView: BaseView {
         Observable.just(channelSection)
             .bind(to: tableView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
-        
-        tableView.rx.itemSelected
-            .subscribe(onNext: { indexPath in
-                print(indexPath)
-            })
-            .disposed(by: disposeBag)
-        
     }
 }
 
