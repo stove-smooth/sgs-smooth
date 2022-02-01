@@ -10,8 +10,14 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 
+protocol MenuViewControllerDelegate: AnyObject {
+    func swipe(channel: Channel?)
+}
+
 class MenuViewController: BaseViewController, CoordinatorContext {
     weak var coordinator: HomeCoordinator?
+    weak var delegate: MenuViewControllerDelegate?
+    
     private lazy var menuView = MenuView(frame: self.view.frame)
     private let viewModel: MenuViewModel
     
@@ -34,6 +40,8 @@ class MenuViewController: BaseViewController, CoordinatorContext {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        self.tabBarController?.tabBar.isHidden = false
         
         self.viewModel.input.fetch.onNext(())
         self.viewModel.input.tapServer.onNext(IndexPath(row: 0, section: 0))
@@ -80,6 +88,22 @@ class MenuViewController: BaseViewController, CoordinatorContext {
                 self.coordinator?.goToFriend()
             })
             .disposed(by: disposeBag)
+        
+        Observable.zip(
+            self.menuView.channelView.tableView.rx.itemSelected,
+            self.menuView.channelView.tableView.rx.modelSelected(Channel.self)
+        ).bind{ [weak self] (indexPath, channel) in
+            self?.menuView.channelView.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+            print("selected \(channel)")
+            
+            switch channel.type {
+            case .text :
+                self?.delegate?.swipe(channel: channel)
+            case .voice:
+                // TODO: webRTC 
+                print("웹알티씨 연결하기")
+            }
+        }.disposed(by: disposeBag)
         
         // MARK: output
         self.viewModel.output.servers
