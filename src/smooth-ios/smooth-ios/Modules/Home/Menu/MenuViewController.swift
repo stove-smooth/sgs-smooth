@@ -36,12 +36,12 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         super.viewWillAppear(animated)
         
         self.viewModel.input.fetch.onNext(())
+        self.viewModel.input.tapServer.onNext(IndexPath(row: 0, section: 0))
     }
     
     override func viewDidLoad() {
         self.view = menuView
         super.viewDidLoad()
-        self.viewModel.input.tapServer.onNext(IndexPath(row: 0, section: 0))
     }
     
     override func bindEvent() {
