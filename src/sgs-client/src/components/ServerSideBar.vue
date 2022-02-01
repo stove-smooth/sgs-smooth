@@ -198,8 +198,6 @@ export default {
         console.log("communityinfo", this.communityInfo);
         console.log(evt);
         if (evt.moved.element.channels) {
-          console.log("카테고리 단위로 움직임");
-          console.log("카테고리아이디", evt.moved.element.id);
           if (evt.moved.newIndex == 0) {
             this.new = 0;
           } else {
@@ -239,17 +237,12 @@ export default {
               }
             }
             console.log(this.new);
-            //아닐경우.
-            /* this.new =
-              this.communityInfo.categories[evt.moved.element.categoryId][
-                evt.moved.newIndex - 1
-              ].id; */
           }
           const movedChannelInfo = {
             id: evt.moved.element.id,
             next: this.new,
+            categoryId: evt.moved.element.categoryId,
           };
-          console.log(movedChannelInfo.id, movedChannelInfo.next);
           try {
             const result = await moveChannel(movedChannelInfo);
             console.log(result);
@@ -258,8 +251,10 @@ export default {
           }
         }
       } else {
+        //if (evt.added) {
         console.log("채널이 카테고리를 건너 움직임");
         console.log(evt);
+        //}
       }
     },
     happy() {
