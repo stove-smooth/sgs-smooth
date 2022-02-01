@@ -13,7 +13,7 @@ enum ChannelType: String, Codable {
     case voice = "VOICE"
 }
 
-struct Channel: Codable, Equatable, IdentifiableType {
+struct Channel: Codable, Equatable, IdentifiableType, Hashable {
     let id: Int
     let username: String?
     let name: String
@@ -24,6 +24,10 @@ struct Channel: Codable, Equatable, IdentifiableType {
     
     var identity: Int {
         return self.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
     
     static func == (lhs: Channel, rhs: Channel) -> Bool {

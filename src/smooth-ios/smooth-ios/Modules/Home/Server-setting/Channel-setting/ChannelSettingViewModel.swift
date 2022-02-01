@@ -33,6 +33,7 @@ class ChannelSettingViewModel: BaseViewModel {
     
     struct Model {
         var section: [ChannelSection] = []
+        var categories: [Category] = []
     }
     
     init(
@@ -75,6 +76,7 @@ class ChannelSettingViewModel: BaseViewModel {
             }
             
             self.model.section = sections
+            self.model.categories = response.categories
             self.output.section.accept(sections)
             self.showLoading.accept(false)
         }

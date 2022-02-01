@@ -83,4 +83,13 @@ class ServerSettingCoordinator: NSObject, Coordinator {
         navigationController.isNavigationBarHidden = true
         modalNav.present(editCategoryVC, animated: true, completion: nil)
     }
+    
+    func goToReorderFromCategory(categories: [Category]) {
+        let reorderVC = CategoryReorderViewController.instance(categories: categories)
+        reorderVC.coordinator = self
+        
+        modalNav.isNavigationBarHidden = false
+        navigationController.isNavigationBarHidden = true
+        modalNav.pushViewController(reorderVC, animated: false)
+    }
 }

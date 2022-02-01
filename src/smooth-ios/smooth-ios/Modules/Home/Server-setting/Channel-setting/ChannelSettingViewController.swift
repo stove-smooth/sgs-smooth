@@ -42,7 +42,7 @@ class ChannelSettingViewContrller: BaseViewController, UIScrollViewDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         self.viewModel.input.fetch.onNext(())
-        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "재배치", style: .plain, target: self, action: #selector(goToReorder))
         super.viewWillAppear(animated)
     }
     
@@ -56,6 +56,7 @@ class ChannelSettingViewContrller: BaseViewController, UIScrollViewDelegate {
     
     override func viewWillDisappear(_ animated: Bool) {
         self.coordinator?.modalNav.isNavigationBarHidden = true
+        navigationItem.rightBarButtonItem = nil
     }
     
     override func bindViewModel() {
@@ -110,6 +111,28 @@ class ChannelSettingViewContrller: BaseViewController, UIScrollViewDelegate {
         )
     }
     
+    @objc public func goToReorder() {
+        UIAlertController.present(
+            in: self, title: nil, message: nil,
+            style: .actionSheet,
+            actions: [
+                .action(title: "카테고리", style: .default),
+                .action(title: "채팅 채널", style: .default),
+                .action(title: "음성 채널", style: .default),
+                .action(title: "취소", style: .cancel)
+            ]).subscribe(onNext: { index in
+                switch index {
+                case 0:
+                    self.coordinator?.goToReorderFromCategory(categories: self.viewModel.model.categories)
+                case 1:
+                    break
+                case 2:
+                    break
+                default:
+                    break
+                }
+            }).disposed(by: disposeBag)
+    }
 }
 
 extension ChannelSettingViewContrller: UITableViewDelegate {

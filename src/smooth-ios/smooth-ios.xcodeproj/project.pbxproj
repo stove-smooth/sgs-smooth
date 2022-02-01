@@ -106,6 +106,9 @@
 		C1C8B21D27A82F9C00E8758E /* EditCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C8B21C27A82F9C00E8758E /* EditCategoryView.swift */; };
 		C1C8B22027A82FD200E8758E /* EditCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C8B21F27A82FD200E8758E /* EditCategoryViewController.swift */; };
 		C1C8B22227A82FDB00E8758E /* EditCategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C8B22127A82FDB00E8758E /* EditCategoryViewModel.swift */; };
+		C1C8B22727A8709E00E8758E /* CategoryReorderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C8B22627A8709E00E8758E /* CategoryReorderViewController.swift */; };
+		C1C8B22B27A877C200E8758E /* CategoryReorderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C8B22A27A877C200E8758E /* CategoryReorderViewModel.swift */; };
+		C1C8B22D27A8CA2B00E8758E /* CategoryReorderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C8B22C27A8CA2B00E8758E /* CategoryReorderCell.swift */; };
 		C1D47EC32779570000DBA3CA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EC22779570000DBA3CA /* AppDelegate.swift */; };
 		C1D47ECC2779570200DBA3CA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C1D47ECB2779570200DBA3CA /* Assets.xcassets */; };
 		C1D47ECF2779570200DBA3CA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C1D47ECD2779570200DBA3CA /* LaunchScreen.storyboard */; };
@@ -249,6 +252,9 @@
 		C1C8B21C27A82F9C00E8758E /* EditCategoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCategoryView.swift; sourceTree = "<group>"; };
 		C1C8B21F27A82FD200E8758E /* EditCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCategoryViewController.swift; sourceTree = "<group>"; };
 		C1C8B22127A82FDB00E8758E /* EditCategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCategoryViewModel.swift; sourceTree = "<group>"; };
+		C1C8B22627A8709E00E8758E /* CategoryReorderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryReorderViewController.swift; sourceTree = "<group>"; };
+		C1C8B22A27A877C200E8758E /* CategoryReorderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryReorderViewModel.swift; sourceTree = "<group>"; };
+		C1C8B22C27A8CA2B00E8758E /* CategoryReorderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryReorderCell.swift; sourceTree = "<group>"; };
 		C1D47EBF2779570000DBA3CA /* smooth-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "smooth-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C1D47EC22779570000DBA3CA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C1D47ECB2779570200DBA3CA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -460,6 +466,7 @@
 				C1C8B21827A81E1600E8758E /* ChannelSettingHeaderCell.swift */,
 				C118D2CF27A6EB7E009CB96C /* ServerInviteCell.swift */,
 				C118D2D127A70062009CB96C /* ServerInviteEmptyView.swift */,
+				C1C8B22C27A8CA2B00E8758E /* CategoryReorderCell.swift */,
 			);
 			path = SubView;
 			sourceTree = "<group>";
@@ -563,6 +570,7 @@
 			children = (
 				C118D2C527A6D5A6009CB96C /* SubView */,
 				C1C8B21127A8139400E8758E /* Channel-setting */,
+				C1C8B22527A86AE000E8758E /* Channel-reorder */,
 				C1C8B21E27A82FA100E8758E /* Category-edit */,
 				C1244F8327A64AD500BEC173 /* Server-edit */,
 				C118D2C627A6D5CA009CB96C /* Server-Invite */,
@@ -591,6 +599,15 @@
 				C1C8B22127A82FDB00E8758E /* EditCategoryViewModel.swift */,
 			);
 			path = "Category-edit";
+			sourceTree = "<group>";
+		};
+		C1C8B22527A86AE000E8758E /* Channel-reorder */ = {
+			isa = PBXGroup;
+			children = (
+				C1C8B22627A8709E00E8758E /* CategoryReorderViewController.swift */,
+				C1C8B22A27A877C200E8758E /* CategoryReorderViewModel.swift */,
+			);
+			path = "Channel-reorder";
 			sourceTree = "<group>";
 		};
 		C1D47EB62779570000DBA3CA = {
@@ -929,9 +946,11 @@
 				C118D2E127A78A9F009CB96C /* Category.swift in Sources */,
 				C1D47F482785DCEC00DBA3CA /* VerifyCodeViewController.swift in Sources */,
 				27B19D48277BEA44008D85DE /* Color+Extension.swift in Sources */,
+				C1C8B22B27A877C200E8758E /* CategoryReorderViewModel.swift in Sources */,
 				C118D2E327A78BCE009CB96C /* CategoryRepository.swift in Sources */,
 				C118D2DF27A789A0009CB96C /* CategoryAPI.swift in Sources */,
 				C102415E279F17E700B702DB /* ServerSection.swift in Sources */,
+				C1C8B22727A8709E00E8758E /* CategoryReorderViewController.swift in Sources */,
 				27F2BE72278FBBEA00A0F0A8 /* HomeCoordinator.swift in Sources */,
 				C1C8B22027A82FD200E8758E /* EditCategoryViewController.swift in Sources */,
 				C102417C27A0050B00B702DB /* RegisterServerView.swift in Sources */,
@@ -1005,6 +1024,7 @@
 				272189072782EB7500ABEF60 /* UserAPI.swift in Sources */,
 				C102417927A0041D00B702DB /* RegisterServerViewController.swift in Sources */,
 				C118D2D227A70062009CB96C /* ServerInviteEmptyView.swift in Sources */,
+				C1C8B22D27A8CA2B00E8758E /* CategoryReorderCell.swift in Sources */,
 				C1024169279F91A600B702DB /* AddServerViewModel.swift in Sources */,
 				C1AA6AFB27A4031F003A32A4 /* ServerInfoViewController.swift in Sources */,
 				C1D47EEE27795D1300DBA3CA /* BaseView.swift in Sources */,

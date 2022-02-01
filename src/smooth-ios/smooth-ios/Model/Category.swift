@@ -7,10 +7,18 @@
 
 import Foundation
 
-struct Category: Codable {
+struct Category: Codable, Hashable {
     let id: Int
     let name: String
     let channels: [Channel]?
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    static func == (lhs: Category, rhs: Category) -> Bool {
+        lhs.id == rhs.id
+    }
 }
 
 
