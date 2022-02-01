@@ -417,11 +417,8 @@
 		C1024163279F911A00B702DB /* SubView */ = {
 			isa = PBXGroup;
 			children = (
-				C1D47F53278B0F5D00DBA3CA /* ServerCell.swift */,
-				C1024161279F26B000B702DB /* ServerButtonCell.swift */,
+				C1C8B22E27A8ED3900E8758E /* Cell */,
 				C1024155279E482100B702DB /* ServerView.swift */,
-				C1D47F51278B0F4900DBA3CA /* ChannalCell.swift */,
-				C118D2F027A7B61A009CB96C /* ChannelCategoryCell.swift */,
 				C1024157279E4B3B00B702DB /* ChannelView.swift */,
 				C1C8B21627A81BA300E8758E /* ChannelEmptyView.swift */,
 			);
@@ -608,6 +605,17 @@
 				C1C8B22A27A877C200E8758E /* CategoryReorderViewModel.swift */,
 			);
 			path = "Channel-reorder";
+			sourceTree = "<group>";
+		};
+		C1C8B22E27A8ED3900E8758E /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				C1D47F53278B0F5D00DBA3CA /* ServerCell.swift */,
+				C1024161279F26B000B702DB /* ServerButtonCell.swift */,
+				C1D47F51278B0F4900DBA3CA /* ChannalCell.swift */,
+				C118D2F027A7B61A009CB96C /* ChannelCategoryCell.swift */,
+			);
+			path = Cell;
 			sourceTree = "<group>";
 		};
 		C1D47EB62779570000DBA3CA = {

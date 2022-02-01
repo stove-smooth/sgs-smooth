@@ -20,7 +20,7 @@ class ChannelEmptyView: BaseView {
     }
     
     let emptyDescriptionLabel = UILabel().then {
-        $0.text = "난처한 상황에 처하셨군요. 채팅 채널 사용 권한이 업석나 서버에 채팅 채널이 없네요."
+        $0.text = "난처한 상황에 처하셨군요. 채팅 채널 사용 권한이 없거나 서버에 채팅 채널이 없네요."
         $0.numberOfLines = 0
         $0.textAlignment = .center
         $0.font = UIFont.systemFont(ofSize: UIFont.labelFontSize-2, weight: .light)
@@ -45,6 +45,7 @@ class ChannelEmptyView: BaseView {
         
         emptyTextLabel.snp.makeConstraints {
             $0.centerY.centerX.equalToSuperview()
+            $0.right.left.equalToSuperview().inset(50)
         }
         
         emptyDescriptionLabel.snp.makeConstraints {

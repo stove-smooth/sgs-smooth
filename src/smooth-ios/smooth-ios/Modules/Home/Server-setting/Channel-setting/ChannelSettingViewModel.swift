@@ -67,17 +67,17 @@ class ChannelSettingViewModel: BaseViewModel {
                 let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
                 self.showErrorMessage.accept(body.message)
             }
-            
-            self.output.showEmpty.accept(response.categories.count == 0)
-            
-            var sections: [ChannelSection] = []
-            response.categories.forEach {
-                sections.append(ChannelSection(header: $0.name, id: $0.id, items: $0.channels ?? []))
+    
+            if response.categories != nil {
+                var sections: [ChannelSection] = []
+                response.categories!.forEach {
+                    sections.append(ChannelSection(header: $0.name, id: $0.id, items: $0.channels ?? []))
+                }
+                
+                self.model.section = sections
+                self.model.categories = response.categories!
+                self.output.section.accept(sections)
             }
-            
-            self.model.section = sections
-            self.model.categories = response.categories
-            self.output.section.accept(sections)
             self.showLoading.accept(false)
         }
     }
