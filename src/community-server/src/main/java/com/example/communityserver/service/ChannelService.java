@@ -9,9 +9,6 @@ import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.CategoryRepository;
 import com.example.communityserver.repository.ChannelRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +24,7 @@ import static com.example.communityserver.exception.CustomExceptionStatus.*;
 @Transactional(readOnly = true)
 public class ChannelService {
 
-    private final RedisTemplate redisTemplate;
+    // private final RedisTemplate redisTemplate;
 
     private final CategoryRepository categoryRepository;
     private final ChannelRepository channelRepository;
@@ -427,21 +424,22 @@ public class ChannelService {
     }
 
     private String getInstance(Long channelId) {
-        List<String> keys = (List<String>) redisTemplate.keys("*").stream()
-                .filter(k -> String.valueOf(k).contains("server"))
-                .collect(Collectors.toList());
-
-        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        String leastUsedInstance = keys.get(0);
-        int min = -1;
-        for (String key: keys) {
-            if (setOperations.members(key).contains("c" + channelId))
-                return key.split("-")[1];
-            if (min < setOperations.members(key).size()) {
-                leastUsedInstance = key;
-                min = setOperations.members(key).size();
-            }
-        }
-        return leastUsedInstance.split("-")[1];
+//        List<String> keys = (List<String>) redisTemplate.keys("*").stream()
+//                .filter(k -> String.valueOf(k).contains("server"))
+//                .collect(Collectors.toList());
+//
+//        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+//        String leastUsedInstance = keys.get(0);
+//        int min = -1;
+//        for (String key: keys) {
+//            if (setOperations.members(key).contains("c" + channelId))
+//                return key.split("-")[1];
+//            if (min < setOperations.members(key).size()) {
+//                leastUsedInstance = key;
+//                min = setOperations.members(key).size();
+//            }
+//        }
+//        return leastUsedInstance.split("-")[1];
+        return null;
     }
 }

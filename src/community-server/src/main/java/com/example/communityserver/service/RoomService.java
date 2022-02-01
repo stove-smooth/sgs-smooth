@@ -35,7 +35,7 @@ public class RoomService {
     private String HOST_ADDRESS;
     private String ROOM_INVITATION_PREFIX = "/r/";
 
-    private final RedisTemplate redisTemplate;
+    // private final RedisTemplate redisTemplate;
 
     private final RoomRepository roomRepository;
     private final RoomMemberRepository roomMemberRepository;
@@ -370,21 +370,22 @@ public class RoomService {
     }
 
     private String getInstance(Long roomId) {
-        List<String> keys = (List<String>) redisTemplate.keys("*").stream()
-                .filter(k -> String.valueOf(k).contains("server"))
-                .collect(Collectors.toList());
-
-        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        String leastUsedInstance = keys.get(0);
-        int min = -1;
-        for (String key: keys) {
-            if (setOperations.members(key).contains("r" + roomId))
-                return key.split("-")[1];
-            if (min < setOperations.members(key).size()) {
-                leastUsedInstance = key;
-                min = setOperations.members(key).size();
-            }
-        }
-        return leastUsedInstance.split("-")[1];
+//        List<String> keys = (List<String>) redisTemplate.keys("*").stream()
+//                .filter(k -> String.valueOf(k).contains("server"))
+//                .collect(Collectors.toList());
+//
+//        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+//        String leastUsedInstance = keys.get(0);
+//        int min = -1;
+//        for (String key: keys) {
+//            if (setOperations.members(key).contains("r" + roomId))
+//                return key.split("-")[1];
+//            if (min < setOperations.members(key).size()) {
+//                leastUsedInstance = key;
+//                min = setOperations.members(key).size();
+//            }
+//        }
+//        return leastUsedInstance.split("-")[1];
+        return null;
     }
 }
