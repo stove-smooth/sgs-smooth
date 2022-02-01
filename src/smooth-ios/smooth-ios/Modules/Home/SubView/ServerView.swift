@@ -75,25 +75,8 @@ class ServerView: BaseView, UIScrollViewDelegate {
             .bind(to: tableView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
         
-        /*
-        1번째 서버가 디폴트로 선택하기
+        /*1번째 서버가 디폴트로 선택하기*/
         let indexPath = IndexPath(row: 0, section: 0)
         tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
-         */
-        
-        
-        // server 아이콘을 선택한 경우
-        /* 🚀tableView Rx Binding
-         
-         tableView.rx.itemSelected
-         .subscribe(onNext: { [weak self] indexPath in
-         guard let self = self else { return }
-         let data = self.roomViewModel.data
-         print("\(indexPath.row)번째 Cell: \(data[indexPath.row])")
-         
-         // todos: 선택 시 channel viewModel에게 이벤트 방출
-         })
-         .disposed(by: disposeBag)
-         */
     }
 }

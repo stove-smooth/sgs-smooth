@@ -36,6 +36,7 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         super.viewWillAppear(animated)
         
         self.viewModel.input.fetch.onNext(())
+        self.viewModel.input.tapServer.onNext(IndexPath(row: 0, section: 0))
     }
     
     override func viewDidLoad() {
@@ -64,7 +65,7 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             .rx.tap
             .asDriver()
             .drive(onNext: {
-                let index = self.viewModel.model.selectedServerIndex!
+                guard let index = self.viewModel.model.selectedServerIndex else { return }
                 
                 self.showServerInfoModal(
                     server: self.viewModel.model.servers![index],
@@ -73,6 +74,12 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             })
             .disposed(by: disposeBag)
         
+        self.menuView.directView.emptyView.requestButton
+            .rx.tap.asDriver()
+            .drive(onNext: {
+                self.coordinator?.goToFriend()
+            })
+            .disposed(by: disposeBag)
         
         // MARK: output
         self.viewModel.output.servers
@@ -83,6 +90,11 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         self.viewModel.output.communityInfo
             .asDriver(onErrorJustReturn: CommunityInfo())
             .drive(self.menuView.rx.communityInfo)
+            .disposed(by: disposeBag)
+        
+        self.viewModel.output.directs
+            .asDriver(onErrorJustReturn: [])
+            .drive(self.menuView.rx.direct)
             .disposed(by: disposeBag)
         
         self.viewModel.output.goToAddServer

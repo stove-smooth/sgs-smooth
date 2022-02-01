@@ -31,6 +31,10 @@ class AddServerViewController: BaseViewController {
         super.viewDidLoad()
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        self.tabBarController?.tabBar.isHidden = true
+    }
+    
     override func bindViewModel() {
         self.addServerView.closeButton.rx.tap
             .observe(on: MainScheduler.instance)

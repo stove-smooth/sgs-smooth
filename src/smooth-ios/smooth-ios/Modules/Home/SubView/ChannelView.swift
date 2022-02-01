@@ -75,7 +75,6 @@ class ChannelView: BaseView {
         ].forEach { self.addSubview($0) }
         
         serverInfoButton.addSubview(serverInfoIcon)
-        
     }
     
     override func bindConstraints() {
@@ -99,29 +98,23 @@ class ChannelView: BaseView {
     
     func bind(communityInfo: CommunityInfo) {
         self.disposeBag = DisposeBag()
-        let categoryList = communityInfo.categories
-        
         tableView.rx.setDelegate(self).disposed(by: disposeBag)
-
+        
         // MARK: title
         self.serverInfoButton.setTitle(communityInfo.name, for: .normal)
         
         // MARK: tableView
-        var channelSection: [ChannelSection] = []
-        channelSection = categoryList.compactMap {
-            ChannelSection(header: $0.name, id: $0.id, items: $0.channels ?? [])
-        }
+        let categoryList = communityInfo.categories
         
+        var channelSection: [ChannelSection] = []
+        if (communityInfo.categories != nil) {
+            channelSection = categoryList!.compactMap {
+                ChannelSection(header: $0.name, id: $0.id, items: $0.channels ?? [])
+            }
+        }
         Observable.just(channelSection)
             .bind(to: tableView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
-        
-        tableView.rx.itemSelected
-            .subscribe(onNext: { indexPath in
-                print(indexPath)
-            })
-            .disposed(by: disposeBag)
-        
     }
 }
 
@@ -140,26 +133,26 @@ extension ChannelView: UITableViewDelegate {
                 //  채널 생성
                 self.section.onNext(self.dataSource[section])
             }).disposed(by: disposeBag)
-    
+        
         return headerCell
     }
     
     /* *💄 tableView headerView custom 하는 다른 방법*
      
      tableView.rx.delegate.methodInvoked(#selector(tableView.delegate?.tableView(_:willDisplayHeaderView:forSection:)))
-         .take(until: tableView.rx.deallocated)
-         .subscribe(onNext: { event in
-             guard let headerView = event[1] as? UITableViewHeaderFooterView else { return }
-             
-             for view in headerView.subviews {
-                 view.backgroundColor = .clear
-             }
-             
-             headerView.textLabel?.textColor = .white
-             headerView.textLabel?.font = UIFont.systemFont(ofSize: UIFont.systemFontSize-1, weight: .bold)
-             
-         })
-         .disposed(by: disposeBag)
+     .take(until: tableView.rx.deallocated)
+     .subscribe(onNext: { event in
+     guard let headerView = event[1] as? UITableViewHeaderFooterView else { return }
+     
+     for view in headerView.subviews {
+     view.backgroundColor = .clear
+     }
+     
+     headerView.textLabel?.textColor = .white
+     headerView.textLabel?.font = UIFont.systemFont(ofSize: UIFont.systemFontSize-1, weight: .bold)
+     
+     })
+     .disposed(by: disposeBag)
      */
 }
 

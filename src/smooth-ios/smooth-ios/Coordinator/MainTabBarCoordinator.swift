@@ -97,4 +97,7 @@ class MainTabBarCoordinator: NSObject, Coordinator {
         navigationController.viewControllers = [tabBarController]
     }
     
+    func goToFriend() {
+        childCoordinators[1].start()
+    }
 }

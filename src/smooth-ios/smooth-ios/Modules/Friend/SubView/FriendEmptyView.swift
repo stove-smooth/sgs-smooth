@@ -18,7 +18,8 @@ class FriendEmptyView: BaseView {
     
     let emptyImage = UIImageView().then {
         $0.image = UIImage(named: "empty-background")
-        $0.contentMode = .scaleAspectFill
+        $0.contentMode = .scaleAspectFit
+        $0.clipsToBounds = true
     }
     
     let requestButton = UIButton().then {
@@ -31,7 +32,7 @@ class FriendEmptyView: BaseView {
     
     
     override func setup() {
-        self.backgroundColor = .messageBarDarkGray
+        self.backgroundColor = .channelListDarkGray
          
         [
             emptyTextLabel, emptyImage, requestButton
@@ -41,12 +42,11 @@ class FriendEmptyView: BaseView {
     }
     
     override func bindConstraints() {
-        
         emptyImage.snp.makeConstraints {
-            $0.right.left.equalToSuperview().inset(50)
+            $0.right.left.equalToSuperview().inset(30)
             $0.centerX.equalToSuperview()
             $0.centerY.equalToSuperview().offset(-100)
-            $0.height.equalTo(150)
+            $0.height.equalTo(100)
         }
         
         emptyTextLabel.snp.makeConstraints {
@@ -57,7 +57,7 @@ class FriendEmptyView: BaseView {
         requestButton.snp.makeConstraints {
             $0.top.equalTo(emptyTextLabel.snp.bottom).offset(15)
             $0.centerX.equalToSuperview()
-            
+            $0.right.left.equalToSuperview().inset(30)
         }
     }
 }

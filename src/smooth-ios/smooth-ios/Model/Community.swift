@@ -14,7 +14,7 @@ struct Community: Codable {
 struct CommunityInfo: Codable {
     let id: Int
     let name: String
-    let categories: [Category]
+    let categories: [Category]?
     
     init() {
         self.id = 0

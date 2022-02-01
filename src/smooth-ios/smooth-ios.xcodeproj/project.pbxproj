@@ -109,6 +109,7 @@
 		C1C8B22727A8709E00E8758E /* CategoryReorderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C8B22627A8709E00E8758E /* CategoryReorderViewController.swift */; };
 		C1C8B22B27A877C200E8758E /* CategoryReorderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C8B22A27A877C200E8758E /* CategoryReorderViewModel.swift */; };
 		C1C8B22D27A8CA2B00E8758E /* CategoryReorderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C8B22C27A8CA2B00E8758E /* CategoryReorderCell.swift */; };
+		C1C8B23027A8FEC400E8758E /* DirectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C8B22F27A8FEC400E8758E /* DirectView.swift */; };
 		C1D47EC32779570000DBA3CA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EC22779570000DBA3CA /* AppDelegate.swift */; };
 		C1D47ECC2779570200DBA3CA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C1D47ECB2779570200DBA3CA /* Assets.xcassets */; };
 		C1D47ECF2779570200DBA3CA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C1D47ECD2779570200DBA3CA /* LaunchScreen.storyboard */; };
@@ -255,6 +256,7 @@
 		C1C8B22627A8709E00E8758E /* CategoryReorderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryReorderViewController.swift; sourceTree = "<group>"; };
 		C1C8B22A27A877C200E8758E /* CategoryReorderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryReorderViewModel.swift; sourceTree = "<group>"; };
 		C1C8B22C27A8CA2B00E8758E /* CategoryReorderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryReorderCell.swift; sourceTree = "<group>"; };
+		C1C8B22F27A8FEC400E8758E /* DirectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectView.swift; sourceTree = "<group>"; };
 		C1D47EBF2779570000DBA3CA /* smooth-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "smooth-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C1D47EC22779570000DBA3CA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C1D47ECB2779570200DBA3CA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -417,13 +419,11 @@
 		C1024163279F911A00B702DB /* SubView */ = {
 			isa = PBXGroup;
 			children = (
-				C1D47F53278B0F5D00DBA3CA /* ServerCell.swift */,
-				C1024161279F26B000B702DB /* ServerButtonCell.swift */,
-				C1024155279E482100B702DB /* ServerView.swift */,
-				C1D47F51278B0F4900DBA3CA /* ChannalCell.swift */,
-				C118D2F027A7B61A009CB96C /* ChannelCategoryCell.swift */,
-				C1024157279E4B3B00B702DB /* ChannelView.swift */,
+				C1C8B22E27A8ED3900E8758E /* Cell */,
 				C1C8B21627A81BA300E8758E /* ChannelEmptyView.swift */,
+				C1024155279E482100B702DB /* ServerView.swift */,
+				C1024157279E4B3B00B702DB /* ChannelView.swift */,
+				C1C8B22F27A8FEC400E8758E /* DirectView.swift */,
 			);
 			path = SubView;
 			sourceTree = "<group>";
@@ -608,6 +608,17 @@
 				C1C8B22A27A877C200E8758E /* CategoryReorderViewModel.swift */,
 			);
 			path = "Channel-reorder";
+			sourceTree = "<group>";
+		};
+		C1C8B22E27A8ED3900E8758E /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				C1D47F53278B0F5D00DBA3CA /* ServerCell.swift */,
+				C1024161279F26B000B702DB /* ServerButtonCell.swift */,
+				C1D47F51278B0F4900DBA3CA /* ChannalCell.swift */,
+				C118D2F027A7B61A009CB96C /* ChannelCategoryCell.swift */,
+			);
+			path = Cell;
 			sourceTree = "<group>";
 		};
 		C1D47EB62779570000DBA3CA = {
@@ -1006,6 +1017,7 @@
 				C1D47F2427833DB800DBA3CA /* BaseResponse.swift in Sources */,
 				C1D47F54278B0F5D00DBA3CA /* ServerCell.swift in Sources */,
 				C1B63F5827A104F900382BF6 /* ImagePickerController+Rx.swift in Sources */,
+				C1C8B23027A8FEC400E8758E /* DirectView.swift in Sources */,
 				C1D47F112779D6FD00DBA3CA /* ContainerViewController.swift in Sources */,
 				C1D47F3C278474AA00DBA3CA /* SignUpViewController.swift in Sources */,
 				C1C8B21027A8138600E8758E /* ChannelSettingView.swift in Sources */,

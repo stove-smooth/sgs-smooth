@@ -29,7 +29,7 @@ class FriendInfoView: BaseView {
         let imgView = UIImageView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
         imgView.makeCircle()
         
-        imgView.layer.borderWidth = 10.0
+        imgView.layer.borderWidth = 5.0
         imgView.layer.borderColor = UIColor.serverListDarkGray?.cgColor
         
         imgView.layer.masksToBounds = true
