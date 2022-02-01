@@ -339,7 +339,7 @@ public class ChannelService {
                 .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
 
         Category category = categoryRepository.findById(request.getCategoryId())
-                .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
                 .orElseThrow(() -> new CustomException(NON_VALID_CATEGORY));
 
         if (!Objects.isNull(target.getParent()))
