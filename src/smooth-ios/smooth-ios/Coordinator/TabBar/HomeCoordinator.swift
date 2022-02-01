@@ -62,4 +62,18 @@ class HomeCoordinator: NSObject, Coordinator {
         childCoordinators.append(coordinator)
         coordinator.start(server: server)
     }
+    
+    func showMakeChannel(categoryId: Int) {
+        let makeChannelVC = MakeChannelViewController.instance(categoryId: categoryId)
+        makeChannelVC.coordinator = self
+        
+        navigationController.present(makeChannelVC, animated: true, completion: nil)
+    }
+    
+    func showMakeCategory(server: Server) {
+        let makeCategoryVC = MakeCategoryViewController.instance(server: server)
+        makeCategoryVC.coordinator = self
+        
+        navigationController.present(makeCategoryVC, animated: true, completion: nil)
+    }
 }

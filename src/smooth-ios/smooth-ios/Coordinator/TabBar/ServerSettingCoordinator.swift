@@ -8,6 +8,7 @@
 import UIKit
 
 class ServerSettingCoordinator: NSObject, Coordinator {
+    
     var delegate: CoordinatorDelegate?
     
     var childCoordinators: [Coordinator]
@@ -43,10 +44,7 @@ class ServerSettingCoordinator: NSObject, Coordinator {
     
     func goToMain() {
         self.coordinatorDidFinish()
-        
-        
         navigationController.popToRootViewController(animated: true)
-//        navigationController.dismiss(animated: true, completion: nil)
     }
     
     func goToEditServerInfo(server: Server) {
@@ -65,4 +63,33 @@ class ServerSettingCoordinator: NSObject, Coordinator {
         modalNav.pushViewController(inviteVC, animated: true)
     }
     
+    func goToChannel(server: Server) {
+        let channelVC = ChannelSettingViewContrller.instance(server: server)
+        
+        channelVC.coordinator = self
+        
+        modalNav.isNavigationBarHidden = false
+        navigationController.isNavigationBarHidden = true
+        modalNav.pushViewController(channelVC, animated: true)
+    }
+    
+    func showEditCategory(category: Category, delegate: AnyObject ) {
+        let editCategoryVC = EditCategoryViewController.instance(categoryId: category.id, categoryName: category.name)
+        
+        editCategoryVC.coordinator = self
+        editCategoryVC.delegate = delegate as? EditCategoryDelegate
+        
+        modalNav.isNavigationBarHidden = false
+        navigationController.isNavigationBarHidden = true
+        modalNav.present(editCategoryVC, animated: true, completion: nil)
+    }
+    
+    func goToReorderFromCategory(categories: [Category]) {
+        let reorderVC = CategoryReorderViewController.instance(categories: categories)
+        reorderVC.coordinator = self
+        
+        modalNav.isNavigationBarHidden = false
+        navigationController.isNavigationBarHidden = true
+        modalNav.pushViewController(reorderVC, animated: false)
+    }
 }

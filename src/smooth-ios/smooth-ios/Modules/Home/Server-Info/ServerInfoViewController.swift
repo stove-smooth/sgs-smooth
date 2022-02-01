@@ -96,7 +96,8 @@ class ServerInfoViewController: BaseViewController, PanModalPresentable {
     }
     
     private func showMakeCategory() {
-        print("showMakeCategory")
+        self.dismiss(animated: true, completion: nil)
+        self.coordinator?.showMakeCategory(server: self.server)
     }
     
     private func showLeaveServer() {

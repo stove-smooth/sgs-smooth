@@ -22,7 +22,7 @@ class ServerSettingView: BaseView {
         $0.text = "서버 설정"
     }
     
-    let tableView = UITableView(frame: .zero, style: .insetGrouped).then {
+    let tableView = UITableView(frame: .zero).then {
         $0.backgroundColor = .clear
         $0.contentInset = UIEdgeInsets(top: 12.5, left: 0, bottom: 0, right: 0)
         
