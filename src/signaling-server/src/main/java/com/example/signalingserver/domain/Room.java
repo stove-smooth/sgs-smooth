@@ -18,9 +18,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import static com.example.signalingserver.config.MessageHandler.ID;
 import static com.example.signalingserver.util.type.Message.*;
-import static com.example.signalingserver.util.type.Property.*;
 
 @Slf4j
 public class Room implements Closeable {

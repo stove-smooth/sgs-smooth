@@ -15,32 +15,32 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.kurento.client.IceCandidate;
 import org.kurento.client.KurentoClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import static com.example.signalingserver.util.type.Property.*;
-import static com.example.signalingserver.SignalingServerApplication.IP;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class MessageHandler extends TextWebSocketHandler {
 
+    @Value("${property.ip}")
+    private String IP;
+
     private final KurentoClient kurento;
     private final RoomManager roomManager;
     private final UserRegister registry;
-    private final JwtFilter jwtFilter;
+    // private final JwtFilter jwtFilter;
 
     private final ObjectMapper mapper;
     private static final Gson gson = new GsonBuilder().create();
@@ -118,34 +118,54 @@ public class MessageHandler extends TextWebSocketHandler {
         final String userId = request.getUserId();
 
         Room room = roomManager.getRoom(roomId);
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(roomId + PIPELINE, room.getPipeLineId(), TIME, TimeUnit.MILLISECONDS);
+//        try {
+//            ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+//            valueOperations.set(roomId + PIPELINE, room.getPipeLineId(), TIME, TimeUnit.MILLISECONDS);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         final UserSession user = room.join(userId, session);
         registry.register(user);
-        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        setOperations.add(roomId, userId);
-
-        setOperations.add(SERVER + IP, roomId);
+//        try {
+//            SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+//            setOperations.add(roomId, userId);
+//            setOperations.add(SERVER + IP, roomId);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void leave(UserSession user) throws IOException {
         final Room room = roomManager.getRoom(user.getRoomId());
         room.leave(user);
         // redis에서 유저 삭제
-        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        setOperations.remove(room.getRoomId(), user.getUserId());
+//        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+//        try {
+//            setOperations.remove(room.getRoomId(), user.getUserId());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         if (room.getParticipants().isEmpty()) {
             roomManager.removeRoom(room);
             // redis에서 방 삭제
-            setOperations.remove(room.getRoomId());
+//            try {
+//                setOperations.remove(room.getRoomId());
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+
             // kurento media pipeline 삭제
             kurento.getServerManager().getPipelines().stream()
                     .filter(pipeline -> pipeline.getId().equals(room.getPipeLineId()))
                     .findAny().ifPresent(pipeline -> pipeline.release());
         }
 
-        setOperations.remove(SERVER + IP, room.getRoomId());
+//        try {
+//            setOperations.remove(SERVER + IP, room.getRoomId());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 }
