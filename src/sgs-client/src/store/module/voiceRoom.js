@@ -27,7 +27,10 @@ const voiceRoom = {
         state.participants = {};
       }
       // 객체 변경 감지를 위한 추가법
+      //console.log("add", participant);
+      //state.participants[name] = participant;
       Vue.set(state.participants, name, participant);
+
       //state.participants[name] = participant
       // 디버깅
       /* console.log('participant added', state.participants); */
@@ -47,17 +50,15 @@ const voiceRoom = {
         let parsedMessage = JSON.parse(message.data);
         // console.info('Received message: ' + message.data)
         /* context.commit('WS_ONMESSAGE', parsedMessage); */
-        console.log(parsedMessage);
         context.dispatch("onServerMessage", parsedMessage);
         return false;
       };
       return false;
     },
     onServerMessage(context, message) {
-      console.log("message옴", context, message);
+      console.log("server 에서옴", message);
       switch (message.id) {
         case "existingParticipants": {
-          console.log("왔다링.");
           context.dispatch("onExistingParticipants", message);
           break;
         }
@@ -93,7 +94,6 @@ const voiceRoom = {
     /**case */
     //case 1 - 내가 참가했을때
     onExistingParticipants(context, msg) {
-      console.log("왔음", msg);
       let constraints = {
         audio: true,
         video: {
@@ -104,11 +104,8 @@ const voiceRoom = {
           },
         },
       };
-      console.log(
-        context.state.myName + " registered in room " + context.state.roomName
-      );
+
       let participant = new Participant(context.state.myName);
-      console.log("participant", participant);
 
       var video = participant.getVideoElement();
 
@@ -117,13 +114,7 @@ const voiceRoom = {
         mediaConstraints: constraints,
         onicecandidate: participant.onIceCandidate.bind(participant),
       };
-      console.log(
-        "options",
-        options.localVideo,
-        options.mediaConstraints,
-        options.onicecandidate
-      );
-      console.log("msg", msg);
+
       participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(
         options,
         function (error) {
@@ -134,6 +125,8 @@ const voiceRoom = {
         }
       );
       const myName = context.state.myName;
+      console.log("내 video", myName);
+      console.log("내 video", participant);
       context.commit("addParticipant", { name: myName, participant });
       msg.members.forEach(function (sender) {
         context.dispatch("receiveVideo", sender);
@@ -151,6 +144,7 @@ const voiceRoom = {
     },
     //case -4 SDP 정보 전송하여 응답 받음.
     receiveVideoResponse(context, result) {
+      console.log("사람들의 video response를 받음.", result);
       context.state.participants[result.userId].rtcPeer.processAnswer(
         result.sdpAnswer,
         function (error) {
@@ -166,7 +160,7 @@ const voiceRoom = {
     receiveVideo(context, sender) {
       var participant = new Participant(sender);
       var video = participant.getVideoElement();
-
+      //추가
       var options = {
         remoteVideo: video,
         onicecandidate: participant.onIceCandidate.bind(participant),
@@ -181,6 +175,8 @@ const voiceRoom = {
           this.generateOffer(participant.offerToReceiveVideo.bind(participant));
         }
       );
+      console.log("참가자 video", sender);
+      console.log("참가자 video", participant);
       context.commit("addParticipant", { name: sender, participant });
     },
     setVoiceInfo(context, meetingInfo) {
@@ -188,7 +184,6 @@ const voiceRoom = {
     },
     sendMessage(context, message) {
       let jsonMessage = JSON.stringify(message);
-      console.log("sendMessage", message);
       context.state.ws.send(jsonMessage);
     },
     leaveRoom(context) {
