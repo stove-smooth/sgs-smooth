@@ -12,7 +12,7 @@ class EditServerInfoViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     
-    let serverRepository: ServerRepositoryProtocol
+    let serverService: ServerServiceProtocol
     let server: Server
     
     var image: UIImage?
@@ -33,10 +33,10 @@ class EditServerInfoViewModel: BaseViewModel {
     
     init(
         server: Server,
-        serverRepository: ServerRepositoryProtocol
+        ServerService: ServerServiceProtocol
     ) {
         self.server = server
-        self.serverRepository = serverRepository
+        self.serverService = ServerService
         super.init()
     }
     
@@ -81,7 +81,7 @@ class EditServerInfoViewModel: BaseViewModel {
     }
     
     private func deleteServer(serverId: Int) {
-        serverRepository.deleteServer(serverId) { response, error in
+        serverService.deleteServer(serverId) { response, error in
             if (error?.response != nil) {
                 let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
                 self.showErrorMessage.accept(body.message)
@@ -92,7 +92,7 @@ class EditServerInfoViewModel: BaseViewModel {
     }
     
     private func updateServerName(name: String) {
-        serverRepository.updateServerName(serverId: server.id, name: name) {
+        serverService.updateServerName(serverId: server.id, name: name) {
          response, error in
             if (error?.response != nil) {
                 let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
@@ -103,7 +103,7 @@ class EditServerInfoViewModel: BaseViewModel {
 
     private func updateServerIcon() {
         let img = self.image?.resizeImage(size: CGSize(width: 200, height: 200))
-        serverRepository.updateServerIcon(serverId: server.id, imageData: img?.jpegData(compressionQuality: 0.7)) {
+        serverService.updateServerIcon(serverId: server.id, imageData: img?.jpegData(compressionQuality: 0.7)) {
          response, error in
             if (error?.response != nil) {
                 let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)

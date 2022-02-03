@@ -25,7 +25,7 @@ class FriendInfoViewController: BaseViewController, PanModalPresentable {
     init(friend: Friend) {
         self.friend = friend
         self.viewModel = FriendInfoViewModel(
-            friendRepository: FriendRepository(),
+            friendService: FriendService(),
             friend: friend
         )
         

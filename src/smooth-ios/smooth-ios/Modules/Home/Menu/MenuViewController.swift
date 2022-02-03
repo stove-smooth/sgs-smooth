@@ -23,7 +23,7 @@ class MenuViewController: BaseViewController, CoordinatorContext {
     
     init() {
         self.viewModel = MenuViewModel(
-            serverRepository: ServerRepository(),
+            serverService: ServerService(),
             userDefaults: UserDefaultsUtil()
         )
         

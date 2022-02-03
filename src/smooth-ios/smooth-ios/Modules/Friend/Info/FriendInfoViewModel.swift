@@ -12,7 +12,7 @@ class FriendInfoViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     
-    let friendRepository: FriendRepositoryProtocol
+    let friendService: FriendServiceProtocol
     
     var friend: Friend
     
@@ -26,10 +26,10 @@ class FriendInfoViewModel: BaseViewModel {
     }
     
     init(
-        friendRepository: FriendRepositoryProtocol,
+        friendService: FriendServiceProtocol,
         friend: Friend
     ) {
-        self.friendRepository = friendRepository
+        self.friendService = friendService
         self.friend = friend
         super.init()
     }
@@ -52,7 +52,7 @@ class FriendInfoViewModel: BaseViewModel {
     
     // TODO: 얼럿 통해서 친구 변동 있을 경우 ListView 변동사항 반영
     private func banFriend() {
-        self.friendRepository.banFriend(self.friend.id) {  response, error in
+        self.friendService.banFriend(self.friend.id) {  response, error in
             guard let response = response else {
                 return
             }
@@ -66,7 +66,7 @@ class FriendInfoViewModel: BaseViewModel {
     }
     
     private func deleteFriend() {
-        self.friendRepository.deleteFriend(self.friend.id) {  response, error in
+        self.friendService.deleteFriend(self.friend.id) {  response, error in
             guard let response = response else {
                 return
             }

@@ -18,8 +18,8 @@ class InviteServerViewController: BaseViewController {
     init(serverId: Int) {
         self.viewModel = InviteServerViewModel(
             serverId: serverId,
-            serverRepository: ServerRepository(),
-            friendRepository: FriendRepository()
+            serverService: ServerService(),
+            friendService: FriendService()
         )
         super.init(nibName: nil, bundle: nil)
     }

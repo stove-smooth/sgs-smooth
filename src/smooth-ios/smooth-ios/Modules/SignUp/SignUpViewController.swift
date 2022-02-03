@@ -15,7 +15,7 @@ class SignUpViewController: BaseViewController {
     private let signUpView = SignUpView()
     private let viewModel = SignUpViewModel(
         userDefaults: UserDefaultsUtil(),
-        userRepository: UserRepository()
+        userService: UserService()
     )
     
     weak var coordinator: MainCoordinator?

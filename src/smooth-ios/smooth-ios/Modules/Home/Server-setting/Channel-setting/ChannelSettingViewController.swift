@@ -28,7 +28,7 @@ class ChannelSettingViewContrller: BaseViewController, UIScrollViewDelegate {
         self.server = server
         self.viewModel = ChannelSettingViewModel(
             server: server,
-            serverRepository: ServerRepository())
+            serverService: ServerService())
         super.init(nibName: nil, bundle: nil)
     }
     

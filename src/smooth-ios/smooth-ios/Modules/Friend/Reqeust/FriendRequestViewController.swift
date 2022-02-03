@@ -23,7 +23,7 @@ class FriendRequestViewController: BaseViewController {
     
     
     init() {
-        self.viewModel = FriendRequestViewModel(friendRepository: FriendRepository())
+        self.viewModel = FriendRequestViewModel(friendService: FriendService())
         super.init(nibName: nil, bundle: nil)
     }
     

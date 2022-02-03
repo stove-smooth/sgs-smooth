@@ -31,7 +31,7 @@ class ChattingViewController: MessagesViewController {
     }
     
     init() {
-        self.viewModel = ChattingViewModel(chattingRepository: ChattingRepository())
+        self.viewModel = ChattingViewModel(chattingService: ChattingService())
         super.init(nibName: nil, bundle: nil)
     }
     

@@ -22,7 +22,7 @@ class MakeChannelViewController: BaseViewController, PanModalPresentable {
     
     init(categoryId: Int) {
         self.categoryId = categoryId
-        self.viewModel = MakeChannelViewModel(categoryId: categoryId, channelRepository: ChannelRepository())
+        self.viewModel = MakeChannelViewModel(categoryId: categoryId, channelService: ChannelService())
         super.init(nibName: nil, bundle: nil)
     }
     

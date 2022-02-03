@@ -1,5 +1,5 @@
 //
-//  ServerRepository.swift
+//  ServerService.swift
 //  smooth-ios
 //
 //  Created by 김두리 on 2022/01/24.
@@ -9,7 +9,7 @@ import Foundation
 import Moya
 import RxSwift
 
-protocol ServerRepositoryProtocol {
+protocol ServerServiceProtocol {
     // MARK: GET
     func fetchServer(_ completion: @escaping ([Server]?, MoyaError?) -> Void)
     func getServerById(_ request: Int, _ completion: @escaping (CommunityInfo?, MoyaError?) -> Void)
@@ -32,7 +32,7 @@ protocol ServerRepositoryProtocol {
     func deleteinvitation(_ invitationId: Int, _  completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
 }
 
-struct ServerRepository: Networkable, ServerRepositoryProtocol {
+struct ServerService: Networkable, ServerServiceProtocol {
     typealias Target = ServerTarget
     
     func fetchServer(_ completion: @escaping ([Server]?, MoyaError?) -> Void) {

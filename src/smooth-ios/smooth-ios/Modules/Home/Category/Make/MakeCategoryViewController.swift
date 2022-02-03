@@ -22,7 +22,7 @@ class MakeCategoryViewController: BaseViewController {
     
     init(server: Server) {
         self.server = server
-        self.viewModel = MakeCategoryViewModel(server: server, categoryRepository: CategoryRepository())
+        self.viewModel = MakeCategoryViewModel(server: server, categoryService: CategoryService())
         super.init(nibName: nil, bundle: nil)
     }
     

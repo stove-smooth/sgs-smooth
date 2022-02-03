@@ -1,5 +1,5 @@
 //
-//  ChattingRepository.swift
+//  ChattingService.swift
 //  smooth-ios
 //
 //  Created by 김두리 on 2022/02/01.
@@ -8,12 +8,12 @@
 import Foundation
 import Moya
 
-protocol ChattingRepositoryProtocol {
+protocol ChattingServiceProtocol {
     func fetchMessgae(_ channelId: Int, completion: @escaping ([Message]?, MoyaError?) -> Void)
 }
 
 
-struct ChattingRepository: Networkable, ChattingRepositoryProtocol {
+struct ChattingService: Networkable, ChattingServiceProtocol {
     typealias Target = ChattingTarget
     
     func fetchMessgae(_ channelId: Int, completion: @escaping ([Message]?, MoyaError?) -> Void) {

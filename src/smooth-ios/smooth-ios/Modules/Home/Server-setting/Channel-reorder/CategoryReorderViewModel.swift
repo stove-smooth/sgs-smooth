@@ -13,7 +13,7 @@ class CategoryReorderViewModel: BaseViewModel {
     let output = Output()
 
     let categories: [Category]
-    let categoryRepository: CategoryRepositoryProtocol
+    let categoryService: CategoryServiceProtocol
     
     struct Input {
         let inputMoveIndex = PublishSubject<[Int]>()
@@ -24,10 +24,10 @@ class CategoryReorderViewModel: BaseViewModel {
     
     init(
         categories: [Category],
-        categoryRepository: CategoryRepositoryProtocol
+        categoryService: CategoryServiceProtocol
     ) {
         self.categories = categories
-        self.categoryRepository = categoryRepository
+        self.categoryService = categoryService
         super.init()
     }
     
@@ -43,7 +43,7 @@ class CategoryReorderViewModel: BaseViewModel {
     
     private func updateLocation(originId: Int, nextId: Int) {
         self.showLoading.accept(true)
-        categoryRepository.updateLocation(originId: originId, nextId: nextId) {
+        categoryService.updateLocation(originId: originId, nextId: nextId) {
             response, error in
             guard let response = response else {
                 return

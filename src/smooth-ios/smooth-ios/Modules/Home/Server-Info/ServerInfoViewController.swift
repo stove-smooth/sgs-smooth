@@ -31,7 +31,7 @@ class ServerInfoViewController: BaseViewController, PanModalPresentable {
         self.viewModel = ServerInfoViewModel(
             server: server,
             member: member,
-            serverRepository: ServerRepository()
+            serverService: ServerService()
         )
         
         super.init(nibName: nil, bundle: nil)

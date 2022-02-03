@@ -12,7 +12,7 @@ class VerifyCodeViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     
-    let userRepository: UserRepositoryProtocol
+    let userService: UserServiceProtocol
     
     struct Input {
         let verifyCodeField = BehaviorRelay<String>(value: "")
@@ -24,9 +24,9 @@ class VerifyCodeViewModel: BaseViewModel {
     }
     
     init(
-        userRepository: UserRepositoryProtocol
+        userService: UserServiceProtocol
     ) {
-        self.userRepository = userRepository
+        self.userService = userService
         super.init()
     }
     
@@ -46,7 +46,7 @@ class VerifyCodeViewModel: BaseViewModel {
     }
     
     private func checkEmail(request: VerifyCodeRequest) {
-        self.userRepository.checkEmail(request) { response, _ in
+        self.userService.checkEmail(request) { response, _ in
             self.output.goToSignUpInfo.accept(())
         }
     }

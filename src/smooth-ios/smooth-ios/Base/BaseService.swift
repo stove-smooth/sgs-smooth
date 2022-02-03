@@ -9,7 +9,7 @@ import Foundation
 import Moya
 import RxSwift
 
-class BaseRepository<API: TargetType> {
+class BaseService<API: TargetType> {
     let disposeBag = DisposeBag()
     
     private let provider = MoyaProvider<API>()

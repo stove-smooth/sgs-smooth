@@ -13,8 +13,8 @@ class InviteServerViewModel: BaseViewModel {
     let output = Output()
     
     var serverId: Int
-    let serverRepository: ServerRepositoryProtocol
-    let friendRepository: FriendRepositoryProtocol
+    let serverService: ServerServiceProtocol
+    let friendService: FriendServiceProtocol
     
     var frienSections: [FriendSection] = []
     var inviteCode: String?
@@ -36,12 +36,12 @@ class InviteServerViewModel: BaseViewModel {
     }
     
     init(serverId: Int,
-         serverRepository: ServerRepositoryProtocol,
-         friendRepository: FriendRepositoryProtocol
+         serverService: ServerServiceProtocol,
+         friendService: FriendServiceProtocol
     ) {
         self.serverId = serverId
-        self.serverRepository = serverRepository
-        self.friendRepository = friendRepository
+        self.serverService = serverService
+        self.friendService = friendService
     }
     
     override func bind() {
@@ -51,7 +51,7 @@ class InviteServerViewModel: BaseViewModel {
         
         self.output.invite
             .bind(onNext: { friend in
-                #warning("server - invite friend")
+#warning("server - invite friend")
                 print("invite chatting 연결하기 \(friend)")
             }).disposed(by: disposeBag)
         
@@ -72,7 +72,7 @@ class InviteServerViewModel: BaseViewModel {
     }
     
     private func fetchInviteCode() {
-        serverRepository.createInvitation(serverId) {
+        serverService.createInvitation(serverId) {
             response, error in
             
             guard let response = response else {
@@ -85,7 +85,7 @@ class InviteServerViewModel: BaseViewModel {
     }
     
     private func fetchFriend() {
-        self.friendRepository.fetchFriend { friends, _ in
+        self.friendService.fetchFriend { friends, _ in
             guard let friends = friends else {
                 return
             }

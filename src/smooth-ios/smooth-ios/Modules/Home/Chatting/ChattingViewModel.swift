@@ -14,7 +14,7 @@ class ChattingViewModel: BaseViewModel {
     let output = Output()
     var model = Model()
     
-    let chattingRepository: ChattingRepository
+    let chattingService: ChattingService
     
     struct Input {
         let fetch = PublishSubject<Channel>()
@@ -32,9 +32,9 @@ class ChattingViewModel: BaseViewModel {
     }
     
     init(
-        chattingRepository: ChattingRepository
+        chattingService: ChattingService
     ) {
-        self.chattingRepository = chattingRepository
+        self.chattingService = chattingService
         super.init()
     }
     
@@ -47,7 +47,7 @@ class ChattingViewModel: BaseViewModel {
     }
     
     private func fetchMessgae(chattingId: Int) {
-        chattingRepository.fetchMessgae(chattingId) { response, error in
+        chattingService.fetchMessgae(chattingId) { response, error in
             if (error?.response != nil) {
                 let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
                 self.showErrorMessage.accept(body.message)

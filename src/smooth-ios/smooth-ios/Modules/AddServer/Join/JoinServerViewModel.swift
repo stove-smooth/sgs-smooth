@@ -13,13 +13,13 @@ class JoinServerViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     
-    let serverRepository: ServerRepositoryProtocol
+    let serverService: ServerServiceProtocol
     var code: String?
     
     init(
-        serverRepository: ServerRepositoryProtocol
+        serverService: ServerServiceProtocol
     ) {
-        self.serverRepository = serverRepository
+        self.serverService = serverService
     }
     
     struct Input {
@@ -47,7 +47,7 @@ class JoinServerViewModel: BaseViewModel {
     }
     
     private func joinServer(serverCode: String) {
-        serverRepository.joinServer(serverCode){ server, error in
+        serverService.joinServer(serverCode){ server, error in
             if (error?.response != nil) {
                 let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
                 self.showErrorMessage.accept(body.message)

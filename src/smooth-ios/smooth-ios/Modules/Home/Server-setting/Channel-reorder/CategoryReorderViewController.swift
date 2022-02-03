@@ -23,7 +23,7 @@ class CategoryReorderViewController: UITableViewController {
         self.model = Model(categories: categories)
         self.viewModel = CategoryReorderViewModel(
             categories: categories,
-            categoryRepository: CategoryRepository()
+            categoryService: CategoryService()
         )
         super.init(nibName: nil, bundle: nil)
     }
@@ -137,7 +137,7 @@ extension CategoryReorderViewController  {
     
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         let originId = model.categories[sourceIndexPath.row].id
-        let nextId = model.categories[destinationIndexPath.row].id
+        let nextId = model.categories[destinationIndexPath.row-1].id
         
         self.model.moveItem(at: sourceIndexPath.row, to: destinationIndexPath.row)
         

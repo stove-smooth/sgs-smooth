@@ -13,7 +13,7 @@ class ChannelSettingViewModel: BaseViewModel {
     let output = Output()
     var model = Model()
     
-    let serverRepository: ServerRepositoryProtocol
+    let serverService: ServerServiceProtocol
     
     let server: Server
     
@@ -38,10 +38,10 @@ class ChannelSettingViewModel: BaseViewModel {
     
     init(
         server: Server,
-        serverRepository: ServerRepositoryProtocol
+                    serverService: ServerServiceProtocol
     ) {
         self.server = server
-        self.serverRepository = serverRepository
+        self.serverService =             serverService
         super.init()
     }
     
@@ -57,7 +57,7 @@ class ChannelSettingViewModel: BaseViewModel {
     
     private func fetch() {
         self.showLoading.accept(true)
-        serverRepository.getServerById(server.id) {
+        serverService.getServerById(server.id) {
             response, error in
             guard let response = response else {
                 return

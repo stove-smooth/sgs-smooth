@@ -1,5 +1,5 @@
 //
-//  CategoryRepository.swift
+//  CategoryService.swift
 //  smooth-ios
 //
 //  Created by 김두리 on 2022/01/31.
@@ -8,7 +8,7 @@
 import Foundation
 import Moya
 
-protocol CategoryRepositoryProtocol {
+protocol CategoryServiceProtocol {
     // MARK: POST
     func createCategory(request: CategoryReqeust, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
     
@@ -20,7 +20,7 @@ protocol CategoryRepositoryProtocol {
     func deleteCategory(categoryId: Int, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
 }
 
-struct CategoryRepository: Networkable, CategoryRepositoryProtocol {
+struct CategoryService: Networkable, CategoryServiceProtocol {
     typealias Target = CategoryTarget
     
     func createCategory(request: CategoryReqeust, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void) {

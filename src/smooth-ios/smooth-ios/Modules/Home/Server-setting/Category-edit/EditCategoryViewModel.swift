@@ -12,7 +12,7 @@ class EditCategoryViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     
-    let categoryRepository: CategoryRepositoryProtocol
+    let categoryService: CategoryServiceProtocol
     let categoryId: Int
     let categoryName: String
     
@@ -30,11 +30,11 @@ class EditCategoryViewModel: BaseViewModel {
     init(
         categoryId: Int,
         categoryName: String,
-        categoryRepository: CategoryRepositoryProtocol
+        categoryService: CategoryServiceProtocol
     ) {
         self.categoryId = categoryId
         self.categoryName = categoryName
-        self.categoryRepository = categoryRepository
+        self.categoryService = categoryService
         super.init()
     }
     
@@ -65,7 +65,7 @@ class EditCategoryViewModel: BaseViewModel {
     
     private func deleteCategory() {
         self.showLoading.accept(true)
-        categoryRepository.deleteCategory(categoryId: self.categoryId) {
+        categoryService.deleteCategory(categoryId: self.categoryId) {
             response, error in
             if (error?.response != nil) {
                 let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
@@ -77,7 +77,7 @@ class EditCategoryViewModel: BaseViewModel {
     
     private func updateCategoryName() {
         self.showLoading.accept(true)
-        categoryRepository.updateCategoryName(
+        categoryService.updateCategoryName(
             categoryId: self.categoryId,
             name: self.input.categoryNameInput.value) {
             response, error in

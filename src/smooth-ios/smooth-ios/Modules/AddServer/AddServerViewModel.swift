@@ -12,7 +12,7 @@ class AddServerViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     
-    let serverRepository: ServerRepositoryProtocol
+    let serverService: ServerServiceProtocol
     
     struct Input {
         
@@ -23,9 +23,9 @@ class AddServerViewModel: BaseViewModel {
     }
     
     init(
-        serverRepository: ServerRepositoryProtocol
+        serverService: ServerServiceProtocol
     ) {
-        self.serverRepository = serverRepository
+        self.serverService = serverService
         super.init()
     }
     

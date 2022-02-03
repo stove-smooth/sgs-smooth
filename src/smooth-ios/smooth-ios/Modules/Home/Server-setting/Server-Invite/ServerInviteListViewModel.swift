@@ -12,7 +12,7 @@ class ServerInviteListViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     
-    let serverRepository: ServerRepositoryProtocol
+    let serverService: ServerServiceProtocol
     let server: Server
     var invitations: [Invitation] = []
     
@@ -29,10 +29,10 @@ class ServerInviteListViewModel: BaseViewModel {
     
     init(
         server: Server,
-        serverRepository: ServerRepositoryProtocol
+        serverService: ServerServiceProtocol
     ) {
         self.server = server
-        self.serverRepository = serverRepository
+        self.serverService = serverService
         super.init()
     }
     
@@ -56,7 +56,7 @@ class ServerInviteListViewModel: BaseViewModel {
     }
     
     private func fetch() {
-        serverRepository.getInvitByServer(server.id) {
+        serverService.getInvitByServer(server.id) {
             response, error in
             guard let response = response else {
                 return
@@ -75,7 +75,7 @@ class ServerInviteListViewModel: BaseViewModel {
     }
     
     private func deleteInvitation(invitation: Invitation) {
-        serverRepository.deleteinvitation(invitation.id) {
+        serverService.deleteinvitation(invitation.id) {
             response, error in
             
             if (error?.response != nil) {

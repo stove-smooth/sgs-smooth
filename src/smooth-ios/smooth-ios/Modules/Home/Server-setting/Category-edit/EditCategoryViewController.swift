@@ -24,7 +24,7 @@ class EditCategoryViewController: BaseViewController {
         self.categoryId = categoryId
         self.categoryName = categoryName
         self.viewModel = EditCategoryViewModel(
-            categoryId: categoryId, categoryName: categoryName, categoryRepository: CategoryRepository())
+            categoryId: categoryId, categoryName: categoryName, categoryService: CategoryService())
         
         super.init(nibName: nil, bundle: nil)
     }

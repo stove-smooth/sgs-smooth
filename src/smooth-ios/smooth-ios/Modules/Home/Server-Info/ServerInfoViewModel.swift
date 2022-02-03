@@ -12,7 +12,7 @@ class ServerInfoViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
 
-    let serverRepository: ServerRepository
+    let serverService: ServerService
     let server: Server
     let member: Member
     
@@ -27,11 +27,11 @@ class ServerInfoViewModel: BaseViewModel {
     init(
         server: Server,
         member: Member,
-        serverRepository: ServerRepository
+        serverService: ServerService
     ) {
         self.server = server
         self.member = member
-        self.serverRepository = serverRepository
+        self.serverService = serverService
         super.init()
     }
     
@@ -44,7 +44,7 @@ class ServerInfoViewModel: BaseViewModel {
     }
     
     private func leaveServer(serverId: Int, memberId: Int) {
-        serverRepository.leaveServer(serverId: serverId, memberId: memberId) { response, error in
+        serverService.leaveServer(serverId: serverId, memberId: memberId) { response, error in
             if (error?.response != nil) {
                 let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
                 self.showErrorMessage.accept(body.message)

@@ -14,7 +14,7 @@ class MenuViewModel: BaseViewModel {
     let output = Output()
     var model = Model()
     
-    let serverRepository: ServerRepository
+    let serverService: ServerService
     let userDefaults: UserDefaultsUtil
     
     struct Input {
@@ -47,10 +47,10 @@ class MenuViewModel: BaseViewModel {
     }
     
     init(
-        serverRepository: ServerRepository,
+        serverService: ServerService,
         userDefaults: UserDefaultsUtil
     ) {
-        self.serverRepository = serverRepository
+        self.serverService = serverService
         self.userDefaults = userDefaults
         
         super.init()
@@ -84,7 +84,7 @@ class MenuViewModel: BaseViewModel {
     
     private func fetchServer() {
         self.showLoading.accept(true)
-        self.serverRepository.fetchServer { servers, _ in
+        self.serverService.fetchServer { servers, _ in
             
             guard let servers = servers else {
                 return
@@ -103,7 +103,7 @@ class MenuViewModel: BaseViewModel {
     }
     
     private func fetchChannel(server: Server){
-        self.serverRepository.getServerById(server.id) { response, error in
+        self.serverService.getServerById(server.id) { response, error in
             
             guard let response = response else {
                 return
@@ -115,7 +115,7 @@ class MenuViewModel: BaseViewModel {
     }
     
     private func fetchMemebr(server: Server) {
-        self.serverRepository.getMemberFromServer(server.id) { response, error in
+        self.serverService.getMemberFromServer(server.id) { response, error in
             
             guard let response = response else {
                 return

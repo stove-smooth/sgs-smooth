@@ -14,7 +14,7 @@ class SignInViewController: BaseViewController {
     private let authView = SignInView()
     private let viewModel = SignInViewModel(
         userDefaults: UserDefaultsUtil(),
-        userRepository: UserRepository()
+        userService: UserService()
     )
     
     weak var coordinator: MainCoordinator?
