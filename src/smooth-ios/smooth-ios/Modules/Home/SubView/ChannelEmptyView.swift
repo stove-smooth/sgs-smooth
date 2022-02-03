@@ -10,7 +10,7 @@ import UIKit
 class ChannelEmptyView: BaseView {
     let emptyImage = UIImageView().then {
         $0.image = UIImage(named: "empty-message")
-        $0.contentMode = .scaleAspectFill
+        $0.contentMode = .scaleAspectFit
     }
     
     let emptyTextLabel = UILabel().then {
@@ -37,20 +37,19 @@ class ChannelEmptyView: BaseView {
     
     override func bindConstraints() {
         emptyImage.snp.makeConstraints {
-            $0.right.left.equalToSuperview().inset(50)
-            $0.centerX.equalToSuperview()
+            $0.centerX.centerX.equalToSuperview()
             $0.bottom.equalTo(emptyTextLabel.snp.top).offset(-20)
-            $0.height.equalTo(150)
+            $0.right.left.equalToSuperview().inset(30)
         }
         
         emptyTextLabel.snp.makeConstraints {
             $0.centerY.centerX.equalToSuperview()
-            $0.right.left.equalToSuperview().inset(50)
         }
         
         emptyDescriptionLabel.snp.makeConstraints {
             $0.top.equalTo(emptyTextLabel.snp.bottom).offset(15)
             $0.centerX.equalToSuperview()
+            $0.right.left.equalToSuperview().inset(20)
         }
         
     }

@@ -17,18 +17,20 @@ class HomeCoordinator: NSObject, Coordinator {
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
         self.childCoordinators = []
+        self.navigationController.tabBarController?.tabBar.setUpUITabBar()
     }
     
     func start() {
         let homeVC = HomeViewController.instance()
         homeVC.coordinator = self
         
+        navigationController.tabBarController?.tabBar.setUpUITabBar()
         navigationController.setNavigationBarHidden(true, animated: false)
         navigationController.pushViewController(homeVC, animated: false)
     }
     
     func goToContainer() {
-        let vc = ContainerViewController.instance()
+        let vc = ChattingViewController.instance()
         let homeVC = HomeViewController.instance()
         
         vc.coordinator = self

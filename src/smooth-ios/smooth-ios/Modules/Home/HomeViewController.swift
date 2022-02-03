@@ -10,23 +10,24 @@ import RxSwift
 import RxCocoa
 import SnapKit
 
-protocol HomeViewControllerDelegate: AnyObject {
-    func didTapMenuButton()
-}
-
 enum MenuState {
     case opened
     case closed
 }
 
+protocol HomeViewControllerDelegate: AnyObject {
+    func loadChatting(channel: Channel)
+}
+
 class HomeViewController: BaseViewController, CoordinatorContext {
     
     weak var coordinator: HomeCoordinator?
+    weak var delegate: HomeViewControllerDelegate?
+    
     var navigationViewController: UINavigationController?
     
     private let menuViewController = MenuViewController.instance()
-    private let containerViewController = ContainerViewController()
-    lazy var serverViewController = ServerViewController()
+    private let chattingViewController = ChattingViewController()
     
     private var menuState: MenuState = .closed
     
@@ -44,12 +45,14 @@ class HomeViewController: BaseViewController, CoordinatorContext {
         menuViewController.coordinator = self.coordinator
         addChild(menuViewController)
         view.addSubview(menuViewController.view)
-//        menuViewController.didMove(toParent: self)
+        menuViewController.didMove(toParent: self)
+        menuViewController.delegate = self
         
-        // Container VC
-        containerViewController.delegate = self
+        // chatting VC
+        chattingViewController.delegate = self
+        self.delegate = chattingViewController.self
         
-        let navVC = UINavigationController(rootViewController: containerViewController)
+        let navVC = UINavigationController(rootViewController: chattingViewController)
         addChild(navVC)
         view.addSubview(navVC.view)
         navVC.didMove(toParent: self)
@@ -59,9 +62,18 @@ class HomeViewController: BaseViewController, CoordinatorContext {
     }
 }
 
+// MARK: - Data 동기화 (menu < - home - > chatting)
+extension HomeViewController: MenuViewControllerDelegate {
+    func swipe(channel: Channel?) {
+        self.didTapMenuButton(channel: channel) // 화면전환 애니메이션
+        // delegate로 전달
+        self.delegate?.loadChatting(channel: channel!)
+    }
+}
+
 // MARK: - Menu Animation
-extension HomeViewController: ContainerViewControllerDelegate {
-    func didTapMenuButton() {
+extension HomeViewController: ChattingViewControllerDelegate {
+    func didTapMenuButton(channel: Channel?) {
         toggleMenu(completion: nil)
     }
     
@@ -69,8 +81,10 @@ extension HomeViewController: ContainerViewControllerDelegate {
         switch menuState {
         case .opened:
             self.tabBarController?.tabBar.isHidden = false
+            self.chattingViewController.messageInputBar.isHidden = true
+            
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseOut){
-                self.navigationViewController?.view.frame.origin.x = self.containerViewController.view.frame.size
+                self.navigationViewController?.view.frame.origin.x = self.chattingViewController.view.frame.size
                     .width-50
             } completion: { [weak self] done in
                 if done {
@@ -80,6 +94,8 @@ extension HomeViewController: ContainerViewControllerDelegate {
             
         case .closed:
             self.tabBarController?.tabBar.isHidden = true
+            self.chattingViewController.messageInputBar.isHidden = false
+            
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseOut){
                 self.navigationViewController?.view.frame.origin.x = 0
             } completion: { [weak self] done in
@@ -90,7 +106,9 @@ extension HomeViewController: ContainerViewControllerDelegate {
                     }
                 }
             }
-
+            
         }
+        
     }
 }
+

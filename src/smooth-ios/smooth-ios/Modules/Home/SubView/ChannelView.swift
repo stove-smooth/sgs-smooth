@@ -116,6 +116,11 @@ class ChannelView: BaseView {
             .bind(to: tableView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
     }
+    
+    func selected(indexPath: IndexPath) {
+        tableView.selectRow(at: indexPath, animated: false, scrollPosition: .middle)
+    }
+
 }
 
 extension ChannelView: UITableViewDelegate {

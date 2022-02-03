@@ -33,6 +33,16 @@ struct Channel: Codable, Equatable, IdentifiableType, Hashable {
     static func == (lhs: Channel, rhs: Channel) -> Bool {
         return lhs.id == rhs.id
     }
+    
+    init() {
+        self.id = 0
+        self.username = nil
+        self.name = ""
+        self.type = .text
+        self.parent = nil
+        self.threads = nil
+        self.public = false
+    }
 }
 
 struct Thread: Codable {
