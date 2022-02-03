@@ -255,7 +255,7 @@ final internal class SampleData {
         case "Font4":
             mutableAttributedString.addAttributes([NSAttributedString.Key.font: UIFont.italicSystemFont(ofSize: UIFont.systemFontSize)], range: range)
         case "Color":
-            mutableAttributedString.addAttributes([NSAttributedString.Key.foregroundColor: UIColor.red], range: range)
+            mutableAttributedString.addAttributes([NSAttributedString.Key.foregroundColor: UIColor.red!], range: range)
         case "Combo":
             let msg9String = "Use .attributedText() to add bold, italic, colored text and more..."
             let msg9Text = NSString(string: msg9String)
@@ -265,7 +265,7 @@ final internal class SampleData {
             msg9AttributedText.addAttributes([NSAttributedString.Key.font: UIFont.monospacedDigitSystemFont(ofSize: UIFont.systemFontSize, weight: UIFont.Weight.bold)], range: msg9Text.range(of: ".attributedText()"))
             msg9AttributedText.addAttributes([NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: UIFont.systemFontSize)], range: msg9Text.range(of: "bold"))
             msg9AttributedText.addAttributes([NSAttributedString.Key.font: UIFont.italicSystemFont(ofSize: UIFont.systemFontSize)], range: msg9Text.range(of: "italic"))
-            msg9AttributedText.addAttributes([NSAttributedString.Key.foregroundColor: UIColor.red], range: msg9Text.range(of: "colored"))
+            msg9AttributedText.addAttributes([NSAttributedString.Key.foregroundColor: UIColor.red!], range: msg9Text.range(of: "colored"))
             mutableAttributedString = msg9AttributedText
         default:
             fatalError("Unrecognized attribute for mock message")

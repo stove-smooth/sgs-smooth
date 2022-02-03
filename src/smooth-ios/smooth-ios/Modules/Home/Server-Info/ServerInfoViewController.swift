@@ -78,7 +78,7 @@ class ServerInfoViewController: BaseViewController, PanModalPresentable {
             .asDriver(onErrorJustReturn: ())
             .drive(onNext: {
                 self.dismiss(animated: true, completion: nil)
-                self.coordinator?.goToMenu()
+//                self.coordinator?.goToMenu()
             })
             .disposed(by: disposeBag)
         

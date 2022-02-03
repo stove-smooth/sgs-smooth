@@ -13,7 +13,6 @@ class ChannelSettingView: BaseView {
     let tableView = UITableView(frame: .zero).then {
         $0.backgroundColor = .clear
         $0.contentInset = UIEdgeInsets(top: 12.5, left: 0, bottom: 0, right: 0)
-        $0.separatorStyle = .none
         
         $0.rowHeight = UITableView.automaticDimension
         $0.estimatedRowHeight = 60

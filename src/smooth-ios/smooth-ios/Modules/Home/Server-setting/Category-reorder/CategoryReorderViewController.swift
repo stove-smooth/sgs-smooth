@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import MobileCoreServices
 import RxSwift
 import RxCocoa
 import Toast_Swift
@@ -62,7 +61,6 @@ class CategoryReorderViewController: UITableViewController {
         tableView.backgroundColor = .messageBarDarkGray
         
         tableView.dragDelegate = self
-        tableView.dropDelegate = self
         tableView.dragInteractionEnabled = true
         tableView.register(CategoryReorderCell.self, forCellReuseIdentifier: CategoryReorderCell.identifier)
     }
@@ -112,10 +110,6 @@ extension CategoryReorderViewController {
             categories.remove(at: sourceIndex)
             categories.insert(category, at: destinationIndex)
         }
-        
-        mutating func addItem(_ category: Category, at index: Int) {
-            categories.insert(category, at: index)
-        }
     }
 }
 
@@ -137,10 +131,8 @@ extension CategoryReorderViewController  {
     
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         let originId = model.categories[sourceIndexPath.row].id
-        let nextId = model.categories[destinationIndexPath.row-1].id
-        
         self.model.moveItem(at: sourceIndexPath.row, to: destinationIndexPath.row)
-        
+        let nextId = destinationIndexPath.row == 0 ? 0 : model.categories[destinationIndexPath.row-1].id
         self.viewModel.input.inputMoveIndex.onNext([originId, nextId])
     }
 }
@@ -164,38 +156,5 @@ extension CategoryReorderViewController: UITableViewDragDelegate {
     
     func tableView(_ tableView: UITableView, dragSessionDidEnd session: UIDragSession) {
         navigationItem.rightBarButtonItem?.isEnabled = true
-    }
-}
-
-// MARK: Drop
-extension CategoryReorderViewController: UITableViewDropDelegate {
-    func tableView(_ tableView: UITableView, performDropWith coordinator: UITableViewDropCoordinator) {
-        
-        let destinationIndexPath: IndexPath
-        
-        if let indexPath = coordinator.destinationIndexPath {
-            destinationIndexPath = indexPath
-        } else {
-            // Get last index path of table view.
-            let section = tableView.numberOfSections - 1
-            let row = tableView.numberOfRows(inSection: section)
-            destinationIndexPath = IndexPath(row: row, section: section)
-        }
-        
-        coordinator.session.loadObjects(ofClass: NSString.self) { items in
-            // Consume drag items.
-            let stringItems = items as! [Category]
-            
-            var indexPaths = [IndexPath]()
-            for (index, item) in stringItems.enumerated() {
-                let indexPath = IndexPath(row: destinationIndexPath.row + index, section: destinationIndexPath.section)
-                self.model.addItem(item, at: indexPath.row)
-                indexPaths.append(indexPath)
-            }
-
-            tableView.insertRows(at: indexPaths, with: .automatic)
-        }
-        
-        print("drop!!!!1------ \(destinationIndexPath.row)")
     }
 }

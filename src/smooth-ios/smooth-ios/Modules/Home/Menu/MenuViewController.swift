@@ -44,7 +44,15 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         self.tabBarController?.tabBar.isHidden = false
         
         self.viewModel.input.fetch.onNext(())
-        self.viewModel.input.tapServer.onNext(IndexPath(row: 0, section: 0))
+        
+        let selectedServerIndex = self.viewModel.model.selectedServerIndex
+        // 선택한 서버가 있는 경우
+        if selectedServerIndex == nil {
+            self.viewModel.input.tapServer.onNext(IndexPath(row: 0, section: 0))
+        } else {
+            self.viewModel.input.tapServer.onNext(IndexPath(row: 0, section: selectedServerIndex!))
+        }
+        
     }
     
     override func viewDidLoad() {

@@ -156,6 +156,9 @@
 		C1D47F4A2785DCF700DBA3CA /* VerifyCodeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F492785DCF700DBA3CA /* VerifyCodeViewModel.swift */; };
 		C1D47F52278B0F4900DBA3CA /* ChannalCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F51278B0F4900DBA3CA /* ChannalCell.swift */; };
 		C1D47F54278B0F5D00DBA3CA /* ServerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47F53278B0F5D00DBA3CA /* ServerCell.swift */; };
+		C1DF653127AC261A007FC317 /* ChannelReorderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1DF653027AC261A007FC317 /* ChannelReorderViewModel.swift */; };
+		C1DF653427AC266D007FC317 /* ChannelReorderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1DF653327AC266D007FC317 /* ChannelReorderViewController.swift */; };
+		C1DF653627AC32B2007FC317 /* ChannelReorderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1DF653527AC32B2007FC317 /* ChannelReorderCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -311,6 +314,9 @@
 		C1D47F492785DCF700DBA3CA /* VerifyCodeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifyCodeViewModel.swift; sourceTree = "<group>"; };
 		C1D47F51278B0F4900DBA3CA /* ChannalCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannalCell.swift; sourceTree = "<group>"; };
 		C1D47F53278B0F5D00DBA3CA /* ServerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerCell.swift; sourceTree = "<group>"; };
+		C1DF653027AC261A007FC317 /* ChannelReorderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelReorderViewModel.swift; sourceTree = "<group>"; };
+		C1DF653327AC266D007FC317 /* ChannelReorderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelReorderViewController.swift; sourceTree = "<group>"; };
+		C1DF653527AC32B2007FC317 /* ChannelReorderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelReorderCell.swift; sourceTree = "<group>"; };
 		C621E57B9EB3150F8810E412 /* Pods-smooth-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-smooth-ios.debug.xcconfig"; path = "Target Support Files/Pods-smooth-ios/Pods-smooth-ios.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -481,6 +487,7 @@
 				C118D2CF27A6EB7E009CB96C /* ServerInviteCell.swift */,
 				C118D2D127A70062009CB96C /* ServerInviteEmptyView.swift */,
 				C1C8B22C27A8CA2B00E8758E /* CategoryReorderCell.swift */,
+				C1DF653527AC32B2007FC317 /* ChannelReorderCell.swift */,
 			);
 			path = SubView;
 			sourceTree = "<group>";
@@ -583,8 +590,9 @@
 			isa = PBXGroup;
 			children = (
 				C118D2C527A6D5A6009CB96C /* SubView */,
+				C1DF653227AC2620007FC317 /* Channel-reorder */,
 				C1C8B21127A8139400E8758E /* Channel-setting */,
-				C1C8B22527A86AE000E8758E /* Channel-reorder */,
+				C1C8B22527A86AE000E8758E /* Category-reorder */,
 				C1C8B21E27A82FA100E8758E /* Category-edit */,
 				C1244F8327A64AD500BEC173 /* Server-edit */,
 				C118D2C627A6D5CA009CB96C /* Server-Invite */,
@@ -615,13 +623,13 @@
 			path = "Category-edit";
 			sourceTree = "<group>";
 		};
-		C1C8B22527A86AE000E8758E /* Channel-reorder */ = {
+		C1C8B22527A86AE000E8758E /* Category-reorder */ = {
 			isa = PBXGroup;
 			children = (
 				C1C8B22627A8709E00E8758E /* CategoryReorderViewController.swift */,
 				C1C8B22A27A877C200E8758E /* CategoryReorderViewModel.swift */,
 			);
-			path = "Channel-reorder";
+			path = "Category-reorder";
 			sourceTree = "<group>";
 		};
 		C1C8B22E27A8ED3900E8758E /* Cell */ = {
@@ -836,6 +844,15 @@
 			path = Chatting;
 			sourceTree = "<group>";
 		};
+		C1DF653227AC2620007FC317 /* Channel-reorder */ = {
+			isa = PBXGroup;
+			children = (
+				C1DF653327AC266D007FC317 /* ChannelReorderViewController.swift */,
+				C1DF653027AC261A007FC317 /* ChannelReorderViewModel.swift */,
+			);
+			path = "Channel-reorder";
+			sourceTree = "<group>";
+		};
 		CABC661DFF2E909E8846E9B8 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -968,6 +985,7 @@
 				C1024152279E346000B702DB /* MenuView.swift in Sources */,
 				C1786DF627A2622900170D4F /* InviteServerViewController.swift in Sources */,
 				C118D2E527A78D40009CB96C /* MakeCategoryView.swift in Sources */,
+				C1DF653427AC266D007FC317 /* ChannelReorderViewController.swift in Sources */,
 				C176604E279A639E0062D0CB /* FriendInfoView.swift in Sources */,
 				C1D47F262783CA0C00DBA3CA /* NetworkLoggerPlugin.swift in Sources */,
 				C118D2C027A6B232009CB96C /* ServerSettingCell.swift in Sources */,
@@ -1046,6 +1064,7 @@
 				C1024156279E482100B702DB /* ServerView.swift in Sources */,
 				2709161927912BBA00A0772D /* FriendListViewController.swift in Sources */,
 				C118D2D027A6EB7E009CB96C /* ServerInviteCell.swift in Sources */,
+				C1DF653127AC261A007FC317 /* ChannelReorderViewModel.swift in Sources */,
 				C1D47EE727795CAD00DBA3CA /* SignInView.swift in Sources */,
 				C1D47F352784488200DBA3CA /* CustomComponent.swift in Sources */,
 				C1C8B22227A82FDB00E8758E /* EditCategoryViewModel.swift in Sources */,
@@ -1092,6 +1111,7 @@
 				C1D47F0427795ED100DBA3CA /* HomeViewController.swift in Sources */,
 				C102416F279FBF8D00B702DB /* AddServerCoordinator.swift in Sources */,
 				C1D47F0E2779D66300DBA3CA /* MenuViewController.swift in Sources */,
+				C1DF653627AC32B2007FC317 /* ChannelReorderCell.swift in Sources */,
 				C1024167279F919400B702DB /* AddServerView.swift in Sources */,
 				C118D2C427A6BA5D009CB96C /* ServerSettingHeaderCell.swift in Sources */,
 				C1D47F3A2784749C00DBA3CA /* SignUpViewModel.swift in Sources */,

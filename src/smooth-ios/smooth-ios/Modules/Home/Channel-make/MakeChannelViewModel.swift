@@ -17,7 +17,7 @@ class MakeChannelViewModel: BaseViewModel {
     
     struct Input {
         let channelNameInput = BehaviorRelay<String>(value: "")
-        let isChat = BehaviorRelay<Bool>(value: false)
+        let isChat = BehaviorRelay<Bool>(value: true)
         let isPublic = BehaviorRelay<Bool>(value: false)
         let tapMakeButton = PublishSubject<Void>()
     }

@@ -92,4 +92,13 @@ class ServerSettingCoordinator: NSObject, Coordinator {
         navigationController.isNavigationBarHidden = true
         modalNav.pushViewController(reorderVC, animated: false)
     }
+    
+    func goToReorderFromChannel(categories: [Category]) {
+        let reorderVC = ChannelReorderViewController.instance(categories: categories)
+        reorderVC.coordinator = self
+        
+        modalNav.isNavigationBarHidden = false
+        navigationController.isNavigationBarHidden = true
+        modalNav.pushViewController(reorderVC, animated: false)
+    }
 }
