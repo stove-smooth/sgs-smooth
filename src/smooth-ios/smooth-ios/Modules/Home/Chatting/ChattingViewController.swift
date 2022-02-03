@@ -239,10 +239,21 @@ class ChattingViewController: MessagesViewController {
     }
     
     func deleteMessage(_ indexPath: IndexPath) {
+        print("\(indexPath) \(messageList.count)")
+        
         messagesCollectionView.performBatchUpdates({
             messageList.remove(at: indexPath.section)
             messagesCollectionView.deleteSections([indexPath.section])
-            messagesCollectionView.reloadSections([indexPath.section+1])
+            
+            if isLastSectionVisible() {
+                messagesCollectionView.reloadSections([indexPath.section-1])
+            } else {
+                messagesCollectionView.reloadSections([indexPath.section+1])
+            }
+        }, completion: {[weak self] _ in
+            if self?.isLastSectionVisible() == true {
+                self?.messagesCollectionView.scrollToLastItem(animated: true)
+            }
         })
     }
     
@@ -272,13 +283,15 @@ extension ChattingViewController: HomeViewControllerDelegate {
     }
 }
 
+
+// MARK: - MessagesLayoutDelegate
 extension ChattingViewController: MessagesLayoutDelegate {
     
     func messageTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
         if isFromCurrentSender(message: message) {
             return !isPreviousMessageSameSender(at: indexPath) ? 20 : 0
         } else {
-            return !isPreviousMessageSameSender(at: indexPath) ? (20 + 17.5) : 0
+            return !isPreviousMessageSameSender(at: indexPath) ? 37.5 : 0
         }
     }
     
@@ -431,11 +444,7 @@ extension ChattingViewController: MessageCellDelegate {
         guard let indexPath = messagesCollectionView.indexPath(for: cell) else { return }
         
         messagesCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredVertically)
-        
-        let message = messageList[indexPath.section]
-        
-        print("indexPath \(indexPath.section) \(indexPath.row)")
-        print(message)
+    
         self.deleteMessage(indexPath)
     }
 }
