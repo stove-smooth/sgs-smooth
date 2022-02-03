@@ -6,7 +6,7 @@
         <user-section></user-section>
       </div>
       <div class="server-activity-container" :key="$route.params.channelid">
-        <template v-if="true">
+        <template v-if="false">
           <server-chatting-menu-bar></server-chatting-menu-bar>
           <div class="server-activity-container1">
             <server-activity-area></server-activity-area>
@@ -14,7 +14,13 @@
           </div>
         </template>
         <template v-else>
-          <server-voice-sharing-area></server-voice-sharing-area>
+          <div class="voice-sharing-container flex-direction-column">
+            <server-chatting-menu-bar></server-chatting-menu-bar>
+            <div class="server-activity-container1">
+              <server-voice-sharing-area></server-voice-sharing-area>
+              <server-member-list></server-member-list>
+            </div>
+          </div>
         </template>
       </div>
     </div>

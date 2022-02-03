@@ -6,6 +6,7 @@ const utils = {
     stompSocketClient: null,
     stompSocketConnected: false,
     navigationSelected: "@me",
+    rtcSocketClient: null,
   },
   getters: {
     getStompSocketClient: (state) => {
@@ -27,6 +28,9 @@ const utils = {
     },
     setNavigationSelected(state, navigationSelected) {
       state.navigationSelected = navigationSelected;
+    },
+    setRtcSocketClient(state, rtcSocketClient) {
+      state.rtcSocketClient = rtcSocketClient;
     },
   },
 };

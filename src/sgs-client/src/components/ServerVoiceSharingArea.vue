@@ -1,8 +1,6 @@
 <template>
-  <div class="voice-sharing-container flex-direction-column">
-    <server-chatting-menu-bar></server-chatting-menu-bar>
-    <div class="voice-participant-sharing">
-      <!-- <div class="wrap">
+  <div class="voice-participant-sharing">
+    <!-- <div class="wrap">
       <div class="scroll__wrap scrollbar-ghost">
           <div class="scroll--element">Element1</div>
           <div class="scroll--element">Element2</div>
@@ -13,58 +11,115 @@
         </div>
       
       </div> -->
-      <div id="container">
-        <div id="wrapper">
-          <div id="join" class="animate join">
-            <h1>Join a Room</h1>
-            <form onsubmit="register(); return false;" accept-charset="UTF-8">
-              <p>
-                <input
-                  type="text"
-                  name="name"
-                  value=""
-                  id="name"
-                  placeholder="Username"
-                  required
-                />
-              </p>
-              <p>
-                <input
-                  type="text"
-                  name="room"
-                  value=""
-                  id="roomName"
-                  placeholder="Room"
-                  required
-                />
-              </p>
-              <p class="submit">
-                <input type="submit" name="commit" value="Join!" />
-              </p>
-            </form>
-          </div>
-          <div id="room" style="display: none">
-            <h2 id="room-header"></h2>
-            <div id="participants"></div>
-            <input
-              type="button"
-              id="button-leave"
-              onmouseup="leaveRoom();"
-              value="Leave room"
-            />
-          </div>
+    <div id="container">
+      <div id="wrapper">
+        re
+        <div id="join" class="animate join">
+          <h1>Join a Room</h1>
+          <form @submit.prevent="register()" accept-charset="UTF-8">
+            <p>
+              <input
+                type="text"
+                name="name"
+                value=""
+                id="name"
+                placeholder="Username"
+                required
+              />
+            </p>
+            <p>
+              <input
+                type="text"
+                name="room"
+                value=""
+                id="roomName"
+                placeholder="Room"
+                required
+              />
+            </p>
+            <p class="submit">
+              <input type="submit" name="commit" value="Join!" />
+            </p>
+          </form>
+        </div>
+        <div id="room" style="display: none">
+          <h2 id="room-header"></h2>
+          <div id="participants"></div>
+          <input
+            type="button"
+            id="button-leave"
+            @mouseup="leaveChannel()"
+            value="Leave room"
+          />
         </div>
       </div>
     </div>
-    <div class="voice-bottom-control-section"></div>
   </div>
 </template>
 
 <script>
-import ServerChattingMenuBar from "./ServerChattingMenuBar.vue";
+//import kurentoUtils from "kurento-utils";
+import { mapGetters, mapActions } from "vuex";
 export default {
-  components: {
-    ServerChattingMenuBar,
+  data() {
+    return {
+      //participants: {},
+      name: "",
+      room: "",
+    };
+  },
+  created() {
+    const url = "https://sig.yoloyolo.org/rtc";
+    /* var ws = new SockJS("https://sig.yoloyolo.org/rtc", null, {
+      transports: ["websocket", "xhr-streaming", "xhr-polling"],
+    }); */
+    this.wsInit(url); //ws 전역 등록.
+    //var participants = {};
+    //var name; =>vdata 등록.
+
+    window.onbeforeunload = function () {
+      console.log("onbeforeunload");
+    };
+  },
+  computed: {
+    //...mapState("utils", ["rtcSocketClient"]),
+    ...mapGetters("user", ["getAccessToken"]),
+  },
+  methods: {
+    ...mapActions("voiceRoom", [
+      "wsInit",
+      "setVoiceInfo",
+      "sendMessage",
+      "leaveRoom",
+    ]),
+    register() {
+      this.name = document.getElementById("name").value;
+      this.room = document.getElementById("roomName").value;
+      console.log("name,room", this.name, this.room);
+      document.getElementById("room-header").innerText = "ROOM " + this.room;
+      document.getElementById("join").style.display = "none";
+      document.getElementById("room").style.display = "block";
+
+      let message = {
+        id: "joinRoom",
+        token: this.getAccessToken,
+        userId: this.name,
+        roomId: this.room,
+      };
+      let voiceRoomInfo = {
+        myName: this.name,
+        roomNAme: this.room,
+      };
+      this.sendMessage(message);
+      this.setVoiceInfo(voiceRoomInfo);
+    },
+    leaveChannel() {
+      this.sendMessage({ id: "leaveRoom" });
+      console.log("leaveRoom");
+      document.getElementById("join").style.display = "block";
+      document.getElementById("room").style.display = "none";
+      this.leaveRoom();
+    },
   },
 };
 </script>

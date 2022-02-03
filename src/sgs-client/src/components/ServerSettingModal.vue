@@ -123,18 +123,17 @@
         <template slot="setting-content">
           <h1 class="header-title">서버 개요</h1>
           <div class="avatar-uploader-inner">
-            <img
-              v-if="false"
-              class="avatar-uploader-image"
-              src="https://cdn.discordapp.com/avatars/291948872408760320/5871cf3e8f8baf59e2f21d89b1640556.webp?size=40"
-              alt=" "
-            />
-            <div
-              v-else
-              class="avatar-uploader-image white-color justify-content-center align-items-center"
-            >
-              안녕
-            </div>
+            <template v-if="isProfileAvatar()">
+              <img class="avatar-uploader-image" :src="this.icon" alt=" " />
+            </template>
+            <template v-else>
+              <div
+                class="avatar-uploader-image white-color justify-content-center align-items-center"
+              >
+                {{ serverSettingModal.serverName }}
+              </div>
+            </template>
+
             <div class="avatar-uploader-hint" v-show="false">아바타 변경</div>
             <div class="avatar-uploader-icon">
               <svg class="img-uploader-icon"></svg>
@@ -149,13 +148,20 @@
           </div>
           <form>
             <div class="server-name-input-container">
-              <h5 class="label-id black-color">카테고리 이름</h5>
+              <div class="flex-direction-row">
+                <h5 class="label-id black-color">서버 이름</h5>
+                <div class="margin-left-8px align-items-center">
+                  <div class="small-button">수정</div>
+                </div>
+              </div>
+
               <div class="friends-state-text">
                 <input
                   width="100%"
                   type="text"
                   maxlength="100"
                   class="channel-name-input"
+                  v-model="serverSettingModal.serverName"
                 />
               </div>
             </div>
@@ -276,10 +282,18 @@ export default {
     return {
       hovered: "",
       menuSelected: "일반",
+      icon: null,
     };
   },
+  created() {
+    console.log(this.$route.params.serverid);
+  },
   computed: {
-    ...mapState("server", ["serverSettingModal", "communityOwner"]),
+    ...mapState("server", [
+      "serverSettingModal",
+      "communityOwner",
+      "communityList",
+    ]),
   },
   methods: {
     ...mapMutations("server", [
@@ -291,6 +305,18 @@ export default {
     },
     clickMenu(menu) {
       this.menuSelected = menu;
+    },
+    isProfileAvatar() {
+      for (var i = 0; i < this.communityList.length; i++) {
+        if (this.communityList[i].id == this.$route.params.serverid) {
+          if (this.communityList[i].icon == null) {
+            return false;
+          } else {
+            this.icon = this.communityList[i].icon;
+            return true;
+          }
+        }
+      }
     },
   },
 };
