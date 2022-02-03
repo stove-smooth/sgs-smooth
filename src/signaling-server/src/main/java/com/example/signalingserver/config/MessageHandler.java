@@ -1,7 +1,7 @@
 package com.example.signalingserver.config;
 
-import com.example.signalingserver.domain.Room;
-import com.example.signalingserver.domain.UserSession;
+import com.example.signalingserver.util.Room;
+import com.example.signalingserver.util.UserSession;
 import com.example.signalingserver.dto.request.CandidateRequest;
 import com.example.signalingserver.dto.request.JoinRequest;
 import com.example.signalingserver.dto.request.ReceiveVideoRequest;
@@ -17,8 +17,6 @@ import org.kurento.client.IceCandidate;
 import org.kurento.client.KurentoClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;

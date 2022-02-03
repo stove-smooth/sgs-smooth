@@ -1,10 +1,8 @@
 package com.example.signalingserver.util;
 
-import com.example.signalingserver.domain.UserSession;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
