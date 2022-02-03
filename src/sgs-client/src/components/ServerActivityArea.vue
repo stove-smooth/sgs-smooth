@@ -610,8 +610,7 @@ export default {
       scrollRef.scrollTop = scrollRef.scrollHeight;
     },
     async handleScroll(e) {
-      const { scrollHeight, scrollTop, clientHeight } = e.target;
-      console.log("scroll", scrollTop, scrollHeight, clientHeight);
+      const { scrollHeight, scrollTop } = e.target;
       if (scrollTop == 0) {
         if (this.more) {
           this.prevScrollHeight = scrollHeight;
