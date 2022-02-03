@@ -100,8 +100,7 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             case .text :
                 self?.delegate?.swipe(channel: channel)
             case .voice:
-                // TODO: webRTC 
-                print("웹알티씨 연결하기")
+                #warning("웹알티씨 연결하기")
             }
         }.disposed(by: disposeBag)
         

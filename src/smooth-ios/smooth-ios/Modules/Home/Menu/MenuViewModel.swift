@@ -30,6 +30,8 @@ class MenuViewModel: BaseViewModel {
         let members = PublishRelay<[Member]>()
         let directs = PublishRelay<[String]>()
         
+        let defaultChannelIndex = PublishRelay<IndexPath>()
+        
         let goToAddServer = PublishRelay<Void>()
     }
     
@@ -71,7 +73,7 @@ class MenuViewModel: BaseViewModel {
                     self.model.selectedServerIndex = indexPath.row
                     self.fetchChannel(server: server)
                     self.fetchMemebr(server: server)
-                case 2: // 서버 추가 버튼 
+                case 2: // 서버 추가 버튼
                     self.model.selectedServerIndex = nil
                     self.output.goToAddServer.accept(())
                 default: break
