@@ -16,9 +16,20 @@ public class KafkaTopicConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    private final String topicName = "chat-server-topic";
+    @Value("${spring.kafka.consumer.chat-topic}")
+    private String directChatTopic;
 
-    private final String topicName2 = "channel-server-topic";
+    @Value("${spring.kafka.consumer.direct-topic}")
+    private String communityChatTopic;
+
+    @Value("${spring.kafka.consumer.etc-direct-topic}")
+    private String etcDirectTopic;
+
+    @Value("${spring.kafka.consumer.etc-community-topic}")
+    private String etcCommunityTopic;
+
+    @Value("${spring.kafka.consumer.file-topic}")
+    private String fileTopic;
 
     @Bean
     public KafkaAdmin kafkaAdmin() {
@@ -29,11 +40,26 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic directChat() {
-        return new NewTopic(topicName,3, (short) 3);
+        return new NewTopic(directChatTopic,3, (short) 3);
+    }
+
+    @Bean
+    public NewTopic etcDirectChat() {
+        return new NewTopic(etcDirectTopic,3,(short) 3);
     }
 
     @Bean
     public NewTopic communityChat() {
-        return new NewTopic(topicName2,3, (short) 3);
+        return new NewTopic(communityChatTopic,3, (short) 3);
+    }
+
+    @Bean
+    public NewTopic etcCommunityChat() {
+        return new NewTopic(etcCommunityTopic,3,(short) 3);
+    }
+
+    @Bean
+    public NewTopic fileUpload() {
+        return new NewTopic(fileTopic,3, (short) 3);
     }
 }

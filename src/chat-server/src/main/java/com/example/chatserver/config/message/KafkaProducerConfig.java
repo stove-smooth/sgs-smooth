@@ -2,6 +2,8 @@ package com.example.chatserver.config.message;
 
 import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.domain.DirectChat;
+import com.example.chatserver.dto.request.FileUploadRequest;
+import com.example.chatserver.dto.response.FileUploadResponse;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,11 +25,15 @@ public class KafkaProducerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    public ProducerFactory<String, DirectChat> producerFactory() {
+    public ProducerFactory<String, DirectChat> producerFactoryForDirect() {
         return new DefaultKafkaProducerFactory<>(producerConfigurations());
     }
 
-    public ProducerFactory<String, ChannelMessage> producerFactory2() {
+    public ProducerFactory<String, ChannelMessage> producerFactoryForCommunity() {
+        return new DefaultKafkaProducerFactory<>(producerConfigurations());
+    }
+
+    public ProducerFactory<String, FileUploadResponse> producerFactoryForFileUpload() {
         return new DefaultKafkaProducerFactory<>(producerConfigurations());
     }
 
@@ -41,12 +47,17 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, DirectChat> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+    public KafkaTemplate<String, DirectChat> kafkaTemplateForDirect() {
+        return new KafkaTemplate<>(producerFactoryForDirect());
     }
 
     @Bean
-    public KafkaTemplate<String, ChannelMessage> kafkaTemplate2() {
-        return new KafkaTemplate<>(producerFactory2());
+    public KafkaTemplate<String, ChannelMessage> kafkaTemplateForCommunity() {
+        return new KafkaTemplate<>(producerFactoryForCommunity());
+    }
+
+    @Bean
+    KafkaTemplate<String,FileUploadResponse> kafkaTemplateForFileUpload() {
+        return new KafkaTemplate<>(producerFactoryForFileUpload());
     }
 }

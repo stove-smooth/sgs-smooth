@@ -28,10 +28,16 @@ public class DirectChat {
 
     private Long userId;
 
+    private String parentId;
+
     private String content;
+
+    private String thumbnail;
 
     private LocalDateTime localDateTime;
 
     private Map<Long,Boolean> read;
+
+    private String type;
 
 }
