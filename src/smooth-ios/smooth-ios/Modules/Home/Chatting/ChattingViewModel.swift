@@ -17,12 +17,14 @@ class ChattingViewModel: BaseViewModel {
     let chattingRepository: ChattingRepository
     
     struct Input {
-        let fetch = PublishSubject<Void>()
+        let fetch = PublishSubject<Channel>()
     }
     
     struct Output {
         let channel = PublishRelay<Channel>()
         let messages = PublishRelay<[Message]>()
+        
+        let showEmpty = PublishRelay<Bool>()
     }
     
     struct Model {
@@ -38,8 +40,8 @@ class ChattingViewModel: BaseViewModel {
     
     override func bind() {
         self.input.fetch
-            .subscribe(onNext: {
-                self.fetchMessgae(chattingId: 1)
+            .subscribe(onNext: { channel in
+                self.fetchMessgae(chattingId: channel.id)
             })
             .disposed(by: disposeBag)
     }
@@ -53,7 +55,8 @@ class ChattingViewModel: BaseViewModel {
                 guard let response = response else {
                     return
                 }
-
+                
+                self.output.showEmpty.accept(response.count == 0)
                 self.model.messgae = response
                 self.output.messages.accept(response)
             }

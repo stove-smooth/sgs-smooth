@@ -18,4 +18,5 @@ target 'smooth-ios' do
   
   pod 'PanModal'
   pod 'Toast-Swift', '~> 5.0.1'
+  pod 'MessageKit'
 end
