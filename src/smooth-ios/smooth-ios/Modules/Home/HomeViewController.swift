@@ -65,7 +65,7 @@ class HomeViewController: BaseViewController, CoordinatorContext {
 // MARK: - Data 동기화 (menu < - home - > chatting)
 extension HomeViewController: MenuViewControllerDelegate {
     func swipe(channel: Channel?) {
-        self.didTapMenuButton() // 화면전환 애니메이션
+        self.didTapMenuButton(channel: channel) // 화면전환 애니메이션
         // delegate로 전달
         self.delegate?.loadChatting(channel: channel!)
     }
@@ -73,7 +73,7 @@ extension HomeViewController: MenuViewControllerDelegate {
 
 // MARK: - Menu Animation
 extension HomeViewController: ChattingViewControllerDelegate {
-    func didTapMenuButton() {
+    func didTapMenuButton(channel: Channel?) {
         toggleMenu(completion: nil)
     }
     
@@ -81,6 +81,8 @@ extension HomeViewController: ChattingViewControllerDelegate {
         switch menuState {
         case .opened:
             self.tabBarController?.tabBar.isHidden = false
+            self.chattingViewController.messageInputBar.isHidden = true
+            
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseOut){
                 self.navigationViewController?.view.frame.origin.x = self.chattingViewController.view.frame.size
                     .width-50
@@ -92,6 +94,8 @@ extension HomeViewController: ChattingViewControllerDelegate {
             
         case .closed:
             self.tabBarController?.tabBar.isHidden = true
+            self.chattingViewController.messageInputBar.isHidden = false
+            
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseOut){
                 self.navigationViewController?.view.frame.origin.x = 0
             } completion: { [weak self] done in
