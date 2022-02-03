@@ -11,8 +11,6 @@ import PanModal
 class FriendInfoViewController: BaseViewController, PanModalPresentable {
     var panScrollable: UIScrollView?
     
-    weak var coordinator: FriendCoordinator?
-    
     private lazy var infoView = FriendInfoView(frame: self.view.frame)
     private let viewModel: FriendInfoViewModel
     

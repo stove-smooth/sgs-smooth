@@ -50,6 +50,7 @@ class HomeViewController: BaseViewController, CoordinatorContext {
         
         // chatting VC
         chattingViewController.delegate = self
+        chattingViewController.coordinator = self.coordinator
         self.delegate = chattingViewController.self
         
         let navVC = UINavigationController(rootViewController: chattingViewController)

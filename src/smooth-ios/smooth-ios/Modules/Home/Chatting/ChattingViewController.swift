@@ -104,9 +104,21 @@ class ChattingViewController: MessagesViewController {
     }
     
     func configureMessageCollectionView() {
+        messagesCollectionView.messagesLayoutDelegate = self
+        messagesCollectionView.messagesDisplayDelegate = self
+        messagesCollectionView.messagesDataSource = self
+        messagesCollectionView.messageCellDelegate = self
+        
         messagesCollectionView.refreshControl = refreshControl
         messagesCollectionView.backgroundColor = .messageBarDarkGray
         
+        maintainPositionOnKeyboardFrameChanged = true
+        scrollsToLastItemOnKeyboardBeginsEditing = true
+        
+        setMessageCollectionLayout()
+    }
+    
+    func setMessageCollectionLayout() {
         let layout = messagesCollectionView.collectionViewLayout as? MessagesCollectionViewFlowLayout
         
         layout?.sectionInset = UIEdgeInsets(top: 1, left: 8, bottom: 1, right: 8)
@@ -123,11 +135,6 @@ class ChattingViewController: MessagesViewController {
         layout?.setMessageIncomingAvatarPosition(.init(vertical: .cellTop))
         
         layout?.setMessageIncomingMessagePadding(UIEdgeInsets(top: -20, left: 0, bottom: 0, right: 0))
-        
-        
-        messagesCollectionView.messagesLayoutDelegate = self
-        messagesCollectionView.messagesDisplayDelegate = self
-        messagesCollectionView.messagesDataSource = self
     }
     
     func configureMessageInputBar() {
@@ -185,7 +192,14 @@ class ChattingViewController: MessagesViewController {
                 self.messageInputBar.inputTextView.placeholder = "#\(channel.name)에 메시지 보내기"
             })
             .disposed(by: disposeBag)
+        
+        Observable.zip(messagesCollectionView.rx.itemSelected, messagesCollectionView.rx.modelSelected(MockMessage.self)).bind(onNext: { indexPath, message in
+            
+            print("itemSelected ---- \(indexPath) \(message)")
+        }).disposed(by: disposeBag)
+        
     }
+    
     
     // MARK: - load message
     func loadFirstMessages() {
@@ -362,23 +376,6 @@ extension ChattingViewController: MessagesDisplayDelegate {
         avatarView.isHidden = isPreviousMessageSameSender(at: indexPath)
     }
     
-    func configureAccessoryView(_ accessoryView: UIView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
-        // Cells are reused, so only add a button here once. For real use you would need to
-        // ensure any subviews are removed if not needed
-        accessoryView.subviews.forEach { $0.removeFromSuperview() }
-        accessoryView.backgroundColor = .clear
-        
-        let shouldShow = Int.random(in: 0...10) == 0
-        guard shouldShow else { return }
-        
-        let button = UIButton(type: .infoLight)
-        button.tintColor = .blurple
-        accessoryView.addSubview(button)
-        button.frame = accessoryView.bounds
-        button.isUserInteractionEnabled = false // respond to accessoryView tap through `MessageCellDelegate`
-        accessoryView.layer.cornerRadius = accessoryView.frame.height / 2
-    }
-    
     func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
         if case MessageKind.photo(let media) = message.kind, let imageURL = media.url {
             imageView.kf.setImage(with: imageURL)
@@ -410,5 +407,34 @@ extension ChattingViewController: MessagesDataSource {
             ])
         }
         return nil
+    }
+}
+
+extension ChattingViewController: MessageCellDelegate {
+    
+    func didTapAvatar(in cell: MessageCollectionViewCell) {
+        guard let indexPath = messagesCollectionView.indexPath(for: cell) else { return }
+        
+        messagesCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: [])
+        
+        #warning("message mockup으로 유저 데이터 얻기")
+        // let friend = messageList[indexPath.section]
+        
+        let friend = Friend(id: 2, name: "밍디", code: "1374", profileImage: Optional("https://sgs-smooth.s3.ap-northeast-2.amazonaws.com/1643090865999"), state: .accept)
+         self.coordinator?.showFriendInfoModal(friend: friend)
+    }
+    
+    func didTapMessage(in cell: MessageCollectionViewCell) {
+        //Call Method to Show Action Picker
+        
+        guard let indexPath = messagesCollectionView.indexPath(for: cell) else { return }
+        
+        messagesCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredVertically)
+        
+        let message = messageList[indexPath.section]
+        
+        print(indexPath.section)
+        print(message)
+        
     }
 }
