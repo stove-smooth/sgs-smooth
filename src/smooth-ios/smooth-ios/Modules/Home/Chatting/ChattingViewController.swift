@@ -192,12 +192,6 @@ class ChattingViewController: MessagesViewController {
                 self.messageInputBar.inputTextView.placeholder = "#\(channel.name)에 메시지 보내기"
             })
             .disposed(by: disposeBag)
-        
-        Observable.zip(messagesCollectionView.rx.itemSelected, messagesCollectionView.rx.modelSelected(MockMessage.self)).bind(onNext: { indexPath, message in
-            
-            print("itemSelected ---- \(indexPath) \(message)")
-        }).disposed(by: disposeBag)
-        
     }
     
     
@@ -241,6 +235,14 @@ class ChattingViewController: MessagesViewController {
             if self?.isLastSectionVisible() == true {
                 self?.messagesCollectionView.scrollToLastItem(animated: true)
             }
+        })
+    }
+    
+    func deleteMessage(_ indexPath: IndexPath) {
+        messagesCollectionView.performBatchUpdates({
+            messageList.remove(at: indexPath.section)
+            messagesCollectionView.deleteSections([indexPath.section])
+            messagesCollectionView.reloadSections([indexPath.section+1])
         })
     }
     
@@ -410,31 +412,30 @@ extension ChattingViewController: MessagesDataSource {
     }
 }
 
+// MARK: - MessageCellDelegate
 extension ChattingViewController: MessageCellDelegate {
-    
     func didTapAvatar(in cell: MessageCollectionViewCell) {
         guard let indexPath = messagesCollectionView.indexPath(for: cell) else { return }
         
         messagesCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: [])
         
-        #warning("message mockup으로 유저 데이터 얻기")
+        #warning("message mockup으로 유저 데이터 얻기 & 내 프로필 선택 시 내 정보 보여주기")
         // let friend = messageList[indexPath.section]
         
         let friend = Friend(id: 2, name: "밍디", code: "1374", profileImage: Optional("https://sgs-smooth.s3.ap-northeast-2.amazonaws.com/1643090865999"), state: .accept)
          self.coordinator?.showFriendInfoModal(friend: friend)
     }
     
+
     func didTapMessage(in cell: MessageCollectionViewCell) {
-        //Call Method to Show Action Picker
-        
         guard let indexPath = messagesCollectionView.indexPath(for: cell) else { return }
         
         messagesCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredVertically)
         
         let message = messageList[indexPath.section]
         
-        print(indexPath.section)
+        print("indexPath \(indexPath.section) \(indexPath.row)")
         print(message)
-        
+        self.deleteMessage(indexPath)
     }
 }

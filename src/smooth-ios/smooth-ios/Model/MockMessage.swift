@@ -84,7 +84,11 @@ struct MockLinkItem: LinkItem {
     let thumbnailImage: UIImage
 }
 
-internal struct MockMessage: MessageType {
+internal struct MockMessage: MessageType, Equatable {
+    static func == (lhs: MockMessage, rhs: MockMessage) -> Bool {
+        return lhs.messageId == rhs.messageId
+    }
+    
 
     var messageId: String
     var sender: SenderType {
@@ -394,9 +398,9 @@ final internal class SampleData {
         case "000001":
             return Avatar(image: UIImage(named: "AppIcon"), initials: initials)
         case "000002":
-            return Avatar(image: UIImage(named: "AppIcon"), initials: initials)
+            return Avatar(image: UIImage(named: "Server+Join"), initials: initials)
         case "000003":
-            return Avatar(image: UIImage(named: "AppIcon"), initials: initials)
+            return Avatar(image: UIImage(named: "Server+Private"), initials: initials)
         case "000000":
             return Avatar(image: nil, initials: "SS")
         default:
