@@ -1,9 +1,7 @@
 package com.example.signalingserver.util;
 
-import com.example.signalingserver.domain.Room;
 import lombok.RequiredArgsConstructor;
 import org.kurento.client.KurentoClient;
-import org.kurento.client.MediaPipeline;
 import org.springframework.stereotype.Component;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
