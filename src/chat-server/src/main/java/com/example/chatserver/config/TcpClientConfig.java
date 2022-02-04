@@ -15,8 +15,8 @@ import org.springframework.integration.ip.tcp.connection.TcpNioClientConnectionF
 import org.springframework.integration.ip.tcp.serializer.ByteArrayCrLfSerializer;
 import org.springframework.messaging.MessageChannel;
 
-//@Configuration
-//@EnableIntegration
+@Configuration
+@EnableIntegration
 public class TcpClientConfig{
 
     @Value("${tcp.server.host}")

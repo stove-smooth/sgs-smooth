@@ -28,9 +28,15 @@ public class ChannelMessage {
 
     private Long accountId;
 
+    private String parentId;
+
     private String content;
+
+    private String thumbnail;
 
     private LocalDateTime localDateTime;
 
     private Map<Long,Boolean> read;
+
+    private String type;
 }
