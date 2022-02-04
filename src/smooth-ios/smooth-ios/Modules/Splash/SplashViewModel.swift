@@ -27,6 +27,7 @@ class SplashViewModel: BaseViewModel {
         self.input.tapSignInButton
             .asDriver(onErrorJustReturn: ())
             .drive(onNext: {
+                ChatWebSocketService().register()
                 self.output.goToSignIn.accept(())
             })
             .disposed(by: disposeBag)

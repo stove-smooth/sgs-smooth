@@ -12,7 +12,7 @@ class MakeCategoryViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     
-    let categoryRepository: CategoryRepositoryProtocol
+    let categoryService: CategoryServiceProtocol
     let server: Server
     
     struct Input {
@@ -28,10 +28,10 @@ class MakeCategoryViewModel: BaseViewModel {
     
     init(
         server: Server,
-        categoryRepository: CategoryRepositoryProtocol
+        categoryService: CategoryServiceProtocol
     ) {
         self.server = server
-        self.categoryRepository = categoryRepository
+        self.categoryService = categoryService
         super.init()
     }
     
@@ -53,7 +53,7 @@ class MakeCategoryViewModel: BaseViewModel {
     }
     
     private func createCategory(request: CategoryReqeust) {
-        categoryRepository.createCategory(request: request) { response, error in
+        categoryService.createCategory(request: request) { response, error in
             if (error?.response != nil) {
                 let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
                 self.showErrorMessage.accept(body.message)

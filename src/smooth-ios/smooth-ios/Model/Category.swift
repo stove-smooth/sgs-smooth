@@ -10,7 +10,7 @@ import Foundation
 struct Category: Codable, Hashable {
     let id: Int
     let name: String
-    let channels: [Channel]?
+    var channels: [Channel]?
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)

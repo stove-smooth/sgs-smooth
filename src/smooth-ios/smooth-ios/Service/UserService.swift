@@ -1,5 +1,5 @@
 //
-//  UserRepository.swift
+//  UserService.swift
 //  smooth-ios
 //
 //  Created by durikim-MN on 2022/01/03.
@@ -8,7 +8,7 @@
 import Foundation
 import Moya
 
-protocol UserRepositoryProtocol {
+protocol UserServiceProtocol {
     func signIn(_ request: SignInRequest, _ completion: @escaping (SignInResponse?, Error?) -> Void )
     func signUp(_ request: SignUpRequest, _ completion: @escaping (SignUpResponse?, Error?) -> Void )
     func sendMail(_ request: SendMailRequest, _ completion: @escaping (SendMailResponse?, Error?) -> Void)
@@ -16,7 +16,7 @@ protocol UserRepositoryProtocol {
     func fetchUserInfo(_ completion: @escaping (User?, Error?) -> Void)
 }
 
-struct UserRepository: Networkable, UserRepositoryProtocol {
+struct UserService: Networkable, UserServiceProtocol {
     typealias Target = UserTarget
     
     func signIn(_ request: SignInRequest, _ completion: @escaping (SignInResponse?, Error?) -> Void ) {

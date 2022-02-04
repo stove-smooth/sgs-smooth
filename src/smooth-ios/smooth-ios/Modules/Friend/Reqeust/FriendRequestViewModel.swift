@@ -12,7 +12,7 @@ class FriendRequestViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     
-    let friendRepository: FriendRepositoryProtocol
+    let friendService: FriendServiceProtocol
     
     struct Input {
         let userTextField = BehaviorRelay<String>(value: "")
@@ -24,9 +24,9 @@ class FriendRequestViewModel: BaseViewModel {
     }
     
     init(
-        friendRepository: FriendRepositoryProtocol
+        friendService: FriendServiceProtocol
     ) {
-        self.friendRepository = friendRepository
+        self.friendService = friendService
         super.init()
     }
     
@@ -42,7 +42,7 @@ class FriendRequestViewModel: BaseViewModel {
             .subscribe(onNext: {
                 let requestList = self.input.userTextField.value.components(separatedBy: "#")
                 
-                self.friendRepository.requestFriend(RequestFriend(name: requestList[0], code: requestList[1])) { response, _ in
+                self.friendService.requestFriend(RequestFriend(name: requestList[0], code: requestList[1])) { response, _ in
                     
                     guard let response = response else {
                         return

@@ -16,7 +16,7 @@ class RegisterServerViewModel: BaseViewModel {
     
     var isPrivate: Bool
     var icon: UIImage?
-    let serverRepository: ServerRepositoryProtocol
+    let serverService: ServerServiceProtocol
     
     struct Input {
         let tapUploadButton = PublishSubject<Void>()
@@ -29,9 +29,9 @@ class RegisterServerViewModel: BaseViewModel {
         let goToInvitation = PublishRelay<Int>()
     }
     
-    init(isPrivate: Bool, serverRepository: ServerRepositoryProtocol) {
+    init(isPrivate: Bool,             serverService: ServerServiceProtocol) {
         self.isPrivate = isPrivate
-        self.serverRepository = serverRepository
+        self.serverService =             serverService
     }
     
     override func bind() {
@@ -55,7 +55,7 @@ class RegisterServerViewModel: BaseViewModel {
     }
     
     func createServer(request: ServerRequest) {
-        serverRepository.createServer(request) { server, error in
+        serverService.createServer(request) { server, error in
             guard let server = server else {
                 return
             }

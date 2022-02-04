@@ -13,7 +13,7 @@ class SignInViewModel: BaseViewModel {
     let output = Output()
     
     let userDefaults: UserDefaultsUtil
-    let userRepository: UserRepositoryProtocol
+    let userService: UserServiceProtocol
     
     struct Input {
         let tapLoginButton = PublishSubject<Void>()
@@ -29,10 +29,10 @@ class SignInViewModel: BaseViewModel {
     
     init(
         userDefaults: UserDefaultsUtil,
-        userRepository: UserRepositoryProtocol
+        userService: UserServiceProtocol
     ) {
         self.userDefaults = userDefaults
-        self.userRepository = userRepository
+        self.userService = userService
         super.init()
     }
     
@@ -61,7 +61,7 @@ class SignInViewModel: BaseViewModel {
     }
     
     private func signIn(request: SignInRequest) {
-        self.userRepository.signIn(request) { response, error in
+        self.userService.signIn(request) { response, error in
             if error == nil {
                 
                 guard let response = response else {
@@ -79,7 +79,7 @@ class SignInViewModel: BaseViewModel {
     }
     
     private func fetchUserInfo() {
-        self.userRepository.fetchUserInfo { user, _ in
+        self.userService.fetchUserInfo { user, _ in
             
             guard let user = user else {
                 return

@@ -12,7 +12,7 @@ class FriendListViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     
-    let friendRepository: FriendRepository
+    let friendService: FriendService
     
     struct Input {
         let tapRequestButton = PublishSubject<Void>()
@@ -28,15 +28,15 @@ class FriendListViewModel: BaseViewModel {
         let goToRequest = PublishRelay<Void>()
     }
     
-    init(friendRepository: FriendRepository) {
-        self.friendRepository = friendRepository
+    init(friendService: FriendService) {
+        self.friendService = friendService
         super.init()
     }
     
     func fetchFriend() {
         self.output.showLoading.accept(true)
         
-        self.friendRepository.fetchFriend { friends, _ in
+        self.friendService.fetchFriend { friends, _ in
             guard let friends = friends else {
                 return
             }
@@ -63,7 +63,7 @@ class FriendListViewModel: BaseViewModel {
         self.input.tapRejectButton
             .asDriver(onErrorJustReturn: Friend.init())
             .drive(onNext: { friend in
-                self.friendRepository.deleteFriend(friend.id) { response, error in
+                self.friendService.deleteFriend(friend.id) { response, error in
                     
                     guard let response = response else {
                         return
@@ -81,7 +81,7 @@ class FriendListViewModel: BaseViewModel {
         self.input.tapAcceptButton
             .asDriver(onErrorJustReturn: Friend.init())
             .drive(onNext: { friend in
-                self.friendRepository.acceptFriend(friend.id) { response, _ in
+                self.friendService.acceptFriend(friend.id) { response, _ in
                     guard let response = response else {
                         return
                     }

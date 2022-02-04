@@ -34,6 +34,18 @@ struct Friend: Codable, Equatable, IdentifiableType {
         self.profileImage = nil
         self.state = FriendState.none
     }
+    
+    init(     id: Int,
+              name: String,
+              code: String,
+              profileImage: String?,
+              state: FriendState) {
+        self.id = id
+        self.code = code
+        self.name = name
+        self.profileImage = profileImage
+        self.state = state
+    }
 }
 
 struct FriendListResponse: Codable {

@@ -20,7 +20,7 @@ class EditServerInfoViewController: BaseViewController {
     
     init(server: Server) {
         self.server = server
-        self.viewModel = EditServerInfoViewModel(server: server, serverRepository: ServerRepository())
+        self.viewModel = EditServerInfoViewModel(server: server, ServerService: ServerService())
         super.init(nibName: nil, bundle: nil)
     }
     

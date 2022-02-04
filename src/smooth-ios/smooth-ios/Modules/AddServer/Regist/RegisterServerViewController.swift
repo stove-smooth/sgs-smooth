@@ -21,7 +21,7 @@ class RegisterServerViewController: BaseViewController {
     init(isPrivate: Bool) {
         self.viewModel = RegisterServerViewModel(
             isPrivate: isPrivate,
-            serverRepository: ServerRepository()
+            serverService: ServerService()
         )
         self.userDefault = UserDefaultsUtil()
         

@@ -2,18 +2,18 @@
 //  ChannelReorderViewModel.swift
 //  smooth-ios
 //
-//  Created by 김두리 on 2022/02/01.
+//  Created by 김두리 on 2022/02/04.
 //
 
 import RxSwift
 import RxCocoa
 
-class CategoryReorderViewModel: BaseViewModel {
+class ChannelReorderViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
 
     let categories: [Category]
-    let categoryRepository: CategoryRepositoryProtocol
+    let channelService: ChannelServiceProtocol
     
     struct Input {
         let inputMoveIndex = PublishSubject<[Int]>()
@@ -24,10 +24,10 @@ class CategoryReorderViewModel: BaseViewModel {
     
     init(
         categories: [Category],
-        categoryRepository: CategoryRepositoryProtocol
+        channelService: ChannelServiceProtocol
     ) {
         self.categories = categories
-        self.categoryRepository = categoryRepository
+        self.channelService = channelService
         super.init()
     }
     
@@ -36,14 +36,15 @@ class CategoryReorderViewModel: BaseViewModel {
             .bind(onNext: { indexs in
                 let originId = indexs[0]
                 let nextId = indexs[1]
+                let categoryId = indexs[2]
                 
-                self.updateLocation(originId: originId, nextId: nextId)
+                self.updateLocation(originId: originId, nextId: nextId, categoryId: categoryId)
             }).disposed(by: disposeBag)
     }
     
-    private func updateLocation(originId: Int, nextId: Int) {
+    private func updateLocation(originId: Int, nextId: Int, categoryId: Int) {
         self.showLoading.accept(true)
-        categoryRepository.updateLocation(originId: originId, nextId: nextId) {
+        channelService.updateLocation(originId: originId, nextId: nextId, categoryId: categoryId) {
             response, error in
             guard let response = response else {
                 return

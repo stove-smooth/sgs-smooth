@@ -31,7 +31,7 @@ class ServerInfoViewController: BaseViewController, PanModalPresentable {
         self.viewModel = ServerInfoViewModel(
             server: server,
             member: member,
-            serverRepository: ServerRepository()
+            serverService: ServerService()
         )
         
         super.init(nibName: nil, bundle: nil)
@@ -78,7 +78,7 @@ class ServerInfoViewController: BaseViewController, PanModalPresentable {
             .asDriver(onErrorJustReturn: ())
             .drive(onNext: {
                 self.dismiss(animated: true, completion: nil)
-                self.coordinator?.goToMenu()
+//                self.coordinator?.goToMenu()
             })
             .disposed(by: disposeBag)
         

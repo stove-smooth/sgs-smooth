@@ -26,7 +26,7 @@ class ServerInviteListViewController: BaseViewController {
     
     init(server: Server) {
         self.server = server
-        self.viewModel = ServerInviteListViewModel(server: server, serverRepository: ServerRepository())
+        self.viewModel = ServerInviteListViewModel(server: server, serverService: ServerService())
         super.init(nibName: nil, bundle: nil)
     }
     

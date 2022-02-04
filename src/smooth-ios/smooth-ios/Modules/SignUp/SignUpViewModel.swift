@@ -13,7 +13,7 @@ class SignUpViewModel: BaseViewModel {
     let output = Output()
     
     let userDefaults: UserDefaultsUtil
-    let userRepository: UserRepositoryProtocol
+    let userService: UserServiceProtocol
     
     struct Input {
         let emailTextField = BehaviorRelay<String>(value: "")
@@ -26,10 +26,10 @@ class SignUpViewModel: BaseViewModel {
     
     init(
         userDefaults: UserDefaultsUtil,
-        userRepository: UserRepositoryProtocol
+        userService: UserServiceProtocol
     ) {
         self.userDefaults = userDefaults
-        self.userRepository = userRepository
+        self.userService = userService
         super.init()
     }
     
@@ -49,7 +49,7 @@ class SignUpViewModel: BaseViewModel {
     }
     
     private func sendMail(request: SendMailRequest) {
-        self.userRepository.sendMail(request) { response,_ in
+        self.userService.sendMail(request) { response,_ in
             self.output.goToVerifyCode.accept(())
         }
         

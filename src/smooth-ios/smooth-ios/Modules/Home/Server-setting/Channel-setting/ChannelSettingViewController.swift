@@ -28,7 +28,7 @@ class ChannelSettingViewContrller: BaseViewController, UIScrollViewDelegate {
         self.server = server
         self.viewModel = ChannelSettingViewModel(
             server: server,
-            serverRepository: ServerRepository())
+            serverService: ServerService())
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -97,12 +97,8 @@ class ChannelSettingViewContrller: BaseViewController, UIScrollViewDelegate {
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: ServerSettingCell.identifier, for: indexPath)
                         as? ServerSettingCell else { return BaseTableViewCell() }
                 
-                switch item.type {
-                case .text:
-                    cell.bind(image: UIImage(named: "Channel+text")!, title: item.name)
-                case .voice:
-                    cell.bind(image: UIImage(named: "Channel+voice")!, title: item.name)
-                }
+                cell.bind(image: UIImage(named: "Channel+\(item.type.rawValue.lowercased())")!,
+                          title: item.name)
                 
                 return cell
             }, titleForHeaderInSection: { dataSource, index in
@@ -117,17 +113,14 @@ class ChannelSettingViewContrller: BaseViewController, UIScrollViewDelegate {
             style: .actionSheet,
             actions: [
                 .action(title: "카테고리", style: .default),
-                .action(title: "채팅 채널", style: .default),
-                .action(title: "음성 채널", style: .default),
+                .action(title: "채널", style: .default),
                 .action(title: "취소", style: .cancel)
             ]).subscribe(onNext: { index in
                 switch index {
                 case 0:
                     self.coordinator?.goToReorderFromCategory(categories: self.viewModel.model.categories)
                 case 1:
-                    break
-                case 2:
-                    break
+                    self.coordinator?.goToReorderFromChannel(categories: self.viewModel.model.categories)
                 default:
                     break
                 }

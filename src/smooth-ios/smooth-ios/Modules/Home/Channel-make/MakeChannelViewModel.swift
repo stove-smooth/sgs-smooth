@@ -12,12 +12,12 @@ class MakeChannelViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     
-    let channelRepository: ChannelRepositoryProtocol
+    let channelService: ChannelServiceProtocol
     let categoryId: Int
     
     struct Input {
         let channelNameInput = BehaviorRelay<String>(value: "")
-        let isChat = BehaviorRelay<Bool>(value: false)
+        let isChat = BehaviorRelay<Bool>(value: true)
         let isPublic = BehaviorRelay<Bool>(value: false)
         let tapMakeButton = PublishSubject<Void>()
     }
@@ -28,10 +28,10 @@ class MakeChannelViewModel: BaseViewModel {
     
     init(
         categoryId: Int,
-        channelRepository: ChannelRepositoryProtocol
+        channelService: ChannelServiceProtocol
     ) {
         self.categoryId = categoryId
-        self.channelRepository = channelRepository
+        self.channelService = channelService
         super.init()
     }
     
@@ -53,7 +53,7 @@ class MakeChannelViewModel: BaseViewModel {
     }
     
     private func createChannel(request: ChannelRequest) {
-        channelRepository.createChannel(request: request) {
+        channelService.createChannel(request: request) {
          response, error in
             if (error?.response != nil) {
                 let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)

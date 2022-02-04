@@ -12,7 +12,7 @@ class MakeServerViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     
-    let channelRepository: ChannelRepositoryProtocol
+    let channelService: ChannelServiceProtocol
     
     struct Input {
         let tapPrivateButton = PublishSubject<Void>()
@@ -23,9 +23,9 @@ class MakeServerViewModel: BaseViewModel {
     }
     
     init(
-        channelRepository: ChannelRepositoryProtocol
+        channelService: ChannelServiceProtocol
     ) {
-        self.channelRepository = channelRepository
+        self.channelService = channelService
         super.init()
     }
     

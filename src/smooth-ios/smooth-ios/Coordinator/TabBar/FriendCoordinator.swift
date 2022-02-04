@@ -41,7 +41,6 @@ class FriendCoordinator: NSObject, Coordinator {
     
     func showFriendInfoModal(friend: Friend) {
         let friendInfoVC = FriendInfoViewController.instance(friend: friend)
-        friendInfoVC.coordinator = self
         
         navigationController.presentPanModal(friendInfoVC)
     }

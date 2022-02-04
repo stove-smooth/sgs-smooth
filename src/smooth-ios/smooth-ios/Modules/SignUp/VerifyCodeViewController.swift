@@ -13,7 +13,7 @@ class VerifyCodeViewController: BaseViewController {
     private let verifyCodeView = VerifyCodeView()
     
     private let viewModel = VerifyCodeViewModel(
-        userRepository: UserRepository()
+        userService: UserService()
     )
     
     

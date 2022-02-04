@@ -19,7 +19,7 @@ class ServerSettingViewController: BaseViewController {
     
     init(server: Server) {
         self.server = server
-        self.viewModel = ServerSettingViewModel(server: server, serverRepository: ServerRepository())
+        self.viewModel = ServerSettingViewModel(server: server, serverService: ServerService())
         super.init(nibName: nil, bundle: nil)
     }
     

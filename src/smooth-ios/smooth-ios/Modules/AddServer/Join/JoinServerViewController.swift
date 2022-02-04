@@ -14,7 +14,7 @@ class JoinServerViewController: BaseViewController {
     private let viewModel: JoinServerViewModel
     
     init() {
-        self.viewModel = JoinServerViewModel(serverRepository: ServerRepository())
+        self.viewModel = JoinServerViewModel(serverService: ServerService())
         super.init(nibName: nil, bundle: nil)
     }
     

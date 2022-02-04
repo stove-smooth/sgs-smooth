@@ -84,7 +84,11 @@ struct MockLinkItem: LinkItem {
     let thumbnailImage: UIImage
 }
 
-internal struct MockMessage: MessageType {
+internal struct MockMessage: MessageType, Equatable {
+    static func == (lhs: MockMessage, rhs: MockMessage) -> Bool {
+        return lhs.messageId == rhs.messageId
+    }
+    
 
     var messageId: String
     var sender: SenderType {
@@ -251,7 +255,7 @@ final internal class SampleData {
         case "Font4":
             mutableAttributedString.addAttributes([NSAttributedString.Key.font: UIFont.italicSystemFont(ofSize: UIFont.systemFontSize)], range: range)
         case "Color":
-            mutableAttributedString.addAttributes([NSAttributedString.Key.foregroundColor: UIColor.red], range: range)
+            mutableAttributedString.addAttributes([NSAttributedString.Key.foregroundColor: UIColor.red!], range: range)
         case "Combo":
             let msg9String = "Use .attributedText() to add bold, italic, colored text and more..."
             let msg9Text = NSString(string: msg9String)
@@ -261,7 +265,7 @@ final internal class SampleData {
             msg9AttributedText.addAttributes([NSAttributedString.Key.font: UIFont.monospacedDigitSystemFont(ofSize: UIFont.systemFontSize, weight: UIFont.Weight.bold)], range: msg9Text.range(of: ".attributedText()"))
             msg9AttributedText.addAttributes([NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: UIFont.systemFontSize)], range: msg9Text.range(of: "bold"))
             msg9AttributedText.addAttributes([NSAttributedString.Key.font: UIFont.italicSystemFont(ofSize: UIFont.systemFontSize)], range: msg9Text.range(of: "italic"))
-            msg9AttributedText.addAttributes([NSAttributedString.Key.foregroundColor: UIColor.red], range: msg9Text.range(of: "colored"))
+            msg9AttributedText.addAttributes([NSAttributedString.Key.foregroundColor: UIColor.red!], range: msg9Text.range(of: "colored"))
             mutableAttributedString = msg9AttributedText
         default:
             fatalError("Unrecognized attribute for mock message")
@@ -394,9 +398,9 @@ final internal class SampleData {
         case "000001":
             return Avatar(image: UIImage(named: "AppIcon"), initials: initials)
         case "000002":
-            return Avatar(image: UIImage(named: "AppIcon"), initials: initials)
+            return Avatar(image: UIImage(named: "Server+Join"), initials: initials)
         case "000003":
-            return Avatar(image: UIImage(named: "AppIcon"), initials: initials)
+            return Avatar(image: UIImage(named: "Server+Private"), initials: initials)
         case "000000":
             return Avatar(image: nil, initials: "SS")
         default:

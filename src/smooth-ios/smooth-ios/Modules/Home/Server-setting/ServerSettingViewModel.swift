@@ -12,7 +12,7 @@ class ServerSettingViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     
-    let serverRepository: ServerRepositoryProtocol
+    let serverService: ServerServiceProtocol
     let server: Server
     
     struct Input {
@@ -25,10 +25,10 @@ class ServerSettingViewModel: BaseViewModel {
     
     init(
         server: Server,
-        serverRepository: ServerRepositoryProtocol
+        serverService: ServerServiceProtocol
     ) {
         self.server = server
-        self.serverRepository = serverRepository
+        self.serverService = serverService
         super.init()
     }
     

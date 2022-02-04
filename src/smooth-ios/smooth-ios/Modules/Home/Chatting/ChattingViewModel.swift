@@ -14,10 +14,12 @@ class ChattingViewModel: BaseViewModel {
     let output = Output()
     var model = Model()
     
-    let chattingRepository: ChattingRepository
+    let chattingService: ChattingService
     
     struct Input {
         let fetch = PublishSubject<Channel>()
+        let page = BehaviorRelay<Int>(value: 0)
+        let size = BehaviorRelay<Int>(value: 20)
     }
     
     struct Output {
@@ -32,9 +34,9 @@ class ChattingViewModel: BaseViewModel {
     }
     
     init(
-        chattingRepository: ChattingRepository
+        chattingService: ChattingService
     ) {
-        self.chattingRepository = chattingRepository
+        self.chattingService = chattingService
         super.init()
     }
     
@@ -47,7 +49,11 @@ class ChattingViewModel: BaseViewModel {
     }
     
     private func fetchMessgae(chattingId: Int) {
-        chattingRepository.fetchMessgae(chattingId) { response, error in
+        
+        let page = self.input.page.value
+        let size = self.input.size.value
+        
+        chattingService.fetchMessgae(chattingId, page: page, size: size) { response, error in
             if (error?.response != nil) {
                 let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
                 self.showErrorMessage.accept(body.message)

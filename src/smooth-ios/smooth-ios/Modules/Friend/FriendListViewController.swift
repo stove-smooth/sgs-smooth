@@ -20,7 +20,7 @@ class FriendListViewController: BaseViewController, CoordinatorContext {
     var dataSource: friendDataSource!
     
     init() {
-        self.viewModel = FriendListViewModel(friendRepository: FriendRepository())
+        self.viewModel = FriendListViewModel(friendService: FriendService())
         super.init(nibName: nil, bundle: nil)
     }
     

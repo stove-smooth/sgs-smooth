@@ -1,5 +1,5 @@
 //
-//  FriendRepository.swift
+//  FriendService.swift
 //  smooth-ios
 //
 //  Created by durikim-MN on 2022/01/14.
@@ -8,7 +8,7 @@
 import Foundation
 import Moya
 
-protocol FriendRepositoryProtocol {
+protocol FriendServiceProtocol {
     func fetchFriend(_ completion: @escaping ([FriendSection]?, Error?) -> Void)
     func deleteFriend(_ request: Int, _ completion: @escaping (DefaultResponse?, Error?) -> Void)
     func requestFriend(_ request: RequestFriend, _ completion: @escaping (DefaultResponse?, Error?) -> Void)
@@ -16,7 +16,7 @@ protocol FriendRepositoryProtocol {
     func acceptFriend(_ request: Int, _ completion: @escaping (DefaultResponse?, Error?) -> Void)
 }
 
-struct FriendRepository: Networkable, FriendRepositoryProtocol {
+struct FriendService: Networkable, FriendServiceProtocol {
     typealias Target = FriendTarget
     
     func fetchFriend(_ completion: @escaping ([FriendSection]?, Error?) -> Void) {
