@@ -1,49 +1,20 @@
 import store from "@/store/index";
 export default function Participant(name) {
-  console.log("participant생성?".name);
   this.name = name;
-  //내가지움 var container = document.createElement("div");
-  /* container.className = isPresentMainParticipant()
-    ? "participant"
-    : "participant main";
 
-  container.id = name; */
-  //var span = document.createElement("span");
+  Object.defineProperty(this, "rtcPeer", { writable: true });
+
   var video = document.createElement("video");
   var rtcPeer;
-  //container.appendChild(video);
-  //container.appendChild(span);
-  //container.onclick = switchContainerClass;
-  //document.getElementById("participants").appendChild(container);
-  //span.appendChild(document.createTextNode(name));
+
   video.id = "video-" + name;
   video.autoplay = true;
   video.controls = false;
   var sdp;
   console.log("무의미", rtcPeer, sdp);
-  /* this.getElement = function () {
-    return container;
-  }; */
   this.getVideoElement = function () {
     return video;
   };
-  /* function switchContainerClass() {
-    console.log("switchContainerClass", container.className);
-    if (container.className === "participant") {
-      var elements = Array.prototype.slice.call(
-        document.getElementsByClassName("participant main")
-      );
-      elements.forEach(function (item) {
-        item.className = "participant";
-      });
-      container.className = "participant main";
-    } else {
-      container.className = "participant";
-    }
-  } */
-  /* function isPresentMainParticipant() {
-    return document.getElementsByClassName("participant main").length != 0;
-  } */
   this.offerToReceiveVideo = function (error, offerSdp, wp) {
     console.log("무의미", wp);
     if (error) return console.error("sdp offer error");
@@ -62,8 +33,6 @@ export default function Participant(name) {
     };
     store.dispatch("voiceRoom/sendMessage", message);
   };
-
-  Object.defineProperty(this, "rtcPeer", { writable: true });
 
   this.dispose = function () {
     console.log("Disposing participant " + this.name);

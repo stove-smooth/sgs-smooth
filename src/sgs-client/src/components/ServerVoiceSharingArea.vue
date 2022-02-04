@@ -130,7 +130,7 @@ export default {
       };
       let voiceRoomInfo = {
         myName: this.name,
-        roomNAme: this.room,
+        roomName: this.room,
       };
       this.sendMessage(message);
       this.setVoiceInfo(voiceRoomInfo);

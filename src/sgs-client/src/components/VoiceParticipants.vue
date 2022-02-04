@@ -22,8 +22,6 @@ export default {
     },
   },
   mounted() {
-    console.log("원본participants", this.participant);
-    console.log("video", this.video);
     this.video.classList.add("video-insert");
     document.getElementById(this.containerId).appendChild(this.video);
     //let parsedParticipants = JSON.stringify(this.participants);

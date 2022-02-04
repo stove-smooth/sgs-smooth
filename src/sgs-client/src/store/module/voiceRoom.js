@@ -22,19 +22,11 @@ const voiceRoom = {
       state.roomName = meetingInfo.roomName;
     },
     addParticipant(state, { name, participant }) {
-      /**베껴온거라 뭔지 잘 모름. */
       if (state.participants === null) {
         state.participants = {};
       }
-      // 객체 변경 감지를 위한 추가법
-      //console.log("add", participant);
       //state.participants[name] = participant;
       Vue.set(state.participants, name, participant);
-
-      //state.participants[name] = participant
-      // 디버깅
-      /* console.log('participant added', state.participants); */
-      // 임시코드 종료
     },
     disposeParticipant(state, participantName) {
       Vue.delete(state.participants, participantName);
@@ -48,15 +40,13 @@ const voiceRoom = {
       };
       context.state.ws.onmessage = function (message) {
         let parsedMessage = JSON.parse(message.data);
-        // console.info('Received message: ' + message.data)
-        /* context.commit('WS_ONMESSAGE', parsedMessage); */
+        console.info("Received message: " + message.data);
         context.dispatch("onServerMessage", parsedMessage);
         return false;
       };
       return false;
     },
     onServerMessage(context, message) {
-      console.log("server 에서옴", message);
       switch (message.id) {
         case "existingParticipants": {
           context.dispatch("onExistingParticipants", message);
@@ -104,7 +94,9 @@ const voiceRoom = {
           },
         },
       };
-
+      console.log(
+        context.state.myName + " registered in room " + context.state.roomName
+      );
       let participant = new Participant(context.state.myName);
 
       var video = participant.getVideoElement();
@@ -125,8 +117,6 @@ const voiceRoom = {
         }
       );
       const myName = context.state.myName;
-      console.log("내 video", myName);
-      console.log("내 video", participant);
       context.commit("addParticipant", { name: myName, participant });
       msg.members.forEach(function (sender) {
         context.dispatch("receiveVideo", sender);
@@ -136,7 +126,7 @@ const voiceRoom = {
     onNewParticipant(context, request) {
       context.dispatch("receiveVideo", request.userId);
     },
-    //case -3
+    //case -3 참가자가 방에서 나갔을때
     onParticipantLeft(context, request) {
       console.log("Participant " + request.userId + " left");
       var participant = context.state.participants[request.userId];
@@ -144,7 +134,6 @@ const voiceRoom = {
     },
     //case -4 SDP 정보 전송하여 응답 받음.
     receiveVideoResponse(context, result) {
-      console.log("사람들의 video response를 받음.", result);
       context.state.participants[result.userId].rtcPeer.processAnswer(
         result.sdpAnswer,
         function (error) {
@@ -160,6 +149,7 @@ const voiceRoom = {
     receiveVideo(context, sender) {
       var participant = new Participant(sender);
       var video = participant.getVideoElement();
+
       //추가
       var options = {
         remoteVideo: video,
@@ -172,11 +162,10 @@ const voiceRoom = {
           if (error) {
             return console.error(error);
           }
+
           this.generateOffer(participant.offerToReceiveVideo.bind(participant));
         }
       );
-      console.log("참가자 video", sender);
-      console.log("참가자 video", participant);
       context.commit("addParticipant", { name: sender, participant });
     },
     setVoiceInfo(context, meetingInfo) {
@@ -184,6 +173,7 @@ const voiceRoom = {
     },
     sendMessage(context, message) {
       let jsonMessage = JSON.stringify(message);
+      console.log("Sending message: " + jsonMessage);
       context.state.ws.send(jsonMessage);
     },
     leaveRoom(context) {
