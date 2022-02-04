@@ -13,7 +13,7 @@
       </div> -->
     <div id="container">
       <div id="wrapper">
-        re
+        <div>오잉{{ this.participants }}</div>
         <div id="join" class="animate join">
           <h1>Join a Room</h1>
           <form @submit.prevent="register()" accept-charset="UTF-8">
@@ -44,7 +44,11 @@
         </div>
         <div id="room" style="display: none">
           <h2 id="room-header"></h2>
-          <div id="participants"></div>
+          <voice-participants
+            v-for="voiceMember in voiceMembers"
+            :key="voiceMember.name"
+            :participant="voiceMember"
+          ></voice-participants>
           <input
             type="button"
             id="button-leave"
@@ -59,8 +63,10 @@
 
 <script>
 //import kurentoUtils from "kurento-utils";
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions, mapState } from "vuex";
+import VoiceParticipants from "./VoiceParticipants.vue";
 export default {
+  components: { VoiceParticipants },
   data() {
     return {
       //participants: {},
@@ -68,6 +74,10 @@ export default {
       room: "",
     };
   },
+  /* mounted() {
+    this.video.classList.add('video-insert');
+    document.getElementById(this.containerId).appendChild(this.video);
+  }, */
   created() {
     const url = "https://sig.yoloyolo.org/rtc";
     /* var ws = new SockJS("https://sig.yoloyolo.org/rtc", null, {
@@ -84,6 +94,18 @@ export default {
   computed: {
     //...mapState("utils", ["rtcSocketClient"]),
     ...mapGetters("user", ["getAccessToken"]),
+    ...mapState("voiceRoom", ["participants"]),
+    voiceMembers() {
+      if (this.participants) {
+        var participantList = [];
+        Object.keys(this.participants).forEach((key) => {
+          participantList.push(this.participants[key]);
+        });
+        return participantList;
+      } else {
+        return null;
+      }
+    },
   },
   methods: {
     ...mapActions("voiceRoom", [
@@ -108,7 +130,7 @@ export default {
       };
       let voiceRoomInfo = {
         myName: this.name,
-        roomNAme: this.room,
+        roomName: this.room,
       };
       this.sendMessage(message);
       this.setVoiceInfo(voiceRoomInfo);
