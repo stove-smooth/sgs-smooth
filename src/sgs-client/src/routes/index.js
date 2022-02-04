@@ -5,8 +5,6 @@ import RegisterPage from "../pages/RegisterPage.vue";
 import MyPage from "../pages/Mypage.vue";
 import NotFoundPage from "../pages/NotFoundPage.vue";
 import UserSettingPage from "../pages/UserSettingPage.vue";
-import ServerPage from "../pages/ServerPage.vue";
-import ServerWelcomePage from "../pages/ServerWelcomePage.vue";
 import PrivateDMPage from "../pages/PrivateDMPage.vue";
 import MainPage from "../pages/MainPage.vue";
 import InvitePage from "../pages/InvitePage.vue";
@@ -56,12 +54,14 @@ export const router = new VueRouter({
         {
           path: "channels/:serverid/:channelid",
           name: "ServerPage",
-          component: ServerPage,
+          component: () => import("../pages/ServerPage.vue"),
+          meta: { auth: true },
         },
         {
           path: "channels/:serverid",
           name: "ServerWelcomePage",
-          component: ServerWelcomePage,
+          component: () => import("../pages/ServerWelcomePage.vue"),
+          meta: { auth: true },
         },
       ],
     },
