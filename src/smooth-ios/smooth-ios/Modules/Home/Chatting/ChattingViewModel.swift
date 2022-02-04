@@ -18,6 +18,8 @@ class ChattingViewModel: BaseViewModel {
     
     struct Input {
         let fetch = PublishSubject<Channel>()
+        let page = BehaviorRelay<Int>(value: 0)
+        let size = BehaviorRelay<Int>(value: 20)
     }
     
     struct Output {
@@ -47,7 +49,11 @@ class ChattingViewModel: BaseViewModel {
     }
     
     private func fetchMessgae(chattingId: Int) {
-        chattingService.fetchMessgae(chattingId) { response, error in
+        
+        let page = self.input.page.value
+        let size = self.input.size.value
+        
+        chattingService.fetchMessgae(chattingId, page: page, size: size) { response, error in
             if (error?.response != nil) {
                 let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
                 self.showErrorMessage.accept(body.message)

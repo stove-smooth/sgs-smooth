@@ -9,7 +9,7 @@ import Foundation
 import Moya
 
 enum ChattingTarget {
-    case fetchMessgae(channelId: Int)
+    case fetchMessgae(channelId: Int, page: Int, size: Int)
 }
 
 extension ChattingTarget: BaseAPI, AccessTokenAuthorizable {
@@ -28,8 +28,12 @@ extension ChattingTarget: BaseAPI, AccessTokenAuthorizable {
     
     var task: Task {
         switch self {
-        case .fetchMessgae(let channelId):
-            return .requestParameters(parameters: ["ch_id": channelId], encoding: URLEncoding.queryString)
+        case .fetchMessgae(let channelId, let page, let size):
+            return .requestParameters(parameters: [
+                "ch_id": channelId,
+                "page": page,
+                "size": size
+            ], encoding: URLEncoding.queryString)
         }
     }
     

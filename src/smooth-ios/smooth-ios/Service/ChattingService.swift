@@ -9,15 +9,15 @@ import Foundation
 import Moya
 
 protocol ChattingServiceProtocol {
-    func fetchMessgae(_ channelId: Int, completion: @escaping ([Message]?, MoyaError?) -> Void)
+    func fetchMessgae(_ channelId: Int, page: Int, size: Int, _ completion: @escaping ([Message]?, MoyaError?) -> Void)
 }
 
 
 struct ChattingService: Networkable, ChattingServiceProtocol {
     typealias Target = ChattingTarget
     
-    func fetchMessgae(_ channelId: Int, completion: @escaping ([Message]?, MoyaError?) -> Void) {
-        makeProvider().request(.fetchMessgae(channelId: channelId)) {
+    func fetchMessgae(_ channelId: Int, page: Int, size: Int, _ completion: @escaping ([Message]?, MoyaError?) -> Void) {
+        makeProvider().request(.fetchMessgae(channelId: channelId, page: page, size: size)) {
             result in
             switch BaseResponse<[Message]>.processResponse(result) {
             case .success(let response):
