@@ -14,6 +14,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.retry.support.RetryTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +27,11 @@ public class KafkaListenerConfig {
     private String bootstrapServers;
 
     private final String groupName = "chat-server-group";
+
+//    @Bean
+//    public RetryTemplate retryTemplate() {
+//
+//    }
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, DirectChat> kafkaListenerContainerFactoryForDirect() {

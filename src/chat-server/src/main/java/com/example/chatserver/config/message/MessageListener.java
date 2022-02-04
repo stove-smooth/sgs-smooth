@@ -20,8 +20,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.RetryableTopic;
+import org.springframework.kafka.retrytopic.TopicSuffixingStrategy;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -193,13 +197,14 @@ public class MessageListener {
             Map<Long, Boolean> readCheck = presenceClient.read(userIdResponse.getMembers());
             channelMessage.setRead(readCheck);
         }
-
+//
 //        RequestPushMessage request = RequestPushMessage
 //                .builder()
 //                .title("방이름")
 //                .body(msg.get("name") + ":" + msg.get("message")).build();
 //
 //        notificationClient.notificationTopics("/topic/group",request);
+
         ChannelMessage save = channelChatRepository.save(channelMessage);
         msg.put("id",save.getId());
         ObjectMapper mapper = new ObjectMapper();

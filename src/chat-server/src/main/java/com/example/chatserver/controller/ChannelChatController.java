@@ -78,7 +78,8 @@ public class ChannelChatController {
 
     @MessageMapping("/join-channel")
     public void sendState(@Payload LoginSessionRequest loginSessionRequest) {
-        presenceClient.changeState(loginSessionRequest);
+        tcpClientGateway.send(loginSessionRequest.toString());
+//        presenceClient.changeState(loginSessionRequest);
     }
 
     @GetMapping("/community")
@@ -89,7 +90,6 @@ public class ChannelChatController {
         return responseService.getDataResponse(channelChatService.findAllByPage(ch_id,page,size));
     }
 
-    // todo kafka
     @PostMapping("/channel/file")
     public void sendFile(@ModelAttribute FileUploadRequest fileUploadRequest) throws IOException {
         FileUploadResponse uploadResponse = channelChatService.fileUpload(fileUploadRequest);
