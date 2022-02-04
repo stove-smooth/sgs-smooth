@@ -5,6 +5,7 @@
 ---
 
 ## 2. 프로젝트 구조
+![architecture](./docs/architecture/architecture.png)
 
 ---
 
