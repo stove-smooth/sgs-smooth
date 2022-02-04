@@ -1,4 +1,4 @@
-package com.example.signalingserver.domain;
+package com.example.signalingserver.util;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

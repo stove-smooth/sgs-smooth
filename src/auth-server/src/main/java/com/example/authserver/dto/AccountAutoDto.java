@@ -18,6 +18,8 @@ import static com.fasterxml.jackson.annotation.JsonProperty.Access;
 @Builder
 public class AccountAutoDto {
 
+    private Long id;
+
     @NotBlank
     @Email
     private String email;
@@ -40,6 +42,7 @@ public class AccountAutoDto {
 
 
     public AccountAutoDto(User account) {
+        this.id = account.getId();
         this.email = account.getEmail();
         this.name = account.getName();
         this.code = account.getCode();
