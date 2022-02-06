@@ -1,48 +1,9 @@
 <template>
   <div class="voice-participant-sharing">
-    <!-- <div class="wrap">
-      <div class="scroll__wrap scrollbar-ghost">
-          <div class="scroll--element">Element1</div>
-          <div class="scroll--element">Element2</div>
-          <div class="scroll--element">Element3</div>
-          <div class="scroll--element">Element4</div>
-          <div class="scroll--element">Element5</div>
-          <div class="scroll--element">Element6</div>
-        </div>
-      
-      </div> -->
     <div id="container">
       <div id="wrapper">
         <div>오잉{{ this.participants }}</div>
-        <div id="join" class="animate join">
-          <h1>Join a Room</h1>
-          <form @submit.prevent="register()" accept-charset="UTF-8">
-            <p>
-              <input
-                type="text"
-                name="name"
-                value=""
-                id="name"
-                placeholder="Username"
-                required
-              />
-            </p>
-            <p>
-              <input
-                type="text"
-                name="room"
-                value=""
-                id="roomName"
-                placeholder="Room"
-                required
-              />
-            </p>
-            <p class="submit">
-              <input type="submit" name="commit" value="Join!" />
-            </p>
-          </form>
-        </div>
-        <div id="room" style="display: none">
+        <div id="room">
           <h2 id="room-header"></h2>
           <voice-participants
             v-for="voiceMember in voiceMembers"
@@ -62,40 +23,31 @@
 </template>
 
 <script>
-//import kurentoUtils from "kurento-utils";
 import { mapGetters, mapActions, mapState } from "vuex";
 import VoiceParticipants from "./VoiceParticipants.vue";
 export default {
   components: { VoiceParticipants },
-  data() {
-    return {
-      //participants: {},
-      name: "",
-      room: "",
+  async created() {
+    console.log("servervoicesharingarea 접근");
+    //const rand_0_9 = Math.floor(Math.random() * 10);
+    let message = {
+      id: "joinRoom",
+      token: this.getAccessToken,
+      userId: this.getUserId,
+      roomId: this.$route.params.channelid,
     };
-  },
-  /* mounted() {
-    this.video.classList.add('video-insert');
-    document.getElementById(this.containerId).appendChild(this.video);
-  }, */
-  created() {
-    const url = "https://sig.yoloyolo.org/rtc";
-    /* var ws = new SockJS("https://sig.yoloyolo.org/rtc", null, {
-      transports: ["websocket", "xhr-streaming", "xhr-polling"],
-    }); */
-    this.wsInit(url); //ws 전역 등록.
-    //var participants = {};
-    //var name; =>vdata 등록.
-
-    window.onbeforeunload = function () {
-      console.log("onbeforeunload");
+    let voiceRoomInfo = {
+      myName: this.getUserId,
+      roomName: this.$route.params.channelid,
     };
+    this.sendMessage(message);
+    this.setVoiceInfo(voiceRoomInfo);
   },
   computed: {
-    //...mapState("utils", ["rtcSocketClient"]),
-    ...mapGetters("user", ["getAccessToken"]),
+    ...mapGetters("user", ["getAccessToken", "getUserId"]),
     ...mapState("voiceRoom", ["participants"]),
     voiceMembers() {
+      //참여자 감지
       if (this.participants) {
         var participantList = [];
         Object.keys(this.participants).forEach((key) => {
@@ -108,38 +60,10 @@ export default {
     },
   },
   methods: {
-    ...mapActions("voiceRoom", [
-      "wsInit",
-      "setVoiceInfo",
-      "sendMessage",
-      "leaveRoom",
-    ]),
-    register() {
-      this.name = document.getElementById("name").value;
-      this.room = document.getElementById("roomName").value;
-      console.log("name,room", this.name, this.room);
-      document.getElementById("room-header").innerText = "ROOM " + this.room;
-      document.getElementById("join").style.display = "none";
-      document.getElementById("room").style.display = "block";
-
-      let message = {
-        id: "joinRoom",
-        token: this.getAccessToken,
-        userId: this.name,
-        roomId: this.room,
-      };
-      let voiceRoomInfo = {
-        myName: this.name,
-        roomName: this.room,
-      };
-      this.sendMessage(message);
-      this.setVoiceInfo(voiceRoomInfo);
-    },
+    ...mapActions("voiceRoom", ["setVoiceInfo", "sendMessage", "leaveRoom"]),
     leaveChannel() {
       this.sendMessage({ id: "leaveRoom" });
       console.log("leaveRoom");
-      document.getElementById("join").style.display = "block";
-      document.getElementById("room").style.display = "none";
       this.leaveRoom();
     },
   },

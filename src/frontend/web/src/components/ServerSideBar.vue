@@ -101,7 +101,7 @@
                   >
                     <div
                       class="channel-main-content"
-                      @click="el.type === 'TEXT' && routeChannel(el.id)"
+                      @click="routeChannel(el.id, el.type)"
                     >
                       <div
                         v-if="el.type === 'TEXT'"
@@ -169,7 +169,7 @@
 
 <script>
 import draggable from "vuedraggable";
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 import { moveCategory, moveChannel } from "../api/index.js";
 export default {
   components: {
@@ -185,6 +185,10 @@ export default {
   },
   computed: {
     ...mapState("server", ["openServerPopout", "communityInfo"]),
+    ...mapState("voiceRoom", ["wsOpen"]),
+  },
+  mounted() {
+    window.addEventListener("click", this.onClick);
   },
   methods: {
     ...mapMutations("server", [
@@ -193,6 +197,7 @@ export default {
       "setCategorySettingModal",
       "setChannelSettingModal",
     ]),
+    ...mapActions("voiceRoom", ["wsInit", "sendMessage", "leaveRoom"]),
     log: async function (evt) {
       if (evt.moved) {
         if (evt.moved.element.channels) {
@@ -341,13 +346,19 @@ export default {
         this.setOpenServerPopout(serverInfo);
       }
     },
-    routeChannel(id) {
+    async routeChannel(id, type) {
+      console.log("type", type);
+      if (type == "VOICE") {
+        if (this.wsOpen) {
+          await this.sendMessage({ id: "leaveRoom" });
+          await this.leaveRoom();
+        }
+        const url = "https://sig.yoloyolo.org/rtc";
+        this.wsInit(url); //ws 전역 등록.
+      }
       this.selected = id;
       this.$router.push("/channels/" + this.communityInfo.id + "/" + id);
     },
-  },
-  mounted() {
-    window.addEventListener("click", this.onClick);
   },
 };
 </script>

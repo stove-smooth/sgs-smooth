@@ -24,17 +24,6 @@ export default {
   mounted() {
     this.video.classList.add("video-insert");
     document.getElementById(this.containerId).appendChild(this.video);
-    //let parsedParticipants = JSON.stringify(this.participants);
-    /* for (let key in this.participants) {
-      this.participants[key].getVideoElement().classList.add("video-insert"); //-> 키값, 모든 value 출력
-      document
-        .getElementById("main-video-container")
-        .appendChild(this.mainVideo);
-    } */
-    /* console.log("participants", parsedParticipants);
-    for (var i = 0; i < parsedParticipants.length; i++) {
-      console.log("participants", parsedParticipants[i]);
-    } */
   },
 };
 </script>

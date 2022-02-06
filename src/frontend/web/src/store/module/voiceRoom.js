@@ -6,6 +6,7 @@ const voiceRoom = {
   namespaced: true,
   state: {
     ws: null,
+    wsOpen: false,
     myName: null,
     roomName: null,
     participants: null,
@@ -17,9 +18,13 @@ const voiceRoom = {
       });
       return false;
     },
-    setVoiceInfo(state, meetingInfo) {
-      state.myName = meetingInfo.myName;
-      state.roomName = meetingInfo.roomName;
+    setWsOpen(state, wsOpen) {
+      console.log("setWsOpen", wsOpen);
+      state.wsOpen = wsOpen;
+    },
+    setVoiceInfo(state, voiceInfo) {
+      state.myName = voiceInfo.myName;
+      state.roomName = voiceInfo.roomName;
     },
     addParticipant(state, { name, participant }) {
       if (state.participants === null) {
@@ -37,6 +42,7 @@ const voiceRoom = {
       context.commit("WS_INIT", url);
       context.state.ws.onopen = function () {
         console.log("connected");
+        context.commit("setWsOpen", true);
       };
       context.state.ws.onmessage = function (message) {
         let parsedMessage = JSON.parse(message.data);
@@ -168,19 +174,21 @@ const voiceRoom = {
       );
       context.commit("addParticipant", { name: sender, participant });
     },
-    setVoiceInfo(context, meetingInfo) {
-      context.commit("setVoiceInfo", meetingInfo);
+    setVoiceInfo(context, voiceInfo) {
+      console.log("voice방 정보 저장");
+      context.commit("setVoiceInfo", voiceInfo);
     },
     sendMessage(context, message) {
       let jsonMessage = JSON.stringify(message);
       console.log("Sending message: " + jsonMessage);
       context.state.ws.send(jsonMessage);
     },
-    leaveRoom(context) {
+    async leaveRoom(context) {
       for (var key in context.state.participants) {
         context.state.participants[key].dispose();
       }
       context.state.ws.close();
+      await context.commit("setWsOpen", false);
     },
   },
 };

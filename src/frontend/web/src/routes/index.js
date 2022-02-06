@@ -8,6 +8,8 @@ import UserSettingPage from "../pages/UserSettingPage.vue";
 import PrivateDMPage from "../pages/PrivateDMPage.vue";
 import MainPage from "../pages/MainPage.vue";
 import InvitePage from "../pages/InvitePage.vue";
+import ServerWelcomePage from "../pages/ServerWelcomePage.vue";
+import ServerPage from "../pages/ServerPage.vue";
 Vue.use(VueRouter);
 
 export const router = new VueRouter({
@@ -54,13 +56,13 @@ export const router = new VueRouter({
         {
           path: "channels/:serverid/:channelid",
           name: "ServerPage",
-          component: () => import("../pages/ServerPage.vue"),
+          component: ServerPage,
           meta: { auth: true },
         },
         {
           path: "channels/:serverid",
           name: "ServerWelcomePage",
-          component: () => import("../pages/ServerWelcomePage.vue"),
+          component: ServerWelcomePage,
           meta: { auth: true },
         },
       ],

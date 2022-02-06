@@ -22,7 +22,7 @@ export default {
       }
     } else {
       if (this.$route.path == "/") {
-        this.$router.replace("/channels/@me");
+        //this.$router.replace("/channels/@me");
       }
     }
   },
