@@ -17,3 +17,9 @@ struct Message: Codable {
     let parentName: String?
     let parentContent: String?
 }
+
+struct SocketMessage: Codable {
+    let content: String
+    let channelId: String
+    let accountId: String
+}
