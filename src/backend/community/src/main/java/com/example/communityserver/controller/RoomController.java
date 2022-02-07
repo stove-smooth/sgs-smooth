@@ -23,18 +23,6 @@ public class RoomController {
     private final ResponseService responseService;
 
     /**
-     * 1. 채팅방 리스트 가져오기
-     * 2. 채팅방 생성하기
-     * 3. 채팅방 정보 가져오기
-     * 4. 채팅방 이름 바꾸기
-     * 5. 채팅방 아이콘 바꾸기
-     * 6. 채팅방 초대장 만들기
-     * 7. 초대장으로 채팅방 들어오기
-     * 8. 채팅방에 초대하기
-     * 9. 채팅방에서 나가기(추방하기)
-     */
-
-    /**
      * 채팅방 리스트 가져오기
      */
     @GetMapping
@@ -150,6 +138,9 @@ public class RoomController {
         return responseService.getSuccessResponse();
     }
 
+    /**
+     * 연결해야될 시그널링 서버 어드레스 조회하기
+     */
     @GetMapping("{roomId}/address")
     public DataResponse<AddressResponse> getConnectAddress(
             @RequestHeader(ID) String userId,
@@ -158,5 +149,16 @@ public class RoomController {
         log.info("GET /community-server/room/{}/address", roomId);
         AddressResponse response = roomService.getConnectAddress(Long.parseLong(userId), roomId);
         return responseService.getDataResponse(response);
+    }
+
+    /**
+     * 채팅방에 속한 회원 아이디 찾기
+     */
+    @GetMapping("/feign/{roomId}/member-id")
+    public DataResponse<MemberListFeignResponse> getRoomMember(
+            @PathVariable Long roomId
+    ) {
+        log.info("GET /community-server/room/{}/member", roomId);
+        return responseService.getDataResponse(roomService.getCommunityMember(roomId));
     }
 }

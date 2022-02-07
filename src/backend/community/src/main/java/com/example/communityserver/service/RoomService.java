@@ -1,10 +1,9 @@
 package com.example.communityserver.service;
 
 import com.example.communityserver.client.UserClient;
-import com.example.communityserver.domain.Room;
-import com.example.communityserver.domain.RoomInvitation;
-import com.example.communityserver.domain.RoomMember;
+import com.example.communityserver.domain.*;
 import com.example.communityserver.domain.type.CommonStatus;
+import com.example.communityserver.domain.type.CommunityMemberStatus;
 import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.exception.CustomException;
@@ -359,6 +358,7 @@ public class RoomService {
         return ownerId.equals(userId);
     }
 
+    // 채팅방에 따라 연결해야될 시그널링 서버 어드레스 조회
     public AddressResponse getConnectAddress(Long userId, Long roomId) {
        roomRepository.findById(roomId)
                 .filter(r -> r.getStatus().equals(CommonStatus.NORMAL))
@@ -387,5 +387,19 @@ public class RoomService {
 //        }
 //        return leastUsedInstance.split("-")[1];
         return null;
+    }
+
+    // 채팅방에 속한 회원 아이디 리스트 조회
+    public MemberListFeignResponse getCommunityMember(Long roomId) {
+        Room room = roomRepository.findById(roomId)
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_ROOM));
+
+        List<Long> ids = room.getMembers().stream()
+                .filter(cm -> cm.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .map(RoomMember::getUserId)
+                .collect(Collectors.toList());
+
+        return new MemberListFeignResponse(ids);
     }
 }
