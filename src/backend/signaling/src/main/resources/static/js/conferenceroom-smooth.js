@@ -1,8 +1,8 @@
 const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYWs3MzgwMUBuYXZlci5jb20iLCJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOjYsImlhdCI6MTY0MzI2OTU4NywiZXhwIjoxNjUxOTA5NTg3fQ.uTvrk45DfbhIWRk0Vt7HchvdE1XPujni-ZU1saMZKMU";
 // Local
-// var ws = new SockJS('/rtc', null, {
-//     transports: ["websocket", "xhr-streaming", "xhr-polling"]
-// });
+//var ws = new SockJS('/rtc', null, {
+//    transports: ["websocket", "xhr-streaming", "xhr-polling"]
+//});
 // Prod
 var ws = new SockJS('https://sig.yoloyolo.org/rtc', null, {
     transports: ["websocket", "xhr-streaming", "xhr-polling"]

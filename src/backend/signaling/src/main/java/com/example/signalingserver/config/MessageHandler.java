@@ -17,6 +17,8 @@ import org.kurento.client.IceCandidate;
 import org.kurento.client.KurentoClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -24,6 +26,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import static com.example.signalingserver.util.type.Property.*;
 
@@ -54,6 +57,12 @@ public class MessageHandler extends TextWebSocketHandler {
         try {
             final JsonObject jsonMessage = gson.fromJson(message.getPayload(), JsonObject.class);
             final UserSession user = registry.getBySession(session);
+
+            if (user != null) {
+                log.info("Incoming message from user '{}': {}", user.getUserId(), jsonMessage);
+            } else {
+                log.info("Incoming message from new user: {}", jsonMessage);
+            }
 
             switch (jsonMessage.get(ID).getAsString()) {
                 case JOIN:
@@ -108,7 +117,7 @@ public class MessageHandler extends TextWebSocketHandler {
      */
 
     private void join(JoinRequest request, WebSocketSession session) throws IOException {
-        // TODO 토큰 확인
+        // 토큰 확인
 //        if (!jwtFilter.isJwtValid(request.getToken()))
 //            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
 
@@ -116,43 +125,48 @@ public class MessageHandler extends TextWebSocketHandler {
         final String userId = request.getUserId();
 
         Room room = roomManager.getRoom(roomId);
-//        try {
-//            ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-//            valueOperations.set(roomId + PIPELINE, room.getPipeLineId(), TIME, TimeUnit.MILLISECONDS);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        try {
+            log.info("[redis] save key : {}, value : {}", roomId+PIPELINE, room.getPipeLineId());
+            ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+            valueOperations.set(roomId + PIPELINE, room.getPipeLineId(), TIME, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         final UserSession user = room.join(userId, session);
         registry.register(user);
-//        try {
-//            SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-//            setOperations.add(roomId, userId);
-//            setOperations.add(SERVER + IP, roomId);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        try {
+            log.info("[redis] save key : {}, value : {}", roomId, userId);
+            log.info("[redis] save key : {}, value : {}", SERVER + IP, roomId);
+            SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+            setOperations.add(roomId, userId);
+            setOperations.add(SERVER + IP, roomId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void leave(UserSession user) throws IOException {
         final Room room = roomManager.getRoom(user.getRoomId());
         room.leave(user);
         // redis에서 유저 삭제
-//        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-//        try {
-//            setOperations.remove(room.getRoomId(), user.getUserId());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+        try {
+            log.info("[redis] remove key : {}, value : {}", room.getRoomId(), user.getUserId());
+            setOperations.remove(room.getRoomId(), user.getUserId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if (room.getParticipants().isEmpty()) {
             roomManager.removeRoom(room);
             // redis에서 방 삭제
-//            try {
-//                setOperations.remove(room.getRoomId());
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
+            try {
+                log.info("[redis] remove key : {}", room.getRoomId());
+                setOperations.remove(room.getRoomId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             // kurento media pipeline 삭제
             kurento.getServerManager().getPipelines().stream()
@@ -160,10 +174,11 @@ public class MessageHandler extends TextWebSocketHandler {
                     .findAny().ifPresent(pipeline -> pipeline.release());
         }
 
-//        try {
-//            setOperations.remove(SERVER + IP, room.getRoomId());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        try {
+            log.info("[redis] remove key : {}, value : {}", SERVER + IP, room.getRoomId());
+            setOperations.remove(SERVER + IP, room.getRoomId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
