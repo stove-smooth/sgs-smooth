@@ -26,6 +26,7 @@ public class RoomDetailResponse {
                 room.getMembers().stream()
                         .filter(rm -> rm.getStatus().equals(CommonStatus.NORMAL))
                         .collect(Collectors.toList()).size());
+        response.setName(room.getName());
         return response;
     }
 }
