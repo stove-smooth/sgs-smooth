@@ -7,13 +7,13 @@ import com.example.communityserver.domain.Room;
 import com.example.communityserver.domain.RoomMember;
 import com.example.communityserver.domain.type.CommonStatus;
 import com.example.communityserver.domain.type.CommunityMemberStatus;
-import com.example.communityserver.dto.request.MemberUpdateFeignRequest;
 import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.CommunityRepository;
 import com.example.communityserver.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +36,7 @@ public class DataCorrectionUtil {
     private final RoomRepository roomRepository;
 
     @Async
+    @Transactional
     public void updateCommunityMember(Long communityId) {
 
         Community community = communityRepository.findById(communityId)
@@ -47,10 +48,11 @@ public class DataCorrectionUtil {
                 .map(CommunityMember::getUserId)
                 .collect(Collectors.toList());
 
-        chatClient.updateCommunityMember(communityId, new MemberUpdateFeignRequest(ids));
+        chatClient.updateCommunityMember(communityId, ids);
     }
 
     @Async
+    @Transactional
     public void updateRoomMember(Long roomId) {
 
         Room room = roomRepository.findById(roomId)
@@ -62,6 +64,6 @@ public class DataCorrectionUtil {
                 .map(RoomMember::getUserId)
                 .collect(Collectors.toList());
 
-        chatClient.updateRoomMember(roomId, new MemberUpdateFeignRequest(ids));
+        chatClient.updateRoomMember(roomId, ids);
     }
 }
