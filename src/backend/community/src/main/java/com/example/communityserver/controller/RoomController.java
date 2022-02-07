@@ -117,7 +117,7 @@ public class RoomController {
     ) {
         log.info("PATCH /community-server/room/member");
 
-        RoomDetailResponse response = roomService.join(Long.parseLong(userId), request, token)
+        RoomDetailResponse response = roomService.join(Long.parseLong(userId), request, token);
 
         // 채팅 서버에 변동 정보 전송
         dataCorrectionUtil.updateRoomMember(response.getId());
