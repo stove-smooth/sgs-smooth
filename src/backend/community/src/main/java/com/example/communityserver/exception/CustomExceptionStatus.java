@@ -32,7 +32,9 @@ public enum CustomExceptionStatus {
     NON_SERVE_IN_THREAD(false, 4016, "스레드에서 제공하지 않는 기능입니다."),
     EMPTY_USER_IN_ROOM(false, 4017, "방에 다른 사용자가 존재하지 않습니다."),
     NON_VALID_ROOM(false, 4018, "유효하지 않은 채팅방입니다."),
-    CANT_EXCHANGE_PERSONAL_ROOM(false, 4019, "개인 채팅방은 수정할 수 없습니다.");
+    CANT_EXCHANGE_PERSONAL_ROOM(false, 4019, "개인 채팅방은 수정할 수 없습니다."),
+    CANT_INVITE_SELF(false, 4020, "스스로를 채팅방에 초대할 수 없습니다."),
+    MEMBER_REQUIRED(false, 4021, "초대하는 사용자의 수가 부족합니다.");
 
     private final boolean isSuccess;
     private final int code;

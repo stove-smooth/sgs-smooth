@@ -127,11 +127,18 @@ public class RoomService {
 
         List<RoomMember> members = new ArrayList<>();
 
+        if (request.getMembers().contains(userId))
+            throw new CustomException(CANT_INVITE_SELF);
+
         // 유저 정보 요청
         List<Long> ids = request.getMembers();
         ids.add(userId);
+        if (ids.size() == 1)
+            throw new CustomException(MEMBER_REQUIRED);
+
         HashMap<Long, UserResponse> userMap = getUserMap(ids, token);
 
+        // 1:1일 경우 기존에 존재하는 채팅방 제공
         if (request.getMembers().size() == 1) {
             Room savedRoom = roomMemberRepository.findByUserId(request.getMembers().get(0)).stream()
                     .map(RoomMember::getRoom)
@@ -141,6 +148,7 @@ public class RoomService {
                             .contains(userId))
                     .findAny().orElse(null);
 
+            // 존재하는 채팅방이 있으면 기존 채팅방 제공
             if (!Objects.isNull(savedRoom)) {
                 RoomMember roomMember = savedRoom.getMembers().stream()
                         .filter(rm -> rm.getUserId().equals(userId))
