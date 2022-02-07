@@ -52,34 +52,30 @@ class SignInViewModel: BaseViewModel {
         self.input.tapLoginButton
             .asDriver(onErrorJustReturn: ())
             .drive(onNext: {
-                self.signIn(request: SignInRequest(
+                self.signIn(
                     email: self.input.emailTextField.value,
                     password: self.input.passwordTextFiled.value
-                ))
+                )
             })
             .disposed(by: disposeBag)
     }
     
-    private func signIn(request: SignInRequest) {
-        self.userService.signIn(request) { response, error in
-            if error == nil {
-                
-                guard let response = response else {
-                    return
-                }
-                
-                self.userDefaults.setUserToken(token: response.result.accessToken)
+    private func signIn(email: String, password: String) {
+        self.userService.signIn(email: email, password: password) { response, error in
+            if (error?.response != nil) {
+                let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
+                self.showErrorMessage.accept(body.message)
+            } else {
+                self.userDefaults.setUserToken(token: response!.accessToken)
                 self.fetchUserInfo()
                 
                 self.output.goToMain.accept(())
-            } else {
-                print("🆘 error!")
             }
         }
     }
     
     private func fetchUserInfo() {
-        self.userService.fetchUserInfo { user, _ in
+        self.userService.fetchUserInfo { user, error in
             
             guard let user = user else {
                 return

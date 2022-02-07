@@ -9,7 +9,7 @@ import Foundation
 import Moya
 
 enum UserTarget {
-    case signIn(param: SignInRequest)
+    case signIn(email: String, password: String)
     case signUp(param: SignUpRequest)
     case sendMail(param: SendMailRequest)
     case verifyCode(param: VerifyCodeRequest)
@@ -45,8 +45,8 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
     
     var task: Task {
         switch self {
-        case .signIn(let user):
-            return .requestCustomJSONEncodable(user, encoder: JSONEncoder())
+        case .signIn(let email, let password):
+            return .requestParameters(parameters: ["email": email, "password": password], encoding: JSONEncoding.default)
         case .signUp(let user):
             return .requestCustomJSONEncodable(user, encoder: JSONEncoder())
         case .sendMail(let request):
