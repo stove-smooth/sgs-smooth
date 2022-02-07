@@ -139,9 +139,10 @@ public class RoomService {
         HashMap<Long, UserResponse> userMap = getUserMap(ids, token);
 
         // 1:1일 경우 기존에 존재하는 채팅방 제공
-        if (request.getMembers().size() == 1) {
-            Room savedRoom = roomMemberRepository.findByUserId(request.getMembers().get(0)).stream()
+        if (request.getMembers().size() == 2) {
+            Room savedRoom = roomMemberRepository.findByUserId(ids.get(0)).stream()
                     .map(RoomMember::getRoom)
+                    .filter(r -> !r.getIsGroup())
                     .filter(r -> r.getMembers().stream()
                             .map(RoomMember::getUserId)
                             .collect(Collectors.toList())
@@ -150,10 +151,9 @@ public class RoomService {
 
             // 존재하는 채팅방이 있으면 기존 채팅방 제공
             if (!Objects.isNull(savedRoom)) {
-                RoomMember roomMember = savedRoom.getMembers().stream()
-                        .filter(rm -> rm.getUserId().equals(userId))
-                        .findFirst().get();
-                roomMember.setStatus(CommonStatus.NORMAL);
+                savedRoom.getMembers().forEach(rm -> {
+                    rm.setStatus(CommonStatus.NORMAL);
+                });
                 return getRoomDetail(savedRoom, userMap, userId);
             }
         }
