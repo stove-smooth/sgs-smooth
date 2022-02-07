@@ -4,6 +4,7 @@ import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.service.CommunityService;
 import com.example.communityserver.service.ResponseService;
+import com.example.communityserver.util.DataCorrectionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -18,13 +19,10 @@ public class CommunityController {
 
     private final CommunityService communityService;
     private final ResponseService responseService;
+    private final DataCorrectionUtil dataCorrectionUtil;
 
     public final static String ID = "id";
     public final static String AUTHORIZATION = "AUTHORIZATION";
-
-    /**
-     * Todo 커뮤니티 내 메세지 읽음 처리 (Optional)
-     */
 
     /**
      * 사용자가 소속된 커뮤니티 리스트 조회
@@ -61,8 +59,13 @@ public class CommunityController {
             @Valid @ModelAttribute CreateCommunityRequest request
     ) {
         log.info("POST /community-server/community");
+
         CommunityResponse response =
                 communityService.createCommunity(Long.parseLong(userId), request, token);
+
+        // 채팅 서버에 변동 정보 전송
+        dataCorrectionUtil.updateCommunityMember(response.getId());
+
         return responseService.getDataResponse(response);
     }
 
@@ -158,7 +161,12 @@ public class CommunityController {
             @Valid @RequestBody JoinRequest request
     ) {
         log.info("POST /community-server/community/member");
+
         CommunityResponse response = communityService.join(Long.parseLong(userId), request, token);
+
+        // 채팅 서버에 변동 정보 전송
+        dataCorrectionUtil.updateCommunityMember(response.getId());
+
         return responseService.getDataResponse(response);
     }
 
@@ -172,7 +180,12 @@ public class CommunityController {
             @RequestParam(name = "id") Long memberId
     ) {
         log.info("DELETE /community-server/community/{}/member", communityId);
+
         communityService.deleteMember(Long.parseLong(userId), communityId, memberId);
+
+        // 채팅 서버에 변동 정보 전송
+        dataCorrectionUtil.updateCommunityMember(communityId);
+
         return responseService.getSuccessResponse();
     }
 
@@ -223,7 +236,7 @@ public class CommunityController {
     public DataResponse<MemberListFeignResponse> getCommunityMember(
             @PathVariable Long communityId
     ) {
-        log.info("GET /community-server/community/{}/member", communityId);
+        log.info("GET /community-server/community/feign/{}/member", communityId);
         return responseService.getDataResponse(communityService.getCommunityMember(communityId));
     }
 }

@@ -4,6 +4,7 @@ import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.service.ResponseService;
 import com.example.communityserver.service.RoomService;
+import com.example.communityserver.util.DataCorrectionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -21,18 +22,7 @@ public class RoomController {
 
     private final RoomService roomService;
     private final ResponseService responseService;
-
-    /**
-     * 1. 채팅방 리스트 가져오기
-     * 2. 채팅방 생성하기
-     * 3. 채팅방 정보 가져오기
-     * 4. 채팅방 이름 바꾸기
-     * 5. 채팅방 아이콘 바꾸기
-     * 6. 채팅방 초대장 만들기
-     * 7. 초대장으로 채팅방 들어오기
-     * 8. 채팅방에 초대하기
-     * 9. 채팅방에서 나가기(추방하기)
-     */
+    private final DataCorrectionUtil dataCorrectionUtil;
 
     /**
      * 채팅방 리스트 가져오기
@@ -56,7 +46,13 @@ public class RoomController {
             @Valid @RequestBody CreateRoomRequest request
     ) {
         log.info("POST /community-server/room");
-        return responseService.getDataResponse(roomService.createRoom(Long.parseLong(userId), request, token));
+
+        RoomDetailResponse response = roomService.createRoom(Long.parseLong(userId), request, token);
+
+        // 채팅 서버에 변동 정보 전송
+        dataCorrectionUtil.updateRoomMember(response.getId());
+
+        return responseService.getDataResponse(response);
     }
 
     /**
@@ -120,7 +116,13 @@ public class RoomController {
             @Valid @RequestBody JoinRequest request
     ) {
         log.info("PATCH /community-server/room/member");
-        return responseService.getDataResponse(roomService.join(Long.parseLong(userId), request, token));
+
+        RoomDetailResponse response = roomService.join(Long.parseLong(userId), request, token);
+
+        // 채팅 서버에 변동 정보 전송
+        dataCorrectionUtil.updateRoomMember(response.getId());
+
+        return responseService.getDataResponse(response);
     }
 
     /**
@@ -132,7 +134,12 @@ public class RoomController {
             @Valid @RequestBody InviteMemberRequest request
     ) {
         log.info("POST /community-server/room/member");
+
         roomService.inviteMember(Long.parseLong(userId), request);
+
+        // 채팅 서버에 변동 정보 전송
+        dataCorrectionUtil.updateRoomMember(request.getId());
+
         return responseService.getSuccessResponse();
     }
 
@@ -146,10 +153,18 @@ public class RoomController {
             @RequestParam(name = "id") Long memberId
     ) {
         log.info("DELETE /community-server/room/{}/member", roomId);
+
         roomService.deleteMember(Long.parseLong(userId), roomId, memberId);
+
+        // 채팅 서버에 변동 정보 전송
+        dataCorrectionUtil.updateRoomMember(roomId);
+
         return responseService.getSuccessResponse();
     }
 
+    /**
+     * 연결해야될 시그널링 서버 어드레스 조회하기
+     */
     @GetMapping("{roomId}/address")
     public DataResponse<AddressResponse> getConnectAddress(
             @RequestHeader(ID) String userId,
@@ -158,5 +173,16 @@ public class RoomController {
         log.info("GET /community-server/room/{}/address", roomId);
         AddressResponse response = roomService.getConnectAddress(Long.parseLong(userId), roomId);
         return responseService.getDataResponse(response);
+    }
+
+    /**
+     * 채팅방에 속한 회원 아이디 찾기
+     */
+    @GetMapping("/feign/{roomId}/member-id")
+    public DataResponse<MemberListFeignResponse> getRoomMember(
+            @PathVariable Long roomId
+    ) {
+        log.info("GET /community-server/room/feign/{}/member", roomId);
+        return responseService.getDataResponse(roomService.getCommunityMember(roomId));
     }
 }

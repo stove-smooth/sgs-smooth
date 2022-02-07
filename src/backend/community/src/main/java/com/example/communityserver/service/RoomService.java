@@ -1,10 +1,9 @@
 package com.example.communityserver.service;
 
 import com.example.communityserver.client.UserClient;
-import com.example.communityserver.domain.Room;
-import com.example.communityserver.domain.RoomInvitation;
-import com.example.communityserver.domain.RoomMember;
+import com.example.communityserver.domain.*;
 import com.example.communityserver.domain.type.CommonStatus;
+import com.example.communityserver.domain.type.CommunityMemberStatus;
 import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.exception.CustomException;
@@ -128,25 +127,33 @@ public class RoomService {
 
         List<RoomMember> members = new ArrayList<>();
 
+        if (request.getMembers().contains(userId))
+            throw new CustomException(CANT_INVITE_SELF);
+
         // 유저 정보 요청
         List<Long> ids = request.getMembers();
         ids.add(userId);
+        if (ids.size() == 1)
+            throw new CustomException(MEMBER_REQUIRED);
+
         HashMap<Long, UserResponse> userMap = getUserMap(ids, token);
 
-        if (request.getMembers().size() == 1) {
-            Room savedRoom = roomMemberRepository.findByUserId(request.getMembers().get(0)).stream()
+        // 1:1일 경우 기존에 존재하는 채팅방 제공
+        if (request.getMembers().size() == 2) {
+            Room savedRoom = roomMemberRepository.findByUserId(ids.get(0)).stream()
                     .map(RoomMember::getRoom)
+                    .filter(r -> !r.getIsGroup())
                     .filter(r -> r.getMembers().stream()
                             .map(RoomMember::getUserId)
                             .collect(Collectors.toList())
                             .contains(userId))
                     .findAny().orElse(null);
 
+            // 존재하는 채팅방이 있으면 기존 채팅방 제공
             if (!Objects.isNull(savedRoom)) {
-                RoomMember roomMember = savedRoom.getMembers().stream()
-                        .filter(rm -> rm.getUserId().equals(userId))
-                        .findFirst().get();
-                roomMember.setStatus(CommonStatus.NORMAL);
+                savedRoom.getMembers().forEach(rm -> {
+                    rm.setStatus(CommonStatus.NORMAL);
+                });
                 return getRoomDetail(savedRoom, userMap, userId);
             }
         }
@@ -359,6 +366,7 @@ public class RoomService {
         return ownerId.equals(userId);
     }
 
+    // 채팅방에 따라 연결해야될 시그널링 서버 어드레스 조회
     public AddressResponse getConnectAddress(Long userId, Long roomId) {
        roomRepository.findById(roomId)
                 .filter(r -> r.getStatus().equals(CommonStatus.NORMAL))
@@ -387,5 +395,19 @@ public class RoomService {
 //        }
 //        return leastUsedInstance.split("-")[1];
         return null;
+    }
+
+    // 채팅방에 속한 회원 아이디 리스트 조회
+    public MemberListFeignResponse getCommunityMember(Long roomId) {
+        Room room = roomRepository.findById(roomId)
+                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_ROOM));
+
+        List<Long> ids = room.getMembers().stream()
+                .filter(cm -> cm.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .map(RoomMember::getUserId)
+                .collect(Collectors.toList());
+
+        return new MemberListFeignResponse(ids);
     }
 }

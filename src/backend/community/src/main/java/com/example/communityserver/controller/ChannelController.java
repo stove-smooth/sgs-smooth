@@ -23,10 +23,6 @@ public class ChannelController {
     private final ResponseService responseService;
 
     /**
-     * Todo 채널 내 메세지 읽음 처리 (Optional)
-     */
-
-    /**
      * 채널 정보 조회하기
      */
     @GetMapping("{channelId}")
