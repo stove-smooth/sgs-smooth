@@ -4,6 +4,7 @@ import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.service.ResponseService;
 import com.example.communityserver.service.RoomService;
+import com.example.communityserver.util.DataCorrectionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ public class RoomController {
 
     private final RoomService roomService;
     private final ResponseService responseService;
+    private final DataCorrectionUtil dataCorrectionUtil;
 
     /**
      * 채팅방 리스트 가져오기
@@ -44,7 +46,13 @@ public class RoomController {
             @Valid @RequestBody CreateRoomRequest request
     ) {
         log.info("POST /community-server/room");
-        return responseService.getDataResponse(roomService.createRoom(Long.parseLong(userId), request, token));
+
+        RoomDetailResponse response = roomService.createRoom(Long.parseLong(userId), request, token);
+
+        // 채팅 서버에 변동 정보 전송
+        dataCorrectionUtil.updateRoomMember(response.getId());
+
+        return responseService.getDataResponse(response);
     }
 
     /**
@@ -108,7 +116,13 @@ public class RoomController {
             @Valid @RequestBody JoinRequest request
     ) {
         log.info("PATCH /community-server/room/member");
-        return responseService.getDataResponse(roomService.join(Long.parseLong(userId), request, token));
+
+        RoomDetailResponse response = roomService.join(Long.parseLong(userId), request, token)
+
+        // 채팅 서버에 변동 정보 전송
+        dataCorrectionUtil.updateRoomMember(response.getId());
+
+        return responseService.getDataResponse(response);
     }
 
     /**
@@ -120,7 +134,12 @@ public class RoomController {
             @Valid @RequestBody InviteMemberRequest request
     ) {
         log.info("POST /community-server/room/member");
+
         roomService.inviteMember(Long.parseLong(userId), request);
+
+        // 채팅 서버에 변동 정보 전송
+        dataCorrectionUtil.updateRoomMember(request.getId());
+
         return responseService.getSuccessResponse();
     }
 
@@ -134,7 +153,12 @@ public class RoomController {
             @RequestParam(name = "id") Long memberId
     ) {
         log.info("DELETE /community-server/room/{}/member", roomId);
+
         roomService.deleteMember(Long.parseLong(userId), roomId, memberId);
+
+        // 채팅 서버에 변동 정보 전송
+        dataCorrectionUtil.updateRoomMember(roomId);
+
         return responseService.getSuccessResponse();
     }
 
@@ -158,7 +182,7 @@ public class RoomController {
     public DataResponse<MemberListFeignResponse> getRoomMember(
             @PathVariable Long roomId
     ) {
-        log.info("GET /community-server/room/{}/member", roomId);
+        log.info("GET /community-server/room/feign/{}/member", roomId);
         return responseService.getDataResponse(roomService.getCommunityMember(roomId));
     }
 }
