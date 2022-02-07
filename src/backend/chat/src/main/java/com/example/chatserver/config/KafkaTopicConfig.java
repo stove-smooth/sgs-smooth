@@ -17,10 +17,10 @@ public class KafkaTopicConfig {
     private String bootstrapServers;
 
     @Value("${spring.kafka.consumer.chat-topic}")
-    private String directChatTopic;
+    private String directMessageTopic;
 
     @Value("${spring.kafka.consumer.direct-topic}")
-    private String communityChatTopic;
+    private String communityMessageTopic;
 
     @Value("${spring.kafka.consumer.etc-direct-topic}")
     private String etcDirectTopic;
@@ -39,22 +39,22 @@ public class KafkaTopicConfig {
     }
 
     @Bean
-    public NewTopic directChat() {
-        return new NewTopic(directChatTopic,3, (short) 3);
+    public NewTopic directMessage() {
+        return new NewTopic(directMessageTopic,3, (short) 3);
     }
 
     @Bean
-    public NewTopic etcDirectChat() {
+    public NewTopic etcDirectMessage() {
         return new NewTopic(etcDirectTopic,3,(short) 3);
     }
 
     @Bean
-    public NewTopic communityChat() {
-        return new NewTopic(communityChatTopic,3, (short) 3);
+    public NewTopic communityMessage() {
+        return new NewTopic(communityMessageTopic,3, (short) 3);
     }
 
     @Bean
-    public NewTopic etcCommunityChat() {
+    public NewTopic etcCommunityMessage() {
         return new NewTopic(etcCommunityTopic,3,(short) 3);
     }
 

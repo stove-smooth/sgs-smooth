@@ -10,4 +10,7 @@ public interface CommunityClient {
 
     @GetMapping("/community/feign/{communityId}/member-id")
     CommunityFeignResponse getUserIds(@PathVariable(value = "communityId") Long communityId);
+
+    @GetMapping("/room/feign/{roomId}/member-id")
+    CommunityFeignResponse getUserIdsFromDM(@PathVariable(value = "roomId") Long roomId);
 }
