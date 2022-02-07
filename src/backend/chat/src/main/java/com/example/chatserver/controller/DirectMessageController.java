@@ -1,25 +1,23 @@
 package com.example.chatserver.controller;
 
 import com.example.chatserver.config.message.MessageSender;
-import com.example.chatserver.domain.DirectChat;
+import com.example.chatserver.domain.DirectMessage;
 import com.example.chatserver.dto.request.FileUploadRequest;
+import com.example.chatserver.dto.response.CommonResponse;
 import com.example.chatserver.dto.response.FileUploadResponse;
 import com.example.chatserver.dto.response.MessageResponse;
 import com.example.chatserver.dto.response.DataResponse;
-import com.example.chatserver.service.DirectChatService;
+import com.example.chatserver.service.DirectMessageService;
 import com.example.chatserver.service.ResponseService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -27,7 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "chat-server")
 @RequiredArgsConstructor
-public class DirectChatController {
+public class DirectMessageController {
 
     @Value("${spring.kafka.consumer.chat-topic}")
     private String directChatTopic;
@@ -39,29 +37,28 @@ public class DirectChatController {
     private String fileTopic;
 
     private final MessageSender messageSender;
-    private final DirectChatService directChatService;
+    private final DirectMessageService directChatService;
     private final ResponseService responseService;
 
     @MessageMapping("/send-direct-typing")
-    public void sendTyping(@Payload DirectChat directChat) {
+    public void sendTyping(@Payload DirectMessage directChat) {
         messageSender.sendToDirectChat(etcDirectTopic,directChat);
     }
 
     @MessageMapping("/send-direct-message")
-    public void sendMessage(@Payload DirectChat directChat) {
-        directChat.setLocalDateTime(LocalDateTime.now());
+    public void sendMessage(@Payload DirectMessage directChat) {
         messageSender.sendToDirectChat(directChatTopic,directChat);
     }
     @MessageMapping("/send-direct-reply")
-    public void sendReplyMessage(@Payload DirectChat directChat) {
+    public void sendReplyMessage(@Payload DirectMessage directChat) {
         messageSender.sendToEtcDirectChat(etcDirectTopic,directChat);
     }
     @MessageMapping("/send-direct-modify")
-    public void sendDirectMessage(@Payload DirectChat directChat) {
+    public void sendDirectMessage(@Payload DirectMessage directChat) {
         messageSender.sendToEtcDirectChat(etcDirectTopic,directChat);
     }
     @MessageMapping("/send-direct-delete")
-    public void sendDeleteMessage(@Payload DirectChat directChat) {
+    public void sendDeleteMessage(@Payload DirectMessage directChat) {
         messageSender.sendToEtcDirectChat(etcDirectTopic,directChat);
     }
 
@@ -79,5 +76,13 @@ public class DirectChatController {
         FileUploadResponse msg = directChatService.fileUpload(fileUploadRequest);
         messageSender.fileUpload(fileTopic,msg);
 
+    }
+
+    @PutMapping("/room-user-list/{room_id}")
+    public CommonResponse findUserList(@PathVariable(value = "room_id") Long room_id,
+                                       @RequestBody List<Long> ids) {
+        directChatService.findUserList(room_id,ids);
+
+        return responseService.getSuccessResponse();
     }
 }

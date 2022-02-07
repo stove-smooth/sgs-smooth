@@ -15,6 +15,7 @@ public class MessageResponse {
     private String profileImage;
     private Long userId;
     private String message;
+    private String messageType;
     private LocalDateTime time;
     private String parentName;
     private String parentContent;

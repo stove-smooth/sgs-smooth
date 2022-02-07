@@ -20,5 +20,9 @@ public class FileUploadRequest {
 
     private Long userId;
 
+    private Long communityId;
+
     private Long channelId;
+
+    private String fileType;
 }

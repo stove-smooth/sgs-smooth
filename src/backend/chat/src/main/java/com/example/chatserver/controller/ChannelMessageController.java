@@ -1,39 +1,30 @@
 package com.example.chatserver.controller;
 
 import com.example.chatserver.client.PresenceClient;
-import com.example.chatserver.config.S3Config;
 import com.example.chatserver.config.TcpClientGateway;
 import com.example.chatserver.config.message.MessageSender;
 import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.dto.request.FileUploadRequest;
 import com.example.chatserver.dto.request.LoginSessionRequest;
-import com.example.chatserver.dto.response.FileUploadResponse;
-import com.example.chatserver.dto.response.MessageResponse;
-import com.example.chatserver.dto.response.DataResponse;
-import com.example.chatserver.repository.ChannelMessageRepository;
-import com.example.chatserver.service.ChannelChatService;
+import com.example.chatserver.dto.response.*;
+import com.example.chatserver.service.ChannelMessageService;
 import com.example.chatserver.service.ResponseService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping(value = "chat-server")
 @RequiredArgsConstructor
-public class ChannelChatController {
+public class ChannelMessageController {
 
     @Value("${spring.kafka.consumer.direct-topic}")
     private String communityChatTopic;
@@ -45,7 +36,7 @@ public class ChannelChatController {
     private String fileTopic;
 
     private final MessageSender messageSender;
-    private final ChannelChatService channelChatService;
+    private final ChannelMessageService channelChatService;
     private final ResponseService responseService;
     private final TcpClientGateway tcpClientGateway;
     private final PresenceClient presenceClient;
@@ -57,7 +48,6 @@ public class ChannelChatController {
 
     @MessageMapping("/send-channel-message")
     public void sendMessage(@Payload ChannelMessage channelMessage) {
-        channelMessage.setLocalDateTime(LocalDateTime.now());
         messageSender.sendToChannelChat(communityChatTopic, channelMessage);
     }
 
@@ -95,5 +85,13 @@ public class ChannelChatController {
         FileUploadResponse uploadResponse = channelChatService.fileUpload(fileUploadRequest);
         messageSender.fileUpload(fileTopic,uploadResponse);
 
+    }
+
+    @PutMapping("/community-user-list/{community_id}")
+    public CommonResponse findUserList(@PathVariable(value = "community_id") Long community_id,
+                                       @RequestBody List<Long> ids) {
+        channelChatService.findUserList(community_id,ids);
+
+        return responseService.getSuccessResponse();
     }
 }
