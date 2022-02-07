@@ -1,8 +1,7 @@
 package com.example.chatserver.config.message;
 
 import com.example.chatserver.domain.ChannelMessage;
-import com.example.chatserver.domain.DirectChat;
-import com.example.chatserver.dto.request.FileUploadRequest;
+import com.example.chatserver.domain.DirectMessage;
 import com.example.chatserver.dto.response.FileUploadResponse;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -25,7 +24,7 @@ public class KafkaProducerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    public ProducerFactory<String, DirectChat> producerFactoryForDirect() {
+    public ProducerFactory<String, DirectMessage> producerFactoryForDirect() {
         return new DefaultKafkaProducerFactory<>(producerConfigurations());
     }
 
@@ -47,7 +46,7 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, DirectChat> kafkaTemplateForDirect() {
+    public KafkaTemplate<String, DirectMessage> kafkaTemplateForDirect() {
         return new KafkaTemplate<>(producerFactoryForDirect());
     }
 

@@ -16,5 +16,6 @@ public class FileUploadResponse {
     private String thumbnail;
     private Long channelId;
     private String type;
+    private String fileType;
     private LocalDateTime time;
 }

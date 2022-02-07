@@ -26,7 +26,7 @@ public class ChannelMessage {
 
     private Long channelId;
 
-    private Long accountId;
+    private Long userId;
 
     private String parentId;
 
@@ -39,4 +39,8 @@ public class ChannelMessage {
     private Map<Long,Boolean> read;
 
     private String type;
+
+    private String name;
+
+    private String profileImage;
 }

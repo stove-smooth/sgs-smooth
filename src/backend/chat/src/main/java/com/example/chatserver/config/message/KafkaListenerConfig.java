@@ -1,8 +1,7 @@
 package com.example.chatserver.config.message;
 
 import com.example.chatserver.domain.ChannelMessage;
-import com.example.chatserver.domain.DirectChat;
-import com.example.chatserver.dto.request.FileUploadRequest;
+import com.example.chatserver.domain.DirectMessage;
 import com.example.chatserver.dto.response.FileUploadResponse;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -13,7 +12,10 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 
 import java.util.HashMap;
@@ -28,21 +30,31 @@ public class KafkaListenerConfig {
 
     private final String groupName = "chat-server-group";
 
-//    @Bean
-//    public RetryTemplate retryTemplate() {
-//
-//    }
+    @Bean
+    public RetryTemplate retryTemplate() {
+        RetryTemplate retryTemplate = new RetryTemplate();
+        FixedBackOffPolicy fixedBackOffPolicy = new FixedBackOffPolicy();
+        fixedBackOffPolicy.setBackOffPeriod(1000L);
+        retryTemplate.setBackOffPolicy(fixedBackOffPolicy);
+        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
+        retryPolicy.setMaxAttempts(3);
+        retryTemplate.setRetryPolicy(retryPolicy);
+
+        return retryTemplate;
+    }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, DirectChat> kafkaListenerContainerFactoryForDirect() {
-        ConcurrentKafkaListenerContainerFactory<String,DirectChat> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, DirectMessage> kafkaListenerContainerFactoryForDirect() {
+        ConcurrentKafkaListenerContainerFactory<String, DirectMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactoryForDirect());
+        factory.setRetryTemplate(retryTemplate());
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
         return factory;
     }
 
     @Bean
-    public ConsumerFactory<String, DirectChat> consumerFactoryForDirect() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(), new JsonDeserializer<>(DirectChat.class));
+    public ConsumerFactory<String, DirectMessage> consumerFactoryForDirect() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(), new JsonDeserializer<>(DirectMessage.class));
     }
 
     @Bean
