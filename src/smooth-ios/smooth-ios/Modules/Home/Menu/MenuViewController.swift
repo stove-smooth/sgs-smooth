@@ -11,7 +11,7 @@ import RxCocoa
 import RxDataSources
 
 protocol MenuViewControllerDelegate: AnyObject {
-    func swipe(channel: Channel?)
+    func swipe(channel: Channel?, communityId: Int)
 }
 
 class MenuViewController: BaseViewController, CoordinatorContext {
@@ -101,12 +101,16 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             self.menuView.channelView.tableView.rx.itemSelected,
             self.menuView.channelView.tableView.rx.modelSelected(Channel.self)
         ).bind{ [weak self] (indexPath, channel) in
-            self?.menuView.channelView.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+            guard let self = self else { return }
+            
+            self.menuView.channelView.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
             print("selected \(channel)")
             
             switch channel.type {
             case .text :
-                self?.delegate?.swipe(channel: channel)
+                let server = self.viewModel.model.servers![self.viewModel.model.selectedServerIndex!]
+                
+                self.delegate?.swipe(channel: channel, communityId: server.id)
             case .voice:
                 #warning("웹알티씨 연결하기")
             }

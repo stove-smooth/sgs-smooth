@@ -9,6 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 import StompClientLib
+import MessageKit
 
 class ChattingViewModel: BaseViewModel {
     let input = Input()
@@ -22,28 +23,31 @@ class ChattingViewModel: BaseViewModel {
         let fetch = PublishSubject<Channel>()
         let page = BehaviorRelay<Int>(value: 0)
         let size = BehaviorRelay<Int>(value: 20)
+        
+        let socketMessage = PublishSubject<MockMessage?>()
     }
     
     struct Output {
         let channel = PublishRelay<Channel>()
-        let messages = PublishRelay<[Message]>()
+        let commniutyId = PublishRelay<Int?>()
+        let messages = PublishRelay<[MockMessage]>()
         
         let showEmpty = PublishRelay<Bool>()
+        let isLoading = PublishRelay<Bool>()
     }
     
     struct Model {
-        var messgae: [Message] = []
+        var messages = [MockMessage]()
     }
     
     init(
-        chattingService: ChattingServiceProtocol,
-        chatWebSocketService: ChatWebSocketService
+        chattingService: ChattingServiceProtocol
     ) {
         self.chattingService = chattingService
-        self.chatWebSocketService = chatWebSocketService
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        self.chatWebSocketService = appDelegate?.chatWebSocketService as! ChatWebSocketService
         
         super.init()
-        chatWebSocketService.delegate = self
     }
     
     override func bind() {
@@ -53,6 +57,16 @@ class ChattingViewModel: BaseViewModel {
                 self.fetchMessgae(chattingId: channel.id)
             })
             .disposed(by: disposeBag)
+        
+        chatWebSocketService.message
+            .subscribe(onNext: { message in
+                self.model.messages.append(message)
+                self.output.messages.accept(self.model.messages)
+                
+            })
+            .disposed(by: disposeBag)
+        
+        
     }
     
     private func fetchMessgae(chattingId: Int) {
@@ -68,56 +82,43 @@ class ChattingViewModel: BaseViewModel {
                     return
                 }
                 
+                let fetchmessages = response.map {
+                    MockMessage(
+                        kind: MessageKind.text($0.message),
+                        user: MockUser(senderId: "\($0.userId)", displayName: $0.name),
+                        messageId: $0.id,
+                        date: Date()
+                    )
+                }
+                
                 self.output.showEmpty.accept(response.count == 0)
-                self.model.messgae = response
-                self.output.messages.accept(response)
+                self.model.messages = fetchmessages
+                self.output.messages.accept(fetchmessages)
             }
         }
     }
     
     private func connect(channelId: Int) {
-        chatWebSocketService.register(channelId: channelId)
+        self.chatWebSocketService.connect(channelId: channelId)
     }
     
-    func sendMessage(message: String) {
-        chatWebSocketService.sendMessage(message: message)
-    }
-}
-
-extension ChattingViewModel: StompClientLibDelegate {
-    // MARK: - StompClient Delegate
-    func stompClient(client: StompClientLib!, didReceiveMessageWithJSONBody jsonBody: AnyObject?, akaStringBody stringBody: String?, withHeader header: [String : String]?, withDestination destination: String) {
-        print("DESTINATION : \(destination)")
-        print("JSON BODY : \(String(describing: jsonBody))")
-        print("STRING BODY : \(stringBody ?? "nil")")
+    func sendMessage(message: String, communityId: Int?) {
+        self.chatWebSocketService.sendMessage(message: message, communityId: communityId)
     }
     
-    func stompClientJSONBody(client: StompClientLib!, didReceiveMessageWithJSONBody jsonBody: String?, withHeader header: [String : String]?, withDestination destination: String) {
-      print("DESTINATION : \(destination)")
-      print("String JSON BODY : \(String(describing: jsonBody))")
-    }
-    
-    func stompClientDidDisconnect(client: StompClientLib!) {
-        chatWebSocketService.connection = false
-        chatWebSocketService.disconnect()
-        print("Socket is Disconnected")
-    }
-    
-    func stompClientDidConnect(client: StompClientLib!) {
-        chatWebSocketService.connection = true
-        chatWebSocketService.connect()
-        print("Socket is Connected \(chatWebSocketService.channelId)")
-    }
-    
-    func serverDidSendReceipt(client: StompClientLib!, withReceiptId receiptId: String) {
-        print("Receipt : \(receiptId)")
-    }
-    
-    func serverDidSendError(client: StompClientLib!, withErrorMessage description: String, detailedErrorMessage message: String?) {
-        print("Failed to Connect!-- Error : \(String(describing: message))")
-    }
-    
-    func serverDidSendPing() {
-        print("Server Ping")
+    func sendFileMessage(request: FileMessageRequest) {
+        self.output.isLoading.accept(true)
+        self.chattingService.sendFileMessage(request) {
+            response, error in
+            guard let response = response else {
+                return
+            }
+            
+            if (!response.isSuccess) {
+                self.showErrorMessage.accept("메시지 보내는데 실패하였습니다.")
+            }
+            
+            self.output.isLoading.accept(false)
+        }
     }
 }

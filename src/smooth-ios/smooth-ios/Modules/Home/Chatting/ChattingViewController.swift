@@ -11,7 +11,7 @@ import MessageKit
 import InputBarAccessoryView
 
 protocol ChattingViewControllerDelegate: AnyObject {
-    func didTapMenuButton(channel: Channel?)
+    func didTapMenuButton(channel: Channel?, communityId: Int?)
 }
 
 class ChattingViewController: MessagesViewController {
@@ -23,7 +23,10 @@ class ChattingViewController: MessagesViewController {
     private let viewModel: ChattingViewModel
     
     lazy var messageList: [MockMessage] = []
+    let messageUser: MockUser
+    
     var channel: Channel?
+    var communityId: Int?
     var inputBarisHide = false
     
     static func instance() -> ChattingViewController {
@@ -32,9 +35,11 @@ class ChattingViewController: MessagesViewController {
     
     init() {
         self.viewModel = ChattingViewModel(
-            chattingService: ChattingService(),
-            chatWebSocketService: ChatWebSocketService()
+            chattingService: ChattingService()
         )
+        let user = UserDefaultsUtil().getUserInfo()!
+        self.messageUser = MockUser(senderId: "\(user.id)", displayName: user.name)
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -54,7 +59,6 @@ class ChattingViewController: MessagesViewController {
         configureNavigationController(channel: nil)
         configureMessageCollectionView()
         configureMessageInputBar()
-        loadFirstMessages()
         
         bindViewModel()
     }
@@ -66,7 +70,7 @@ class ChattingViewController: MessagesViewController {
     }()
     
     @objc func didTapMenuButton() {
-        delegate?.didTapMenuButton(channel: nil)
+        delegate?.didTapMenuButton(channel: nil, communityId: nil)
     }
     
     private func bindViewModel() {
@@ -78,41 +82,41 @@ class ChattingViewController: MessagesViewController {
                 self.messageInputBar.inputTextView.placeholder = "#\(channel.name)에 메시지 보내기"
             })
             .disposed(by: disposeBag)
+        
+        self.viewModel.output.commniutyId
+            .bind(onNext: { communityId in self.communityId = communityId })
+            .disposed(by: disposeBag)
+        
+        self.viewModel.output.messages
+            .bind(onNext: { messages in
+                self.messageList = messages
+                self.messagesCollectionView.reloadData()
+                self.messagesCollectionView.scrollToLastItem()
+            }).disposed(by: disposeBag)
+        
     }
 }
 
 // MARK: - HomeVC Delegate
 extension ChattingViewController: HomeViewControllerDelegate {
-    func loadChatting(channel: Channel) {
+    func loadChatting(channel: Channel, communityId: Int?) {
         self.viewModel.output.channel.accept(channel)
+        self.viewModel.output.commniutyId.accept(communityId)
     }
 }
 
 // MARK: - Message
 extension ChattingViewController {
-    func loadFirstMessages() {
-        DispatchQueue.global(qos: .userInitiated).async {
-            let count = UserDefaults.standard.mockMessagesCount()
-            SampleData.shared.getMessages(count: count) { messages in
-                DispatchQueue.main.async {
-                    self.messageList = messages
-                    self.messagesCollectionView.reloadData()
-                    self.messagesCollectionView.scrollToLastItem()
-                }
-            }
-        }
-    }
+
     
     @objc func loadMoreMessages() {
-        DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 1) {
-            SampleData.shared.getMessages(count: 20) { messages in
-                DispatchQueue.main.async {
-                    self.messageList.insert(contentsOf: messages, at: 0)
-                    self.messagesCollectionView.reloadDataAndKeepOffset()
-                    self.refreshControl.endRefreshing()
-                }
-            }
-        }
+        self.viewModel.output.messages
+            .asDriver(onErrorJustReturn: [])
+            .drive(onNext: { messsages in
+                self.messageList.insert(contentsOf: messsages, at: 0)
+                self.messagesCollectionView.reloadDataAndKeepOffset()
+                self.refreshControl.endRefreshing()
+            }).disposed(by: self.disposeBag)
     }
     
     func insertMessage(_ message: MockMessage) {
@@ -208,13 +212,27 @@ extension ChattingViewController: InputBarAccessoryViewDelegate {
     
     private func insertMessages(_ data: [Any]) {
         for component in data {
-            let user = SampleData.shared.currentSender
             if let str = component as? String {
-                self.viewModel.sendMessage(message: str)
-                let message = MockMessage(text: str, user: user, messageId: UUID().uuidString, date: Date())
+                self.viewModel.sendMessage(message: str, communityId: self.communityId)
+                let message = MockMessage(kind: MessageKind.text(str), user: messageUser, messageId: UUID().uuidString, date: Date())
                 insertMessage(message)
-            } else if let img = component as? UIImage {
-                let message = MockMessage(image: img, user: user, messageId: UUID().uuidString, date: Date())
+            }
+            else if let img = component as? UIImage {
+                let message = MockMessage(image: img, user: messageUser, messageId: UUID().uuidString, date: Date())
+                
+                let thumb = img.generateThumbnail()!
+                
+                let request = FileMessageRequest(
+                    image: img.data,
+                    thumbnail: thumb.data,
+                    userId: Int(messageUser.senderId)!,
+                    channelId: channel!.id,
+                    communityId: communityId,
+                    type: communityId != nil ? "community" : "direct",
+                    fileType: FileType.image
+                )
+                
+                self.viewModel.sendFileMessage(request: request)
                 insertMessage(message)
             }
         }
