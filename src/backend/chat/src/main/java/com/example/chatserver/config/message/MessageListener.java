@@ -87,6 +87,7 @@ public class MessageListener {
                 msg.put("name", directChat.getContent());
                 break;
             case "reply": {
+                directChat.setLocalDateTime(LocalDateTime.now());
                 DirectMessage result = directChatRepository.save(directChat);
 
                 msg.put("id", result.getId());
@@ -95,6 +96,8 @@ public class MessageListener {
                 msg.put("profileImage", result.getProfileImage());
                 msg.put("message", result.getContent());
                 msg.put("time", String.valueOf(result.getLocalDateTime()));
+                msg.put("parentName", result.getParentName());
+                msg.put("parentContent", result.getParentContent());
 
                 break;
             }
@@ -189,6 +192,7 @@ public class MessageListener {
                 msg.put("name", channelMessage.getContent());
                 break;
             case "reply": {
+                channelMessage.setLocalDateTime(LocalDateTime.now());
                 ChannelMessage result = channelChatRepository.save(channelMessage);
 
                 msg.put("id", result.getId());
@@ -197,6 +201,8 @@ public class MessageListener {
                 msg.put("profileImage", result.getProfileImage());
                 msg.put("message", result.getContent());
                 msg.put("time", String.valueOf(result.getLocalDateTime()));
+                msg.put("parentName", result.getParentName());
+                msg.put("parentContent", result.getParentContent());
 
                 break;
             }

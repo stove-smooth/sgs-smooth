@@ -43,4 +43,8 @@ public class ChannelMessage {
     private String name;
 
     private String profileImage;
+
+    private String parentName;
+
+    private String parentContent;
 }

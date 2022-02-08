@@ -67,7 +67,8 @@ public class ChannelMessageService {
                     .profileImage(image)
                     .userId(i.getUserId())
                     .message(i.getContent())
-                    .messageType(i.getType())
+                    .thumbnail(i.getThumbnail())
+                    .fileType(i.getType())
                     .parentName(parentName)
                     .parentContent(parentContent)
                     .time(i.getLocalDateTime()).build();
@@ -79,39 +80,65 @@ public class ChannelMessageService {
     }
 
     public FileUploadResponse fileUpload(FileUploadRequest fileUploadRequest) throws IOException {
-        String image = null;
-        String thumbnail = null;
-        if (fileUploadRequest.getImage() != null) {
-            image = s3Config.upload(fileUploadRequest.getImage());
-            thumbnail = s3Config.upload(fileUploadRequest.getThumbnail());
+        if (fileUploadRequest.getType().equals("image") || fileUploadRequest.getType().equals("video")) {
+            String image = null;
+            String thumbnail = null;
+            if (fileUploadRequest.getImage() != null) {
+                image = s3Config.upload(fileUploadRequest.getImage());
+                thumbnail = s3Config.upload(fileUploadRequest.getThumbnail());
+            }
+
+            ChannelMessage channelMessage = ChannelMessage.builder()
+                    .content(image)
+                    .thumbnail(thumbnail)
+                    .userId(fileUploadRequest.getUserId())
+                    .communityId(fileUploadRequest.getCommunityId())
+                    .channelId(fileUploadRequest.getChannelId())
+                    .type(fileUploadRequest.getFileType())
+                    .localDateTime(LocalDateTime.now()).build();
+
+            ChannelMessage save = channelChatRepository.save(channelMessage);
+
+            FileUploadResponse uploadResponse = FileUploadResponse.builder()
+                    .id(save.getId())
+                    .userId(save.getUserId())
+                    .name(fileUploadRequest.getName())
+                    .profileImage(fileUploadRequest.getProfileImage())
+                    .message(image)
+                    .thumbnail(thumbnail)
+                    .type(fileUploadRequest.getType())
+                    .fileType(fileUploadRequest.getFileType())
+                    .time(LocalDateTime.now()).build();
+
+            return uploadResponse;
+        } else {
+            String image = null;
+            if (fileUploadRequest.getImage() != null) {
+                image = s3Config.upload(fileUploadRequest.getImage());;
+            }
+
+            ChannelMessage channelMessage = ChannelMessage.builder()
+                    .content(image)
+                    .userId(fileUploadRequest.getUserId())
+                    .communityId(fileUploadRequest.getCommunityId())
+                    .channelId(fileUploadRequest.getChannelId())
+                    .type(fileUploadRequest.getFileType())
+                    .localDateTime(LocalDateTime.now()).build();
+
+            ChannelMessage save = channelChatRepository.save(channelMessage);
+
+            FileUploadResponse uploadResponse = FileUploadResponse.builder()
+                    .id(save.getId())
+                    .userId(save.getUserId())
+                    .name(fileUploadRequest.getName())
+                    .profileImage(fileUploadRequest.getProfileImage())
+                    .message(image)
+                    .type(fileUploadRequest.getType())
+                    .fileType(fileUploadRequest.getFileType())
+                    .time(LocalDateTime.now()).build();
+
+            return uploadResponse;
         }
-
-        ChannelMessage channelMessage = ChannelMessage.builder()
-                .content(image)
-                .thumbnail(thumbnail)
-                .userId(fileUploadRequest.getUserId())
-                .communityId(fileUploadRequest.getCommunityId())
-                .channelId(fileUploadRequest.getChannelId())
-                .type(fileUploadRequest.getFileType())
-                .localDateTime(LocalDateTime.now()).build();
-
-        UserInfoFeignResponse userInfo = userClient.getUserInfo(fileUploadRequest.getUserId());
-
-        ChannelMessage save = channelChatRepository.save(channelMessage);
-
-        FileUploadResponse uploadResponse = FileUploadResponse.builder()
-                .id(save.getId())
-                .name(userInfo.getResult().getName())
-                .profileImage(userInfo.getResult().getProfileImage())
-                .message(image)
-                .thumbnail(thumbnail)
-                .type(fileUploadRequest.getType())
-                .channelId(fileUploadRequest.getChannelId())
-                .fileType(fileUploadRequest.getFileType())
-                .time(LocalDateTime.now()).build();
-
-        return uploadResponse;
-
     }
 
     public void findUserList(Long community_id, List<Long> ids) {

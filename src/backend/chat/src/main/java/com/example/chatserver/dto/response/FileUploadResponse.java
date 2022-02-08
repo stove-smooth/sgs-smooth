@@ -14,6 +14,7 @@ public class FileUploadResponse {
     private String profileImage;
     private String message;
     private String thumbnail;
+    private Long userId;
     private Long channelId;
     private String type;
     private String fileType;

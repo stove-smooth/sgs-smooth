@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 public class NameAndPhotoResponse {
 
     private String name;
+    private String code;
     private String profileImage;
 }
