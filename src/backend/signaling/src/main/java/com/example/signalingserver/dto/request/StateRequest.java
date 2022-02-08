@@ -12,17 +12,13 @@ public class StateRequest {
     private String session_id;
     private String user_id;
     private String channel_id;
-    private String room_id;
 
 
-    public StateRequest(String type, String sessionId, String userId, String id) {
+    public StateRequest(String type, String sessionId, String userId, String channel_id) {
         this.type = type;
         this.session_id = sessionId;
         this.user_id = userId;
-        if (id.contains("c-")) {
-            this.channel_id = id;
-        } else
-            this.room_id = id;
+        this.channel_id = channel_id;
     }
 
     @Override
@@ -32,7 +28,6 @@ public class StateRequest {
                 ", session_id='" + session_id + '\'' +
                 ", user_id='" + user_id + '\'' +
                 ", channel_id='" + channel_id + '\'' +
-                ", room_id='" + room_id + '\'' +
                 '}';
     }
 }
