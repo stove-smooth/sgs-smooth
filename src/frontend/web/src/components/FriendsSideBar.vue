@@ -29,7 +29,11 @@
         </div>
         <h2 class="private-channels-header-container small-title-text">
           <span class="private-channels-header-text">다이렉트 메시지</span>
-          <div class="invite-private-channels-button" aria-label="DM생성">
+          <div
+            class="invite-private-channels-button"
+            aria-label="DM생성"
+            @click="setCreateDirectMessageGroupModal(true)"
+          >
             <svg class="invite-private-channels-icon"></svg>
           </div>
         </h2>
@@ -40,7 +44,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 import NumberBadge from "./common/NumberBadge.vue";
 import DmListForm from "./DMListForm.vue";
 export default {
@@ -54,6 +58,7 @@ export default {
   },
   methods: {
     ...mapActions("dm", ["fetchDirectMessageList"]),
+    ...mapMutations("dm", ["setCreateDirectMessageGroupModal"]),
     routeMypage() {
       this.$router.push("/channels/@me");
     },
