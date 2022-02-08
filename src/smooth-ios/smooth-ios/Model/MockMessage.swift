@@ -18,6 +18,13 @@ internal struct MockMessage: MessageType, Equatable {
 
     var user: MockUser
 
+    init() {
+        self.kind = MessageKind.text("")
+        self.user = MockUser(senderId: "-1", displayName: "", profileImage: nil)
+        self.messageId = "-1"
+        self.sentDate = Date()
+    }
+    
     init(kind: MessageKind, user: MockUser, messageId: String, date: Date) {
         self.kind = kind
         self.user = user
@@ -44,6 +51,7 @@ internal struct MockMessage: MessageType, Equatable {
 struct MockUser: SenderType, Equatable {
     var senderId: String
     var displayName: String
+    var profileImage: String?
 }
 
 private struct ImageMediaItem: MediaItem {

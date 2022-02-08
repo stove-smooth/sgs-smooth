@@ -14,6 +14,8 @@ struct Message: Codable {
     let profileImage: String?
     let userId: Int
     let message: String
+    let thumbnail: String?
+    let fileType: FileType?
     let time: String
     let parentName: String?
     let parentContent: String?
@@ -26,10 +28,17 @@ struct SocketMessage: Codable {
 }
 
 struct MessagePayload: Codable {
-    let message: String
-    let userId: String
+    let id: String
     let name: String
+    let userId: String
+
     let profileImage: String?
+    let message: String
+    
+    let originImage: String?
+    let fileType: FileType?
+
+//    let time:
 }
 
 enum RoomType: String, Codable{
@@ -51,4 +60,6 @@ struct FileMessageRequest: Codable {
     let communityId: Int?
     let type: String
     let fileType: FileType
+    let name: String
+    let profileImage: String?
 }
