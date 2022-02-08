@@ -41,10 +41,12 @@ public class Room extends BaseTimeEntity {
     //== 생성 메소드 ==//
     public static Room createRoom(
             String name,
-            List<RoomMember> members
+            List<RoomMember> members,
+            String iconImage
     ) {
         Room room = new Room();
         room.setName(name);
+        room.setIconImage(iconImage);
         for (RoomMember member: members)
             room.addMember(member);
         room.setIsGroup(members.size() > 2 ? true : false);
@@ -55,6 +57,10 @@ public class Room extends BaseTimeEntity {
     public void addMember(RoomMember roomMember) {
         this.getMembers().add(roomMember);
         roomMember.setRoom(this);
+    }
+
+    public void editIcon(String iconImage) {
+        this.setIconImage(iconImage);
     }
 
     public void delete() {
