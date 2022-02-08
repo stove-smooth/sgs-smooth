@@ -1,4 +1,4 @@
-package com.example.signalingserver.config;
+package com.example.signalingserver.service;
 
 import com.example.signalingserver.util.Room;
 import com.example.signalingserver.util.UserSession;
@@ -28,7 +28,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import static com.example.signalingserver.util.type.Property.*;
+import static com.example.signalingserver.util.type.EventType.*;
 
 @Slf4j
 @Component

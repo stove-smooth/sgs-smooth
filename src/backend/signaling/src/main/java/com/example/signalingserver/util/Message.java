@@ -1,11 +1,11 @@
-package com.example.signalingserver.util.type;
+package com.example.signalingserver.util;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import static com.example.signalingserver.config.MessageHandler.ID;
-import static com.example.signalingserver.util.type.Property.*;
+import static com.example.signalingserver.service.MessageHandler.ID;
+import static com.example.signalingserver.util.type.EventType.*;
 
 public class Message {
 
