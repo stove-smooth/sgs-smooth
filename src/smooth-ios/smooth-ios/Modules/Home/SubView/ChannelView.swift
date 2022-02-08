@@ -96,7 +96,7 @@ class ChannelView: BaseView {
         }
     }
     
-    func bind(communityInfo: CommunityInfo) {
+    func bind(communityInfo: CommunityInfo, selectedChannel: IndexPath?) {
         self.disposeBag = DisposeBag()
         tableView.rx.setDelegate(self).disposed(by: disposeBag)
         
@@ -115,12 +115,31 @@ class ChannelView: BaseView {
         Observable.just(channelSection)
             .bind(to: tableView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
+        
+        if selectedChannel != nil {
+            tableView.selectRow(at: selectedChannel, animated: false, scrollPosition: .middle)
+        } else {
+            guard let categoryList = categoryList else { return }
+            
+            let defaultChannel = categoryList
+                .compactMap { $0.channels }
+                .compactMap { $0.first }
+                .first
+            
+            for i in 0...categoryList.count-1 {
+                if (categoryList[i].channels != nil) {
+                    let row = categoryList[i].channels!.firstIndex(of: defaultChannel!)
+                    if (row != nil) {
+                        tableView.selectRow(at: IndexPath(row: row!, section: i),
+                                            animated: false, scrollPosition: .middle)
+                        break 
+                    }
+                }
+            }
+        }
+        
+        
     }
-    
-    func selected(indexPath: IndexPath) {
-        tableView.selectRow(at: indexPath, animated: false, scrollPosition: .middle)
-    }
-
 }
 
 extension ChannelView: UITableViewDelegate {
