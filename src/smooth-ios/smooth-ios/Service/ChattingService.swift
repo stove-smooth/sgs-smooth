@@ -37,7 +37,7 @@ struct ChattingService: Networkable, ChattingServiceProtocol {
     func sendFileMessage(_ request: FileMessageRequest, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void) {
         makeProvider().request(.sendFileMessage(request: request)) {
             result in
-            switch BaseResponse<DefaultResponse>.processResponse(result) {
+            switch BaseResponse<DefaultResponse>.processJSONResponse(result) {
             case .success(let response):
                 guard let response = response else {
                     return

@@ -92,6 +92,16 @@ class ChatWebSocketService: NSObject, ChatWebSocketServiceProtocol {
         
         socketClient.sendJSONForDict(dict: payloadObject as AnyObject, toDestination: "/kafka/send-channel-message")
     }
+    
+    func deleteMessage(message: MockMessage) {
+        let payloadObject = [
+            "id": message.messageId,
+            "userId": "\(message.user.senderId)",
+            "type": "delete",
+        ] as [String : Any]
+        
+        socketClient.sendJSONForDict(dict: payloadObject as AnyObject, toDestination: "/kafka/send-channel-delete")
+    }
 }
 
 
@@ -116,8 +126,8 @@ extension ChatWebSocketService: StompClientLibDelegate {
                            displayName: messagePayload.name,
                            profileImage: messagePayload.profileImage
                           ),
-            messageId: UUID().uuidString,
-            date: Date())
+            messageId: messagePayload.id,
+            date: messagePayload.time.ISOtoDate)
         self.message.onNext(newMessage)
     }
     
