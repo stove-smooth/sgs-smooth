@@ -20,7 +20,7 @@ export default function Participant(name) {
     if (error) return console.error("sdp offer error");
     console.log("Invoking SDP offer callback function");
     var msg = { id: "receiveVideoFrom", userId: name, sdpOffer: offerSdp };
-    store.dispatch("voiceRoom/sendMessage", msg);
+    store.dispatch("voice/sendMessage", msg);
   };
 
   this.onIceCandidate = function (candidate, wp) {
@@ -31,12 +31,12 @@ export default function Participant(name) {
       userId: name,
       candidate: candidate,
     };
-    store.dispatch("voiceRoom/sendMessage", message);
+    store.dispatch("voice/sendMessage", message);
   };
 
   this.dispose = function () {
     console.log("Disposing participant " + this.name);
     this.rtcPeer.dispose();
-    store.dispatch("voiceRoom/disposeParticipant", this.name);
+    store.dispatch("voice/disposeParticipant", this.name);
   };
 }

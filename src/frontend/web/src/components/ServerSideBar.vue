@@ -185,19 +185,19 @@ export default {
   },
   computed: {
     ...mapState("server", ["openServerPopout", "communityInfo"]),
-    ...mapState("voiceRoom", ["wsOpen"]),
+    ...mapState("voice", ["wsOpen"]),
   },
   mounted() {
     window.addEventListener("click", this.onClick);
   },
   methods: {
+    ...mapActions("voice", ["wsInit", "sendMessage", "leaveRoom"]),
     ...mapMutations("server", [
       "setCreateChannel",
       "setOpenServerPopout",
       "setCategorySettingModal",
       "setChannelSettingModal",
     ]),
-    ...mapActions("voiceRoom", ["wsInit", "sendMessage", "leaveRoom"]),
     log: async function (evt) {
       if (evt.moved) {
         if (evt.moved.element.channels) {
@@ -347,15 +347,20 @@ export default {
       }
     },
     async routeChannel(id, type) {
-      console.log("type", type);
+      console.log("type", type, "wsopen", this.wsOpen);
       if (type == "VOICE") {
+        console.log(1);
         if (this.wsOpen) {
-          await this.sendMessage({ id: "leaveRoom" });
-          await this.leaveRoom();
+          console.log(2);
+          this.sendMessage({ id: "leaveRoom" });
+          console.log(3);
+          this.leaveRoom();
         }
+        console.log("type이 VOICE일시");
         const url = "https://sig.yoloyolo.org/rtc";
-        this.wsInit(url); //ws 전역 등록.
+        await this.wsInit(url); //ws 전역 등록.
       }
+      console.log(4);
       this.selected = id;
       this.$router.push("/channels/" + this.communityInfo.id + "/" + id);
     },

@@ -79,7 +79,7 @@ export default {
   },
   computed: {
     ...mapState("server", ["communityInfo"]),
-    ...mapState("voiceRoom", ["wsOpen"]),
+    ...mapState("voice", ["wsOpen"]),
   },
 };
 </script>
