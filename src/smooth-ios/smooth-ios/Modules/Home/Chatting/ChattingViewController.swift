@@ -13,6 +13,7 @@ import Toast_Swift
 
 protocol ChattingViewControllerDelegate: AnyObject {
     func didTapMenuButton(channel: Channel?, communityId: Int?)
+    func dismiss(channel: Channel?, communityId: Int?)
 }
 
 class ChattingViewController: MessagesViewController {
@@ -72,6 +73,12 @@ class ChattingViewController: MessagesViewController {
     
     @objc func didTapMenuButton() {
         delegate?.didTapMenuButton(channel: nil, communityId: nil)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        delegate?.dismiss(channel: channel, communityId: communityId)
+        
+        super.viewWillDisappear(animated)
     }
     
     private func bindViewModel() {
@@ -160,7 +167,7 @@ extension ChattingViewController {
     }
     
     func deleteMessage(_ indexPath: IndexPath) {
-        print("\(indexPath) \(messageList.count)")
+        print("deleteMessage \(indexPath) \(messageList.count)")
         
         messagesCollectionView.performBatchUpdates({
             messageList.remove(at: indexPath.section)
@@ -249,6 +256,7 @@ extension ChattingViewController: InputBarAccessoryViewDelegate, CameraInputBarA
             // MARK: 텍스트
             if let str = component as? String {
                 self.viewModel.sendMessage(message: str, communityId: self.communityId)
+                
                 let message = MockMessage(kind: .text(str), user: messageUser, messageId: UUID().uuidString, date: Date())
                 insertMessage(message)
             }
@@ -274,5 +282,13 @@ extension ChattingViewController: InputBarAccessoryViewDelegate, CameraInputBarA
                 insertMessage(message)
             }
         }
+    }
+}
+
+// MARK: - ChattingMessageOptionVC Delegate
+extension ChattingViewController: ChattingMessageOptionDelegate {
+    func delete(indexPath: IndexPath) {
+        delegate?.didTapMenuButton(channel: self.channel, communityId: self.communityId)
+        self.deleteMessage(indexPath)
     }
 }

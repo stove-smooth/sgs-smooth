@@ -19,10 +19,16 @@ protocol HomeViewControllerDelegate: AnyObject {
     func loadChatting(channel: Channel, communityId: Int?)
 }
 
+protocol DeliveryDelegate: AnyObject {
+    func appear(channel: Channel?, communityId: Int?)
+}
+
 class HomeViewController: BaseViewController, CoordinatorContext {
     
     weak var coordinator: HomeCoordinator?
+    
     weak var delegate: HomeViewControllerDelegate?
+    weak var delivery: DeliveryDelegate?
     
     var navigationViewController: UINavigationController?
     
@@ -47,6 +53,7 @@ class HomeViewController: BaseViewController, CoordinatorContext {
         view.addSubview(menuViewController.view)
         menuViewController.didMove(toParent: self)
         menuViewController.delegate = self
+        self.delivery = menuViewController.self as? DeliveryDelegate
         
         // chatting VC
         chattingViewController.delegate = self
@@ -74,6 +81,12 @@ extension HomeViewController: MenuViewControllerDelegate {
 
 // MARK: - Menu Animation
 extension HomeViewController: ChattingViewControllerDelegate {
+    func dismiss(channel: Channel?, communityId: Int?) {
+        self.menuState = .closed
+        toggleMenu(completion: nil)
+        self.delivery?.appear(channel: channel, communityId: communityId)
+    }
+    
     func didTapMenuButton(channel: Channel?, communityId: Int?) {
         toggleMenu(completion: nil)
     }
