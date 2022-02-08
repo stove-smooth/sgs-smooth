@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState, mapActions } from "vuex";
+import { mapGetters, mapState } from "vuex";
 
 import FriendsSideBar from "../components/FriendsSideBar.vue";
 import FriendsStateList from "../components/FriendsStateList.vue";
@@ -39,12 +39,6 @@ export default {
     FriendsStateList,
     FriendsNowPlayingList,
     FriendsNewAdd,
-  },
-  async created() {
-    await this.fetchDirectMessageList();
-  },
-  methods: {
-    ...mapActions("dm", ["fetchDirectMessageList"]),
   },
   computed: {
     ...mapState("friends", ["friendsStateMenu"]),

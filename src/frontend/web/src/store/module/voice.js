@@ -61,7 +61,6 @@ const voice = {
         context.commit("setWsOpen", true);
       };
       context.state.ws.onmessage = function (message) {
-        console.log("일로안오나?");
         let parsedMessage = JSON.parse(message.data);
         console.log("Received message: " + message.data);
         context.dispatch("onServerMessage", parsedMessage);

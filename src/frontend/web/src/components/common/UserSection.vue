@@ -76,8 +76,10 @@
             aria-label="마이크"
             role="switch"
             type="button"
+            @click="setMute"
           >
-            <svg class="mute"></svg>
+            <svg v-if="mute" class="mute-on"></svg>
+            <svg v-else class="mute"></svg>
           </button>
         </div>
         <div class="mydevice-controller">
@@ -86,8 +88,10 @@
             aria-label="헤드셋"
             role="switch"
             type="button"
+            @click="setDeafen"
           >
-            <svg class="deafen"></svg>
+            <svg v-if="deafen" class="deafen-on"></svg>
+            <svg v-else class="deafen"></svg>
           </button>
         </div>
         <div class="mydevice-controller">
@@ -107,11 +111,12 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 export default {
   methods: {
+    ...mapMutations("voice", ["setMute", "setDeafen"]),
     ...mapActions("user", ["FETCH_USERINFO"]),
-    ...mapActions("voiceRoom", ["sendMessage", "leaveRoom"]),
+    ...mapActions("voice", ["sendMessage", "leaveRoom"]),
     openSettings() {
       this.$router.push("/settings");
     },
@@ -145,7 +150,7 @@ export default {
   computed: {
     ...mapState("user", ["code", "nickname", "userimage"]),
     ...mapState("server", ["currentChannelType", "communityInfo"]),
-    ...mapState("voiceRoom", ["wsOpen"]),
+    ...mapState("voice", ["wsOpen", "mute", "deafen"]),
   },
   async created() {
     await this.FETCH_USERINFO();
@@ -318,11 +323,23 @@ export default {
   width: 12px;
   height: 17px;
 }
+.mute-on {
+  display: flex;
+  background-image: url("../../assets/mute-on.svg");
+  width: 20px;
+  height: 20px;
+}
 .deafen {
   display: flex;
   background-image: url("../../assets/deafen.svg");
   width: 16px;
   height: 16px;
+}
+.deafen-on {
+  display: flex;
+  background-image: url("../../assets/deafen_on.svg");
+  width: 20px;
+  height: 20px;
 }
 .settings {
   display: flex;

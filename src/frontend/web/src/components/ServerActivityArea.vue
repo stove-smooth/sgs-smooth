@@ -702,6 +702,7 @@ export default {
         var array = [];
         for (var i = 0; i < result.data.result.length; i++) {
           //시간을 한국 시간+디스코드에 맞게 변환
+          console.log("communitymessage", result.data.result[i]);
           const translatedTime = this.convertFromStringToDate(
             result.data.result[i].time
           );

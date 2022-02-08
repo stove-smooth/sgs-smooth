@@ -166,6 +166,9 @@ function readDMChatMessage(channelId, pageId) {
 function fetchDirectMessageList() {
   return instance.get(`community-server/room`);
 }
+function createDirectMessage(membersInfo) {
+  return instance.post(`community-server/room`, membersInfo);
+}
 export {
   registerUser,
   loginUser,
@@ -198,4 +201,5 @@ export {
   readDMChatMessage,
   sendImageDirectChatting,
   fetchDirectMessageList,
+  createDirectMessage,
 };
