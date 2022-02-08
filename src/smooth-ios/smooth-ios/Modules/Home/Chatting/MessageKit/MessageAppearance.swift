@@ -41,19 +41,13 @@ extension ChattingViewController: MessagesDisplayDelegate {
         
         // 프로필 셋업
         let user = self.messageList[indexPath.section].user
-        let img = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
-        
-        img.contentMode = .scaleAspectFit
         
         if user.profileImage != nil {
-            img.kf.indicatorType = .activity
-            img.setImage(URL(string: user.profileImage!)!)
+            avatarView.setImage(URL(string: user.profileImage!)!)
         } else {
-            img.image = UIImage(named: "Logo")
-            img.center = CGPoint(x: 15 , y: 15)
-            img.contentMode = .scaleAspectFit
+            let img = UIImage(named: "Logo")
+            avatarView.image = img
         }
-        avatarView.set(avatar: Avatar(image: img.image, initials: ""))
         
         avatarView.backgroundColor = UIColor.random(code: Int(user.senderId) ?? 0)
         avatarView.isHidden = isPreviousMessageSameSender(at: indexPath)

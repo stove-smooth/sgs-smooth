@@ -39,19 +39,28 @@ extension ChattingViewController: MessageCellDelegate {
         
         messagesCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: [])
         
-        #warning("message mockup으로 유저 데이터 얻기 & 내 프로필 선택 시 내 정보 보여주기")
-        // let friend = messageList[indexPath.section]
-        
-        let friend = Friend(id: 2, name: "밍디", code: "1374", profileImage: Optional("https://sgs-smooth.s3.ap-northeast-2.amazonaws.com/1643090865999"), state: .accept)
-         self.coordinator?.showFriendInfoModal(friend: friend)
+        let user = messageList[indexPath.section].user
+        self.coordinator?.showFriendInfoModal(id: Int(user.senderId)!, state: .none)
     }
     
 
     func didTapMessage(in cell: MessageCollectionViewCell) {
         guard let indexPath = messagesCollectionView.indexPath(for: cell) else { return }
         
-        messagesCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredVertically)
+        
+        self.coordinator?.showMessageOptionModal(indexPath: indexPath)
+        
+    }
     
-//        self.deleteMessage(indexPath)
+    func didTapImage(in cell: MessageCollectionViewCell) {
+        // 이미지 크게 보기
+    }
+    
+    func didTapBackground(in cell: MessageCollectionViewCell) {
+        guard let indexPath = messagesCollectionView.indexPath(for: cell) else { return }
+        
+        messagesCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredVertically)
+        
+        self.coordinator?.showMessageOptionModal(indexPath: indexPath)
     }
 }

@@ -9,11 +9,15 @@ import Foundation
 import Moya
 
 protocol UserServiceProtocol {
+    // MARK: POST
     func signIn(email: String, password: String, _ completion: @escaping (SignIn?, MoyaError?) -> Void)
     func signUp(_ request: SignUpRequest, _ completion: @escaping (SignUpResponse?, MoyaError?) -> Void )
     func sendMail(_ request: SendMailRequest, _ completion: @escaping (SendMailResponse?, MoyaError?) -> Void)
+    
+    // MARK: GET
     func checkEmail(_ request: VerifyCodeRequest, _ completion: @escaping (VerifyCodeResponse?, MoyaError?) -> Void)
     func fetchUserInfo(_ completion: @escaping (User?, MoyaError?) -> Void)
+    func fetchUserInfoById(userId: Int, _ completion: @escaping (UserInfo?, MoyaError?) -> Void)
 }
 
 struct UserService: Networkable, UserServiceProtocol {
@@ -76,6 +80,23 @@ struct UserService: Networkable, UserServiceProtocol {
                 }
 
                 return completion(response, nil)
+            case .failure(let error):
+                return completion(nil, error)
+            }
+        }
+    }
+    
+    func fetchUserInfoById(userId: Int, _ completion: @escaping (UserInfo?, MoyaError?) -> Void) {
+        makeProvider().request(.fetchUserInfoById(userId: userId)) {
+            result in
+            switch BaseResponse<UserInfo>.processResponse(result) {
+            case .success(let response):
+                guard let response = response else {
+                    return
+                }
+                
+                return completion(response, nil)
+            
             case .failure(let error):
                 return completion(nil, error)
             }

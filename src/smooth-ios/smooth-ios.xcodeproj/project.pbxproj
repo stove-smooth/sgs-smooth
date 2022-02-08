@@ -164,6 +164,7 @@
 		C1FAF63C27AD812F00269EEF /* MessageAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FAF63B27AD812F00269EEF /* MessageAppearance.swift */; };
 		C1FAF63E27AD81DE00269EEF /* ChattingDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FAF63D27AD81DE00269EEF /* ChattingDataSource.swift */; };
 		C1FAF64027B15B3800269EEF /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FAF63F27B15B3800269EEF /* String+Extension.swift */; };
+		C1FAF64227B22E3000269EEF /* ChattingMessageOptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FAF64127B22E2F00269EEF /* ChattingMessageOptionViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -327,6 +328,7 @@
 		C1FAF63B27AD812F00269EEF /* MessageAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAppearance.swift; sourceTree = "<group>"; };
 		C1FAF63D27AD81DE00269EEF /* ChattingDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChattingDataSource.swift; sourceTree = "<group>"; };
 		C1FAF63F27B15B3800269EEF /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
+		C1FAF64127B22E2F00269EEF /* ChattingMessageOptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChattingMessageOptionViewController.swift; sourceTree = "<group>"; };
 		C621E57B9EB3150F8810E412 /* Pods-smooth-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-smooth-ios.debug.xcconfig"; path = "Target Support Files/Pods-smooth-ios/Pods-smooth-ios.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -851,6 +853,7 @@
 			children = (
 				C1D47F102779D6FD00DBA3CA /* ChattingViewController.swift */,
 				C1C8B23B27A97E4700E8758E /* ChattingViewModel.swift */,
+				C1FAF64127B22E2F00269EEF /* ChattingMessageOptionViewController.swift */,
 				C1FAF63A27AD805700269EEF /* MessageKit */,
 			);
 			path = Chatting;
@@ -1011,6 +1014,7 @@
 				C1DF653427AC266D007FC317 /* ChannelReorderViewController.swift in Sources */,
 				C176604E279A639E0062D0CB /* FriendInfoView.swift in Sources */,
 				C1D47F262783CA0C00DBA3CA /* NetworkLoggerPlugin.swift in Sources */,
+				C1FAF64227B22E3000269EEF /* ChattingMessageOptionViewController.swift in Sources */,
 				C118D2C027A6B232009CB96C /* ServerSettingCell.swift in Sources */,
 				C1D47F432785DA4900DBA3CA /* SignUpInfoViewModel.swift in Sources */,
 				C118D2E127A78A9F009CB96C /* Category.swift in Sources */,

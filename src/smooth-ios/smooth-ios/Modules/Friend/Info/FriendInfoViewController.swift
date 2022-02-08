@@ -14,19 +14,23 @@ class FriendInfoViewController: BaseViewController, PanModalPresentable {
     private lazy var infoView = FriendInfoView(frame: self.view.frame)
     private let viewModel: FriendInfoViewModel
     
-    private let friend: Friend
+    private let friendId: Int
+    private let friendState: FriendState
     
+    // TODO: 친구 상태에 따라 alert action, friend 정보 변경
     let actions: [UIAlertController.AlertAction] = [
         .action(title: "차단하기", style: .destructive),
         .action(title: "친구 삭제하기", style: .default),
         .action(title: "취소", style: .cancel)
     ]
     
-    init(friend: Friend) {
-        self.friend = friend
+    init(friendId: Int, state: FriendState) {
+        self.friendId = friendId
+        self.friendState = state
         self.viewModel = FriendInfoViewModel(
             friendService: FriendService(),
-            friend: friend
+            userService: UserService(),
+            friendId: friendId
         )
         
         super.init(nibName: nil, bundle: nil)
@@ -36,8 +40,8 @@ class FriendInfoViewController: BaseViewController, PanModalPresentable {
         fatalError("init(coder:) has not been implemented")
     }
     
-    static func instance(friend: Friend) -> FriendInfoViewController {
-        return FriendInfoViewController(friend: friend).then {
+    static func instance(friendId: Int, state: FriendState) -> FriendInfoViewController {
+        return FriendInfoViewController(friendId: friendId, state: state).then {
             $0.modalPresentationStyle = .overCurrentContext
         }
     }
@@ -50,11 +54,17 @@ class FriendInfoViewController: BaseViewController, PanModalPresentable {
         return .contentHeight(200)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.viewModel.input.fetch.onNext(())
+    }
+
     override func viewDidLoad() {
+        self.view = infoView
+        
         super.viewDidLoad()
         
-        self.view = infoView
-        infoView.bind(friend: friend)
     }
     
     private func dismiss() {
@@ -62,6 +72,12 @@ class FriendInfoViewController: BaseViewController, PanModalPresentable {
     }
     
     override func bindViewModel() {
+        
+        self.viewModel.output.friend
+            .asDriver(onErrorJustReturn: Friend())
+            .drive(onNext: self.infoView.bind(friend:))
+            .disposed(by: disposeBag)
+        
         self.infoView.settingButton.rx.tap
             .subscribe(onNext: { [weak self] in
                 guard let self = self else { return }
@@ -75,10 +91,8 @@ class FriendInfoViewController: BaseViewController, PanModalPresentable {
                 ).subscribe(onNext: { index in
                     switch index {
                     case 0:
-                        print("차단하기 \(self.friend)")
                         self.viewModel.input.tapBanButton.accept(())
                     case 1:
-                        print("삭제하기 \(self.friend)")
                         self.viewModel.input.tapDeleteButton.accept(())
                     default:
                         break
