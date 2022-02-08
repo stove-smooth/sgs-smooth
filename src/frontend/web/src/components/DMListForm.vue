@@ -30,7 +30,11 @@
           <div class="friends-contents">
             <div class="friends-name-decorator">
               <div class="friends-name">{{ item.name }}</div>
-              <svg class="primary-close" v-show="upHere === item.id"></svg>
+              <svg
+                class="primary-close"
+                v-show="upHere === item.id"
+                @click.stop.prevent="exitDirectMessage(item.id)"
+              ></svg>
             </div>
             <div class="subtext-decorator">
               <div class="subtext" v-show="item.group">
@@ -45,7 +49,8 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters, mapMutations } from "vuex";
+import { exitDirectMessage } from "../api/index";
 export default {
   data() {
     return {
@@ -54,8 +59,10 @@ export default {
   },
   computed: {
     ...mapState("dm", ["directMessageList"]),
+    ...mapGetters("user", ["getUserId"]),
   },
   methods: {
+    ...mapMutations("dm", ["setDirectMessageList"]),
     hold(index) {
       this.upHere = index;
     },
@@ -65,6 +72,18 @@ export default {
     routePrivateDM(index) {
       if (this.$route.path !== "/channels/@me/" + index) {
         this.$router.push("/channels/@me/" + index);
+      }
+    },
+    async exitDirectMessage(dmId) {
+      const result = await exitDirectMessage(dmId, this.getUserId);
+      if (result.data.code === 1000) {
+        let array = this.directMessageList.filter(
+          (element) => element.id !== dmId
+        );
+        if (this.$route.params.id == dmId) {
+          this.$router.replace("/channels/@me");
+        }
+        this.setDirectMessageList(array);
       }
     },
   },

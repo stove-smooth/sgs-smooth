@@ -181,12 +181,11 @@ export default {
       window.location.reload();
     },
     async sendDirectMessage(userInfo) {
-      console.log("userId", userInfo.userId);
       for (let i = 0; i < this.directMessageList.length; i++) {
         if (this.directMessageList[i].group == false) {
           if (this.directMessageList[i].members.includes(userInfo.userId)) {
-            console.log("이동");
-            break;
+            this.$router.push(`/channels/@me/${this.directMessageList[i].id}`);
+            return;
           }
         }
       }
@@ -194,7 +193,7 @@ export default {
         members: [userInfo.userId],
       };
       const result = await createDirectMessage(dmMembers);
-      console.log("result", result);
+      this.$router.push(`/channels/@me/${result.data.result.id}`);
     },
   },
 };
