@@ -1,5 +1,6 @@
 package com.example.signalingserver.service;
 
+import com.example.signalingserver.config.tcp.TcpClientGateway;
 import com.example.signalingserver.util.Room;
 import com.example.signalingserver.util.UserSession;
 import com.example.signalingserver.dto.request.CandidateRequest;
@@ -38,10 +39,10 @@ public class MessageHandler extends TextWebSocketHandler {
     @Value("${property.ip}")
     private String IP;
 
+    // private final JwtFilter jwtFilter;
     private final KurentoClient kurento;
     private final RoomManager roomManager;
     private final UserRegister registry;
-    // private final JwtFilter jwtFilter;
 
     private final ObjectMapper mapper;
     private static final Gson gson = new GsonBuilder().create();
@@ -55,6 +56,7 @@ public class MessageHandler extends TextWebSocketHandler {
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
         try {
+
             final JsonObject jsonMessage = gson.fromJson(message.getPayload(), JsonObject.class);
             final UserSession user = registry.getBySession(session);
 
