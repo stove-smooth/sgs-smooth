@@ -34,36 +34,32 @@ export const router = new VueRouter({
       path: "/",
       name: "MainPage",
       component: MainPage,
+      meta: { auth: true },
       children: [
         {
           path: "channels/@me/:id",
           name: "privateDmPage",
           component: PrivateDMPage,
-          meta: { auth: true },
         },
         {
           path: "channels/@me",
           name: "MyPage",
           component: MyPage,
-          meta: { auth: true },
         },
         {
           path: "settings",
           name: "UserSettingPage",
           component: UserSettingPage,
-          meta: { auth: true },
         },
         {
           path: "channels/:serverid/:channelid",
           name: "ServerPage",
           component: ServerPage,
-          meta: { auth: true },
         },
         {
           path: "channels/:serverid",
           name: "ServerWelcomePage",
           component: ServerWelcomePage,
-          meta: { auth: true },
         },
       ],
     },
