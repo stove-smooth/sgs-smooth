@@ -110,8 +110,14 @@ extension ChatWebSocketService: StompClientLibDelegate {
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         let messagePayload = try! decoder.decode(MessagePayload.self, from: stringBody.data(using: .utf8)!)
         
-        let newMessage = MockMessage(text: messagePayload.message, user: MockUser(senderId: messagePayload.userId, displayName: messagePayload.name), messageId: UUID().uuidString, date: Date())
-        
+        let newMessage = MockMessage(
+            text: messagePayload.message,
+            user: MockUser(senderId: messagePayload.userId,
+                           displayName: messagePayload.name,
+                           profileImage: messagePayload.profileImage
+                          ),
+            messageId: UUID().uuidString,
+            date: Date())
         self.message.onNext(newMessage)
     }
     

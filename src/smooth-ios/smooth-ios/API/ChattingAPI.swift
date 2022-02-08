@@ -67,15 +67,24 @@ extension ChattingTarget: BaseAPI, AccessTokenAuthorizable {
             let channelId = request.channelId.description.data(using: .utf8) ?? Data()
             let type = request.type.description.data(using: .utf8) ?? Data()
             let fileType = request.fileType.rawValue.description.data(using: .utf8) ?? Data()
+            let name = request.name.description.data(using: .utf8) ?? Data()
+            
             
             multipartFromData.append(MultipartFormData(provider: .data(userId), name: "userId"))
             multipartFromData.append(MultipartFormData(provider: .data(channelId), name: "channelId"))
             multipartFromData.append(MultipartFormData(provider: .data(type), name: "type"))
             multipartFromData.append(MultipartFormData(provider: .data(fileType), name: "fileType"))
+            multipartFromData.append(MultipartFormData(provider: .data(name), name: "name"))
+           
             
             if (request.communityId != nil) {
                 let communityId = request.communityId!.description.data(using: .utf8) ?? Data()
                 multipartFromData.append(MultipartFormData(provider: .data(communityId), name: "communityId"))
+            }
+            
+            if (request.profileImage != nil) {
+                let profileImage = request.profileImage!.description.data(using: .utf8) ?? Data()
+                multipartFromData.append(MultipartFormData(provider: .data(profileImage), name: "profileImage"))
             }
             
             return .uploadMultipart(multipartFromData)

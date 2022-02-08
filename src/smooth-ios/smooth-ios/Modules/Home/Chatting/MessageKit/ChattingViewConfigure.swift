@@ -59,6 +59,7 @@ extension ChattingViewController {
     func setMessageCollectionLayout() {
         messagesCollectionView.refreshControl = refreshControl
         messagesCollectionView.backgroundColor = .messageBarDarkGray
+        messagesCollectionView.tintColor = .clear
         
         maintainPositionOnKeyboardFrameChanged = true
         scrollsToLastItemOnKeyboardBeginsEditing = true
@@ -66,19 +67,14 @@ extension ChattingViewController {
         let layout = messagesCollectionView.collectionViewLayout as? MessagesCollectionViewFlowLayout
         
         layout?.sectionInset = UIEdgeInsets(top: 1, left: 8, bottom: 1, right: 8)
-        
-        layout?.setMessageOutgoingAvatarSize(CGSize(width: 30, height: 30))
+        // 메시지 내용 (topLabel, 이름)
         layout?.setMessageOutgoingMessageTopLabelAlignment(LabelAlignment(textAlignment: .left, textInsets: UIEdgeInsets(top: 0, left: 50, bottom: 0, right: 0)))
-        layout?.setMessageOutgoingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .left, textInsets: UIEdgeInsets(top: 0, left: 30, bottom: 0, right: 0)))
+        layout?.setMessageOutgoingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .left, textInsets: UIEdgeInsets(top: 0, left: 50, bottom: 0, right: 0)))
         
-        layout?.setMessageIncomingMessageTopLabelAlignment(LabelAlignment(textAlignment: .left, textInsets: UIEdgeInsets(top: 0, left: 50, bottom: 15, right: 0)))
+        layout?.setMessageIncomingMessageTopLabelAlignment(LabelAlignment(textAlignment: .left, textInsets: UIEdgeInsets(top: 0, left: 50, bottom: 0, right: 0)))
         layout?.setMessageIncomingAvatarSize(CGSize(width: 30, height: 30))
-        layout?.setMessageIncomingMessagePadding(UIEdgeInsets(top: -20, left: 0, bottom: 0, right: 0))
-        
         layout?.setMessageOutgoingAvatarPosition(.init(vertical: .cellTop))
         layout?.setMessageIncomingAvatarPosition(.init(vertical: .cellTop))
-        
-        layout?.setMessageIncomingMessagePadding(UIEdgeInsets(top: -20, left: 0, bottom: 0, right: 0))
     }
     
     // MARK: - InputBar

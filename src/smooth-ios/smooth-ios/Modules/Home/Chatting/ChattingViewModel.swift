@@ -82,13 +82,31 @@ class ChattingViewModel: BaseViewModel {
                     return
                 }
                 
-                let fetchmessages = response.map {
-                    MockMessage(
-                        kind: MessageKind.text($0.message),
-                        user: MockUser(senderId: "\($0.userId)", displayName: $0.name),
-                        messageId: $0.id,
-                        date: Date()
-                    )
+                var fetchmessages: [MockMessage] = []
+                
+                for msg in response {
+                    var newMessage: MockMessage?
+                    
+                    switch msg.fileType {
+                    case .image:
+                        newMessage = MockMessage(image: msg.message.toUIImage()!,
+                                                 user: MockUser(senderId: "\(msg.userId)", displayName: msg.name, profileImage: msg.profileImage),
+                                                 messageId: msg.id,
+                                                 date: msg.time.ISOtoDate
+                        )
+                    case .file: break
+                    case .video: break
+                        
+                    case .none:
+                        newMessage = MockMessage(
+                            kind: MessageKind.text(msg.message),
+                            user: MockUser(senderId: "\(msg.userId)", displayName: msg.name, profileImage: msg.profileImage),
+                            messageId: msg.id,
+                            date: msg.time.ISOtoDate
+                        )
+                    }
+                    
+                    fetchmessages.append(newMessage!)
                 }
                 
                 self.output.showEmpty.accept(response.count == 0)
@@ -103,7 +121,9 @@ class ChattingViewModel: BaseViewModel {
     }
     
     func sendMessage(message: String, communityId: Int?) {
+        self.output.isLoading.accept(true)
         self.chatWebSocketService.sendMessage(message: message, communityId: communityId)
+        self.output.isLoading.accept(false)
     }
     
     func sendFileMessage(request: FileMessageRequest) {

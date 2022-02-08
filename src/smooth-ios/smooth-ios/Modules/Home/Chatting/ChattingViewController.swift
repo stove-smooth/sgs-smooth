@@ -9,6 +9,7 @@ import UIKit
 import RxSwift
 import MessageKit
 import InputBarAccessoryView
+import Toast_Swift
 
 protocol ChattingViewControllerDelegate: AnyObject {
     func didTapMenuButton(channel: Channel?, communityId: Int?)
@@ -38,7 +39,7 @@ class ChattingViewController: MessagesViewController {
             chattingService: ChattingService()
         )
         let user = UserDefaultsUtil().getUserInfo()!
-        self.messageUser = MockUser(senderId: "\(user.id)", displayName: user.name)
+        self.messageUser = MockUser(senderId: "\(user.id)", displayName: user.name, profileImage: user.profileImage)
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -78,7 +79,10 @@ class ChattingViewController: MessagesViewController {
             .bind(onNext: { channel in
                 self.viewModel.input.fetch.onNext(channel)
                 self.channel = channel
+                
                 self.configureNavigationController(channel: channel)
+                self.messagesCollectionView.reloadData()
+                self.messagesCollectionView.scrollToLastItem()
                 self.messageInputBar.inputTextView.placeholder = "#\(channel.name)에 메시지 보내기"
             })
             .disposed(by: disposeBag)
@@ -94,6 +98,27 @@ class ChattingViewController: MessagesViewController {
                 self.messagesCollectionView.scrollToLastItem()
             }).disposed(by: disposeBag)
         
+        
+        self.viewModel.showErrorMessage
+            .asDriver(onErrorJustReturn: "")
+            .drive(onNext: { message in
+                self.showToast(message: message, isWarning: true)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    func showToast(message: String, isWarning: Bool) {
+        var style = ToastStyle()
+        style.backgroundColor = .serverListDarkGray!
+        style.cornerRadius = 15
+        
+        let emoji = isWarning ? "⛔️ " : "✅ "
+        
+        self.view.makeToast(
+            emoji+message,
+            position: .top,
+            style: style
+        )
     }
 }
 
@@ -173,10 +198,19 @@ extension ChattingViewController {
 }
 
 // MARK: - InputBar
-extension ChattingViewController: InputBarAccessoryViewDelegate {
+extension ChattingViewController: InputBarAccessoryViewDelegate, CameraInputBarAccessoryViewDelegate {
     @objc
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
         processInputBar(messageInputBar)
+    }
+    
+    func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith attachments: [AttachmentManager.Attachment]) {
+        for item in attachments {
+            if  case .image(let image) = item {
+                self.insertMessages([image])
+            }
+        }
+        inputBar.invalidatePlugins()
     }
     
     func processInputBar(_ inputBar: InputBarAccessoryView) {
@@ -195,12 +229,12 @@ extension ChattingViewController: InputBarAccessoryViewDelegate {
         inputBar.invalidatePlugins()
         // Send button activity animation
         inputBar.sendButton.startAnimating()
-        inputBar.inputTextView.placeholder = "Sending..."
+        inputBar.inputTextView.placeholder = "메시지 보내는 중..."
         // Resign first responder for iPad split view
         inputBar.inputTextView.resignFirstResponder()
+        
         DispatchQueue.global(qos: .default).async {
-            // fake send request task
-            sleep(1)
+            sleep(UInt32(0.2)) // fake send request task
             DispatchQueue.main.async { [weak self] in
                 inputBar.sendButton.stopAnimating()
                 inputBar.inputTextView.placeholder = "메시지 보내기"
@@ -212,24 +246,28 @@ extension ChattingViewController: InputBarAccessoryViewDelegate {
     
     private func insertMessages(_ data: [Any]) {
         for component in data {
+            // MARK: 텍스트
             if let str = component as? String {
                 self.viewModel.sendMessage(message: str, communityId: self.communityId)
-                let message = MockMessage(kind: MessageKind.text(str), user: messageUser, messageId: UUID().uuidString, date: Date())
+                let message = MockMessage(kind: .text(str), user: messageUser, messageId: UUID().uuidString, date: Date())
                 insertMessage(message)
             }
+            // MARK: 이미지
             else if let img = component as? UIImage {
                 let message = MockMessage(image: img, user: messageUser, messageId: UUID().uuidString, date: Date())
                 
                 let thumb = img.generateThumbnail()!
                 
                 let request = FileMessageRequest(
-                    image: img.data,
+                    image: img.jpegData(compressionQuality: 0.5),
                     thumbnail: thumb.data,
                     userId: Int(messageUser.senderId)!,
                     channelId: channel!.id,
                     communityId: communityId,
                     type: communityId != nil ? "community" : "direct",
-                    fileType: FileType.image
+                    fileType: FileType.image,
+                    name: messageUser.displayName,
+                    profileImage: messageUser.profileImage
                 )
                 
                 self.viewModel.sendFileMessage(request: request)

@@ -14,7 +14,6 @@ extension ChattingViewController: MessagesDisplayDelegate {
         return .white!
     }
     
-    
     func detectorAttributes(for detector: DetectorType, and message: MessageType, at indexPath: IndexPath) -> [NSAttributedString.Key: Any] {
         switch detector {
         case .hashtag, .mention:
@@ -38,8 +37,25 @@ extension ChattingViewController: MessagesDisplayDelegate {
     }
     
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
-        let avatar = SampleData.shared.getAvatarFor(sender: message.sender)
-        avatarView.set(avatar: avatar)
+        avatarView.prepareForInterfaceBuilder()
+        
+        // 프로필 셋업
+        let user = self.messageList[indexPath.section].user
+        let img = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+        
+        img.contentMode = .scaleAspectFit
+        
+        if user.profileImage != nil {
+            img.kf.indicatorType = .activity
+            img.setImage(URL(string: user.profileImage!)!)
+        } else {
+            img.image = UIImage(named: "Logo")
+            img.center = CGPoint(x: 15 , y: 15)
+            img.contentMode = .scaleAspectFit
+        }
+        avatarView.set(avatar: Avatar(image: img.image, initials: ""))
+        
+        avatarView.backgroundColor = UIColor.random(code: Int(user.senderId) ?? 0)
         avatarView.isHidden = isPreviousMessageSameSender(at: indexPath)
     }
     
@@ -57,15 +73,29 @@ extension ChattingViewController: MessagesDisplayDelegate {
 extension ChattingViewController: MessagesLayoutDelegate {
     
     func messageTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        if isFromCurrentSender(message: message) {
-            return !isPreviousMessageSameSender(at: indexPath) ? 20 : 0
+        if !isPreviousMessageSameSender(at: indexPath) {
+            switch message.kind {
+            case .photo:
+                return 30
+            default: return 20
+            }
         } else {
-            return !isPreviousMessageSameSender(at: indexPath) ? 37.5 : 0
+            switch message.kind {
+            case .text:
+                return -20
+            default:
+                return 0
+            }
         }
     }
     
     func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return (!isNextMessageSameSender(at: indexPath) && isFromCurrentSender(message: message)) ? 16 : 0
+        switch message.kind {
+        case .photo:
+            return 16
+        default:
+            return 0
+        }
     }
     
     func footerViewSize(for section: Int, in messagesCollectionView: MessagesCollectionView) -> CGSize {

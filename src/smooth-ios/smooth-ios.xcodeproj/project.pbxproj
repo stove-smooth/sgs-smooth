@@ -163,6 +163,7 @@
 		C1FAF63927AD7B6F00269EEF /* ChattingViewConfigure.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FAF63827AD7B6F00269EEF /* ChattingViewConfigure.swift */; };
 		C1FAF63C27AD812F00269EEF /* MessageAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FAF63B27AD812F00269EEF /* MessageAppearance.swift */; };
 		C1FAF63E27AD81DE00269EEF /* ChattingDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FAF63D27AD81DE00269EEF /* ChattingDataSource.swift */; };
+		C1FAF64027B15B3800269EEF /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FAF63F27B15B3800269EEF /* String+Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -325,6 +326,7 @@
 		C1FAF63827AD7B6F00269EEF /* ChattingViewConfigure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChattingViewConfigure.swift; sourceTree = "<group>"; };
 		C1FAF63B27AD812F00269EEF /* MessageAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAppearance.swift; sourceTree = "<group>"; };
 		C1FAF63D27AD81DE00269EEF /* ChattingDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChattingDataSource.swift; sourceTree = "<group>"; };
+		C1FAF63F27B15B3800269EEF /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		C621E57B9EB3150F8810E412 /* Pods-smooth-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-smooth-ios.debug.xcconfig"; path = "Target Support Files/Pods-smooth-ios/Pods-smooth-ios.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -441,6 +443,7 @@
 				C1B63F5727A104F900382BF6 /* ImagePickerController+Rx.swift */,
 				C1786DF327A2390100170D4F /* Data+Extension.swift */,
 				C1C8B23327A973F400E8758E /* UITabBar+Extension.swift */,
+				C1FAF63F27B15B3800269EEF /* String+Extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1133,6 +1136,7 @@
 				C118D2BE27A6AE39009CB96C /* ServerSettingCoordinator.swift in Sources */,
 				C1D47F0427795ED100DBA3CA /* HomeViewController.swift in Sources */,
 				C102416F279FBF8D00B702DB /* AddServerCoordinator.swift in Sources */,
+				C1FAF64027B15B3800269EEF /* String+Extension.swift in Sources */,
 				C1D47F0E2779D66300DBA3CA /* MenuViewController.swift in Sources */,
 				C1DF653627AC32B2007FC317 /* ChannelReorderCell.swift in Sources */,
 				C1024167279F919400B702DB /* AddServerView.swift in Sources */,
