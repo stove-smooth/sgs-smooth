@@ -32,6 +32,7 @@ const server = {
     openFixedMessagesModal: false,
     serverMemberPlusMenu: null,
     messageReadyToDelete: false,
+    currentChannelType: null,
   },
   mutations: {
     setCreateServer(state, createServer) {
@@ -108,6 +109,9 @@ const server = {
     },
     setMessageReadyToDelete(state, messageReadyToDelete) {
       state.messageReadyToDelete = messageReadyToDelete;
+    },
+    setCurrentChannelType(state, currentChannelType) {
+      state.currentChannelType = currentChannelType;
     },
   },
   actions: {

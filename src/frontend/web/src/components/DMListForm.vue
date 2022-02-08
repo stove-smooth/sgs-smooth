@@ -1,24 +1,27 @@
 <template>
   <div>
-    <div v-for="(item, index) in friends" :key="index">
+    <div v-for="item in directMessageList" :key="item.id">
       <div class="primary-member-container">
         <div
           class="primary-member-layout"
-          @mouseover="hold(index)"
+          @mouseover="hold(item.id)"
           @mouseleave="unhold"
-          @click="routePrivateDM(index)"
+          @click="routePrivateDM(item.id)"
+          v-bind:class="{
+            'primary-member-layout-hover': $route.params.id == item.id,
+          }"
         >
           <div class="avatar-container">
             <div class="profile-wrapper" aria-label="칭구1">
               <div class="avatar-wrapper">
-                <img
-                  class="avatar"
-                  src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=32"
-                  alt=" "
-                />
+                <img class="avatar" :src="item.icon" alt=" " />
                 <template aria-label="status-invisible">
-                  <div class="status-ring">
-                    <div class="status-offline"></div>
+                  <div class="status-ring" v-show="!item.group">
+                    <div
+                      v-if="item.state == '온라인'"
+                      class="status-online"
+                    ></div>
+                    <div v-else class="status-offline"></div>
                   </div>
                 </template>
               </div>
@@ -27,10 +30,16 @@
           <div class="friends-contents">
             <div class="friends-name-decorator">
               <div class="friends-name">{{ item.name }}</div>
-              <svg class="primary-close" v-show="upHere === index"></svg>
+              <svg
+                class="primary-close"
+                v-show="upHere === item.id"
+                @click.stop.prevent="exitDirectMessage(item.id)"
+              ></svg>
             </div>
             <div class="subtext-decorator">
-              <div class="subtext" v-show="false">멤버 3명.</div>
+              <div class="subtext" v-show="item.group">
+                멤버 {{ item.count }}명
+              </div>
             </div>
           </div>
         </div>
@@ -40,54 +49,20 @@
 </template>
 
 <script>
+import { mapState, mapGetters, mapMutations } from "vuex";
+import { exitDirectMessage } from "../api/index";
 export default {
   data() {
     return {
       upHere: "",
-      friends: [
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-        { name: "두리짱" },
-        { name: "병각" },
-        { name: "히동" },
-      ],
     };
   },
+  computed: {
+    ...mapState("dm", ["directMessageList"]),
+    ...mapGetters("user", ["getUserId"]),
+  },
   methods: {
+    ...mapMutations("dm", ["setDirectMessageList"]),
     hold(index) {
       this.upHere = index;
     },
@@ -97,6 +72,18 @@ export default {
     routePrivateDM(index) {
       if (this.$route.path !== "/channels/@me/" + index) {
         this.$router.push("/channels/@me/" + index);
+      }
+    },
+    async exitDirectMessage(dmId) {
+      const result = await exitDirectMessage(dmId, this.getUserId);
+      if (result.data.code === 1000) {
+        let array = this.directMessageList.filter(
+          (element) => element.id !== dmId
+        );
+        if (this.$route.params.id == dmId) {
+          this.$router.replace("/channels/@me");
+        }
+        this.setDirectMessageList(array);
       }
     },
   },

@@ -19,8 +19,13 @@
         <friends-form :friend="friendsOnline">
           <template slot="title">온라인-{{ friendsOnline.length }}명</template>
           <template slot="status"><span>온라인</span></template>
-          <template slot="action">
-            <div class="action-button" aria-label="메시지 보내기" role="button">
+          <template v-slot:action="slotProps">
+            <div
+              class="action-button"
+              aria-label="메시지 보내기"
+              role="button"
+              @click="sendDirectMessage(slotProps)"
+            >
               <svg class="send-message"></svg>
             </div>
             <div class="action-button" aria-label="기타" role="button">
@@ -36,7 +41,12 @@
           >
           <template slot="status"><span>온라인</span></template>
           <template v-slot:action="slotProps">
-            <div class="action-button" aria-label="메시지 보내기" role="button">
+            <div
+              class="action-button"
+              aria-label="메시지 보내기"
+              role="button"
+              @click="sendDirectMessage(slotProps)"
+            >
               <svg class="send-message"></svg>
             </div>
             <div
@@ -114,7 +124,11 @@
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
 import FriendsForm from "./common/FriendsForm.vue";
-import { acceptFriend, deleteFriend } from "../api/index.js";
+import {
+  acceptFriend,
+  deleteFriend,
+  createDirectMessage,
+} from "../api/index.js";
 export default {
   components: { FriendsForm },
   async created() {
@@ -134,6 +148,7 @@ export default {
       "friendsBan",
       "friendsPlusMenu",
     ]),
+    ...mapState("dm", ["directMessageList"]),
   },
   methods: {
     ...mapActions("friends", ["FETCH_FRIENDSLIST"]),
@@ -164,6 +179,21 @@ export default {
     async rejectFriend(id) {
       await deleteFriend(id);
       window.location.reload();
+    },
+    async sendDirectMessage(userInfo) {
+      for (let i = 0; i < this.directMessageList.length; i++) {
+        if (this.directMessageList[i].group == false) {
+          if (this.directMessageList[i].members.includes(userInfo.userId)) {
+            this.$router.push(`/channels/@me/${this.directMessageList[i].id}`);
+            return;
+          }
+        }
+      }
+      const dmMembers = {
+        members: [userInfo.userId],
+      };
+      const result = await createDirectMessage(dmMembers);
+      this.$router.push(`/channels/@me/${result.data.result.id}`);
     },
   },
 };

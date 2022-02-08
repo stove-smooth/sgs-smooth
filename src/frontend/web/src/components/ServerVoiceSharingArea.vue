@@ -1,60 +1,41 @@
 <template>
   <div class="voice-participant-sharing">
-    <!-- <div class="wrap">
-      <div class="scroll__wrap scrollbar-ghost">
-          <div class="scroll--element">Element1</div>
-          <div class="scroll--element">Element2</div>
-          <div class="scroll--element">Element3</div>
-          <div class="scroll--element">Element4</div>
-          <div class="scroll--element">Element5</div>
-          <div class="scroll--element">Element6</div>
-        </div>
-      
-      </div> -->
-    <div id="container">
+    <div class="voice-participant-container">
       <div id="wrapper">
         <div>오잉{{ this.participants }}</div>
-        <div id="join" class="animate join">
-          <h1>Join a Room</h1>
-          <form @submit.prevent="register()" accept-charset="UTF-8">
-            <p>
-              <input
-                type="text"
-                name="name"
-                value=""
-                id="name"
-                placeholder="Username"
-                required
-              />
-            </p>
-            <p>
-              <input
-                type="text"
-                name="room"
-                value=""
-                id="roomName"
-                placeholder="Room"
-                required
-              />
-            </p>
-            <p class="submit">
-              <input type="submit" name="commit" value="Join!" />
-            </p>
-          </form>
+        <div class="wrap">
+          <div class="scroll__wrap participant-scroller">
+            <voice-participants
+              v-for="voiceMember in voiceMembers"
+              :key="voiceMember.name"
+              :participant="voiceMember"
+            ></voice-participants>
+          </div>
         </div>
-        <div id="room" style="display: none">
+        <!--  <div id="room">
           <h2 id="room-header"></h2>
-          <voice-participants
-            v-for="voiceMember in voiceMembers"
-            :key="voiceMember.name"
-            :participant="voiceMember"
-          ></voice-participants>
-          <input
-            type="button"
-            id="button-leave"
-            @mouseup="leaveChannel()"
-            value="Leave room"
-          />
+
+        </div> -->
+      </div>
+    </div>
+    <div class="voice-bottom-control-section">
+      <div class="voice-bottom-control-container">
+        <div
+          class="voice-control-button justify-content-center align-items-center"
+        >
+          <div v-if="false" class="big-video-camera"></div>
+          <div v-else class="big-camera-disabled"></div>
+        </div>
+        <div
+          class="voice-control-button justify-content-center align-items-center"
+        >
+          <div v-if="false" class="big-mute"></div>
+          <div v-else class="big-mute-on"></div>
+        </div>
+        <div
+          class="voice-control-button justify-content-center align-items-center red-voice-control-button"
+        >
+          <div class="big-no-connect"></div>
         </div>
       </div>
     </div>
@@ -62,40 +43,39 @@
 </template>
 
 <script>
-//import kurentoUtils from "kurento-utils";
 import { mapGetters, mapActions, mapState } from "vuex";
 import VoiceParticipants from "./VoiceParticipants.vue";
 export default {
   components: { VoiceParticipants },
-  data() {
-    return {
-      //participants: {},
-      name: "",
-      room: "",
+  async created() {
+    console.log("servervoicesharingarea 접근");
+    //const rand_0_9 = Math.floor(Math.random() * 10);
+    let message = {
+      id: "joinRoom",
+      token: this.getAccessToken,
+      userId: this.getUserId,
+      roomId: this.$route.params.channelid,
     };
+    let voiceRoomInfo = {
+      myName: this.getUserId,
+      roomName: this.$route.params.channelid,
+    };
+    this.sendMessage(message);
+    this.setVoiceInfo(voiceRoomInfo);
+    console.log("message", message, "voiceRoomInfo", voiceRoomInfo);
+    /* this.ws.onmessage = function (message) {
+      console.log("일로안오나?");
+      let parsedMessage = JSON.parse(message.data);
+      console.log("Received message: " + message.data);
+      this.onServerMessage(parsedMessage);
+    }; */
   },
-  /* mounted() {
-    this.video.classList.add('video-insert');
-    document.getElementById(this.containerId).appendChild(this.video);
-  }, */
-  created() {
-    const url = "https://sig.yoloyolo.org/rtc";
-    /* var ws = new SockJS("https://sig.yoloyolo.org/rtc", null, {
-      transports: ["websocket", "xhr-streaming", "xhr-polling"],
-    }); */
-    this.wsInit(url); //ws 전역 등록.
-    //var participants = {};
-    //var name; =>vdata 등록.
 
-    window.onbeforeunload = function () {
-      console.log("onbeforeunload");
-    };
-  },
   computed: {
-    //...mapState("utils", ["rtcSocketClient"]),
-    ...mapGetters("user", ["getAccessToken"]),
-    ...mapState("voiceRoom", ["participants"]),
+    ...mapGetters("user", ["getAccessToken", "getUserId"]),
+    ...mapState("voice", ["participants", "ws"]),
     voiceMembers() {
+      //참여자 감지
       if (this.participants) {
         var participantList = [];
         Object.keys(this.participants).forEach((key) => {
@@ -108,38 +88,15 @@ export default {
     },
   },
   methods: {
-    ...mapActions("voiceRoom", [
-      "wsInit",
+    ...mapActions("voice", [
       "setVoiceInfo",
       "sendMessage",
       "leaveRoom",
+      "onServerMessage",
     ]),
-    register() {
-      this.name = document.getElementById("name").value;
-      this.room = document.getElementById("roomName").value;
-      console.log("name,room", this.name, this.room);
-      document.getElementById("room-header").innerText = "ROOM " + this.room;
-      document.getElementById("join").style.display = "none";
-      document.getElementById("room").style.display = "block";
-
-      let message = {
-        id: "joinRoom",
-        token: this.getAccessToken,
-        userId: this.name,
-        roomId: this.room,
-      };
-      let voiceRoomInfo = {
-        myName: this.name,
-        roomName: this.room,
-      };
-      this.sendMessage(message);
-      this.setVoiceInfo(voiceRoomInfo);
-    },
     leaveChannel() {
       this.sendMessage({ id: "leaveRoom" });
       console.log("leaveRoom");
-      document.getElementById("join").style.display = "block";
-      document.getElementById("room").style.display = "none";
       this.leaveRoom();
     },
   },
@@ -168,16 +125,63 @@ export default {
 }
 .voice-participant-sharing {
   flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
 }
 .voice-bottom-control-section {
   display: flex;
   -webkit-box-align: center;
   align-items: center;
   -webkit-box-pack: justify;
-  justify-content: space-between;
+  justify-content: center;
   line-height: 0;
-  height: 50px;
+  height: 80px;
   background-color: blanchedalmond;
+}
+.voice-bottom-control-container {
+  display: flex;
+  align-items: center;
+}
+.voice-control-button {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  background-color: #000;
+  margin: 12px;
+}
+.red-voice-control-button {
+  background-color: #ed4245;
+}
+.big-camera-disabled {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  background-image: url("../assets/big-camera-disabled.svg");
+}
+.big-video-camera {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  background-image: url("../assets/big-video-camera.svg");
+}
+.big-mute {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  background-image: url("../assets/big-mute.svg");
+}
+.big-mute-on {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  background-image: url("../assets/big-mute-on.svg");
+}
+.big-no-connect {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  background-image: url("../assets/big-no-connect.svg");
 }
 .voice-participant-sharing-area {
   width: 100px;
@@ -196,6 +200,8 @@ export default {
   overflow-x: auto;
   white-space: nowrap;
   font-size: 0;
+  display: flex;
+  background-color: #202225;
 }
 .scroll--element {
   display: inline-block;
@@ -209,6 +215,26 @@ export default {
 }
 .scroll--element + .scroll--element {
   margin-left: 15px;
+}
+
+.participant-scroller::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+.participant-scroller::-webkit-scrollbar-corner {
+  border: none;
+  background: none;
+}
+.participant-scroller::-webkit-scrollbar-thumb {
+  background-color: #5865f2;
+  border-width: 3px;
+  border-radius: 7px;
+  background-clip: padding-box;
+}
+.participant-scroller::-webkit-scrollbar-track {
+  border-width: initial;
+  border-color: transparent;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 </style>
 <style scoped>
@@ -278,6 +304,9 @@ select {
   margin: 50px auto;
   width: 640px;
   height: 500px;
+}
+.voice-participant-container {
+  flex: 1 1 0;
 }
 
 .join {
@@ -418,9 +447,8 @@ input[type="submit"]:active {
 }
 
 #room {
-  width: 100%;
   text-align: center;
-  height: 200px;
+  display: flex;
 }
 
 #button-leave {

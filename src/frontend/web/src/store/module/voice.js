@@ -2,13 +2,18 @@ import SockJS from "sockjs-client";
 import kurentoUtils from "kurento-utils";
 import Participant from "./js/participant.js";
 import Vue from "vue";
-const voiceRoom = {
+const voice = {
   namespaced: true,
   state: {
     ws: null,
+    wsOpen: false,
     myName: null,
     roomName: null,
     participants: null,
+    //본인 장비
+    mute: false,
+    deafen: false,
+    video: false,
   },
   mutations: {
     WS_INIT(state, url) {
@@ -17,9 +22,13 @@ const voiceRoom = {
       });
       return false;
     },
-    setVoiceInfo(state, meetingInfo) {
-      state.myName = meetingInfo.myName;
-      state.roomName = meetingInfo.roomName;
+    setWsOpen(state, wsOpen) {
+      console.log("setWsOpen", wsOpen);
+      state.wsOpen = wsOpen;
+    },
+    setVoiceInfo(state, voiceInfo) {
+      state.myName = voiceInfo.myName;
+      state.roomName = voiceInfo.roomName;
     },
     addParticipant(state, { name, participant }) {
       if (state.participants === null) {
@@ -31,20 +40,31 @@ const voiceRoom = {
     disposeParticipant(state, participantName) {
       Vue.delete(state.participants, participantName);
     },
+    setMute(state) {
+      console.log("setMute");
+      state.mute = !state.mute;
+    },
+    setDeafen(state) {
+      console.log("setDeafen");
+      state.deafen = !state.deafen;
+    },
+    setVideo(state) {
+      state.video = !state.video;
+    },
   },
   actions: {
     wsInit(context, url) {
+      console.log("init");
       context.commit("WS_INIT", url);
       context.state.ws.onopen = function () {
         console.log("connected");
+        context.commit("setWsOpen", true);
       };
       context.state.ws.onmessage = function (message) {
         let parsedMessage = JSON.parse(message.data);
-        console.info("Received message: " + message.data);
+        console.log("Received message: " + message.data);
         context.dispatch("onServerMessage", parsedMessage);
-        return false;
       };
-      return false;
     },
     onServerMessage(context, message) {
       switch (message.id) {
@@ -114,6 +134,8 @@ const voiceRoom = {
             return console.error(error);
           }
           this.generateOffer(participant.offerToReceiveVideo.bind(participant));
+          //this.audioEnabled = !context.state.mute;
+          //this.videoEnabled = context.state.video;
         }
       );
       const myName = context.state.myName;
@@ -168,21 +190,25 @@ const voiceRoom = {
       );
       context.commit("addParticipant", { name: sender, participant });
     },
-    setVoiceInfo(context, meetingInfo) {
-      context.commit("setVoiceInfo", meetingInfo);
+    setVoiceInfo(context, voiceInfo) {
+      console.log("voice방 정보 저장");
+      context.commit("setVoiceInfo", voiceInfo);
     },
     sendMessage(context, message) {
+      console.log("일로오는거맞아?", message);
       let jsonMessage = JSON.stringify(message);
       console.log("Sending message: " + jsonMessage);
+      console.log("ws1", context.state.ws);
       context.state.ws.send(jsonMessage);
     },
-    leaveRoom(context) {
+    async leaveRoom(context) {
       for (var key in context.state.participants) {
         context.state.participants[key].dispose();
       }
       context.state.ws.close();
+      await context.commit("setWsOpen", false);
     },
   },
 };
 
-export default voiceRoom;
+export default voice;

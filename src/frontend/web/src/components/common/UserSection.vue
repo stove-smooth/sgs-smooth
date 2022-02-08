@@ -1,7 +1,7 @@
 <template>
   <div>
     <section class="my-section">
-      <div class="primary-container">
+      <div class="primary-container" v-show="wsOpen">
         <div class="media-connected-container">
           <div class="display-flex">
             <div class="media-connected-title-inner">
@@ -11,7 +11,10 @@
               </div>
               <div class="subtext">라운지/스무th</div>
             </div>
-            <div class="device-controll-wrapper">
+            <div
+              class="device-controll-wrapper"
+              @click="leaveVoiceConnection()"
+            >
               <button
                 class="device-controll-button"
                 aria-label="연결끊기"
@@ -73,8 +76,10 @@
             aria-label="마이크"
             role="switch"
             type="button"
+            @click="setMute"
           >
-            <svg class="mute"></svg>
+            <svg v-if="mute" class="mute-on"></svg>
+            <svg v-else class="mute"></svg>
           </button>
         </div>
         <div class="mydevice-controller">
@@ -83,8 +88,10 @@
             aria-label="헤드셋"
             role="switch"
             type="button"
+            @click="setDeafen"
           >
-            <svg class="deafen"></svg>
+            <svg v-if="deafen" class="deafen-on"></svg>
+            <svg v-else class="deafen"></svg>
           </button>
         </div>
         <div class="mydevice-controller">
@@ -104,16 +111,46 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 export default {
   methods: {
+    ...mapMutations("voice", ["setMute", "setDeafen"]),
     ...mapActions("user", ["FETCH_USERINFO"]),
+    ...mapActions("voice", ["sendMessage", "leaveRoom"]),
     openSettings() {
       this.$router.push("/settings");
+    },
+    leaveVoiceConnection() {
+      this.sendMessage({ id: "leaveRoom" });
+      console.log("leaveRoom");
+      this.leaveRoom();
+      if (this.currentChannelType != "TEXT") {
+        //첫번째 채널 혹은 welcomepage로 이동.
+        const categories = this.communityInfo.categories;
+        for (var category in categories) {
+          if (categories[category].channels != null) {
+            for (var channels in categories[category].channels) {
+              if (categories[category].channels[channels].type === "TEXT") {
+                const firstchannel = categories[category].channels[channels].id;
+                this.$router.push(
+                  "/channels/" +
+                    this.$route.params.serverid +
+                    "/" +
+                    firstchannel
+                );
+                return;
+              }
+            }
+          }
+        }
+        this.$router.push("/channels/" + this.$route.params.serverid);
+      }
     },
   },
   computed: {
     ...mapState("user", ["code", "nickname", "userimage"]),
+    ...mapState("server", ["currentChannelType", "communityInfo"]),
+    ...mapState("voice", ["wsOpen", "mute", "deafen"]),
   },
   async created() {
     await this.FETCH_USERINFO();
@@ -286,11 +323,23 @@ export default {
   width: 12px;
   height: 17px;
 }
+.mute-on {
+  display: flex;
+  background-image: url("../../assets/mute-on.svg");
+  width: 20px;
+  height: 20px;
+}
 .deafen {
   display: flex;
   background-image: url("../../assets/deafen.svg");
   width: 16px;
   height: 16px;
+}
+.deafen-on {
+  display: flex;
+  background-image: url("../../assets/deafen_on.svg");
+  width: 20px;
+  height: 20px;
 }
 .settings {
   display: flex;

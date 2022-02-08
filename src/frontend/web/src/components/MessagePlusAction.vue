@@ -19,7 +19,7 @@
         </div>
         <div
           class="plus-action-label-container"
-          @click="MessageReply(messagePlusMenu)"
+          @click="messageReply(messagePlusMenu)"
         >
           <div class="plus-action-label">답장</div>
           <svg class="reply-button"></svg>
@@ -31,7 +31,7 @@
         <div
           v-if="messagePlusMenu.userId == getUserId"
           class="plus-action-label-container hover-white"
-          @click="setMessageReadyToDelete(messagePlusMenu.id)"
+          @click="messageDelete(messagePlusMenu.id)"
         >
           <div class="plus-action-label red-color">메시지 삭제하기</div>
           <svg class="trashcan"></svg>
@@ -62,8 +62,11 @@ export default {
       "setMessageFixId",
       "setMessageReadyToDelete",
     ]),
-    ...mapMutations("dm", ["setDirectMessageReplyId"]),
-    MessageReply(messagePlusMenu) {
+    ...mapMutations("dm", [
+      "setDirectMessageReplyId",
+      "setDirectMessageReadyToDelete",
+    ]),
+    messageReply(messagePlusMenu) {
       if (!this.$route.params.channelid) {
         const message = {
           channel: this.$route.params.id,
@@ -76,6 +79,13 @@ export default {
           messageInfo: messagePlusMenu,
         };
         this.setCommunityMessageReplyId(message);
+      }
+    },
+    messageDelete(id) {
+      if (!this.$route.params.channelid) {
+        this.setDirectMessageReadyToDelete(id);
+      } else {
+        this.setMessageReadyToDelete(id);
       }
     },
   },

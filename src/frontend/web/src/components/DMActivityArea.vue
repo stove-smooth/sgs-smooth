@@ -42,17 +42,27 @@
                     messageHovered === item.id || messagePlusMenu === item.id,
                 }"
               >
+                <!--내가 연속적으로 보낸 메시지와 아닌 메시지가 구별됨-->
                 <div
                   class="primary-chat-message-wrapper"
                   v-bind:class="{
-                    'others-chat-message-wrapper': item.isOther,
+                    'others-chat-message-wrapper':
+                      item.isOther || item.parentName != null,
                     'message-replying':
                       directMessageReplyId !== '' &&
                       directMessageReplyId.messageInfo.id == item.id,
                   }"
                 >
+                  <!--메세지답장-->
+                  <div
+                    v-if="item.parentName != null"
+                    class="message-reply-content"
+                  >
+                    <div class="reply-accessories" />
+                    {{ item.parentName }}{{ item.parentContent }}
+                  </div>
                   <div class="chat-message-content">
-                    <template v-if="item.isOther">
+                    <template v-if="item.isOther || item.parentName != null">
                       <img
                         :src="item.profileImage"
                         class="chat-avatar clickable"
@@ -63,7 +73,7 @@
                         <span class="chat-time-stamp">{{ item.time }}</span>
                       </h2>
                     </template>
-
+                    <!--메세지 수정의 UI가 구분됨-->
                     <div v-if="messageEditId === item.id">
                       <div class="channel-message-edit-area">
                         <div class="channel-message-input-area">
@@ -119,6 +129,26 @@
                       <template v-else
                         ><div>{{ item.message }}</div></template
                       >
+                    </div>
+                    <!--정말 삭제하시겠어요?-->
+                    <div
+                      class="channel-message-edit-tool-area"
+                      v-if="directMessageReadyToDelete == item.id"
+                    >
+                      정말 삭제하시겠어요?
+                      <span
+                        class="highlight-text contents clickable"
+                        @click="cancelDelete()"
+                      >
+                        취소
+                      </span>
+                      •
+                      <span
+                        class="highlight-text contents clickable red-color"
+                        @click="deleteMessage(item.id)"
+                      >
+                        댓글 삭제
+                      </span>
                     </div>
                   </div>
                   <div
@@ -319,7 +349,7 @@ import { VEmojiPicker } from "v-emoji-picker";
 
 import { converToThumbnail, dataUrlToFile } from "../utils/common.js";
 import { mapState, mapMutations, mapGetters } from "vuex";
-import { sendImageChatting, readDMChatMessage } from "../api/index";
+import { sendImageDirectChatting, readDMChatMessage } from "../api/index";
 export default {
   components: {
     VEmojiPicker,
@@ -330,8 +360,8 @@ export default {
       text: "",
       images: [],
       thumbnails: [],
-      receiveList: [],
       thumbnailFiles: [],
+      receiveList: [],
       emojiPopout: false,
       replyEmojiPopout: "",
       page: 0,
@@ -344,10 +374,10 @@ export default {
     window.addEventListener("click", this.onClick);
   },
   computed: {
-    ...mapState("user", ["nickname"]),
+    ...mapState("user", ["nickname", "userimage"]),
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
     ...mapState("server", ["messagePlusMenu", "messageEditId"]),
-    ...mapState("dm", ["directMessageReplyId"]),
+    ...mapState("dm", ["directMessageReplyId", "directMessageReadyToDelete"]),
     ...mapGetters("user", ["getUserId"]),
   },
   async created() {
@@ -389,7 +419,10 @@ export default {
   methods: {
     ...mapMutations("utils", ["setClientX", "setClientY"]),
     ...mapMutations("server", ["setMessagePlusMenu", "setMessageEditId"]),
-    ...mapMutations("dm", ["setDirectMessageReplyId"]),
+    ...mapMutations("dm", [
+      "setDirectMessageReplyId",
+      "setDirectMessageReadyToDelete",
+    ]),
     sendMessage(e) {
       if (e.keyCode == 13 && !e.shiftKey && this.stompSocketConnected) {
         if (this.text.trim().length == 0 && this.images.length == 0) {
@@ -419,7 +452,6 @@ export default {
         let thumbnailFile = await dataUrlToFile(thumbnail);
         this.thumbnails.push(thumbnail);
         this.thumbnailFiles.push(thumbnailFile);
-        console.log("image", this.images, "thumbnail", this.thumbnails);
       }
     },
     deleteAttachment(index) {
@@ -432,6 +464,8 @@ export default {
           content: this.text,
           channelId: this.$route.params.id,
           userId: this.getUserId,
+          name: this.nickname,
+          profileImage: this.userimage,
         };
         this.stompSocketClient.send(
           "/kafka/send-direct-message",
@@ -445,7 +479,12 @@ export default {
         content: this.text,
         channelId: this.$route.params.id,
         userId: this.getUserId,
+        name: this.nickname,
+        profileImage: this.userimage,
         parentId: this.directMessageReplyId.messageInfo.id,
+        parentName: this.directMessageReplyId.messageInfo.name,
+        parentContent: this.directMessageReplyId.messageInfo.message,
+        type: "reply",
       };
       this.stompSocketClient.send(
         "/kafka/send-direct-reply",
@@ -457,7 +496,6 @@ export default {
     modify(id, content) {
       this.modifyLogMessage = "";
       if (this.stompSocketClient && this.stompSocketConnected) {
-        console.log(id, content);
         if (content.trim().length == 0) {
           this.modifyLogMessage = "내용을 입력한 후 수정해주세요.";
         }
@@ -465,6 +503,7 @@ export default {
           id: id,
           content: content,
           userId: this.getUserId,
+          type: "modify",
         };
         this.stompSocketClient.send(
           "/kafka/send-direct-modify",
@@ -478,6 +517,24 @@ export default {
       this.setMessageEditId("");
       this.modifyLogMessage = "";
     },
+    deleteMessage(id) {
+      const msg = {
+        id: id,
+        userId: this.getUserId,
+        type: "delete",
+      };
+      this.stompSocketClient.send(
+        "/kafka/send-direct-delete",
+        JSON.stringify(msg),
+        {}
+      );
+      let array = this.receiveList.filter((element) => element.id !== id);
+      this.receiveList = array;
+      this.setDirectMessageReadyToDelete(false);
+    },
+    cancelDelete() {
+      this.setDirectMessageReadyToDelete(false);
+    },
     MessageReply(messagePlusMenu) {
       const message = {
         channel: this.$route.params.id,
@@ -487,15 +544,19 @@ export default {
     },
     async sendPicture() {
       const formData = new FormData();
-      for (let i = 0; i < this.images.length; i++) {
+      /* for (let i = 0; i < this.images.length; i++) {
         formData.append("image", this.thumbnailFiles[i]);
-      }
+      } */
+      formData.append("image", this.images[0]);
+      formData.append("thumbnail", this.thumbnailFiles[0]);
+      formData.append("userId", this.getUserId);
+      formData.append("channelId", this.$route.params.id);
+      formData.append("type", "direct");
+      formData.append("fileType", "image");
+      formData.append("name", this.nickname);
+      formData.append("profileImage", this.userimage);
       try {
-        await sendImageChatting(
-          formData,
-          this.$route.params.id,
-          this.getUserId
-        );
+        await sendImageDirectChatting(formData);
         this.images = [];
         this.thumbnails = [];
       } catch (err) {
@@ -554,14 +615,19 @@ export default {
       let dateComponents = responseDate.split("T");
       dateComponents[0].split("-");
       let timePieces = dateComponents[1].split(":");
-
+      let transDate;
       if (parseInt(timePieces[0]) + 9 < 24) {
         time.hour = parseInt(timePieces[0]) + 9;
+        let tempDate = new Date(dateComponents[0]);
+        transDate = tempDate.toLocaleDateString();
       } else {
         time.hour = parseInt(timePieces[0]) + 9 - 24;
+        var newDate = new Date(dateComponents[0]);
+        newDate.setDate(newDate.getDate() + 1);
+        transDate = newDate.toLocaleDateString();
       }
       time.minutes = parseInt(timePieces[1]);
-      return [dateComponents[0], time.hour + ":" + time.minutes];
+      return [transDate, time.hour + ":" + time.minutes];
     },
     onSelectEmoji(emoji) {
       this.text += emoji.data;
@@ -583,7 +649,6 @@ export default {
       } else {
         this.replyEmojiPopout = messageId;
       }
-      console.log("mesage", this.replyEmojiPopout);
     },
     urlify(text) {
       var urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -619,14 +684,18 @@ export default {
         }
         var array = [];
         for (var i = 0; i < result.data.result.length; i++) {
+          //시간을 한국 시간+디스코드에 맞게 변환
+          console.log("message입니다.", result.data.result[i]);
           const translatedTime = this.convertFromStringToDate(
             result.data.result[i].time
           );
           result.data.result[i].date = translatedTime[0];
           result.data.result[i].time = translatedTime[1];
+          //사진이라면 image태그를 붙여줌.
           result.data.result[i].message = this.urlify(
             result.data.result[i].message
           );
+          //동일 시간(분)에 동일 유저가 보냈다면 다른 같은 메시지로 묶음.
           let isOther = true;
           if (i != 0) {
             const timeResult = this.isSameTime(
@@ -645,6 +714,11 @@ export default {
         }
         let newarray = array.concat(this.receiveList);
         this.receiveList = newarray;
+        if (this.page == 0) {
+          this.$nextTick(function () {
+            this.scrollToBottom();
+          });
+        }
         if (this.prevScrollHeight != 0) {
           this.$nextTick(function () {
             let scrollRef = this.$refs["scrollRef"];
@@ -652,29 +726,20 @@ export default {
               scrollRef.scrollHeight - this.prevScrollHeight;
           });
         }
-        if (this.page == 0) {
-          this.$nextTick(function () {
-            this.scrollToBottom();
-          });
-        }
       } catch (err) {
         console.log(err.response);
       }
     },
-    isSameTime(prevv, currentt) {
-      let prevTime = prevv.time.split(":");
-      let currentTime = currentt.time.split(":");
-      if (prevv.date == currentt.date) {
-        let interval =
-          parseInt(currentTime[0]) * 60 +
-          parseInt(currentTime[1]) -
-          (parseInt(prevTime[0]) * 60 + parseInt(prevTime[1]));
-        if (interval <= 15) {
+    isSameTime(prev, current) {
+      //먼저 날이 같을때.
+      if (prev.date == current.date) {
+        if (prev.time == current.time) {
           return true;
         } else {
           return false;
         }
       } else {
+        //date가 다르다면 같은 시간이 아님.
         return false;
       }
     },

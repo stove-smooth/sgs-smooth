@@ -40,16 +40,20 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 import NumberBadge from "./common/NumberBadge.vue";
 import DmListForm from "./DMListForm.vue";
 export default {
   components: { DmListForm, NumberBadge },
+  async created() {
+    await this.fetchDirectMessageList();
+  },
   computed: {
     ...mapState("friends", ["friendsWaitNumber"]),
     ...mapState("utils", ["navigationSelected"]),
   },
   methods: {
+    ...mapActions("dm", ["fetchDirectMessageList"]),
     routeMypage() {
       this.$router.push("/channels/@me");
     },

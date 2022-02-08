@@ -1,12 +1,12 @@
 <template>
   <div class="base-container">
-    <div class="content-mypage">
+    <div class="content-mypage" :key="$route.params.channelid">
       <div class="sidebar">
         <server-side-bar></server-side-bar>
         <user-section></user-section>
       </div>
-      <div class="server-activity-container" :key="$route.params.channelid">
-        <template v-if="false">
+      <div class="server-activity-container">
+        <template v-if="isChattingChannel($route.params.channelid)">
           <server-chatting-menu-bar></server-chatting-menu-bar>
           <div class="server-activity-container1">
             <server-activity-area></server-activity-area>
@@ -14,13 +14,14 @@
           </div>
         </template>
         <template v-else>
-          <div class="voice-sharing-container flex-direction-column">
-            <server-chatting-menu-bar></server-chatting-menu-bar>
-            <div class="server-activity-container1">
-              <server-voice-sharing-area></server-voice-sharing-area>
-              <server-member-list></server-member-list>
-            </div>
-          </div>
+          <template v-if="wsOpen"
+            ><div class="voice-sharing-container flex-direction-column">
+              <server-chatting-menu-bar></server-chatting-menu-bar>
+              <div class="server-activity-container1">
+                <server-voice-sharing-area></server-voice-sharing-area>
+                <server-member-list></server-member-list>
+              </div></div
+          ></template>
         </template>
       </div>
     </div>
@@ -28,7 +29,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
 import ServerSideBar from "../components/ServerSideBar.vue";
 import UserSection from "../components/common/UserSection.vue";
 import ServerChattingMenuBar from "../components/ServerChattingMenuBar.vue";
@@ -44,18 +45,41 @@ export default {
     ServerMemberList,
     ServerVoiceSharingArea,
   },
+  async created() {
+    await this.fetchCommunityInfo();
+  },
   methods: {
     ...mapActions("server", [
       "FETCH_COMMUNITYINFO",
       "FETCH_COMMUNITYMEMBERLIST",
     ]),
+    ...mapMutations("server", ["setCurrentChannelType"]),
     async fetchCommunityInfo() {
       await this.FETCH_COMMUNITYINFO(this.$route.params.serverid);
       await this.FETCH_COMMUNITYMEMBERLIST(this.$route.params.serverid);
     },
+    isChattingChannel(channelId) {
+      const categories = this.communityInfo.categories;
+      for (var category in categories) {
+        if (categories[category].channels != null) {
+          for (let i = 0; i < categories[category].channels.length; i++) {
+            if (categories[category].channels[i].id == channelId) {
+              if (categories[category].channels[i].type == "TEXT") {
+                this.setCurrentChannelType("TEXT");
+                return true;
+              } else {
+                this.setCurrentChannelType("VOICE");
+                return false;
+              }
+            }
+          }
+        }
+      }
+    },
   },
-  async created() {
-    await this.fetchCommunityInfo();
+  computed: {
+    ...mapState("server", ["communityInfo"]),
+    ...mapState("voice", ["wsOpen"]),
   },
 };
 </script>

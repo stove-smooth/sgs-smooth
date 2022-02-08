@@ -102,11 +102,29 @@ function moveChannel(channelData) {
 function moveCommunity(communityData) {
   return instance.patch("community-server/community/location", communityData);
 }
-async function sendImageChatting(userData, channelId, userId) {
+async function sendImageChatting(userData) {
   try {
     const accesstoken = await store.getters["user/getAccessToken"];
     const response = await axios.post(
-      `http://52.79.229.100:8000/chat-server/channel/file?ch_id=${channelId}&user_id=${userId}`,
+      `http://52.79.229.100:8000/chat-server/channel/file`,
+      userData,
+      {
+        headers: {
+          AUTHORIZATION: accesstoken,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response;
+  } catch (err) {
+    console.log(err.response);
+  }
+}
+async function sendImageDirectChatting(userData) {
+  try {
+    const accesstoken = await store.getters["user/getAccessToken"];
+    const response = await axios.post(
+      `http://52.79.229.100:8000/chat-server/file`,
       userData,
       {
         headers: {
@@ -145,6 +163,17 @@ function readChatMessage(channelId, pageId) {
 function readDMChatMessage(channelId, pageId) {
   return instance.get(`chat-server/direct?ch_id=${channelId}&page=${pageId}`);
 }
+function fetchDirectMessageList() {
+  return instance.get(`community-server/room`);
+}
+function createDirectMessage(membersInfo) {
+  return instance.post(`community-server/room`, membersInfo);
+}
+function exitDirectMessage(roomId, memberId) {
+  return instance.delete(
+    `community-server/room/${roomId}/member?id=${memberId}`
+  );
+}
 export {
   registerUser,
   loginUser,
@@ -175,4 +204,8 @@ export {
   readChatMessage,
   moveCommunity,
   readDMChatMessage,
+  sendImageDirectChatting,
+  fetchDirectMessageList,
+  createDirectMessage,
+  exitDirectMessage,
 };

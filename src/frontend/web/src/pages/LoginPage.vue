@@ -22,8 +22,6 @@ export default {
     if (this.getEmail) {
       this.$router.push("/channels/@me");
     }
-    console.log(this.$route.query);
-    console.log(this.path);
   },
   mounted() {
     if (this.$route.params?.message) {
@@ -33,8 +31,6 @@ export default {
         );
       }
     }
-    console.log(this.$route.query);
-    console.log(this.path);
   },
 };
 </script>
