@@ -176,11 +176,9 @@ const iceServers = [
             callback = (callback || noop).bind(this);
             var self = this;
             var localVideo = options.localVideo;
-            var localScreen = options.localScreen;
             var remoteVideo = options.remoteVideo;
             var videoStream = options.videoStream;
             var audioStream = options.audioStream;
-            var screenStream = options.screenStream;
             var mediaConstraints = options.mediaConstraints;
             var pc = options.peerConnection;
             var sendSource = options.sendSource || 'webcam';
@@ -219,11 +217,6 @@ const iceServers = [
                 'localVideo': {
                     get: function () {
                         return localVideo;
-                    }
-                },
-                'localScreen': {
-                    get: function () {
-                        return localScreen;
                     }
                 },
                 'dataChannel': {
@@ -410,13 +403,6 @@ const iceServers = [
                     localVideo = attachMediaStream(localVideo, videoStream);
                 }
             };
-            this.showLocalScreen = function () {
-                localScreen.srcObject = screenStream;
-                localScreen.muted = true;
-                if (typeof AdapterJS !== 'undefined' && AdapterJS.webrtcDetectedBrowser === 'IE' && AdapterJS.webrtcDetectedVersion >= 9) {
-                    localScreen = attachMediaStream(localScreen, screenStream);
-                }
-            }
             this.send = function (data) {
                 if (dataChannel && dataChannel.readyState === 'open') {
                     dataChannel.send(data);
@@ -508,14 +494,6 @@ const iceServers = [
                         pc.addTrack(track, audioStream);
                     });
                 }
-                if (screenStream && localScreen) {
-                    self.showLocalScreen();
-                }
-                if (screenStream) {
-                    screenStream.getTracks().forEach(function (track) {
-                        pc.addTrack(track, screenStream);
-                    });
-                }
                 callback();
             }
             if (mode !== 'recvonly' && !videoStream && !audioStream) {
@@ -549,40 +527,6 @@ const iceServers = [
             } else {
                 setTimeout(start, 0);
             }
-
-            if (mode !== 'recvonly' && !screenStream) {
-                function getScreen(constraints) {
-                    if (constraints === undefined) {
-                        constraints = MEDIA_CONSTRAINTS;
-                    }
-
-                    if (typeof AdapterJS !== 'undefined' && AdapterJS.webrtcDetectedBrowser === 'IE' && AdapterJS.webrtcDetectedVersion >= 9) {
-                        navigator.getDisplayMedia({ video: true }, function (stream) {
-                            screenStream = stream;
-                            start();
-                        }, callback);
-                    } else {
-                        navigator.mediaDevices.getDisplayMedia({ video: true }).then(function (stream) {
-                            screenStream = stream;
-                            start();
-                        }).catch(callback);
-                    }
-                }
-                if (sendSource === 'webcam') {
-                    getScreen(mediaConstraints);
-                } else {
-                    getScreenConstraints(sendSource, function (error, constraints_) {
-                        if (error)
-                            return callback(error);
-                        constraints = [mediaConstraints];
-                        constraints.unshift(constraints_);
-                        getScreen(recursive.apply(undefined, constraints));
-                    }, guid);
-                }
-            } else {
-                setTimeout(start, 0);
-            }
-
             this.on('_dispose', function () {
                 if (localVideo) {
                     localVideo.pause();
@@ -591,14 +535,6 @@ const iceServers = [
                         localVideo.load();
                     }
                     localVideo.muted = false;
-                }
-                if (localScreen) {
-                    localScreen.pause();
-                    localScreen.srcObject = null;
-                    if (typeof AdapterJS === 'undefined') {
-                        localScreen.load();
-                    }
-                    localScreen.muted = false;
                 }
                 if (remoteVideo) {
                     remoteVideo.pause();
@@ -1256,24 +1192,17 @@ const iceServers = [
 
         /**
          # freeice
-
          The `freeice` module is a simple way of getting random STUN or TURN server
          for your WebRTC application.  The list of servers (just STUN at this stage)
          were sourced from this [gist](https://gist.github.com/zziuni/3741933).
-
          ## Example Use
-
          The following demonstrates how you can use `freeice` with
          [rtc-quickconnect](https://github.com/rtc-io/rtc-quickconnect):
-
          <<< examples/quickconnect.js
-
          As the `freeice` module generates ice servers in a list compliant with the
          WebRTC spec you will be able to use it with raw `RTCPeerConnection`
          constructors and other WebRTC libraries.
-
          ## Hey, don't use my STUN/TURN server!
-
          If for some reason your free STUN or TURN server ends up in the
          list of servers ([stun](https://github.com/DamonOehlman/freeice/blob/master/stun.json) or
          [turn](https://github.com/DamonOehlman/freeice/blob/master/turn.json))
@@ -1282,9 +1211,7 @@ const iceServers = [
          within 24 hours (or sooner).  This is the quickest and probably the most
          polite way to have something removed (and provides us some visibility
          if someone opens a pull request requesting that a server is added).
-
          ## Please add my server!
-
          If you have a server that you wish to add to the list, that's awesome! I'm
          sure I speak on behalf of a whole pile of WebRTC developers who say thanks.
          To get it into the list, feel free to either open a pull request or if you
@@ -1292,26 +1219,17 @@ const iceServers = [
          the addition of the server (make sure you provide all the details, and if
          you have a Terms of Service then including that in the PR/issue would be
          awesome).
-
          ## I know of a free server, can I add it?
-
          Sure, if you do your homework and make sure it is ok to use (I'm currently
          in the process of reviewing the terms of those STUN servers included from
          the original list).  If it's ok to go, then please see the previous entry
          for how to add it.
-
          ## Current List of Servers
-
          * current as at the time of last `README.md` file generation
-
          ### STUN
-
          <<< stun.json
-
          ### TURN
-
          <<< turn.json
-
          **/
 
         var freeice = function(opts) {
@@ -1558,7 +1476,6 @@ const iceServers = [
  * @name JavaScript/NodeJS Merge v1.2.1
  * @author yeikos
  * @repository https://github.com/yeikos/js.merge
-
  * Copyright 2014 yeikos - MIT license
  * https://raw.github.com/yeikos/js.merge/master/LICENSE
  */
@@ -1734,16 +1651,12 @@ const iceServers = [
     },{}],12:[function(require,module,exports){
         /**
          # normalice
-
          Normalize an ice server configuration object (or plain old string) into a format
          that is usable in all browsers supporting WebRTC.  Primarily this module is designed
          to help with the transition of the `url` attribute of the configuration object to
          the `urls` attribute.
-
          ## Example Usage
-
          <<< examples/simple.js
-
          **/
 
         var protocols = [
@@ -4340,19 +4253,12 @@ const iceServers = [
         /*
 WildEmitter.js is a slim little event emitter by @henrikjoreteg largely based
 on @visionmedia's Emitter from UI Kit.
-
 Why? I wanted it standalone.
-
 I also wanted support for wildcard emitters like this:
-
 emitter.on('*', function (eventName, other, event, payloads) {
-
 });
-
 emitter.on('somenamespace*', function (eventName, payloads) {
-
 });
-
 Please note that callbacks triggered by wildcard registered events also get
 the event name as the first argument.
 */

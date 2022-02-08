@@ -1,5 +1,7 @@
-package com.example.signalingserver.config;
+package com.example.signalingserver.service;
 
+import com.example.signalingserver.config.tcp.TcpClientGateway;
+import com.example.signalingserver.dto.request.StateRequest;
 import com.example.signalingserver.util.Room;
 import com.example.signalingserver.util.UserSession;
 import com.example.signalingserver.dto.request.CandidateRequest;
@@ -7,6 +9,7 @@ import com.example.signalingserver.dto.request.JoinRequest;
 import com.example.signalingserver.dto.request.ReceiveVideoRequest;
 import com.example.signalingserver.util.RoomManager;
 import com.example.signalingserver.util.UserRegister;
+import com.example.signalingserver.util.type.State;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -28,7 +31,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import static com.example.signalingserver.util.type.Property.*;
+import static com.example.signalingserver.util.type.EventType.*;
 
 @Slf4j
 @Component
@@ -38,10 +41,11 @@ public class MessageHandler extends TextWebSocketHandler {
     @Value("${property.ip}")
     private String IP;
 
+    // private final JwtFilter jwtFilter;
     private final KurentoClient kurento;
     private final RoomManager roomManager;
     private final UserRegister registry;
-    // private final JwtFilter jwtFilter;
+    private final TcpClientGateway tcpClientGateway;
 
     private final ObjectMapper mapper;
     private static final Gson gson = new GsonBuilder().create();
@@ -55,6 +59,7 @@ public class MessageHandler extends TextWebSocketHandler {
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) {
         try {
+
             final JsonObject jsonMessage = gson.fromJson(message.getPayload(), JsonObject.class);
             final UserSession user = registry.getBySession(session);
 
@@ -66,8 +71,13 @@ public class MessageHandler extends TextWebSocketHandler {
 
             switch (jsonMessage.get(ID).getAsString()) {
                 case JOIN:
+                    // 방 접속
                     JoinRequest joinRequest = mapper.readValue(message.getPayload(), JoinRequest.class);
                     join(joinRequest, session);
+
+                    // 상태관리 서버로 접속 정보 전송
+                    StateRequest loginRequest = new StateRequest(State.LOGIN, session.getId(), joinRequest.getUserId(), joinRequest.getRoomId());
+                    tcpClientGateway.send(loginRequest.toString());
                     break;
                 case RECEIVE_VIDEO_FROM:
                     ReceiveVideoRequest receiveVideoRequest
@@ -105,7 +115,10 @@ public class MessageHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         UserSession user = registry.removeBySession(session);
         roomManager.getRoom(user.getRoomId()).leave(user);
-        leave(user);
+
+        // 상태관리 서버로 접속 정보 전송
+        StateRequest logoutRequest = new StateRequest(State.LOGOUT, session.getId(), user.getUserId(), user.getRoomId());
+        tcpClientGateway.send(logoutRequest.toString());
     }
 
     /**

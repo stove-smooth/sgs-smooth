@@ -1,6 +1,6 @@
 package com.example.signalingserver.util.type;
 
-public class Property {
+public class EventType {
 
     // event id
     public static final String JOIN = "joinRoom";

@@ -170,7 +170,8 @@ public class RoomService {
                 name += ", ";
         }
 
-        Room newRoom = Room.createRoom(name, members);
+        String iconImage = amazonS3Connector.getRandomImage();
+        Room newRoom = Room.createRoom(name, members, iconImage);
         roomRepository.save(newRoom);
 
         return getRoomDetail(newRoom, userMap, userId);
