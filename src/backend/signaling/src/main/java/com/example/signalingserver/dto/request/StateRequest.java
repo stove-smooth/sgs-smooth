@@ -9,29 +9,30 @@ import lombok.NoArgsConstructor;
 public class StateRequest {
 
     private String type;
-    private String sessionId;
-    private String userId;
-    private String channelId;
-    private String roomId;
+    private String session_id;
+    private String user_id;
+    private String channel_id;
+    private String room_id;
+
 
     public StateRequest(String type, String sessionId, String userId, String id) {
         this.type = type;
-        this.sessionId = sessionId;
-        this.userId = userId;
+        this.session_id = sessionId;
+        this.user_id = userId;
         if (id.contains("c-")) {
-            this.channelId = id;
+            this.channel_id = id;
         } else
-            this.roomId = id;
+            this.room_id = id;
     }
 
     @Override
     public String toString() {
         return "{" +
                 "type='" + type + '\'' +
-                ", sessionId='" + sessionId + '\'' +
-                ", userId='" + userId + '\'' +
-                ", channelId='" + channelId + '\'' +
-                ", roomId='" + roomId + '\'' +
+                ", session_id='" + session_id + '\'' +
+                ", user_id='" + user_id + '\'' +
+                ", channel_id='" + channel_id + '\'' +
+                ", room_id='" + room_id + '\'' +
                 '}';
     }
 }
