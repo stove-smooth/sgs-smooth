@@ -184,6 +184,7 @@ public class UserService extends BaseTimeEntity {
 
         NameAndPhotoResponse result = NameAndPhotoResponse.builder()
                 .name(user.getName())
+                .code(user.getCode())
                 .profileImage(user.getProfileImage()).build();
 
         return result;

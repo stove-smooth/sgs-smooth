@@ -53,6 +53,7 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
                 tcpClientGateway.send(loginSessionRequest.toString());
 //                presenceClient.uploadState(loginSessionRequest);
                 break;
+                // todo disconnect 여러가지 테스트 (전원끄기, 랜선뽑기 등)
             case DISCONNECT:
                 String sessionId = accessor.getSessionId();
                 LoginSessionRequest logoutSessionRequest = LoginSessionRequest.builder()
