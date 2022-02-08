@@ -14,9 +14,23 @@ protocol MenuViewControllerDelegate: AnyObject {
     func swipe(channel: Channel?, communityId: Int)
 }
 
+extension MenuViewController: DeliveryDelegate{
+    func appear(channel: Channel?, communityId: Int?) {
+        guard let servers = self.viewModel.model.servers else { return }
+        
+        for index in 0...servers.count-1 {
+            if(servers[index].id == communityId) {
+                self.viewModel.input.tapServer.onNext(IndexPath(row: index, section: 1))
+            }
+        }
+    }
+}
+
 class MenuViewController: BaseViewController, CoordinatorContext {
     weak var coordinator: HomeCoordinator?
+    
     weak var delegate: MenuViewControllerDelegate?
+    weak var delivery: DeliveryDelegate?
     
     private lazy var menuView = MenuView(frame: self.view.frame)
     private let viewModel: MenuViewModel
@@ -46,18 +60,28 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         self.viewModel.input.fetch.onNext(())
         
         let selectedServerIndex = self.viewModel.model.selectedServerIndex
+        
         // 선택한 서버가 있는 경우
         if selectedServerIndex == nil {
             self.viewModel.input.tapServer.onNext(IndexPath(row: 0, section: 0))
         } else {
-            self.viewModel.input.tapServer.onNext(IndexPath(row: 0, section: selectedServerIndex!))
+            self.viewModel.input.tapServer.onNext(IndexPath(row: selectedServerIndex!, section: 1))
+            
+            let indexPath = IndexPath(row: selectedServerIndex!, section: 1)
+            self.menuView.serverView.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
         }
         
+        
     }
+    
     
     override func viewDidLoad() {
         self.view = menuView
         super.viewDidLoad()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
     }
     
     override func bindEvent() {
@@ -103,8 +127,7 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         ).bind{ [weak self] (indexPath, channel) in
             guard let self = self else { return }
             
-            self.menuView.channelView.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
-            print("selected \(channel)")
+            self.viewModel.output.selectedChannel.accept(indexPath)
             
             switch channel.type {
             case .text :
@@ -112,7 +135,7 @@ class MenuViewController: BaseViewController, CoordinatorContext {
                 
                 self.delegate?.swipe(channel: channel, communityId: server.id)
             case .voice:
-                #warning("웹알티씨 연결하기")
+#warning("웹알티씨 연결하기")
             }
         }.disposed(by: disposeBag)
         
@@ -122,16 +145,29 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             .drive(self.menuView.rx.server)
             .disposed(by: disposeBag)
         
-        self.viewModel.output.communityInfo
-            .asDriver(onErrorJustReturn: CommunityInfo())
-            .drive(self.menuView.rx.communityInfo)
+        Observable.combineLatest(self.viewModel.output.communityInfo, self.viewModel.output.selectedChannel)
+            .observe(on: MainScheduler.instance)
+            .bind(to: self.menuView.rx.communityInfo)
             .disposed(by: disposeBag)
+        
+        /*
+         Observable.zip(self.viewModel.output.communityInfo, self.viewModel.output.selectedChannel)
+         .observe(on: MainScheduler.instance)
+         .bind(to: self.menuView.rx.communityInfo)
+         .disposed(by: disposeBag)
+         */
         
         self.viewModel.output.directs
             .asDriver(onErrorJustReturn: [])
             .drive(self.menuView.rx.direct)
             .disposed(by: disposeBag)
         
+        self.viewModel.output.selectedServer
+            .asDriver(onErrorJustReturn: nil)
+            .drive(self.menuView.rx.selectedServer)
+            .disposed(by: disposeBag)
+        
+        // MARK: coordinator
         self.viewModel.output.goToAddServer
             .observe(on: MainScheduler.instance)
             .bind(onNext: self.goToAddServer)
