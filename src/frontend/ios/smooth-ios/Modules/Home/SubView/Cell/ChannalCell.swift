@@ -24,7 +24,7 @@ class ChannelCell: BaseTableViewCell {
     
     func bind(channel: Channel) {
         self.textLabel?.text = "\(channel.name)"
-        self.imageView?.image = UIImage(named: "Channel+\(channel.type)")?.resizeImage(size: CGSize(width: 20, height: 20))
+        self.imageView?.image = UIImage(named: "Channel+\(channel.type.rawValue.lowercased())")?.resizeImage(size: CGSize(width: 20, height: 20))
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {

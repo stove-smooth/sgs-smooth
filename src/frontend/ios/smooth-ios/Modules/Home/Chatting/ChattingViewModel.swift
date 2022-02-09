@@ -8,48 +8,68 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import StompClientLib
+import MessageKit
 
 class ChattingViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     var model = Model()
     
-    let chattingService: ChattingService
+    let chattingService: ChattingServiceProtocol
+    let chatWebSocketService: ChatWebSocketService
     
     struct Input {
         let fetch = PublishSubject<Channel>()
         let page = BehaviorRelay<Int>(value: 0)
         let size = BehaviorRelay<Int>(value: 20)
+        
+        let socketMessage = PublishSubject<MockMessage?>()
     }
     
     struct Output {
         let channel = PublishRelay<Channel>()
-        let messages = PublishRelay<[Message]>()
+        let commniutyId = PublishRelay<Int?>()
+        let messages = PublishRelay<[MockMessage]>()
         
         let showEmpty = PublishRelay<Bool>()
+        let isLoading = PublishRelay<Bool>()
     }
     
     struct Model {
-        var messgae: [Message] = []
+        var messages = [MockMessage]()
     }
     
     init(
-        chattingService: ChattingService
+        chattingService: ChattingServiceProtocol
     ) {
         self.chattingService = chattingService
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        self.chatWebSocketService = appDelegate?.chatWebSocketService as! ChatWebSocketService
+        
         super.init()
     }
     
     override func bind() {
         self.input.fetch
             .subscribe(onNext: { channel in
+                self.connect(channelId: channel.id)
                 self.fetchMessgae(chattingId: channel.id)
             })
             .disposed(by: disposeBag)
+        
+        chatWebSocketService.message
+            .subscribe(onNext: { message in
+                self.model.messages.append(message)
+                self.output.messages.accept(self.model.messages)
+                
+            })
+            .disposed(by: disposeBag)
+        
+        
     }
     
     private func fetchMessgae(chattingId: Int) {
-        
         let page = self.input.page.value
         let size = self.input.size.value
         
@@ -62,10 +82,67 @@ class ChattingViewModel: BaseViewModel {
                     return
                 }
                 
+                var fetchmessages: [MockMessage] = []
+                
+                for msg in response {
+                    var newMessage: MockMessage?
+                    
+                    switch msg.fileType {
+                    case .image:
+                        newMessage = MockMessage(image: msg.message.toUIImage()!,
+                                                 user: MockUser(senderId: "\(msg.userId)", displayName: msg.name, profileImage: msg.profileImage),
+                                                 messageId: msg.id,
+                                                 date: msg.time.ISOtoDate
+                        )
+                    case .file: break
+                    case .video: break
+                        
+                    case .none:
+                        newMessage = MockMessage(
+                            kind: MessageKind.text(msg.message),
+                            user: MockUser(senderId: "\(msg.userId)", displayName: msg.name, profileImage: msg.profileImage),
+                            messageId: msg.id,
+                            date: msg.time.ISOtoDate
+                        )
+                    }
+                    
+                    fetchmessages.append(newMessage!)
+                }
+                
                 self.output.showEmpty.accept(response.count == 0)
-                self.model.messgae = response
-                self.output.messages.accept(response)
+                self.model.messages = fetchmessages
+                self.output.messages.accept(fetchmessages)
             }
         }
+    }
+    
+    private func connect(channelId: Int) {
+        self.chatWebSocketService.connect(channelId: channelId)
+    }
+    
+    func sendMessage(message: String, communityId: Int?) {
+        self.output.isLoading.accept(true)
+        self.chatWebSocketService.sendMessage(message: message, communityId: communityId)
+        self.output.isLoading.accept(false)
+    }
+    
+    func sendFileMessage(request: FileMessageRequest) {
+        self.output.isLoading.accept(true)
+        self.chattingService.sendFileMessage(request) {
+            response, error in
+            guard let response = response else {
+                return
+            }
+            
+            if (!response.isSuccess) {
+                self.showErrorMessage.accept("메시지 보내는데 실패하였습니다.")
+            }
+            
+            self.output.isLoading.accept(false)
+        }
+    }
+    
+    func deleteMessage(message: MockMessage) {
+        self.chatWebSocketService.deleteMessage(message: message)
     }
 }

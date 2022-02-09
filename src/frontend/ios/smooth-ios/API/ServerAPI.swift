@@ -103,7 +103,7 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
                     MultipartFormData(
                         provider: .data(request.icon!),
                         name: "icon",
-                        fileName: "server-icon",
+                        fileName: "server-icon-\(Data())",
                         mimeType: request.icon!.mimeType
                     )
                 )

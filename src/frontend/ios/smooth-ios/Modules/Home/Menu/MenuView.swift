@@ -51,11 +51,27 @@ extension Reactive where Base: MenuView {
         }
     }
     
-    var communityInfo: Binder<CommunityInfo> {
+    var selectedServer: Binder<Int?> {
+        return Binder(self.base) { view, selectedServer in
+            if (selectedServer == nil) {
+                view.serverView.tableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .none)
+            } else {
+                view.serverView.tableView.selectRow(at: IndexPath(row: selectedServer!, section: 1), animated: false, scrollPosition: .none)
+            }
+        }
+    }
+
+    var communityInfo: Binder<(CommunityInfo, IndexPath?)> {
         return Binder(self.base) { view, communityInfo in
             view.channelView.isHidden = false
             view.directView.isHidden = true
-            view.channelView.bind(communityInfo: communityInfo)
+            view.channelView.bind(communityInfo: communityInfo.0, selectedChannel: communityInfo.1)
+        }
+    }
+    
+    var selectedChannel: Binder<IndexPath?> {
+        return Binder(self.base) { view, selectedChannel in
+            view.channelView.tableView.selectRow(at: selectedChannel, animated: true, scrollPosition: .none)
         }
     }
     

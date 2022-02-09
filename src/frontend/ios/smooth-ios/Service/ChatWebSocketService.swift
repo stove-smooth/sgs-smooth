@@ -7,107 +7,159 @@
 
 import Foundation
 import StompClientLib
+import MessageKit
+import RxSwift
 
 protocol ChatWebSocketServiceProtocol {
+    func setup()
     func register()
+    func connect(channelId: Int)
     func disconnect()
-    func connect(type: String, channelId: Int?)
-    func autoReconnect()
+    
+    func sendMessage(message: String, communityId: Int?)
+    func deleteMessage(message: MockMessage)
+    func modifyMessage(message: MockMessage)
 }
 
-class ChatWebSocketService: NSObject, StompClientLibDelegate, ChatWebSocketServiceProtocol {
-    
+class ChatWebSocketService: NSObject, ChatWebSocketServiceProtocol {
     let socketClient = StompClientLib()
     
-    let baseURL = "http://3.36.238.237:8080/my-chat"
-    
+    let baseURL = "http://3.36.238.237:8080"
     var url = NSURL()
-    private var header: [String: String] = [:]
-    private var reconnectTimer : Timer?
-    public var connection: Bool = false
+    var channelId: Int?
+    var user: User?
     
-    override init() {
+    var header: [String: String] = [:]
+    var message = PublishSubject<MockMessage>()
+    
+    private var reconnectTimer : Timer?
+    
+    func setup() {
         let userDefaults = UserDefaultsUtil()
         guard let user = userDefaults.getUserInfo() else { return }
+        self.user = user
         
         self.header = [
             "access-token": userDefaults.getUserToken(),
             "user-id": "\(user.id)",
-            "heart-beat": "0, 10000"
         ]
     }
     
     func register() {
+        self.setup()
+        
         let wsURL = baseURL[baseURL.index(baseURL.startIndex, offsetBy: 7)...]
-        let completedWSURL = "ws://\(wsURL)/websocket"
+        let completedWSURL = "ws://\(wsURL)/my-chat/websocket"
         
         url = NSURL(string: completedWSURL)!
         
         socketClient.openSocketWithURLRequest(request: NSURLRequest(url: url as URL), delegate: self, connectionHeaders: self.header)
-        print(header)
-        print(url)
-        self.connection = true
-        
-        print("Socket is connected successfully!")
     }
     
-    func connect(type: String, channelId: Int?){
-        var topic = "/topic/\(type)"
+    func connect(channelId: Int) {
+        self.channelId = channelId
+        let destination = "/topic/group/\(channelId)"
         
-        if channelId != nil {
-            topic = topic + "/" + "\(channelId!)"
-        }
-
-        
-        print("Socket is topic Connected : \(topic)")
-        
-        socketClient.subscribeWithHeader(destination: topic, withHeader: header)
+        socketClient.subscribe(destination: destination)
+        print("socket subscribe - \(destination)")
     }
     
     func disconnect() {
-        self.connection = false
-        socketClient.disconnect()
+        guard let channelId = self.channelId else {
+            return
+        }
+        socketClient.unsubscribe(destination: "/topic/group/\(channelId)")
     }
     
     func autoReconnect(){
         socketClient.autoDisconnect(time: 3)
-        socketClient.reconnect(request: NSURLRequest(url: url as URL), delegate: self as StompClientLibDelegate, time: 4.0)
+        socketClient.reconnect(request: NSURLRequest(url: url as URL), delegate: self, time: 4.0)
     }
     
-    func sendMessage() {
-        let dict = ["content" :"test duri","channelId":"105","accountId":3] as [String : Any]
+    func sendMessage(message: String, communityId: Int?) {
+        guard let user = user else {
+            return
+        }
+
+        var payloadObject = [
+            "content": message,
+            "channelId": "\(channelId!)",
+            "userId": "\(user.id)",
+            "name": "\(user.name)",
+            "profileImage": user.profileImage as Any
+        ] as [String : Any]
         
-        guard let dictionaries = try? JSONSerialization.data(withJSONObject: dict) else { return }
+        if communityId != nil {
+            payloadObject["communityId"] = communityId
+        }
         
-        socketClient.sendMessage(
-            message: String(data: dictionaries, encoding: .utf8)!,
-            toDestination: "/kafka/send-channel-message",
-            withHeaders: header,
-            withReceipt: nil
-        )
+        socketClient.sendJSONForDict(dict: payloadObject as AnyObject, toDestination: "/kafka/send-channel-message")
     }
     
-    // MARK: - StompClient Delegate
+    func deleteMessage(message: MockMessage) {
+        let payloadObject = [
+            "id": message.messageId,
+            "userId": "\(message.user.senderId)",
+            "type": "delete",
+        ] as [String : Any]
+        
+        socketClient.sendJSONForDict(dict: payloadObject as AnyObject, toDestination: "/kafka/send-channel-delete")
+    }
+    
+    func modifyMessage(message: MockMessage) {
+        
+        var content: String = ""
+        switch message.kind {
+        case .text(let text):
+            content = text
+        default:
+            break
+        }
+        
+        let payloadObject = [
+            "id": message.messageId,
+            "content": content,
+            "type": "modify",
+        ] as [String : Any]
+        
+        socketClient.sendJSONForDict(dict: payloadObject as AnyObject, toDestination: "/kafka/send-channel-modify")
+    }
+}
+
+
+// MARK: - StompClient Delegate
+extension ChatWebSocketService: StompClientLibDelegate {
     func stompClient(client: StompClientLib!, didReceiveMessageWithJSONBody jsonBody: AnyObject?, akaStringBody stringBody: String?, withHeader header: [String : String]?, withDestination destination: String) {
         print("DESTINATION : \(destination)")
         print("JSON BODY : \(String(describing: jsonBody))")
         print("STRING BODY : \(stringBody ?? "nil")")
+        
+        guard let stringBody = stringBody else {
+            return
+        }
+
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let messagePayload = try! decoder.decode(MessagePayload.self, from: stringBody.data(using: .utf8)!)
+        
+        let newMessage = MockMessage(
+            text: messagePayload.message,
+            user: MockUser(senderId: messagePayload.userId,
+                           displayName: messagePayload.name,
+                           profileImage: messagePayload.profileImage
+                          ),
+            messageId: messagePayload.id,
+            date: messagePayload.time.ISOtoDate)
+        self.message.onNext(newMessage)
     }
     
     func stompClientDidDisconnect(client: StompClientLib!) {
+        self.disconnect()
         print("Socket is Disconnected")
-        self.serverDidSendPing()
-        client.autoDisconnect(time: 3)
-        client.reconnect(request: NSURLRequest(url: url as URL) , delegate: self)
     }
     
     func stompClientDidConnect(client: StompClientLib!) {
-        let topic = "/topic/group/105"
-//        socketClient.subscribeWithHeader(destination: topic, withHeader: header)
-        
-        client.subscribeWithHeader(destination: topic, withHeader: header)
-        
-        print("Socket is Connected : \(topic)")
+        print("Socket is Connected")
     }
     
     func serverDidSendReceipt(client: StompClientLib!, withReceiptId receiptId: String) {
@@ -121,5 +173,4 @@ class ChatWebSocketService: NSObject, StompClientLibDelegate, ChatWebSocketServi
     func serverDidSendPing() {
         print("Server Ping")
     }
-    
 }

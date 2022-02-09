@@ -22,4 +22,20 @@ extension UIImage {
     var data : Data? {
          return cgImage?.dataProvider?.data as Data?
        }
+    
+    func generateThumbnail() -> UIImage? {
+        let options = [
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceThumbnailMaxPixelSize: 100] as CFDictionary
+
+        guard let imageData = self.pngData(),
+              let imageSource = CGImageSourceCreateWithData(imageData as NSData, nil),
+              let image = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options)
+        else {
+            return nil
+        }
+
+        return UIImage(cgImage: image)
+    }
 }

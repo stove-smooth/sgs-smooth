@@ -9,11 +9,15 @@ import Foundation
 import Moya
 
 enum UserTarget {
-    case signIn(param: SignInRequest)
+    // MARK: POST
+    case signIn(email: String, password: String)
     case signUp(param: SignUpRequest)
     case sendMail(param: SendMailRequest)
+
+    // MARK: GET
     case verifyCode(param: VerifyCodeRequest)
     case fetchUserInfo
+    case fetchUserInfoById(userId: Int)
 }
 
 extension UserTarget: BaseAPI, AccessTokenAuthorizable {
@@ -30,6 +34,8 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
             return "/auth-server/check-email"
         case .fetchUserInfo:
             return "/auth-server/auth/info"
+        case .fetchUserInfoById:
+            return "/auth-server/name"
         }
     }
     
@@ -40,13 +46,14 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
         case .sendMail: return .post
         case .verifyCode: return .get
         case .fetchUserInfo: return .get
+        case .fetchUserInfoById: return .get
         }
     }
     
     var task: Task {
         switch self {
-        case .signIn(let user):
-            return .requestCustomJSONEncodable(user, encoder: JSONEncoder())
+        case .signIn(let email, let password):
+            return .requestParameters(parameters: ["email": email, "password": password], encoding: JSONEncoding.default)
         case .signUp(let user):
             return .requestCustomJSONEncodable(user, encoder: JSONEncoder())
         case .sendMail(let request):
@@ -55,12 +62,14 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
             return .requestParameters(parameters: ["key": request.key], encoding: URLEncoding.queryString)
         case .fetchUserInfo:
             return .requestPlain
+        case .fetchUserInfoById(let userId):
+            return .requestParameters(parameters: ["id": userId], encoding: URLEncoding.queryString)
         }
     }
     
     var authorizationType: AuthorizationType? {
         switch  self {
-        case .signIn, .signUp, .sendMail, .verifyCode:
+        case .signIn, .signUp, .sendMail, .verifyCode, .fetchUserInfoById:
             return nil
         case .fetchUserInfo:
             return .custom("")
