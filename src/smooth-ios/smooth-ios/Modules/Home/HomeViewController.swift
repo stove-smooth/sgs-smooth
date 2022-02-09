@@ -53,7 +53,7 @@ class HomeViewController: BaseViewController, CoordinatorContext {
         view.addSubview(menuViewController.view)
         menuViewController.didMove(toParent: self)
         menuViewController.delegate = self
-        self.delivery = menuViewController.self as? DeliveryDelegate
+        self.delivery = menuViewController.self
         
         // chatting VC
         chattingViewController.delegate = self

@@ -51,7 +51,7 @@ class ChattingViewController: MessagesViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         self.tabBarController?.tabBar.isHidden = true
-//        delegate?.dismiss(channel: channel, communityId: communityId)
+        delegate?.dismiss(channel: channel, communityId: communityId)
         
         super.viewWillAppear(animated)
     }

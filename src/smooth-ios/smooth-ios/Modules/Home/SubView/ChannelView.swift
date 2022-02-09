@@ -132,7 +132,7 @@ class ChannelView: BaseView {
                     if (row != nil) {
                         tableView.selectRow(at: IndexPath(row: row!, section: i),
                                             animated: false, scrollPosition: .middle)
-                        break 
+                        break
                     }
                 }
             }
