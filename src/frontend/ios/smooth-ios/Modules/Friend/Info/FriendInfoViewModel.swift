@@ -11,30 +11,45 @@ import RxCocoa
 class FriendInfoViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
+    var model = Model()
     
+    let friendId: Int
     let friendService: FriendServiceProtocol
-    
-    var friend: Friend
+    let userService: UserServiceProtocol
     
     struct Input {
+        let fetch = PublishSubject<Void>()
         let tapBanButton = PublishRelay<Void>()
         let tapDeleteButton = PublishRelay<Void>()
     }
     
     struct Output {
         let dismiss = PublishRelay<Void>()
+        let friend = PublishRelay<Friend>()
+    }
+    
+    struct Model {
+        var friend = Friend()
     }
     
     init(
         friendService: FriendServiceProtocol,
-        friend: Friend
+        userService: UserServiceProtocol,
+        friendId: Int
     ) {
         self.friendService = friendService
-        self.friend = friend
+        self.userService = userService
+        self.friendId = friendId
         super.init()
     }
     
     override func bind() {
+        self.input.fetch
+            .subscribe(onNext: {
+                self.fetchFriendInfo(userId: self.friendId)
+            })
+            .disposed(by: disposeBag)
+        
         self.input.tapBanButton
             .asDriver(onErrorJustReturn: ())
             .drive(onNext: {
@@ -52,7 +67,7 @@ class FriendInfoViewModel: BaseViewModel {
     
     // TODO: 얼럿 통해서 친구 변동 있을 경우 ListView 변동사항 반영
     private func banFriend() {
-        self.friendService.banFriend(self.friend.id) {  response, error in
+        self.friendService.banFriend(model.friend.id) {  response, error in
             guard let response = response else {
                 return
             }
@@ -66,7 +81,7 @@ class FriendInfoViewModel: BaseViewModel {
     }
     
     private func deleteFriend() {
-        self.friendService.deleteFriend(self.friend.id) {  response, error in
+        self.friendService.deleteFriend(model.friend.id) {  response, error in
             guard let response = response else {
                 return
             }
@@ -75,6 +90,25 @@ class FriendInfoViewModel: BaseViewModel {
                 self.output.dismiss.accept(())
             } else {
                 self.showErrorMessage.accept(response.message)
+            }
+        }
+    }
+    
+    private func fetchFriendInfo(userId: Int) {
+        userService.fetchUserInfoById(userId: userId) {
+            response, error in
+            
+            if (error?.response != nil) {
+                let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
+                self.showErrorMessage.accept(body.message)
+            } else {
+                guard let userInfo = response else {
+                    return
+                }
+
+                self.model.friend = Friend(id: self.friendId, name: userInfo.name, code: userInfo.code, profileImage: userInfo.profileImage, state: .none)
+                
+                self.output.friend.accept(self.model.friend)
             }
         }
     }

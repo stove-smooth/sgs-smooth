@@ -100,7 +100,7 @@ class FriendListViewController: BaseViewController, CoordinatorContext {
                     break
                 case .normal(let friend):
                     print(friend)
-                    self.coordinator?.showFriendInfoModal(friend: friend)
+                    self.coordinator?.showFriendInfoModal(id: friend.id, state: friend.state)
                 }
             })
             .disposed(by: disposeBag)

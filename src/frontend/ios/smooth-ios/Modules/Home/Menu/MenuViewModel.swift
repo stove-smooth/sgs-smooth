@@ -20,15 +20,21 @@ class MenuViewModel: BaseViewModel {
     struct Input {
         let fetch = PublishSubject<Void>()
         let tapServer = PublishSubject<IndexPath>()
+        
+        let menuPipline = PublishSubject<Void>()
     }
     
     struct Output {
         let showLoading = PublishRelay<Bool>()
         
+        // MARK: Binder
         let servers = PublishRelay<[Server]>()
+        let selectedServer = PublishRelay<Int?>()
         let communityInfo = PublishRelay<CommunityInfo>()
-        let members = PublishRelay<[Member]>()
+        let selectedChannel = PublishRelay<IndexPath?>()
         let directs = PublishRelay<[String]>()
+        
+        let members = PublishRelay<[Member]>()
         
         let defaultChannelIndex = PublishRelay<IndexPath>()
         
@@ -63,18 +69,26 @@ class MenuViewModel: BaseViewModel {
         
         self.input.tapServer
             .bind(onNext: { indexPath in
+                self.output.selectedChannel.accept(nil)
+                
                 switch indexPath.section {
                 case 0: // 다이렉트 메시지 홈 + 다이렉트 메시지 함
                     print("홈")
                     self.model.selectedServerIndex = nil
+                    self.output.selectedServer.accept(nil)
                     self.fetchDirect()
                 case 1: // 서버 리스트
                     let server = self.model.servers![indexPath.row]
-                    self.model.selectedServerIndex = indexPath.row
+                    self.model.selectedServerIndex = self.model.servers?.firstIndex(of: server)
+                    
+                    self.output.selectedServer.accept(self.model.selectedServerIndex)
                     self.fetchChannel(server: server)
+                    
                     self.fetchMemebr(server: server)
                 case 2: // 서버 추가 버튼
                     self.model.selectedServerIndex = nil
+                    self.output.selectedServer.accept(nil)
+                    
                     self.output.goToAddServer.accept(())
                 default: break
                 }
@@ -98,6 +112,7 @@ class MenuViewModel: BaseViewModel {
             }
             
             self.output.servers.accept(servers)
+            self.output.selectedServer.accept(self.model.selectedServerIndex)
             self.output.showLoading.accept(false)
         }
     }

@@ -74,9 +74,5 @@ class ServerView: BaseView, UIScrollViewDelegate {
         Observable.just(sections)
             .bind(to: tableView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
-        
-        /*1번째 서버가 디폴트로 선택하기*/
-        let indexPath = IndexPath(row: 0, section: 0)
-        tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
     }
 }

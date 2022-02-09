@@ -38,6 +38,15 @@ class SignInViewController: BaseViewController {
         super.viewDidLoad()
     }
     
+    override func bindEvent() {
+        self.viewModel.showErrorMessage
+            .asDriver(onErrorJustReturn: "")
+            .drive(onNext: { message in
+                self.showToast(message: message, isWarning: true)
+            })
+            .disposed(by: disposeBag)
+    }
+    
     override func bindViewModel() {
         self.authView.emailField.rx.text
             .orEmpty

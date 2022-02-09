@@ -85,8 +85,8 @@ class HomeCoordinator: NSObject, Coordinator {
         navigationController.present(makeCategoryVC, animated: true, completion: nil)
     }
     
-    func showFriendInfoModal(friend: Friend) {
-        let friendInfoVC = FriendInfoViewController.instance(friend: friend)
+    func showFriendInfoModal(id: Int, state: FriendState) {
+        let friendInfoVC = FriendInfoViewController.instance(friendId: id, state: state)
         
         navigationController.presentPanModal(friendInfoVC)
     }
