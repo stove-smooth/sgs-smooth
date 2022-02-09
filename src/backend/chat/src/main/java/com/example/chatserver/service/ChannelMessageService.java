@@ -4,9 +4,12 @@ import com.example.chatserver.client.CommunityClient;
 import com.example.chatserver.client.UserClient;
 import com.example.chatserver.config.S3Config;
 import com.example.chatserver.domain.ChannelMessage;
+import com.example.chatserver.domain.MessageTime;
 import com.example.chatserver.dto.request.FileUploadRequest;
+import com.example.chatserver.dto.request.LoginSessionRequest;
 import com.example.chatserver.dto.response.*;
 import com.example.chatserver.repository.ChannelMessageRepository;
+import com.example.chatserver.repository.MessageTimeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -31,6 +34,7 @@ public class ChannelMessageService {
     private final RedisTemplate<String, CommunityFeignResponse.UserIdResponse> redisTemplateForIds;
     private final UserClient userClient;
     private final S3Config s3Config;
+    private final MessageTimeRepository messageTimeRepository;
     // 2주
     private long TIME = 14 * 24 * 60 * 60 * 1000L;
 
@@ -80,7 +84,7 @@ public class ChannelMessageService {
     }
 
     public FileUploadResponse fileUpload(FileUploadRequest fileUploadRequest) throws IOException {
-        if (fileUploadRequest.getType().equals("image") || fileUploadRequest.getType().equals("video")) {
+        if (fileUploadRequest.getFileType().equals("image") || fileUploadRequest.getFileType().equals("video")) {
             String image = null;
             String thumbnail = null;
             if (fileUploadRequest.getImage() != null) {
@@ -105,11 +109,11 @@ public class ChannelMessageService {
                     .name(fileUploadRequest.getName())
                     .profileImage(fileUploadRequest.getProfileImage())
                     .message(image)
+                    .channelId(fileUploadRequest.getChannelId())
                     .thumbnail(thumbnail)
                     .type(fileUploadRequest.getType())
                     .fileType(fileUploadRequest.getFileType())
                     .time(LocalDateTime.now()).build();
-
             return uploadResponse;
         } else {
             String image = null;
@@ -133,6 +137,7 @@ public class ChannelMessageService {
                     .name(fileUploadRequest.getName())
                     .profileImage(fileUploadRequest.getProfileImage())
                     .message(image)
+                    .channelId(save.getChannelId())
                     .type(fileUploadRequest.getType())
                     .fileType(fileUploadRequest.getFileType())
                     .time(LocalDateTime.now()).build();
@@ -151,6 +156,23 @@ public class ChannelMessageService {
             CommunityFeignResponse.UserIdResponse userIdResponse = new CommunityFeignResponse.UserIdResponse();
             userIdResponse.setMembers(ids);
             redisTemplateForIds.opsForValue().set("CH" + community_id, userIdResponse, TIME, TimeUnit.MILLISECONDS);
+        }
+    }
+
+    public void setRoomTime(LoginSessionRequest loginSessionRequest, String lastRoom) {
+        MessageTime result = messageTimeRepository.findByChannelId(lastRoom);
+        if (result == null) {
+            Map<String,LocalDateTime> users = new HashMap<>();
+            users.put(loginSessionRequest.getUser_id(), LocalDateTime.now());
+            MessageTime messageTime = MessageTime.builder()
+                    .channelId(lastRoom)
+                    .read(users).build();
+            messageTimeRepository.save(messageTime);
+        } else {
+            Map<String, LocalDateTime> read = result.getRead();
+            read.put(loginSessionRequest.getUser_id(),LocalDateTime.now());
+            result.setRead(read);
+            messageTimeRepository.save(result);
         }
     }
 }

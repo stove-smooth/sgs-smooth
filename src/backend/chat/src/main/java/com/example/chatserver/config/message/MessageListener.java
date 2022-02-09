@@ -244,11 +244,11 @@ public class MessageListener {
 
     @KafkaListener(topics = topicForFileUpload,groupId = groupName, containerFactory = "kafkaListenerContainerFactoryForFile")
     public void fileUpload(FileUploadResponse fileUploadResponse) throws IOException {
-
-        String json = objectMapper.writeValueAsString(fileUploadResponse);
         if (fileUploadResponse.getType().equals("direct")) {
+            String json = objectMapper.writeValueAsString(fileUploadResponse);
             template.convertAndSend("/topic/direct/" + fileUploadResponse.getChannelId(), json);
         } else {
+            String json = objectMapper.writeValueAsString(fileUploadResponse);
             template.convertAndSend("/topic/group/" + fileUploadResponse.getChannelId(), json);
         }
     }

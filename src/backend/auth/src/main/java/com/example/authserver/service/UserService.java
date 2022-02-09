@@ -13,6 +13,7 @@ import com.example.authserver.dto.*;
 import com.example.authserver.dto.request.SignInRequest;
 import com.example.authserver.dto.response.MailResponse;
 import com.example.authserver.dto.response.SignInResponse;
+import com.example.authserver.repository.DeviceRepository;
 import com.example.authserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -43,6 +45,7 @@ public class UserService extends BaseTimeEntity {
     private final JwtTokenProvider jwtTokenProvider;
     private final EmailService emailService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final DeviceRepository deviceRepository;
 
     @Transactional
     public AccountAutoDto signUp(AccountAutoDto dto) {
@@ -51,6 +54,11 @@ public class UserService extends BaseTimeEntity {
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
         User account = User.createAccount(dto);
         accountRepository.save(account);
+
+        Device device = Device.builder()
+                .user(account)
+                .last_access(LocalDateTime.now()).build();
+        deviceRepository.save(device);
 
         return dto;
     }
@@ -188,5 +196,11 @@ public class UserService extends BaseTimeEntity {
                 .profileImage(user.getProfileImage()).build();
 
         return result;
+    }
+
+    @Transactional
+    public void changeLastAccess(Long id) {
+        Device device = deviceRepository.findByUserId(id);
+        device.setLast_access(LocalDateTime.now());
     }
 }
