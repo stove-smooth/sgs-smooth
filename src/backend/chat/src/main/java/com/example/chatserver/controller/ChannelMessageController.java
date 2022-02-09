@@ -81,9 +81,11 @@ public class ChannelMessageController {
     }
 
     @PostMapping("/channel/file")
-    public void sendFile(@ModelAttribute FileUploadRequest fileUploadRequest) throws IOException {
+    public CommonResponse sendFile(@ModelAttribute FileUploadRequest fileUploadRequest) throws IOException {
         FileUploadResponse uploadResponse = channelChatService.fileUpload(fileUploadRequest);
         messageSender.fileUpload(fileTopic,uploadResponse);
+
+        return responseService.getSuccessResponse();
 
     }
 

@@ -84,4 +84,8 @@ public class PresenceService {
         }
         return check;
     }
+//
+//    public void statusChange(Long id, String status) {
+//        redisTemplate.opsForValue().set("STATUS" + id, status, TIME, TimeUnit.MILLISECONDS);
+//    }
 }

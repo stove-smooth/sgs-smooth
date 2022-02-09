@@ -19,4 +19,20 @@ public class FileUploadResponse {
     private String type;
     private String fileType;
     private LocalDateTime time;
+
+    @Override
+    public String toString() {
+        return "{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", profileImage='" + profileImage + '\'' +
+                ", message='" + message + '\'' +
+                ", thumbnail='" + thumbnail + '\'' +
+                ", userId=" + userId +
+                ", channelId=" + channelId +
+                ", type='" + type + '\'' +
+                ", fileType='" + fileType + '\'' +
+                ", time=" + time +
+                '}';
+    }
 }

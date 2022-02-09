@@ -78,7 +78,7 @@ public class DirectMessageService {
     }
 
     public FileUploadResponse fileUpload(FileUploadRequest fileUploadRequest) throws IOException {
-        if (fileUploadRequest.getType().equals("image") || fileUploadRequest.getType().equals("video")) {
+        if (fileUploadRequest.getFileType().equals("image") || fileUploadRequest.getFileType().equals("video")) {
             String image = null;
             String thumbnail = null;
             if (fileUploadRequest.getImage() != null) {
@@ -102,6 +102,7 @@ public class DirectMessageService {
                     .userId(save.getUserId())
                     .name(fileUploadRequest.getName())
                     .profileImage(fileUploadRequest.getProfileImage())
+                    .channelId(fileUploadRequest.getChannelId())
                     .message(image)
                     .thumbnail(thumbnail)
                     .type(fileUploadRequest.getType())
@@ -130,6 +131,7 @@ public class DirectMessageService {
                     .userId(save.getUserId())
                     .name(fileUploadRequest.getName())
                     .profileImage(fileUploadRequest.getProfileImage())
+                    .channelId(save.getChannelId())
                     .message(image)
                     .type(fileUploadRequest.getType())
                     .fileType(fileUploadRequest.getFileType())

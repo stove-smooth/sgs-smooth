@@ -21,27 +21,35 @@ public class PresenceController {
     private final ResponseService responseService;
     private final PresenceService presenceService;
 
-    @PostMapping("login-state")
-    public CommonResponse uploadState(@RequestBody LoginSessionRequest loginSessionRequest) {
-        presenceService.uploadState(loginSessionRequest);
-
-        return responseService.getSuccessResponse();
-    }
-
-    @PostMapping("/logout-state")
-    public CommonResponse deleteState(@RequestBody LoginSessionRequest loginSessionRequest) throws JsonProcessingException {
-
-        presenceService.deleteState(loginSessionRequest);
-
-        return responseService.getSuccessResponse();
-    }
-
-    @PostMapping("/change-state")
-    public CommonResponse changeState(@RequestBody LoginSessionRequest loginSessionRequest) throws JsonProcessingException {
-        presenceService.changeState(loginSessionRequest);
-
-        return responseService.getSuccessResponse();
-    }
+//    @PostMapping("login-state")
+//    public CommonResponse uploadState(@RequestBody LoginSessionRequest loginSessionRequest) {
+//        presenceService.uploadState(loginSessionRequest);
+//
+//        return responseService.getSuccessResponse();
+//    }
+//
+//    @PostMapping("/logout-state")
+//    public CommonResponse deleteState(@RequestBody LoginSessionRequest loginSessionRequest) throws JsonProcessingException {
+//
+//        presenceService.deleteState(loginSessionRequest);
+//
+//        return responseService.getSuccessResponse();
+//    }
+//
+//    @PostMapping("/change-state")
+//    public CommonResponse changeState(@RequestBody LoginSessionRequest loginSessionRequest) throws JsonProcessingException {
+//        presenceService.changeState(loginSessionRequest);
+//
+//        return responseService.getSuccessResponse();
+//    }
+//
+//    @PutMapping("status/{id}/{status}")
+//    public CommonResponse statusChange(@PathVariable(value = "id") Long id,
+//                                       @PathVariable(value = "status") String status) {
+//        presenceService.statusChange(id,status);
+//
+//        return responseService.getSuccessResponse();
+//    }
 
     @PostMapping("/read")
     public Map<Long,Boolean> read(@RequestBody List<Long> requestAccountIds) {

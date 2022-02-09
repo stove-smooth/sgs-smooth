@@ -1,6 +1,7 @@
 package com.example.chatserver.config;
 
 import com.example.chatserver.client.PresenceClient;
+import com.example.chatserver.client.UserClient;
 import com.example.chatserver.config.message.JwtTokenFilter;
 import com.example.chatserver.dto.request.LoginSessionRequest;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
     private final JwtTokenFilter jwtTokenFilter;
     private final PresenceClient presenceClient;
     private final TcpClientGateway tcpClientGateway;
+    private final UserClient userClient;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -59,7 +61,9 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
                 LoginSessionRequest logoutSessionRequest = LoginSessionRequest.builder()
                                 .type("logout")
                                 .session_id(sessionId).build();
-                tcpClientGateway.send(logoutSessionRequest.toString());
+                String id = tcpClientGateway.send(logoutSessionRequest.toString());
+                log.info("아이디" + id);
+                userClient.changeLastAccess(Long.valueOf(id));
 //                presenceClient.deleteState(logoutSessionRequest);
                 break;
             default:

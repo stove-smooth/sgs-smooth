@@ -80,7 +80,7 @@ public class ChannelMessageService {
     }
 
     public FileUploadResponse fileUpload(FileUploadRequest fileUploadRequest) throws IOException {
-        if (fileUploadRequest.getType().equals("image") || fileUploadRequest.getType().equals("video")) {
+        if (fileUploadRequest.getFileType().equals("image") || fileUploadRequest.getFileType().equals("video")) {
             String image = null;
             String thumbnail = null;
             if (fileUploadRequest.getImage() != null) {
@@ -105,11 +105,11 @@ public class ChannelMessageService {
                     .name(fileUploadRequest.getName())
                     .profileImage(fileUploadRequest.getProfileImage())
                     .message(image)
+                    .channelId(fileUploadRequest.getChannelId())
                     .thumbnail(thumbnail)
                     .type(fileUploadRequest.getType())
                     .fileType(fileUploadRequest.getFileType())
                     .time(LocalDateTime.now()).build();
-
             return uploadResponse;
         } else {
             String image = null;
@@ -133,6 +133,7 @@ public class ChannelMessageService {
                     .name(fileUploadRequest.getName())
                     .profileImage(fileUploadRequest.getProfileImage())
                     .message(image)
+                    .channelId(save.getChannelId())
                     .type(fileUploadRequest.getType())
                     .fileType(fileUploadRequest.getFileType())
                     .time(LocalDateTime.now()).build();
