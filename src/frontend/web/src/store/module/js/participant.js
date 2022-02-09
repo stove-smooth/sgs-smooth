@@ -6,8 +6,9 @@ export default function Participant(name) {
 
   var video = document.createElement("video");
   var rtcPeer;
-
   video.id = "video-" + name;
+  video.classList.add("width-100");
+  video.classList.add("height-100");
   video.autoplay = true;
   video.controls = false;
   var sdp;
@@ -25,7 +26,7 @@ export default function Participant(name) {
 
   this.onIceCandidate = function (candidate, wp) {
     console.log("무의미", wp);
-    console.log("Local candidate" + JSON.stringify(candidate));
+    //console.log("Local candidate" + JSON.stringify(candidate));
     var message = {
       id: "onIceCandidate",
       userId: name,

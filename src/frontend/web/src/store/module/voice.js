@@ -62,7 +62,6 @@ const voice = {
       };
       context.state.ws.onmessage = function (message) {
         let parsedMessage = JSON.parse(message.data);
-        console.log("Received message: " + message.data);
         context.dispatch("onServerMessage", parsedMessage);
       };
     },
@@ -195,10 +194,7 @@ const voice = {
       context.commit("setVoiceInfo", voiceInfo);
     },
     sendMessage(context, message) {
-      console.log("일로오는거맞아?", message);
       let jsonMessage = JSON.stringify(message);
-      console.log("Sending message: " + jsonMessage);
-      console.log("ws1", context.state.ws);
       context.state.ws.send(jsonMessage);
     },
     async leaveRoom(context) {
