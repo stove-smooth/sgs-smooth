@@ -60,10 +60,13 @@ public class TcpService {
                     redisTemplate.delete(session_id);
                     redisTemplate.delete("USER" + user_Id);
                 }
-                return user_Id;
+                String temp = user_Id + "," + state;
+                return temp;
             }
             case "state": {
                 String user_id = "USER" + request.getUser_id();
+                String lastRoom = redisTemplate.opsForValue().get(user_id).toString();
+                log.info(lastRoom);
                 String channel_id = request.getChannel_id();
                 redisTemplate.opsForValue().set(user_id, channel_id, TIME, TimeUnit.MILLISECONDS);
 
@@ -79,7 +82,7 @@ public class TcpService {
                     String s = mapper.writeValueAsString(temp);
                     redisTemplate.opsForValue().set(channel_id, s, TIME, TimeUnit.MILLISECONDS);
                 }
-                break;
+                return lastRoom;
             }
         }
 

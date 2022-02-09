@@ -4,10 +4,14 @@ import com.example.chatserver.client.CommunityClient;
 import com.example.chatserver.client.UserClient;
 import com.example.chatserver.config.S3Config;
 import com.example.chatserver.domain.DirectMessage;
+import com.example.chatserver.domain.MessageTime;
 import com.example.chatserver.dto.request.FileUploadRequest;
+import com.example.chatserver.dto.request.MessageCountRequest;
 import com.example.chatserver.dto.response.*;
 import com.example.chatserver.repository.DirectMessageRepository;
+import com.example.chatserver.repository.MessageTimeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,11 +24,13 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DirectMessageService {
 
     private final DirectMessageRepository directChatRepository;
+    private final MessageTimeRepository messageTimeRepository;
     private final UserClient userClient;
     private final S3Config s3Config;
     private final CommunityClient communityClient;
@@ -152,5 +158,17 @@ public class DirectMessageService {
             userIdResponse.setMembers(ids);
             redisTemplateForIds.opsForValue().set("DM" + room_id, userIdResponse, TIME, TimeUnit.MILLISECONDS);
         }
+    }
+
+    public void messageCount(MessageCountRequest messageCountRequest) {
+        Long userId = messageCountRequest.getUserId();
+        for (Long roomId: messageCountRequest.getRoomIds()) {
+            String room = "r-" + roomId;
+            MessageTime messageTime = messageTimeRepository.findByChannelId(room);
+            LocalDateTime start = messageTime.getRead().get(String.valueOf(userId));
+            List<DirectMessage> messages = directChatRepository.findByChannelIdAndLocalDateTimeBetween(roomId, start,LocalDateTime.now());
+            log.info(String.valueOf(messages.size()));
+        }
+
     }
 }

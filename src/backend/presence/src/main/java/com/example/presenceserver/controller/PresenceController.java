@@ -2,6 +2,7 @@ package com.example.presenceserver.controller;
 
 import com.example.presenceserver.dto.request.LoginSessionRequest;
 import com.example.presenceserver.dto.response.CommonResponse;
+import com.example.presenceserver.dto.response.DataResponse;
 import com.example.presenceserver.service.PresenceService;
 import com.example.presenceserver.service.ResponseService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -50,6 +51,12 @@ public class PresenceController {
 //
 //        return responseService.getSuccessResponse();
 //    }
+
+    // 유저들 on, off 상태 정보 반환
+    @GetMapping("/user-state")
+    public DataResponse<Map<Long,String>> getUsersState(@RequestBody List<Long> requestAccountIds) {
+        return responseService.getDataResponse(presenceService.getUsersState(requestAccountIds));
+    }
 
     @PostMapping("/read")
     public Map<Long,Boolean> read(@RequestBody List<Long> requestAccountIds) {

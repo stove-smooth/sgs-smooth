@@ -66,10 +66,11 @@ public class ChannelMessageController {
         messageSender.sendToEtcChannelChat(etcCommunityTopic,channelMessage);
     }
 
+    // 방 이동 시 상태관리
     @MessageMapping("/join-channel")
     public void sendState(@Payload LoginSessionRequest loginSessionRequest) {
-        tcpClientGateway.send(loginSessionRequest.toString());
-//        presenceClient.changeState(loginSessionRequest);
+        String lastRoom = tcpClientGateway.send(loginSessionRequest.toString());
+        channelChatService.setRoomTime(loginSessionRequest,lastRoom);
     }
 
     @GetMapping("/community")

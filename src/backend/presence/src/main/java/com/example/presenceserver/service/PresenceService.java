@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -83,6 +84,22 @@ public class PresenceService {
             }
         }
         return check;
+    }
+
+    public Map<Long,String> getUsersState(List<Long> requestAccountIds) {
+        Map<Long,String> result = new HashMap<>();
+
+        for (Long i : requestAccountIds) {
+            Object value = redisTemplate.opsForValue().get("STATUS" + i);
+            log.info((String) value);
+            if (String.valueOf(value).equals("null")) {
+                result.put(i,"offline");
+            } else {
+                result.put(i, String.valueOf(value));
+            }
+        }
+
+        return result;
     }
 //
 //    public void statusChange(Long id, String status) {
