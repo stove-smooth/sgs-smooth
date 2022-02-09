@@ -21,6 +21,7 @@ extension MenuViewController: DeliveryDelegate{
         for index in 0...servers.count-1 {
             if(servers[index].id == communityId) {
                 self.viewModel.input.tapServer.onNext(IndexPath(row: index, section: 1))
+                break 
             }
         }
     }

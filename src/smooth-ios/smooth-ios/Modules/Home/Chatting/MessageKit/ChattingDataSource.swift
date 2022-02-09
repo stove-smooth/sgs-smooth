@@ -48,7 +48,7 @@ extension ChattingViewController: MessageCellDelegate {
         guard let indexPath = messagesCollectionView.indexPath(for: cell) else { return }
         
         
-        self.coordinator?.showMessageOptionModal(indexPath: indexPath)
+        self.showMessageOption(indexPath: indexPath)
         
     }
     
@@ -61,6 +61,39 @@ extension ChattingViewController: MessageCellDelegate {
         
         messagesCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredVertically)
         
-        self.coordinator?.showMessageOptionModal(indexPath: indexPath)
+        self.showMessageOption(indexPath: indexPath)
+    }
+}
+
+extension ChattingViewController {
+    func showMessageOption(indexPath: IndexPath) {
+        UIAlertController.present(
+            in: self, title: nil, message: nil,
+            style: .actionSheet,
+            actions: [
+                .action(title: "메시지 수정하기", style: .default),
+                .action(title: "메시지 삭제하기", style: .default),
+                .action(title: "취소", style: .cancel)
+            ]).subscribe(onNext: { index in
+                switch index {
+                case 0:
+//                    self.modifyInputBar(indexPath)
+                    break
+                case 1:
+                    self.showDeleteMessage(indexPath: indexPath)
+                default:
+                    break
+                }
+            }).disposed(by: disposeBag)
+    }
+    
+    func showDeleteMessage(indexPath: IndexPath) {
+        AlertUtils.showWithCancel(
+            controller: self,
+            title: "메시지 삭제",
+            message: "정말 이 메시지를 삭제할까요? 삭제하면 되돌릴 수 없어요."
+        ) {
+            self.deleteMessage(indexPath)
+        }
     }
 }

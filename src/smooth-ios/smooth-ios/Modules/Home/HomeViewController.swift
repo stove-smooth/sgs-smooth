@@ -89,6 +89,7 @@ extension HomeViewController: ChattingViewControllerDelegate {
     
     func didTapMenuButton(channel: Channel?, communityId: Int?) {
         toggleMenu(completion: nil)
+        self.delivery?.appear(channel: channel, communityId: communityId)
     }
     
     func toggleMenu(completion: (() -> Void)?) {

@@ -141,4 +141,8 @@ class ChattingViewModel: BaseViewModel {
             self.output.isLoading.accept(false)
         }
     }
+    
+    func deleteMessage(message: MockMessage) {
+        self.chatWebSocketService.deleteMessage(message: message)
+    }
 }

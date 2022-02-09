@@ -15,7 +15,10 @@ protocol ChatWebSocketServiceProtocol {
     func register()
     func connect(channelId: Int)
     func disconnect()
+    
     func sendMessage(message: String, communityId: Int?)
+    func deleteMessage(message: MockMessage)
+    func modifyMessage(message: MockMessage)
 }
 
 class ChatWebSocketService: NSObject, ChatWebSocketServiceProtocol {
@@ -101,6 +104,25 @@ class ChatWebSocketService: NSObject, ChatWebSocketServiceProtocol {
         ] as [String : Any]
         
         socketClient.sendJSONForDict(dict: payloadObject as AnyObject, toDestination: "/kafka/send-channel-delete")
+    }
+    
+    func modifyMessage(message: MockMessage) {
+        
+        var content: String = ""
+        switch message.kind {
+        case .text(let text):
+            content = text
+        default:
+            break
+        }
+        
+        let payloadObject = [
+            "id": message.messageId,
+            "content": content,
+            "type": "modify",
+        ] as [String : Any]
+        
+        socketClient.sendJSONForDict(dict: payloadObject as AnyObject, toDestination: "/kafka/send-channel-modify")
     }
 }
 

@@ -51,6 +51,7 @@ class ChattingViewController: MessagesViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         self.tabBarController?.tabBar.isHidden = true
+//        delegate?.dismiss(channel: channel, communityId: communityId)
         
         super.viewWillAppear(animated)
     }
@@ -72,7 +73,7 @@ class ChattingViewController: MessagesViewController {
     }()
     
     @objc func didTapMenuButton() {
-        delegate?.didTapMenuButton(channel: nil, communityId: nil)
+        delegate?.didTapMenuButton(channel: channel, communityId: communityId)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -169,6 +170,8 @@ extension ChattingViewController {
     func deleteMessage(_ indexPath: IndexPath) {
         print("deleteMessage \(indexPath) \(messageList.count)")
         
+        self.viewModel.deleteMessage(message: messageList[indexPath.section])
+        
         messagesCollectionView.performBatchUpdates({
             messageList.remove(at: indexPath.section)
             messagesCollectionView.deleteSections([indexPath.section])
@@ -180,7 +183,10 @@ extension ChattingViewController {
             }
         }, completion: {[weak self] _ in
             if self?.isLastSectionVisible() == true {
-                self?.messagesCollectionView.scrollToLastItem(animated: true)
+                self?.messagesCollectionView
+                    .scrollToLastItem(animated: true)
+            } else {
+                self?.messagesCollectionView.scrollToItem(at: indexPath, at: .centeredVertically, animated: true)
             }
         })
     }
@@ -229,6 +235,20 @@ extension ChattingViewController: InputBarAccessoryViewDelegate, CameraInputBarA
             let substring = attributedText.attributedSubstring(from: range)
             let context = substring.attribute(.autocompletedContext, at: 0, effectiveRange: nil)
             print("Autocompleted: `", substring, "` with context: ", context ?? [])
+        }
+        
+        
+        func modifyInputBar(indexPath: IndexPath) {
+            let message = messageList[indexPath.section]
+            
+            var content: String = ""
+            switch message.kind {
+            case .text(let text):
+                content = text
+            default: break
+            }
+            
+            inputBar.inputTextView.text = content
         }
         
         let components = inputBar.inputTextView.components
@@ -282,13 +302,5 @@ extension ChattingViewController: InputBarAccessoryViewDelegate, CameraInputBarA
                 insertMessage(message)
             }
         }
-    }
-}
-
-// MARK: - ChattingMessageOptionVC Delegate
-extension ChattingViewController: ChattingMessageOptionDelegate {
-    func delete(indexPath: IndexPath) {
-        delegate?.didTapMenuButton(channel: self.channel, communityId: self.communityId)
-        self.deleteMessage(indexPath)
     }
 }

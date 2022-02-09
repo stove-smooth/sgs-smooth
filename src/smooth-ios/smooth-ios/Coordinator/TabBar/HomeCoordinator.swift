@@ -90,9 +90,4 @@ class HomeCoordinator: NSObject, Coordinator {
         
         navigationController.presentPanModal(friendInfoVC)
     }
-    
-    func showMessageOptionModal(indexPath: IndexPath) {
-        let optionVC = ChattingMessageOptionViewController.instance(indexPath: indexPath)
-        navigationController.presentPanModal(optionVC)
-    }
 }

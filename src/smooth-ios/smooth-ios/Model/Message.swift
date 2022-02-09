@@ -38,7 +38,7 @@ struct MessagePayload: Codable {
     let originImage: String?
     let fileType: FileType?
 
-//    let time:
+    let time: String
 }
 
 enum RoomType: String, Codable{
