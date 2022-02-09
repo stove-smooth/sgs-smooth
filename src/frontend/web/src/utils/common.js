@@ -43,6 +43,7 @@ function processFile2(tempImage) {
 async function converToThumbnail(image) {
   const result = await processFile(image);
   const thumbnail = await processFile2(result);
+  console.log("converToThumbnail", image, thumbnail);
   return thumbnail;
 }
 
@@ -50,6 +51,7 @@ async function dataUrlToFile(dataUrl) {
   const response = await fetch(dataUrl);
   const blob = await response.blob();
   const time = new Date().getTime();
+  console.log("time", time);
   return new File([blob], time, { type: "image/*" });
 }
 export { selectProfile, converToThumbnail, dataUrlToFile };

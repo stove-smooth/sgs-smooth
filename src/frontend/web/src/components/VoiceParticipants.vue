@@ -22,6 +22,8 @@ export default {
     },
   },
   mounted() {
+    console.log("마운트되니? , this.participant.rtcPeer.videoEnabled");
+    //video위에 보이는지 유무
     this.video.classList.add("video-insert");
     document.getElementById(this.containerId).appendChild(this.video);
   },

@@ -25,16 +25,19 @@
             </div>
           </div>
           <div class="media-action-button">
-            <button aria-label="영상" type="button" class="camera-share-button">
+            <button
+              aria-label="영상"
+              type="button"
+              class="camera-share-button"
+              v-bind:class="{
+                'camera-share-off': video,
+              }"
+              @click="toggleVideo"
+            >
               <div class="primary-text-content">
                 <svg class="video-camera"></svg>
-                영상
-              </div>
-            </button>
-            <button aria-label="화면" type="button" class="camera-share-button">
-              <div class="primary-text-content">
-                <svg class="video-camera"></svg>
-                영상
+                <span v-if="!video">영상 켜기</span>
+                <span v-else class="white-color">영상 끄기</span>
               </div>
             </button>
           </div>
@@ -76,7 +79,7 @@
             aria-label="마이크"
             role="switch"
             type="button"
-            @click="setMute"
+            @click="toggleMic"
           >
             <svg v-if="mute" class="mute-on"></svg>
             <svg v-else class="mute"></svg>
@@ -88,7 +91,7 @@
             aria-label="헤드셋"
             role="switch"
             type="button"
-            @click="setDeafen"
+            @click="toggleHeadPhone"
           >
             <svg v-if="deafen" class="deafen-on"></svg>
             <svg v-else class="deafen"></svg>
@@ -111,10 +114,10 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from "vuex";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   methods: {
-    ...mapMutations("voice", ["setMute", "setDeafen"]),
+    ...mapMutations("voice", ["setMute", "setDeafen", "setVideo"]),
     ...mapActions("user", ["FETCH_USERINFO"]),
     ...mapActions("voice", ["sendMessage", "leaveRoom"]),
     openSettings() {
@@ -146,11 +149,40 @@ export default {
         this.$router.push("/channels/" + this.$route.params.serverid);
       }
     },
+    toggleMic() {
+      this.setMute();
+      this.myParticipantObject.rtcPeer.audioEnabled = !this.mute;
+    },
+    toggleHeadPhone() {
+      Object.keys(this.participants).forEach((key) => {
+        let videoElement = this.participants[key].getVideoElement();
+        console.log("key", key);
+        if (key != this.getUserId) {
+          videoElement.muted = !this.deafen;
+        }
+      });
+      this.setDeafen();
+    },
+    toggleVideo() {
+      this.myParticipantObject.rtcPeer.videoEnabled = !this.video;
+      this.setVideo();
+    },
   },
   computed: {
+    ...mapGetters("user", ["getUserId"]),
     ...mapState("user", ["code", "nickname", "userimage"]),
     ...mapState("server", ["currentChannelType", "communityInfo"]),
-    ...mapState("voice", ["wsOpen", "mute", "deafen"]),
+    ...mapState("voice", [
+      "wsOpen",
+      "mute",
+      "deafen",
+      "video",
+      "myName",
+      "participants",
+    ]),
+    myParticipantObject() {
+      return this.participants[this.myName];
+    },
   },
   async created() {
     await this.FETCH_USERINFO();
@@ -231,6 +263,9 @@ export default {
   align-items: center;
   position: relative;
   background-color: #58f287;
+}
+.camera-share-off {
+  background-color: #2f3136;
 }
 .my-section {
   -webkit-box-flex: 0;

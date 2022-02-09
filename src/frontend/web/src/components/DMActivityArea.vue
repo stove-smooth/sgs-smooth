@@ -448,6 +448,9 @@ export default {
       }
     },
     async uploadImage() {
+      this.images = [];
+      this.thumbnails = [];
+      this.thumbnailFiles = [];
       for (var i = 0; i < this.$refs["images"].files.length; i++) {
         this.images.push(this.$refs["images"].files[i]);
         let thumbnail = await converToThumbnail(this.$refs["images"].files[i]);
@@ -687,7 +690,6 @@ export default {
         var array = [];
         for (var i = 0; i < result.data.result.length; i++) {
           //시간을 한국 시간+디스코드에 맞게 변환
-          console.log("message입니다.", result.data.result[i]);
           const translatedTime = this.convertFromStringToDate(
             result.data.result[i].time
           );

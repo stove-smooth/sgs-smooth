@@ -462,6 +462,9 @@ export default {
       }
     },
     async uploadImage() {
+      this.images = [];
+      this.thumbnails = [];
+      this.thumbnailFiles = [];
       for (var i = 0; i < this.$refs["images"].files.length; i++) {
         this.images.push(this.$refs["images"].files[i]);
         let thumbnail = await converToThumbnail(this.$refs["images"].files[i]);
@@ -502,7 +505,6 @@ export default {
         parentContent: this.communityMessageReplyId.messageInfo.message,
         type: "reply",
       };
-      //console.log(this.communityMessageReplyId.messageInfo, msg);
       this.stompSocketClient.send(
         "/kafka/send-channel-reply",
         JSON.stringify(msg),
@@ -702,9 +704,9 @@ export default {
           this.more = false;
         }
         var array = [];
+        let imageCount = 0;
         for (var i = 0; i < result.data.result.length; i++) {
           //시간을 한국 시간+디스코드에 맞게 변환
-          console.log("communitymessage", result.data.result[i]);
           const translatedTime = this.convertFromStringToDate(
             result.data.result[i].time
           );
@@ -715,6 +717,7 @@ export default {
             result.data.result[i].fileType &&
             result.data.result[i].fileType == "image"
           ) {
+            imageCount = imageCount + 1;
             result.data.result[i].thumbnail = this.urlify(
               result.data.result[i].thumbnail
             );
@@ -743,6 +746,9 @@ export default {
             this.scrollToBottom();
           });
         }
+        console.log("imageCount", imageCount * 100);
+        let scrollRef = this.$refs["scrollRef"];
+        scrollRef.scrollTop = scrollRef.scrollTop - imageCount * 100;
         if (this.prevScrollHeight != 0) {
           this.$nextTick(function () {
             let scrollRef = this.$refs["scrollRef"];
