@@ -60,12 +60,12 @@ xcuserdata/
 *.dSYM
 
 ## Swift Package Manager
-src/smooth-ios/Packages/
+src/front/ios/smooth-ios/Packages/
 Package.pins
 Package.resolved
 
 ## CocoaPods
-src/smooth-ios/Pods/
+src/front/ios/smooth-ios/Pods/
 *.lock
 
 
@@ -75,6 +75,6 @@ src/smooth-ios/Pods/
 .LSOverride
 ._*
 
-src/smooth-ios/smooth-ios.xcodeproj/project.pbxproj
+src/front/ios/smooth-ios/smooth-ios.xcodeproj/project.pbxproj
 *.pbxproj
-src/smooth-ios/smooth-ios.xcodeproj/project.pbxproj
+src/front/ios/smooth-ios/smooth-ios.xcodeproj/project.pbxproj
