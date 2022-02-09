@@ -28,5 +28,7 @@ public class Notification {
 
     private String image;
 
-    private List<Long> userNos;
+    private Map<String, String> token;
+
+    private Map<String, String> send;
 }
