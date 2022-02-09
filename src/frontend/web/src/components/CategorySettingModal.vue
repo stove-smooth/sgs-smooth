@@ -22,7 +22,6 @@
           </div>
           <div class="primary-seperator"></div>
           <div class="channel-content-wrapper" role="listitem">
-            0
             <div
               class="channel-content margin-right-8px hover-selected"
               @click="setCategoryReadyToDelete(categorySettingModal)"

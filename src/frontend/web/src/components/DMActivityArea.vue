@@ -123,8 +123,8 @@
                       </p>
                     </div>
                     <div v-else class="message-content">
-                      <template v-if="item.message.includes('img')"
-                        ><div v-html="item.message"></div
+                      <template v-if="item.fileType && item.fileType == 'image'"
+                        ><div v-html="item.thumbnail"></div
                       ></template>
                       <template v-else
                         ><div>{{ item.message }}</div></template
@@ -392,7 +392,9 @@ export default {
         const receivedForm = JSON.parse(res.body);
         receivedForm.date = translatedTime[0];
         receivedForm.time = translatedTime[1];
-        receivedForm.message = this.urlify(receivedForm.message);
+        if (receivedForm.fileType && receivedForm.fileType == "image") {
+          receivedForm.thumbnail = this.urlify(receivedForm.thumbnail);
+        }
         let isOther = true;
         if (this.receiveList.length > 0) {
           const timeResult = this.isSameTime(
@@ -692,9 +694,14 @@ export default {
           result.data.result[i].date = translatedTime[0];
           result.data.result[i].time = translatedTime[1];
           //사진이라면 image태그를 붙여줌.
-          result.data.result[i].message = this.urlify(
-            result.data.result[i].message
-          );
+          if (
+            result.data.result[i].fileType &&
+            result.data.result[i].fileType == "image"
+          ) {
+            result.data.result[i].thumbnail = this.urlify(
+              result.data.result[i].thumbnail
+            );
+          }
           //동일 시간(분)에 동일 유저가 보냈다면 다른 같은 메시지로 묶음.
           let isOther = true;
           if (i != 0) {
