@@ -125,14 +125,14 @@
                       class="create-children-wrapper"
                       v-show="hovered === el.id || selected == el.id"
                     >
-                      <div
+                      <!-- <div
                         class="create-children-button"
                         aria-label="초대 코드 만들기"
                         tabindex="0"
                         role="button"
                       >
                         <svg class="invite-people-to-server"></svg>
-                      </div>
+                      </div> -->
                       <div
                         class="create-children-button"
                         aria-label="채널 편집"
@@ -147,13 +147,13 @@
                 </div>
                 <!----음성 참여자 목록-->
                 <div class="voice-participants-list" v-show="false">
-                  <div class="draggable">
-                    <div class="voice-user-wrapper clickable">
-                      <div class="voice-user-content">
-                        <div class="small-avatar-wrapper" />
-                        <div class="voice-participants-username-wrapper">
-                          밍디
-                        </div>
+                  <div class="voice-user-wrapper clickable">
+                    <div class="voice-user-content">
+                      <div class="small-avatar-wrapper">
+                        <img src="" alt=" " />
+                      </div>
+                      <div class="voice-participants-username-wrapper">
+                        밍디
                       </div>
                     </div>
                   </div>
@@ -637,7 +637,6 @@ export default {
   margin-bottom: 1px;
 }
 .small-avatar-wrapper {
-  background-image: url("https://cdn.discordapp.com/avatars/405352159685902340/3826d665833a6f43e9e438469edaa75b.webp?size=24");
   margin-right: 8px;
   margin-left: 8px;
   width: 24px;

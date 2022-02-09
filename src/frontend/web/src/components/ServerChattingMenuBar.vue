@@ -4,10 +4,10 @@
       <div class="primary-icon-wrapper">
         <svg class="hashtag-icon"></svg>
       </div>
-      <h3 class="server-name" aria-label="channel-name">{{ $route.params }}</h3>
+      <h3 class="server-name" aria-label="channel-name">{{ channelName }}</h3>
     </div>
     <div class="primary-header-toolbar">
-      <div
+      <!-- <div
         aria-label="스레드"
         role="button"
         tabindex="0"
@@ -22,8 +22,8 @@
         class="primary-icon-wrapper align-items-center"
       >
         <svg class="big-alarms-icon"></svg>
-      </div>
-      <div
+      </div> -->
+      <!-- <div
         aria-label="고정된 메시지"
         role="button"
         tabindex="0"
@@ -31,29 +31,49 @@
         @click="setOpenFixedMessagesModal(true)"
       >
         <svg class="fixed-icon clickable"></svg>
-      </div>
+      </div> -->
       <div class="server-chatting-searchbar"><search-bar></search-bar></div>
-      <div
+      <!-- <div
         aria-label="메일 보관함"
         role="button"
         tabindex="0"
         class="primary-icon-wrapper align-items-center"
       >
         <svg class="mail-box"></svg>
-      </div>
+      </div> -->
     </div>
   </section>
 </template>
 
 <script>
 import SearchBar from "./common/SearchBar.vue";
-import { mapMutations } from "vuex";
+import { mapState, mapMutations } from "vuex";
 export default {
   components: {
     SearchBar,
   },
   methods: {
     ...mapMutations("server", ["setOpenFixedMessagesModal"]),
+  },
+  computed: {
+    ...mapState("server", ["communityInfo"]),
+    channelName() {
+      let channel = "";
+      const categories = this.communityInfo.categories;
+      for (var category in categories) {
+        if (categories[category].channels != null) {
+          for (let i = 0; i < categories[category].channels.length; i++) {
+            if (
+              categories[category].channels[i].id ==
+              this.$route.params.channelid
+            ) {
+              channel = categories[category].channels[i].name;
+            }
+          }
+        }
+      }
+      return channel;
+    },
   },
 };
 </script>

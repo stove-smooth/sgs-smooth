@@ -3,15 +3,17 @@
     <div
       :id="videoWrapperId"
       v-show="participant.rtcPeer.videoEnabled"
-      class="no-video-container"
+      class="display-flex"
     ></div>
-    <div v-show="!participant.rtcPeer.videoEnabled" class="no-video-container">
+    <div v-show="!participant.rtcPeer.videoEnabled">
       <img class="no-video-img" src="../assets/default_stove.png" />
     </div>
+    <span class="text-align-center">{{ this.nickname }}</span>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   props: {
     participant: {
@@ -19,6 +21,7 @@ export default {
     },
   },
   computed: {
+    ...mapState("user", ["nickname"]),
     video() {
       return this.participant.getVideoElement();
     },
@@ -34,15 +37,23 @@ export default {
       "마운트되니? , this.participant.rtcPeer.videoEnabled",
       this.participant.rtcPeer.videoEnabled
     );
+
     //video위에 보이는지 유무
     document.getElementById(this.videoWrapperId).appendChild(this.video);
+    var newArea = document.createElement("div");
+    newArea.classList.add("video-unit-container");
+    document.getElementById(this.videoWrapperId).appendChild(newArea);
   },
 };
 </script>
 
 <style>
 .video-unit-container {
-  position: relative;
+  width: 240px;
+  height: 240px;
+  display: flex;
+  flex-direction: column;
+  color: white;
 }
 .video-insert {
   height: 100%;
@@ -55,9 +66,9 @@ export default {
   height: 240px;
 } */
 .no-video-container {
-  width: 240px;
+  /*   width: 240px;
   height: 240px;
-  display: flex;
+  display: flex; */
 }
 .no-video-img {
   width: 100%;

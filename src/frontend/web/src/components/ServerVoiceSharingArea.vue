@@ -1,20 +1,22 @@
 <template>
   <div class="voice-participant-sharing">
-    <div class="voice-participant-container">
-      <!-- <div id="wrapper"> -->
-      <div>오잉{{ this.participants }}</div>
-      <!-- <div class="wrap">
+    <!-- <div id="wrapper"> -->
+    <!-- <div>오잉{{ this.participants }}</div> -->
+    <!-- <div class="wrap">
           <div class="scroll__wrap participant-scroller"> -->
-      <div v-for="voiceMember in voiceMembers" :key="voiceMember.name">
-        <voice-participants
-          :key="voiceMember.rtcPeer.videoEnabled"
-          :participant="voiceMember"
-        ></voice-participants>
-      </div>
-      <!-- </div>
-        </div> -->
-      <!-- </div> -->
+    <div
+      class="voice-participant-container"
+      v-for="voiceMember in voiceMembers"
+      :key="voiceMember.name"
+    >
+      <voice-participants
+        :key="voiceMember.rtcPeer.videoEnabled"
+        :participant="voiceMember"
+      ></voice-participants>
     </div>
+    <!-- </div>
+        </div> -->
+    <!-- </div> -->
     <div class="voice-bottom-control-section">
       <div class="voice-bottom-control-container">
         <div
@@ -175,7 +177,7 @@ export default {
   justify-content: center;
   line-height: 0;
   height: 80px;
-  background-color: blanchedalmond;
+  margin-bottom: 24px;
 }
 .voice-bottom-control-container {
   display: flex;
@@ -346,6 +348,9 @@ select {
 }
 .voice-participant-container {
   flex: 1 1 0;
+  justify-content: center;
+  align-items: center;
+  display: flex;
 }
 
 .join {
