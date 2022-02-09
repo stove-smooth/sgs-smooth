@@ -327,19 +327,15 @@ export default {
     },
     async verifyEmail() {
       this.emailsend = false;
-      console.log("왔다.");
       const userData = {
         email: this.id,
       };
-
       let result;
       try {
         result = await sendAuthCode(userData);
       } catch (err) {
         console.log(err.response);
       }
-
-      console.log("result", result);
       if (result.data.code === 1000) {
         this.emailsend = true;
       }

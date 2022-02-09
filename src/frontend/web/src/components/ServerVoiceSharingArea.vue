@@ -12,28 +12,27 @@
             ></voice-participants>
           </div>
         </div>
-        <!--  <div id="room">
-          <h2 id="room-header"></h2>
-
-        </div> -->
       </div>
     </div>
     <div class="voice-bottom-control-section">
       <div class="voice-bottom-control-container">
         <div
-          class="voice-control-button justify-content-center align-items-center"
+          class="voice-control-button justify-content-center align-items-center clickable"
+          @click="toggleVideo"
         >
-          <div v-if="false" class="big-video-camera"></div>
+          <div v-if="video" class="big-video-camera"></div>
           <div v-else class="big-camera-disabled"></div>
         </div>
         <div
-          class="voice-control-button justify-content-center align-items-center"
+          class="voice-control-button justify-content-center align-items-center clickable"
+          @click="toggleMic"
         >
-          <div v-if="false" class="big-mute"></div>
+          <div v-if="!mute" class="big-mute"></div>
           <div v-else class="big-mute-on"></div>
         </div>
         <div
-          class="voice-control-button justify-content-center align-items-center red-voice-control-button"
+          class="voice-control-button justify-content-center align-items-center red-voice-control-button clickable"
+          @click="leaveVoiceConnection"
         >
           <div class="big-no-connect"></div>
         </div>
@@ -43,7 +42,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions, mapState } from "vuex";
+import { mapGetters, mapActions, mapMutations, mapState } from "vuex";
 import VoiceParticipants from "./VoiceParticipants.vue";
 export default {
   components: { VoiceParticipants },
@@ -54,11 +53,11 @@ export default {
       id: "joinRoom",
       token: this.getAccessToken,
       userId: this.getUserId,
-      roomId: this.$route.params.channelid,
+      roomId: `c-${this.$route.params.channelid}`,
     };
     let voiceRoomInfo = {
       myName: this.getUserId,
-      roomName: this.$route.params.channelid,
+      roomName: `c-${this.$route.params.channelid}`,
     };
     this.sendMessage(message);
     this.setVoiceInfo(voiceRoomInfo);
@@ -73,7 +72,8 @@ export default {
 
   computed: {
     ...mapGetters("user", ["getAccessToken", "getUserId"]),
-    ...mapState("voice", ["participants", "ws"]),
+    ...mapState("voice", ["participants", "ws", "mute", "video", "myName"]),
+    ...mapState("server", ["currentChannelType", "communityInfo"]),
     voiceMembers() {
       //참여자 감지
       if (this.participants) {
@@ -86,6 +86,9 @@ export default {
         return null;
       }
     },
+    myParticipantObject() {
+      return this.participants[this.myName];
+    },
   },
   methods: {
     ...mapActions("voice", [
@@ -94,10 +97,45 @@ export default {
       "leaveRoom",
       "onServerMessage",
     ]),
-    leaveChannel() {
+    ...mapMutations("voice", ["setMute", "setVideo"]),
+    toggleMic() {
+      this.setMute();
+      this.myParticipantObject.rtcPeer.audioEnabled = !this.mute;
+    },
+    toggleVideo() {
+      this.myParticipantObject.rtcPeer.videoEnabled = !this.video;
+      this.setVideo();
+    },
+    /* leaveChannel() {
       this.sendMessage({ id: "leaveRoom" });
       console.log("leaveRoom");
       this.leaveRoom();
+    }, */
+    leaveVoiceConnection() {
+      this.sendMessage({ id: "leaveRoom" });
+      console.log("leaveRoom");
+      this.leaveRoom();
+      if (this.currentChannelType != "TEXT") {
+        //첫번째 채널 혹은 welcomepage로 이동.
+        const categories = this.communityInfo.categories;
+        for (var category in categories) {
+          if (categories[category].channels != null) {
+            for (var channels in categories[category].channels) {
+              if (categories[category].channels[channels].type === "TEXT") {
+                const firstchannel = categories[category].channels[channels].id;
+                this.$router.push(
+                  "/channels/" +
+                    this.$route.params.serverid +
+                    "/" +
+                    firstchannel
+                );
+                return;
+              }
+            }
+          }
+        }
+        this.$router.push("/channels/" + this.$route.params.serverid);
+      }
     },
   },
 };

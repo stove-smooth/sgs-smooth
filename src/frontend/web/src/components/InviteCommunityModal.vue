@@ -5,7 +5,7 @@
       <modal @exit="closeModal">
         <template slot="header">
           <h3 class="action-title margin-left-8px">
-            친구를 스무TH 그룹으로 초대하기
+            친구를 {{ communityInviteModal.serverName }} 그룹으로 초대하기
           </h3>
           <search-bar></search-bar>
         </template>

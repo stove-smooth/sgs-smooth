@@ -11,9 +11,9 @@ const voice = {
     roomName: null,
     participants: null,
     //본인 장비
-    mute: false,
-    deafen: false,
-    video: false,
+    mute: false, //음소거시 true
+    deafen: false, //헤드셋 막을시 true
+    video: false, //video 보임 여부
   },
   mutations: {
     WS_INIT(state, url) {
@@ -104,7 +104,7 @@ const voice = {
     /**case */
     //case 1 - 내가 참가했을때
     onExistingParticipants(context, msg) {
-      let constraints = {
+      /* let constraints = {
         audio: true,
         video: {
           mandatory: {
@@ -113,7 +113,7 @@ const voice = {
             minFrameRate: 15,
           },
         },
-      };
+      }; */
       console.log(
         context.state.myName + " registered in room " + context.state.roomName
       );
@@ -123,7 +123,7 @@ const voice = {
 
       var options = {
         localVideo: video,
-        mediaConstraints: constraints,
+        //mediaConstraints: constraints,
         onicecandidate: participant.onIceCandidate.bind(participant),
       };
 
@@ -134,8 +134,8 @@ const voice = {
             return console.error(error);
           }
           this.generateOffer(participant.offerToReceiveVideo.bind(participant));
-          //this.audioEnabled = !context.state.mute;
-          //this.videoEnabled = context.state.video;
+          this.audioEnabled = !context.state.mute;
+          this.videoEnabled = context.state.video;
         }
       );
       const myName = context.state.myName;

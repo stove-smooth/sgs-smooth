@@ -32,6 +32,7 @@
       <fixed-messages-modal></fixed-messages-modal>
       <server-members-plus-action></server-members-plus-action>
       <community-banish-modal></community-banish-modal>
+      <create-direct-message-group-modal></create-direct-message-group-modal>
     </template>
     <template v-else> <loading-spinner /> </template>
   </div>
@@ -64,7 +65,7 @@ import FixMessageModal from "../components/FixMessageModal.vue";
 import FixedMessagesModal from "../components/FixedMessagesModal.vue";
 import ServerMembersPlusAction from "../components/ServerMembersPlusAction.vue";
 import CommunityBanishModal from "../components/CommunityBanishModal.vue";
-
+import CreateDirectMessageGroupModal from "../components/CreateDirectMessageGroupModal.vue";
 export default {
   name: "App",
   components: {
@@ -91,6 +92,7 @@ export default {
     FixedMessagesModal,
     ServerMembersPlusAction,
     CommunityBanishModal,
+    CreateDirectMessageGroupModal,
   },
   data() {
     return {

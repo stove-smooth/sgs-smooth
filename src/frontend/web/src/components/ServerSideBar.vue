@@ -463,7 +463,7 @@ export default {
 }
 .channel-default-container {
   position: relative;
-  padding-top: 16px;
+  padding-top: 5px;
 }
 .channel-category-wrapper {
   position: relative;
@@ -477,6 +477,8 @@ export default {
   -webkit-box-pack: justify;
   justify-content: space-between;
   color: #8e9297;
+  margin-top: 12px;
+  margin-bottom: 12px;
 }
 .channel-category-content {
   overflow: hidden;

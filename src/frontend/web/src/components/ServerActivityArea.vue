@@ -123,8 +123,8 @@
                       </p>
                     </div>
                     <div v-else class="message-content">
-                      <template v-if="item.message.includes('img')"
-                        ><div v-html="item.message"></div
+                      <template v-if="item.fileType && item.fileType == 'image'"
+                        ><div v-html="item.thumbnail"></div
                       ></template>
                       <template v-else
                         ><div>{{ item.message }}</div></template
@@ -405,7 +405,9 @@ export default {
         const receivedForm = JSON.parse(res.body);
         receivedForm.date = translatedTime[0];
         receivedForm.time = translatedTime[1];
-        receivedForm.message = this.urlify(receivedForm.message);
+        if (receivedForm.fileType && receivedForm.fileType == "image") {
+          receivedForm.thumbnail = this.urlify(receivedForm.thumbnail);
+        }
         let isOther = true;
         if (this.receiveList.length > 0) {
           const timeResult = this.isSameTime(
@@ -460,6 +462,9 @@ export default {
       }
     },
     async uploadImage() {
+      this.images = [];
+      this.thumbnails = [];
+      this.thumbnailFiles = [];
       for (var i = 0; i < this.$refs["images"].files.length; i++) {
         this.images.push(this.$refs["images"].files[i]);
         let thumbnail = await converToThumbnail(this.$refs["images"].files[i]);
@@ -500,7 +505,6 @@ export default {
         parentContent: this.communityMessageReplyId.messageInfo.message,
         type: "reply",
       };
-      //console.log(this.communityMessageReplyId.messageInfo, msg);
       this.stompSocketClient.send(
         "/kafka/send-channel-reply",
         JSON.stringify(msg),
@@ -700,18 +704,24 @@ export default {
           this.more = false;
         }
         var array = [];
+        let imageCount = 0;
         for (var i = 0; i < result.data.result.length; i++) {
           //시간을 한국 시간+디스코드에 맞게 변환
-          console.log("communitymessage", result.data.result[i]);
           const translatedTime = this.convertFromStringToDate(
             result.data.result[i].time
           );
           result.data.result[i].date = translatedTime[0];
           result.data.result[i].time = translatedTime[1];
           //사진이라면 image태그를 붙여줌.
-          result.data.result[i].message = this.urlify(
-            result.data.result[i].message
-          );
+          if (
+            result.data.result[i].fileType &&
+            result.data.result[i].fileType == "image"
+          ) {
+            imageCount = imageCount + 1;
+            result.data.result[i].thumbnail = this.urlify(
+              result.data.result[i].thumbnail
+            );
+          }
           //동일 시간(분)에 동일 유저가 보냈다면 다른 같은 메시지로 묶음.
           let isOther = true;
           if (i != 0) {
@@ -736,6 +746,9 @@ export default {
             this.scrollToBottom();
           });
         }
+        console.log("imageCount", imageCount * 100);
+        let scrollRef = this.$refs["scrollRef"];
+        scrollRef.scrollTop = scrollRef.scrollTop - imageCount * 100;
         if (this.prevScrollHeight != 0) {
           this.$nextTick(function () {
             let scrollRef = this.$refs["scrollRef"];

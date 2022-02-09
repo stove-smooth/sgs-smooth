@@ -5,6 +5,7 @@ const dm = {
     directMessageReplyId: "",
     directMessageReadyToDelete: false,
     directMessageList: [],
+    createDirectMessageGroupModal: false,
   },
 
   mutations: {
@@ -16,6 +17,9 @@ const dm = {
     },
     setDirectMessageList(state, directMessageList) {
       state.directMessageList = directMessageList;
+    },
+    setCreateDirectMessageGroupModal(state, createDirectMessageGroupModal) {
+      state.createDirectMessageGroupModal = createDirectMessageGroupModal;
     },
   },
   actions: {
