@@ -185,7 +185,7 @@ export default {
   },
   computed: {
     ...mapState("server", ["openServerPopout", "communityInfo"]),
-    ...mapState("voice", ["wsOpen"]),
+    ...mapState("voice", ["wsOpen", "video"]),
   },
   mounted() {
     window.addEventListener("click", this.onClick);
@@ -198,6 +198,7 @@ export default {
       "setCategorySettingModal",
       "setChannelSettingModal",
     ]),
+    ...mapMutations("voice", ["setVideo"]),
     log: async function (evt) {
       if (evt.moved) {
         if (evt.moved.element.channels) {
@@ -347,21 +348,18 @@ export default {
       }
     },
     async routeChannel(id, type) {
-      console.log("type", type, "wsopen", this.wsOpen);
       if (type == "VOICE") {
-        console.log(1);
         if (this.wsOpen) {
-          console.log(2);
           this.sendMessage({ id: "leaveRoom" });
-          console.log(3);
           this.leaveRoom();
         }
-        console.log("type이 VOICE일시");
         const url = "https://sig.yoloyolo.org/rtc";
         await this.wsInit(url); //ws 전역 등록.
       }
-      console.log(4);
       this.selected = id;
+      if (this.video) {
+        this.setVideo();
+      }
       this.$router.push("/channels/" + this.communityInfo.id + "/" + id);
     },
   },

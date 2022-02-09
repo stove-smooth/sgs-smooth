@@ -1,18 +1,19 @@
 <template>
   <div class="voice-participant-sharing">
     <div class="voice-participant-container">
-      <div id="wrapper">
-        <div>오잉{{ this.participants }}</div>
-        <div class="wrap">
-          <div class="scroll__wrap participant-scroller">
-            <voice-participants
-              v-for="voiceMember in voiceMembers"
-              :key="voiceMember.name"
-              :participant="voiceMember"
-            ></voice-participants>
-          </div>
-        </div>
+      <!-- <div id="wrapper"> -->
+      <div>오잉{{ this.participants }}</div>
+      <!-- <div class="wrap">
+          <div class="scroll__wrap participant-scroller"> -->
+      <div v-for="voiceMember in voiceMembers" :key="voiceMember.name">
+        <voice-participants
+          :key="voiceMember.rtcPeer.videoEnabled"
+          :participant="voiceMember"
+        ></voice-participants>
       </div>
+      <!-- </div>
+        </div> -->
+      <!-- </div> -->
     </div>
     <div class="voice-bottom-control-section">
       <div class="voice-bottom-control-container">
