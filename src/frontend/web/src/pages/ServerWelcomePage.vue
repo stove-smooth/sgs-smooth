@@ -1,17 +1,20 @@
 <template>
   <div class="base-container">
     <div class="content-mypage">
-      <div class="sidebar">
-        <server-side-bar></server-side-bar>
-        <user-section></user-section>
-      </div>
-      <div class="server-activity-container">
-        <server-chatting-menu-bar></server-chatting-menu-bar>
-        <div class="server-activity-container1">
-          <server-welcome></server-welcome>
-          <server-member-list></server-member-list>
+      <template v-if="computed">
+        <div class="sidebar">
+          <server-side-bar></server-side-bar>
+          <user-section></user-section>
         </div>
-      </div>
+        <div class="server-activity-container">
+          <server-chatting-menu-bar></server-chatting-menu-bar>
+          <div class="server-activity-container1">
+            <server-welcome></server-welcome>
+            <server-member-list></server-member-list>
+          </div>
+        </div>
+      </template>
+      <template v-else><loading-spinner></loading-spinner></template>
     </div>
   </div>
 </template>
@@ -23,6 +26,7 @@ import UserSection from "../components/common/UserSection.vue";
 import ServerChattingMenuBar from "../components/ServerChattingMenuBar.vue";
 import ServerMemberList from "../components/ServerMemberList.vue";
 import ServerWelcome from "../components/ServerWelcome.vue";
+import LoadingSpinner from "../components/common/LoadingSpinner.vue";
 export default {
   components: {
     ServerSideBar,
@@ -30,6 +34,12 @@ export default {
     ServerChattingMenuBar,
     ServerMemberList,
     ServerWelcome,
+    LoadingSpinner,
+  },
+  data() {
+    return {
+      computed: false,
+    };
   },
   methods: {
     ...mapActions("server", ["FETCH_COMMUNITYINFO"]),
@@ -46,12 +56,12 @@ export default {
               this.$router.push(
                 "/channels/" + this.$route.params.serverid + "/" + firstchannel
               );
-              return true;
+              this.computed = true;
             }
           }
         }
       }
-      return false;
+      this.computed = true;
     },
   },
   computed: {

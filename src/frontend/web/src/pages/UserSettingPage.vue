@@ -3,76 +3,74 @@
     <div class="settings-background">
       <div class="wrapper-react">
         <div>
-          <div class="authbox authboxmobile themdark">
-            <div class="center-wrapper">
-              <div>
-                <div class="header">
-                  <svg class="close" @click="closeSettings"></svg>
-                </div>
-                <div class="content"></div>
-                <div class="content justify-content-center">
-                  <div class="profile-banner-preview">
-                    <div class="banner-background"></div>
-                    <div class="avatar-uploader">
-                      <div class="avatar-uploader-inner">
-                        <img
-                          class="avatar-uploader-image"
-                          :src="userimage"
-                          alt=" "
-                        />
-                        <div class="avatar-uploader-hint" v-show="false">
-                          아바타 변경
-                        </div>
-                        <div class="avatar-uploader-icon">
-                          <svg class="img-uploader-icon"></svg>
-                        </div>
-                        <input
-                          class="file-input"
-                          type="file"
-                          ref="image"
-                          accept="image/*"
-                          @change="uploadImage()"
-                        />
+          <div class="center-wrapper">
+            <div>
+              <div class="header">
+                <svg class="close" @click="closeSettings"></svg>
+              </div>
+              <div class="content"></div>
+              <div class="content justify-content-center">
+                <div class="profile-banner-preview">
+                  <div class="banner-background"></div>
+                  <div class="avatar-uploader">
+                    <div class="avatar-uploader-inner">
+                      <img
+                        class="avatar-uploader-image"
+                        :src="userimage"
+                        alt=" "
+                      />
+                      <div class="avatar-uploader-hint" v-show="false">
+                        아바타 변경
                       </div>
-                      <button class="small-button" @click="resetImage">
-                        기본 프로필 사용
-                      </button>
-                      <button
-                        class="small-button"
-                        v-bind:style="{ marginLeft: '12px' }"
-                        @click="changeProfile"
-                      >
-                        프로필 저장
-                      </button>
+                      <div class="avatar-uploader-icon">
+                        <svg class="img-uploader-icon"></svg>
+                      </div>
+                      <input
+                        class="file-input"
+                        type="file"
+                        ref="image"
+                        accept="image/*"
+                        @change="uploadImage()"
+                      />
                     </div>
-                    <div class="profile-name-header">
+                    <button class="small-button" @click="resetImage">
+                      기본 프로필 사용
+                    </button>
+                    <button
+                      class="small-button"
+                      v-bind:style="{ marginLeft: '12px' }"
+                      @click="changeProfile"
+                    >
+                      프로필 저장
+                    </button>
+                  </div>
+                  <div class="profile-name-header">
+                    <div class="justify-content-space-between">
+                      <div class="profile-header-nametag">
+                        <div class="bold-username">{{ nickname }}</div>
+                        <div class="user-code">#{{ code }}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="profile-info">
+                    <div class="primary-divider" />
+                    <div class="margin-bottom-16px">
                       <div class="justify-content-space-between">
-                        <div class="profile-header-nametag">
-                          <div class="bold-username">{{ nickname }}</div>
-                          <div class="user-code">#{{ code }}</div>
-                        </div>
+                        <div class="subtext white-color">내 소개</div>
+                        <button class="small-button">수정</button>
                       </div>
+                      <input
+                        type="text"
+                        class="input-default"
+                        placeholder="useraboutme"
+                        v-model="useraboutme"
+                      />
                     </div>
-                    <div class="profile-info">
-                      <div class="primary-divider" />
-                      <div class="margin-bottom-16px">
-                        <div class="justify-content-space-between">
-                          <div class="subtext">내 소개</div>
-                          <button class="small-button">수정</button>
-                        </div>
-                        <input
-                          type="text"
-                          class="input-default"
-                          placeholder="useraboutme"
-                          v-model="useraboutme"
-                        />
-                      </div>
-                    </div>
-                    <div class="justify-content-center">
-                      <button class="grey-large-button">
-                        <a href="javascript:;" @click="logoutUser">로그아웃</a>
-                      </button>
-                    </div>
+                  </div>
+                  <div class="justify-content-center">
+                    <button class="grey-large-button">
+                      <a href="javascript:;" @click="logoutUser">로그아웃</a>
+                    </button>
                   </div>
                 </div>
               </div>

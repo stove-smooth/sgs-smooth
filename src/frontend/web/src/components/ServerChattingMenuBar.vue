@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import { computeChannelName } from "../utils/common.js";
 import SearchBar from "./common/SearchBar.vue";
 import { mapState, mapMutations } from "vuex";
 export default {
@@ -58,20 +59,10 @@ export default {
   computed: {
     ...mapState("server", ["communityInfo"]),
     channelName() {
-      let channel = "";
-      const categories = this.communityInfo.categories;
-      for (var category in categories) {
-        if (categories[category].channels != null) {
-          for (let i = 0; i < categories[category].channels.length; i++) {
-            if (
-              categories[category].channels[i].id ==
-              this.$route.params.channelid
-            ) {
-              channel = categories[category].channels[i].name;
-            }
-          }
-        }
-      }
+      let channel = computeChannelName(
+        this.$route.params.channelid,
+        this.communityInfo
+      );
       return channel;
     },
   },

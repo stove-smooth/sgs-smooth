@@ -31,11 +31,6 @@
                 <div class="justify-content-space-between">
                   <div class="subtext white-color">내 소개</div>
                 </div>
-                <input
-                  type="text"
-                  class="input-default"
-                  placeholder="useraboutme"
-                />
               </div>
             </div>
           </div>

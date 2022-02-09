@@ -9,7 +9,7 @@
                 <svg class="ping"></svg>
                 <div class="rtc-connection-description">영상 연결됨</div>
               </div>
-              <div class="subtext">라운지/스무th</div>
+              <div class="subtext">{{ communityInfo.name }}</div>
             </div>
             <div
               class="device-controll-wrapper"
@@ -24,7 +24,7 @@
               </button>
             </div>
           </div>
-          <div class="media-action-button">
+          <!-- <div class="media-action-button">
             <button
               aria-label="영상"
               type="button"
@@ -40,7 +40,7 @@
                 <span v-else class="white-color">영상 끄기</span>
               </div>
             </button>
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="my-section-container">
@@ -156,17 +156,16 @@ export default {
     toggleHeadPhone() {
       Object.keys(this.participants).forEach((key) => {
         let videoElement = this.participants[key].getVideoElement();
-        console.log("key", key);
         if (key != this.getUserId) {
           videoElement.muted = !this.deafen;
         }
       });
       this.setDeafen();
     },
-    toggleVideo() {
+    /* toggleVideo() {
       this.myParticipantObject.rtcPeer.videoEnabled = !this.video;
       this.setVideo();
-    },
+    }, */
   },
   computed: {
     ...mapGetters("user", ["getUserId"]),
@@ -176,7 +175,7 @@ export default {
       "wsOpen",
       "mute",
       "deafen",
-      "video",
+      //"video",
       "myName",
       "participants",
     ]),
