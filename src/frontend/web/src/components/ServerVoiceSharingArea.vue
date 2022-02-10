@@ -1,22 +1,26 @@
 <template>
   <div class="voice-participant-sharing">
-    <!-- <div id="wrapper"> -->
-    <!-- <div>오잉{{ this.participants }}</div> -->
-    <!-- <div class="wrap">
-          <div class="scroll__wrap participant-scroller"> -->
     <div
       class="voice-participant-container"
-      v-for="voiceMember in voiceMembers"
-      :key="voiceMember.name"
+      v-if="voiceMembers"
+      v-bind:class="{
+        'two-participant-container': voiceMembers.length <= 2,
+        'four-participant-container':
+          voiceMembers.length > 2 && voiceMembers.length <= 4,
+        'more-than-participant-container': voiceMembers.length > 4,
+      }"
     >
-      <voice-participants
-        :key="voiceMember.rtcPeer.videoEnabled"
-        :participant="voiceMember"
-      ></voice-participants>
+      <div
+        class="voice-participant-wrapper"
+        v-for="voiceMember in voiceMembers"
+        :key="voiceMember.name"
+      >
+        <voice-participants
+          :key="voiceMember.rtcPeer.videoEnabled"
+          :participant="voiceMember"
+        ></voice-participants>
+      </div>
     </div>
-    <!-- </div>
-        </div> -->
-    <!-- </div> -->
     <div class="voice-bottom-control-section">
       <div class="voice-bottom-control-container">
         <div
@@ -65,12 +69,6 @@ export default {
     this.sendMessage(message);
     this.setVoiceInfo(voiceRoomInfo);
     console.log("message", message, "voiceRoomInfo", voiceRoomInfo);
-    /* this.ws.onmessage = function (message) {
-      console.log("일로안오나?");
-      let parsedMessage = JSON.parse(message.data);
-      console.log("Received message: " + message.data);
-      this.onServerMessage(parsedMessage);
-    }; */
   },
 
   computed: {
@@ -109,11 +107,6 @@ export default {
       this.myParticipantObject.rtcPeer.videoEnabled = !this.video;
       this.setVideo();
     },
-    /* leaveChannel() {
-      this.sendMessage({ id: "leaveRoom" });
-      console.log("leaveRoom");
-      this.leaveRoom();
-    }, */
     leaveVoiceConnection() {
       this.sendMessage({ id: "leaveRoom" });
       console.log("leaveRoom");
@@ -165,8 +158,12 @@ export default {
   color: #fff;
 }
 .voice-participant-sharing {
-  flex: 1 1 0;
+  position: relative;
   display: flex;
+  /*   -webkit-box-pack: end;
+  justify-content: end; */
+  width: 100%;
+  height: 100%;
   flex-direction: column;
 }
 .voice-bottom-control-section {
@@ -347,6 +344,33 @@ select {
   height: 500px;
 }
 .voice-participant-container {
+  margin: 0px auto;
+  display: grid;
+  width: 90%;
+  height: 90%;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+}
+.two-participant-container {
+  grid-template-rows: 100%;
+  max-width: 900px;
+  grid-template-columns: repeat(auto-fit, minmax(45%, 1fr));
+}
+.four-participant-container {
+  grid-template-rows: 50% 50%;
+  max-width: 900px;
+  grid-template-columns: repeat(auto-fit, minmax(45%, 1fr));
+}
+.more-than-participant-container {
+  grid-template-rows: 50% 50%;
+  max-width: 1500px;
+  grid-template-columns: repeat(auto-fit, minmax(30%, 1fr));
+}
+.voice-participant-wrapper {
   flex: 1 1 0;
   justify-content: center;
   align-items: center;

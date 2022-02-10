@@ -57,6 +57,9 @@ function deleteFriend(userId) {
 function blockFriend(userId) {
   return instance.patch("auth-server/auth/ban-friend?id=" + userId);
 }
+function fetchMemberInfo(id) {
+  return instance.get(`auth-server/name?id=${id}`);
+}
 async function createNewCommunity(userData) {
   try {
     const accesstoken = await store.getters["user/getAccessToken"];
@@ -182,6 +185,7 @@ export {
   friendRequest,
   fetchFriends,
   fetchUserInfo,
+  fetchMemberInfo,
   changeUserImage,
   acceptFriend,
   deleteFriend,
