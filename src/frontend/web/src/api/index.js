@@ -172,6 +172,9 @@ function fetchDirectMessageList() {
 function createDirectMessage(membersInfo) {
   return instance.post(`community-server/room`, membersInfo);
 }
+function fetchDirectMessageMemberList(roomId) {
+  return instance.get(`community-server/room/${roomId}`);
+}
 function exitDirectMessage(roomId, memberId) {
   return instance.delete(
     `community-server/room/${roomId}/member?id=${memberId}`
@@ -211,5 +214,6 @@ export {
   sendImageDirectChatting,
   fetchDirectMessageList,
   createDirectMessage,
+  fetchDirectMessageMemberList,
   exitDirectMessage,
 };

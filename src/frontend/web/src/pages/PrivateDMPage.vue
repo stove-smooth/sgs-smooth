@@ -9,6 +9,7 @@
         <dm-menu-bar></dm-menu-bar>
         <div class="friends-state-container2">
           <dm-activity-area></dm-activity-area>
+          <dm-member-list></dm-member-list>
         </div>
       </div>
     </div>
@@ -18,6 +19,7 @@
 <script>
 import UserSection from "../components/common/UserSection.vue";
 import DmActivityArea from "../components/DMActivityArea.vue";
+import DmMemberList from "../components/DMMemberList.vue";
 import DmMenuBar from "../components/DMMenuBar.vue";
 import FriendsSideBar from "../components/FriendsSideBar.vue";
 
@@ -27,6 +29,7 @@ export default {
     UserSection,
     DmActivityArea,
     DmMenuBar,
+    DmMemberList,
   },
 };
 </script>

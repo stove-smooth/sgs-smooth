@@ -162,10 +162,6 @@ export default {
       });
       this.setDeafen();
     },
-    /* toggleVideo() {
-      this.myParticipantObject.rtcPeer.videoEnabled = !this.video;
-      this.setVideo();
-    }, */
   },
   computed: {
     ...mapGetters("user", ["getUserId"]),

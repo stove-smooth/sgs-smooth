@@ -1,4 +1,7 @@
-import { fetchDirectMessageList } from "../../api";
+import {
+  fetchDirectMessageList,
+  fetchDirectMessageMemberList,
+} from "../../api";
 const dm = {
   namespaced: true,
   state: {
@@ -6,6 +9,7 @@ const dm = {
     directMessageReadyToDelete: false,
     directMessageList: [],
     createDirectMessageGroupModal: false,
+    directMessageMemberList: [],
   },
 
   mutations: {
@@ -21,12 +25,18 @@ const dm = {
     setCreateDirectMessageGroupModal(state, createDirectMessageGroupModal) {
       state.createDirectMessageGroupModal = createDirectMessageGroupModal;
     },
+    setDirectMessageMemberList(state, directMessageMemberList) {
+      state.directMessageMemberList = directMessageMemberList;
+    },
   },
   actions: {
     async fetchDirectMessageList({ commit }) {
       let result = await fetchDirectMessageList();
-      console.log("결과", result, commit);
       commit("setDirectMessageList", result.data.result.rooms);
+    },
+    async fetchDirectMessageMemberList({ commit }, roomId) {
+      let result = await fetchDirectMessageMemberList(roomId);
+      console.log("결과", result, commit);
     },
   },
 };
