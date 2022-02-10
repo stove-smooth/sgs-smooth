@@ -38,4 +38,8 @@ public class DirectMessage {
 
     private String profileImage;
 
+    private String parentName;
+
+    private String parentContent;
+
 }

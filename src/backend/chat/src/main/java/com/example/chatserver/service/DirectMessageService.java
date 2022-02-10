@@ -4,10 +4,14 @@ import com.example.chatserver.client.CommunityClient;
 import com.example.chatserver.client.UserClient;
 import com.example.chatserver.config.S3Config;
 import com.example.chatserver.domain.DirectMessage;
+import com.example.chatserver.domain.MessageTime;
 import com.example.chatserver.dto.request.FileUploadRequest;
+import com.example.chatserver.dto.request.MessageCountRequest;
 import com.example.chatserver.dto.response.*;
 import com.example.chatserver.repository.DirectMessageRepository;
+import com.example.chatserver.repository.MessageTimeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,11 +24,13 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DirectMessageService {
 
     private final DirectMessageRepository directChatRepository;
+    private final MessageTimeRepository messageTimeRepository;
     private final UserClient userClient;
     private final S3Config s3Config;
     private final CommunityClient communityClient;
@@ -65,7 +71,8 @@ public class DirectMessageService {
                     .profileImage(image)
                     .userId(i.getUserId())
                     .message(i.getContent())
-                    .messageType(i.getType())
+                    .thumbnail(i.getThumbnail())
+                    .fileType(i.getType())
                     .parentName(parentName)
                     .parentContent(parentContent)
                     .time(i.getLocalDateTime()).build();
@@ -77,37 +84,67 @@ public class DirectMessageService {
     }
 
     public FileUploadResponse fileUpload(FileUploadRequest fileUploadRequest) throws IOException {
-        String image = null;
-        String thumbnail = null;
-        if (fileUploadRequest.getImage() != null) {
-            image = s3Config.upload(fileUploadRequest.getImage());
-            thumbnail = s3Config.upload(fileUploadRequest.getThumbnail());
+        if (fileUploadRequest.getFileType().equals("image") || fileUploadRequest.getFileType().equals("video")) {
+            String image = null;
+            String thumbnail = null;
+            if (fileUploadRequest.getImage() != null) {
+                image = s3Config.upload(fileUploadRequest.getImage());
+                thumbnail = s3Config.upload(fileUploadRequest.getThumbnail());
+            }
+
+            DirectMessage directChat = DirectMessage.builder()
+                    .content(image)
+                    .thumbnail(thumbnail)
+                    .userId(fileUploadRequest.getUserId())
+                    .channelId(fileUploadRequest.getChannelId())
+                    .type(fileUploadRequest.getFileType())
+                    .localDateTime(LocalDateTime.now()).build();
+
+
+            DirectMessage save = directChatRepository.save(directChat);
+
+            FileUploadResponse uploadResponse = FileUploadResponse.builder()
+                    .id(save.getId())
+                    .userId(save.getUserId())
+                    .name(fileUploadRequest.getName())
+                    .profileImage(fileUploadRequest.getProfileImage())
+                    .channelId(fileUploadRequest.getChannelId())
+                    .message(image)
+                    .thumbnail(thumbnail)
+                    .type(fileUploadRequest.getType())
+                    .fileType(fileUploadRequest.getFileType())
+                    .time(LocalDateTime.now()).build();
+
+            return uploadResponse;
+        } else {
+            String image = null;
+            if (fileUploadRequest.getImage() != null) {
+                image = s3Config.upload(fileUploadRequest.getImage());
+            }
+
+            DirectMessage directChat = DirectMessage.builder()
+                    .content(image)
+                    .userId(fileUploadRequest.getUserId())
+                    .channelId(fileUploadRequest.getChannelId())
+                    .type(fileUploadRequest.getFileType())
+                    .localDateTime(LocalDateTime.now()).build();
+
+
+            DirectMessage save = directChatRepository.save(directChat);
+
+            FileUploadResponse uploadResponse = FileUploadResponse.builder()
+                    .id(save.getId())
+                    .userId(save.getUserId())
+                    .name(fileUploadRequest.getName())
+                    .profileImage(fileUploadRequest.getProfileImage())
+                    .channelId(save.getChannelId())
+                    .message(image)
+                    .type(fileUploadRequest.getType())
+                    .fileType(fileUploadRequest.getFileType())
+                    .time(LocalDateTime.now()).build();
+
+            return uploadResponse;
         }
-
-        DirectMessage directChat = DirectMessage.builder()
-                .content(image)
-                .thumbnail(thumbnail)
-                .userId(fileUploadRequest.getUserId())
-                .channelId(fileUploadRequest.getChannelId())
-                .type(fileUploadRequest.getFileType())
-                .localDateTime(LocalDateTime.now()).build();
-
-        UserInfoFeignResponse userInfo = userClient.getUserInfo(fileUploadRequest.getUserId());
-
-        DirectMessage save = directChatRepository.save(directChat);
-
-        FileUploadResponse uploadResponse = FileUploadResponse.builder()
-                .id(save.getId())
-                .name(userInfo.getResult().getName())
-                .profileImage(userInfo.getResult().getProfileImage())
-                .message(image)
-                .thumbnail(thumbnail)
-                .type(fileUploadRequest.getType())
-                .fileType(fileUploadRequest.getFileType())
-                .channelId(fileUploadRequest.getChannelId())
-                .time(LocalDateTime.now()).build();
-
-        return uploadResponse;
     }
 
     public void findUserList(Long room_id, List<Long> ids) {
@@ -121,5 +158,17 @@ public class DirectMessageService {
             userIdResponse.setMembers(ids);
             redisTemplateForIds.opsForValue().set("DM" + room_id, userIdResponse, TIME, TimeUnit.MILLISECONDS);
         }
+    }
+
+    public void messageCount(MessageCountRequest messageCountRequest) {
+        Long userId = messageCountRequest.getUserId();
+        for (Long roomId: messageCountRequest.getRoomIds()) {
+            String room = "r-" + roomId;
+            MessageTime messageTime = messageTimeRepository.findByChannelId(room);
+            LocalDateTime start = messageTime.getRead().get(String.valueOf(userId));
+            List<DirectMessage> messages = directChatRepository.findByChannelIdAndLocalDateTimeBetween(roomId, start,LocalDateTime.now());
+            log.info(String.valueOf(messages.size()));
+        }
+
     }
 }

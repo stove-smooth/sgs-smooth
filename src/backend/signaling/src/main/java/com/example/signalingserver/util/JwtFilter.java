@@ -1,4 +1,4 @@
-package com.example.signalingserver.config;
+package com.example.signalingserver.util;
 
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;

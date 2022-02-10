@@ -66,10 +66,11 @@ public class ChannelMessageController {
         messageSender.sendToEtcChannelChat(etcCommunityTopic,channelMessage);
     }
 
+    // 방 이동 시 상태관리
     @MessageMapping("/join-channel")
     public void sendState(@Payload LoginSessionRequest loginSessionRequest) {
-        tcpClientGateway.send(loginSessionRequest.toString());
-//        presenceClient.changeState(loginSessionRequest);
+        String lastRoom = tcpClientGateway.send(loginSessionRequest.toString());
+        channelChatService.setRoomTime(loginSessionRequest,lastRoom);
     }
 
     @GetMapping("/community")
@@ -81,9 +82,11 @@ public class ChannelMessageController {
     }
 
     @PostMapping("/channel/file")
-    public void sendFile(@ModelAttribute FileUploadRequest fileUploadRequest) throws IOException {
+    public CommonResponse sendFile(@ModelAttribute FileUploadRequest fileUploadRequest) throws IOException {
         FileUploadResponse uploadResponse = channelChatService.fileUpload(fileUploadRequest);
         messageSender.fileUpload(fileTopic,uploadResponse);
+
+        return responseService.getSuccessResponse();
 
     }
 

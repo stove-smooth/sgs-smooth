@@ -3,6 +3,7 @@ package com.example.chatserver.controller;
 import com.example.chatserver.config.message.MessageSender;
 import com.example.chatserver.domain.DirectMessage;
 import com.example.chatserver.dto.request.FileUploadRequest;
+import com.example.chatserver.dto.request.MessageCountRequest;
 import com.example.chatserver.dto.response.CommonResponse;
 import com.example.chatserver.dto.response.FileUploadResponse;
 import com.example.chatserver.dto.response.MessageResponse;
@@ -72,10 +73,11 @@ public class DirectMessageController {
 
     // todo kafka
     @PostMapping("/file")
-    public void sendFile(@ModelAttribute FileUploadRequest fileUploadRequest) throws IOException {
+    public CommonResponse sendFile(@ModelAttribute FileUploadRequest fileUploadRequest) throws IOException {
         FileUploadResponse msg = directChatService.fileUpload(fileUploadRequest);
         messageSender.fileUpload(fileTopic,msg);
 
+        return responseService.getSuccessResponse();
     }
 
     @PutMapping("/room-user-list/{room_id}")
@@ -84,5 +86,10 @@ public class DirectMessageController {
         directChatService.findUserList(room_id,ids);
 
         return responseService.getSuccessResponse();
+    }
+
+    @GetMapping("/message-count")
+    public void messageCount(@RequestBody MessageCountRequest messageCountRequest) {
+        directChatService.messageCount(messageCountRequest);
     }
 }

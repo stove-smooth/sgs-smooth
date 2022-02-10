@@ -1,8 +1,11 @@
 package com.example.chatserver.config;
 
 import com.example.chatserver.client.PresenceClient;
+import com.example.chatserver.client.UserClient;
 import com.example.chatserver.config.message.JwtTokenFilter;
+import com.example.chatserver.domain.MessageTime;
 import com.example.chatserver.dto.request.LoginSessionRequest;
+import com.example.chatserver.repository.MessageTimeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,6 +17,9 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -25,6 +31,7 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
     private final JwtTokenFilter jwtTokenFilter;
     private final PresenceClient presenceClient;
     private final TcpClientGateway tcpClientGateway;
+    private final MessageTimeRepository messageTimeRepository;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -53,16 +60,38 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
                 tcpClientGateway.send(loginSessionRequest.toString());
 //                presenceClient.uploadState(loginSessionRequest);
                 break;
+                // todo disconnect 여러가지 테스트 (전원끄기, 랜선뽑기 등)
             case DISCONNECT:
                 String sessionId = accessor.getSessionId();
                 LoginSessionRequest logoutSessionRequest = LoginSessionRequest.builder()
                                 .type("logout")
                                 .session_id(sessionId).build();
-                tcpClientGateway.send(logoutSessionRequest.toString());
+                String id = tcpClientGateway.send(logoutSessionRequest.toString());
+                log.info("반환값 " + id);
+                String[] items = id.split(",");
+                setRoomTime(items[0],items[1]);
+
 //                presenceClient.deleteState(logoutSessionRequest);
                 break;
             default:
                 break;
+        }
+    }
+
+    public void setRoomTime(String userId, String lastRoom) {
+        MessageTime result = messageTimeRepository.findByChannelId(lastRoom);
+        if (result == null) {
+            Map<String, LocalDateTime> users = new HashMap<>();
+            users.put(userId, LocalDateTime.now());
+            MessageTime messageTime = MessageTime.builder()
+                    .channelId(lastRoom)
+                    .read(users).build();
+            messageTimeRepository.save(messageTime);
+        } else {
+            Map<String, LocalDateTime> read = result.getRead();
+            read.put(userId,LocalDateTime.now());
+            result.setRead(read);
+            messageTimeRepository.save(result);
         }
     }
 }

@@ -29,5 +29,11 @@ public class Device {
     @Column(length = 200)
     private String token;
 
-    private LocalDateTime access_at;
+    private LocalDateTime access_time;
+
+    private LocalDateTime last_access;
+
+    public void setLast_access(LocalDateTime last_access) {
+        this.last_access = last_access;
+    }
 }
