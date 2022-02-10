@@ -58,7 +58,6 @@ public class CommunityService {
         if (!Objects.isNull(request.getIcon()))
             iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
 
-
         // 기본 생성되는 카테고리
         Category voiceCategory = makeDefaultCategory(ChannelType.VOICE, null);
         Category textCategory = makeDefaultCategory(ChannelType.TEXT, voiceCategory);

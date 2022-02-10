@@ -4,12 +4,7 @@
 - [디스코드 클론코딩](https://github.com/stove-smooth/sgs-smooth/wiki#%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8)
 ---
 
-## 2. 프로젝트 구조
-![architecture](./docs/architecture/architecture.png)
-
----
-
-## 3. 기술 스택
+## 2. 기술 스택
 ### Backend
 - Java 11
 - Spring Boot
@@ -38,6 +33,11 @@
 - Nginx
 - AWS EC2, RDS, S3, CloudFront, ElastiCache
 - Firebase Cloud Messaging
+---
+
+## 3. 프로젝트 구조
+![architecture](./docs/architecture/architecture.png)
+
 ---
 
 ## 4. 디렉토리 구조
