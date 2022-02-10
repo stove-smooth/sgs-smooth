@@ -102,10 +102,13 @@ public class MessageHandler extends TextWebSocketHandler {
                 case VIDEO_STATE_FROM:
                     VideoStateRequest videoStateRequest
                             = mapper.readValue(message.getPayload(), VideoStateRequest.class);
+                    updateVideo(videoStateRequest, user);
                     break;
                 // 오디오 설정 변경
                 case AUDIO_STATE_FROM:
-
+                    AudioStateRequest audioStateRequest
+                            = mapper.readValue(message.getPayload(), AudioStateRequest.class);
+                    updateAudio(audioStateRequest, user);
                     break;
                 // 방 나가기
                 case LEAVE:
@@ -202,5 +205,15 @@ public class MessageHandler extends TextWebSocketHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void updateVideo(VideoStateRequest request, UserSession user) throws IOException {
+        final Room room = roomManager.getRoom(user.getRoomId(), user.getCommunityId());
+        room.updateVideo(request);
+    }
+
+    private void updateAudio(AudioStateRequest request, UserSession user) throws IOException {
+        final Room room = roomManager.getRoom(user.getRoomId(), user.getCommunityId());
+        room.updateAudio(request);
     }
 }

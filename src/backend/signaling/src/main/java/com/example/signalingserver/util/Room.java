@@ -1,5 +1,7 @@
 package com.example.signalingserver.util;
 
+import com.example.signalingserver.dto.request.AudioStateRequest;
+import com.example.signalingserver.dto.request.VideoStateRequest;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -108,6 +110,20 @@ public class Room implements Closeable {
 
         final JsonObject existingParticipantsMsg = existingParticipants(participantsArray);
         user.sendMessage(existingParticipantsMsg);
+    }
+
+    public void updateVideo(VideoStateRequest request) throws IOException {
+        final JsonObject updateVideoStateJson = videoStateAnswer(request.getUserId(), request.getVideo());
+        for (final UserSession participant: participants.values()) {
+            participant.sendMessage(updateVideoStateJson);
+        }
+    }
+
+    public void updateAudio(AudioStateRequest request) throws IOException {
+        final JsonObject updateAudioStateJson = audioStateAnswer(request.getUserId(), request.getAudio());
+        for (final UserSession participant: participants.values()) {
+            participant.sendMessage(updateAudioStateJson);
+        }
     }
 
     public Collection<UserSession> getParticipants() {
