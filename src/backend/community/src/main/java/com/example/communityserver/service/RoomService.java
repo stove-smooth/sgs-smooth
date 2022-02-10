@@ -5,6 +5,7 @@ import com.example.communityserver.client.UserClient;
 import com.example.communityserver.domain.*;
 import com.example.communityserver.domain.type.CommonStatus;
 import com.example.communityserver.domain.type.CommunityMemberStatus;
+import com.example.communityserver.domain.type.UserState;
 import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.exception.CustomException;
@@ -13,6 +14,7 @@ import com.example.communityserver.repository.RoomMemberRepository;
 import com.example.communityserver.repository.RoomRepository;
 import com.example.communityserver.util.AmazonS3Connector;
 import com.example.communityserver.util.Base62;
+import com.example.communityserver.util.UserStateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -110,7 +112,7 @@ public class RoomService {
             if (!Objects.isNull(otherUser)) {
                 roomResponse.setName(otherUser.getName());
                 roomResponse.setIcon(otherUser.getImage());
-                roomResponse.setState(otherUser.getState());
+                roomResponse.setState(UserStateUtil.status.get(otherUser.getId()));
             }
         }
     }

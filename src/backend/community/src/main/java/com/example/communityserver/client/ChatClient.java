@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "ChatFeign", url = "http://52.79.229.100:8000/chat-server")
+@FeignClient(name = "ChatFeign", url = "http://3.36.238.237:8080/chat-server")
 public interface ChatClient {
 
     @PutMapping("/community-user-list/{community_id}")
@@ -22,6 +22,6 @@ public interface ChatClient {
             @RequestBody List<Long> ids
     );
 
-    @PostMapping("message-count")
+    @PostMapping("/message-count")
     List<MessageCountResponse> getMyMessages(@RequestBody MessageCountRequest request);
 }

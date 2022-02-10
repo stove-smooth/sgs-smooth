@@ -28,11 +28,11 @@ public class CommunityController {
      * 사용자가 소속된 커뮤니티 리스트 조회
      */
     @GetMapping()
-    public DataResponse<CommunityListResponse> getCommunityList(
+    public DataResponse<MainResponse> getCommunityList(
             @RequestHeader(ID) String userId
     ) {
         log.info("GET /community-server/community");
-        CommunityListResponse response = communityService.getCommunityList(Long.parseLong(userId));
+        MainResponse response = communityService.getCommunityList(Long.parseLong(userId));
         return responseService.getDataResponse(response);
     }
 
