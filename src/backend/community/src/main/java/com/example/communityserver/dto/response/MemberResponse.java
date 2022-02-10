@@ -2,6 +2,8 @@ package com.example.communityserver.dto.response;
 
 import com.example.communityserver.domain.CommunityMember;
 import com.example.communityserver.domain.type.CommunityRole;
+import com.example.communityserver.domain.type.UserState;
+import com.example.communityserver.util.UserStateUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +11,7 @@ import lombok.Setter;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -32,7 +35,10 @@ public class MemberResponse {
         memberResponse.setNickname(user.getName());
         memberResponse.setCode(user.getCode());
         memberResponse.setRole(member.getRole());
-        memberResponse.setStatus("online");
+        if (!Objects.isNull(UserStateUtil.status.get(user.getId())))
+            memberResponse.setStatus(UserStateUtil.status.get(user.getId()));
+        else
+            memberResponse.setStatus(UserState.OFFLINE);
         return memberResponse;
     }
 }
