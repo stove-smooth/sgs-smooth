@@ -1,5 +1,6 @@
 package com.example.presenceserver.service;
 
+import com.example.presenceserver.configuration.client.TcpClientGateway;
 import com.example.presenceserver.dto.request.LoginSessionRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,8 +20,12 @@ import java.util.concurrent.TimeUnit;
 public class TcpService {
 
     private final RedisTemplate<String, Object> redisTemplate;
+    private final TcpClientGateway tcpClientGateway;
     private final ObjectMapper objectMapper;
     private long TIME = 24 * 60 * 60 * 1000L;
+    private static final String SEP = ",";
+    private static final String ONLINE = "online";
+    private static final String OFFLINE = "offline";
 
     public String processMessage(String message) throws JsonProcessingException {
         LoginSessionRequest request = new Gson().fromJson(message,LoginSessionRequest.class);
@@ -31,8 +36,9 @@ public class TcpService {
                 String status = "STATUS" + request.getUser_id();
                 String session_id = request.getSession_id();
                 redisTemplate.opsForValue().set(user_id, "home", TIME, TimeUnit.MILLISECONDS);
-                redisTemplate.opsForValue().set(status, "online", TIME, TimeUnit.MILLISECONDS);
+                redisTemplate.opsForValue().set(status, ONLINE, TIME, TimeUnit.MILLISECONDS);
                 redisTemplate.opsForValue().set(session_id, request.getUser_id(), TIME, TimeUnit.MILLISECONDS);
+                tcpClientGateway.send(request.getUser_id() + SEP + ONLINE);
                 break;
             }
             case "logout": {
@@ -47,19 +53,21 @@ public class TcpService {
                         ArrayList arrayList = objectMapper.readValue(list, ArrayList.class);
                         arrayList.remove(user_Id);
                         redisTemplate.opsForValue().set(state, objectMapper.writeValueAsString(arrayList));
-                        redisTemplate.opsForValue().set(status, "offline", TIME, TimeUnit.MILLISECONDS);
+                        redisTemplate.opsForValue().set(status, OFFLINE, TIME, TimeUnit.MILLISECONDS);
                         redisTemplate.delete(session_id);
                         redisTemplate.delete("USER" + user_Id);
                     } else {
-                        redisTemplate.opsForValue().set(status, "offline", TIME, TimeUnit.MILLISECONDS);
+                        redisTemplate.opsForValue().set(status, OFFLINE, TIME, TimeUnit.MILLISECONDS);
                         redisTemplate.delete(session_id);
                         redisTemplate.delete("USER" + user_Id);
                     }
                 } else {
-                    redisTemplate.opsForValue().set(status, "offline", TIME, TimeUnit.MILLISECONDS);
+                    redisTemplate.opsForValue().set(status, OFFLINE, TIME, TimeUnit.MILLISECONDS);
                     redisTemplate.delete(session_id);
                     redisTemplate.delete("USER" + user_Id);
+
                 }
+                tcpClientGateway.send(request.getUser_id() + SEP + OFFLINE);
                 String temp = user_Id + "," + state;
                 return temp;
             }

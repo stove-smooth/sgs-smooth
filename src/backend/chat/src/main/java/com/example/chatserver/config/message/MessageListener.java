@@ -60,7 +60,6 @@ public class MessageListener {
     public void directMessageListener(DirectMessage directChat) throws JsonProcessingException {
         directChat.setLocalDateTime(LocalDateTime.now());
         HashMap<String,String> msg = new HashMap<>();
-        log.info(directChat.getContent());
 
         msg.put("userId", String.valueOf(directChat.getUserId()));
         msg.put("name",directChat.getName());
@@ -78,7 +77,6 @@ public class MessageListener {
 
     @KafkaListener(topics = topicNameForDirectEtc,groupId = groupName, containerFactory = "kafkaListenerContainerFactoryForDirect")
     public void directEctListener(DirectMessage directChat) throws JsonProcessingException {
-        log.info(directChat.getType());
         String type = directChat.getType();
         HashMap<String,String> msg = new HashMap<>();
 
@@ -142,7 +140,6 @@ public class MessageListener {
     public void communityChatListener(ChannelMessage channelMessage) throws JsonProcessingException {
         channelMessage.setLocalDateTime(LocalDateTime.now());
         HashMap<String,String> msg = new HashMap<>();
-        log.info(channelMessage.getContent());
 
         msg.put("userId", String.valueOf(channelMessage.getUserId()));
         msg.put("name",channelMessage.getName());
@@ -183,7 +180,6 @@ public class MessageListener {
 
     @KafkaListener(topics = topicNameForCommunityEtc,groupId = groupName, containerFactory = "kafkaListenerContainerFactoryForCommunity")
     public void CommunityEctListener(ChannelMessage channelMessage) throws JsonProcessingException {
-        log.info(channelMessage.getType());
         String type = channelMessage.getType();
         HashMap<String,String> msg = new HashMap<>();
 

@@ -162,12 +162,16 @@ public class DirectMessageService {
 
     public void messageCount(MessageCountRequest messageCountRequest) {
         Long userId = messageCountRequest.getUserId();
+        List<MessageCountResponse> count = new ArrayList<>();
         for (Long roomId: messageCountRequest.getRoomIds()) {
             String room = "r-" + roomId;
             MessageTime messageTime = messageTimeRepository.findByChannelId(room);
             LocalDateTime start = messageTime.getRead().get(String.valueOf(userId));
+            start = start.plusHours(9);
             List<DirectMessage> messages = directChatRepository.findByChannelIdAndLocalDateTimeBetween(roomId, start,LocalDateTime.now());
-            log.info(String.valueOf(messages.size()));
+            int size = messages.size();
+            LocalDateTime lastMessageTime = messages.get(size - 1).getLocalDateTime();
+//            lastMessageTime.
         }
 
     }

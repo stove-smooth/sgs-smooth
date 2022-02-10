@@ -86,23 +86,19 @@ public class PresenceService {
         return check;
     }
 
-    public Map<Long,String> getUsersState(List<Long> requestAccountIds) {
+    public Map<Long,String> getUsersState() {
         Map<Long,String> result = new HashMap<>();
+        List<String> keys = redisTemplate.keys("*").stream()
+                .filter(k -> String.valueOf(k).contains("STATUS")).collect(Collectors.toList());
 
-        for (Long i : requestAccountIds) {
-            Object value = redisTemplate.opsForValue().get("STATUS" + i);
-            log.info((String) value);
-            if (String.valueOf(value).equals("null")) {
-                result.put(i,"offline");
-            } else {
-                result.put(i, String.valueOf(value));
+        for (String i : keys) {
+            String value = redisTemplate.opsForValue().get(i).toString();
+            if (value.equals("online")) {
+                String user_id = i.split("STATUS")[1];
+                result.put(Long.valueOf(user_id),value);
             }
         }
 
         return result;
     }
-//
-//    public void statusChange(Long id, String status) {
-//        redisTemplate.opsForValue().set("STATUS" + id, status, TIME, TimeUnit.MILLISECONDS);
-//    }
 }
