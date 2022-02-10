@@ -1,9 +1,9 @@
 package com.example.communityserver.client;
 
+import com.example.communityserver.dto.request.MessageCountRequest;
+import com.example.communityserver.dto.response.MessageCountResponse;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,4 +21,7 @@ public interface ChatClient {
             @PathVariable(value = "room_id") Long room_id,
             @RequestBody List<Long> ids
     );
+
+    @PostMapping("message-count")
+    List<MessageCountResponse> getMyMessages(@RequestBody MessageCountRequest request);
 }
