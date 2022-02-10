@@ -13,5 +13,6 @@ public class JoinRequest {
     private String id;
     private String token;
     private String userId;
+    private String communityId;
     private String roomId;
 }

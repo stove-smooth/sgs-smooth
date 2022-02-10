@@ -24,12 +24,14 @@ import static com.example.signalingserver.util.Message.*;
 public class Room implements Closeable {
 
     private final String roomId;
+    private final String communityId;
     private final MediaPipeline pipeline;
     private final ConcurrentMap<String, UserSession> participants = new ConcurrentHashMap<>();
 
-    public Room(String roomId, MediaPipeline pipeline) {
+    public Room(String roomId, MediaPipeline pipeline, String communityId) {
         this.roomId = roomId;
         this.pipeline = pipeline;
+        this.communityId = communityId;
     }
 
     public String getRoomId() {
@@ -45,8 +47,8 @@ public class Room implements Closeable {
         this.close();
     }
 
-    public UserSession join(String userId, WebSocketSession session) throws IOException {
-        final UserSession participant = new UserSession(userId, this.roomId, session, this.pipeline);
+    public UserSession join(String userId, WebSocketSession session, String communityId) throws IOException {
+        final UserSession participant = new UserSession(userId, this.roomId, session, this.pipeline, communityId);
         joinRoom(participant);
         participants.put(participant.getUserId(), participant);
         sendParticipantNames(participant);

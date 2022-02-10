@@ -1,12 +1,9 @@
 package com.example.signalingserver.service;
 
 import com.example.signalingserver.config.tcp.TcpClientGateway;
-import com.example.signalingserver.dto.request.StateRequest;
+import com.example.signalingserver.dto.request.*;
 import com.example.signalingserver.util.Room;
 import com.example.signalingserver.util.UserSession;
-import com.example.signalingserver.dto.request.CandidateRequest;
-import com.example.signalingserver.dto.request.JoinRequest;
-import com.example.signalingserver.dto.request.ReceiveVideoRequest;
 import com.example.signalingserver.util.RoomManager;
 import com.example.signalingserver.util.UserRegister;
 import com.example.signalingserver.util.type.State;
@@ -70,15 +67,15 @@ public class MessageHandler extends TextWebSocketHandler {
             }
 
             switch (jsonMessage.get(ID).getAsString()) {
+                // 방 접속
                 case JOIN:
-                    // 방 접속
                     JoinRequest joinRequest = mapper.readValue(message.getPayload(), JoinRequest.class);
                     join(joinRequest, session);
-
                     // 상태관리 서버로 접속 정보 전송
-                    StateRequest loginRequest = new StateRequest(State.LOGIN, session.getId(), joinRequest.getUserId(), joinRequest.getRoomId());
+                    StateRequest loginRequest = new StateRequest(State.LOGIN, session.getId(), joinRequest.getUserId(), joinRequest.getCommunityId(), joinRequest.getRoomId());
                     tcpClientGateway.send(loginRequest.toString());
                     break;
+                // SDP 정보 전송
                 case RECEIVE_VIDEO_FROM:
                     ReceiveVideoRequest receiveVideoRequest
                             = mapper.readValue(message.getPayload(), ReceiveVideoRequest.class);
@@ -87,6 +84,7 @@ public class MessageHandler extends TextWebSocketHandler {
                     final String sdpOffer = receiveVideoRequest.getSdpOffer();
                     user.receiveVideoFrom(sender, sdpOffer);
                     break;
+                // ICE Candidate 정보 전송
                 case ON_ICE_CANDIDATE:
                     CandidateRequest candidateRequest
                             = mapper.readValue(message.getPayload(), CandidateRequest.class);
@@ -100,6 +98,16 @@ public class MessageHandler extends TextWebSocketHandler {
                         user.addCandidate(cand, candidateRequest.getUserId());
                     }
                     break;
+                // 비디오 설정 변경
+                case VIDEO_STATE_FROM:
+                    VideoStateRequest videoStateRequest
+                            = mapper.readValue(message.getPayload(), VideoStateRequest.class);
+                    break;
+                // 오디오 설정 변경
+                case AUDIO_STATE_FROM:
+
+                    break;
+                // 방 나가기
                 case LEAVE:
                     leave(user);
                     break;
@@ -114,10 +122,10 @@ public class MessageHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         UserSession user = registry.removeBySession(session);
-        roomManager.getRoom(user.getRoomId()).leave(user);
+        roomManager.getRoom(user.getRoomId(), user.getCommunityId()).leave(user);
 
         // 상태관리 서버로 접속 정보 전송
-        StateRequest logoutRequest = new StateRequest(State.LOGOUT, session.getId(), user.getUserId(), user.getRoomId());
+        StateRequest logoutRequest = new StateRequest(State.LOGOUT, session.getId(), user.getUserId(), user.getCommunityId(), user.getRoomId());
         tcpClientGateway.send(logoutRequest.toString());
     }
 
@@ -136,8 +144,9 @@ public class MessageHandler extends TextWebSocketHandler {
 
         final String roomId = request.getRoomId();
         final String userId = request.getUserId();
+        final String communityId = request.getCommunityId();
 
-        Room room = roomManager.getRoom(roomId);
+        Room room = roomManager.getRoom(roomId, communityId);
         try {
             log.info("[redis] save key : {}, value : {}", roomId+PIPELINE, room.getPipeLineId());
             ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
@@ -146,7 +155,7 @@ public class MessageHandler extends TextWebSocketHandler {
             e.printStackTrace();
         }
 
-        final UserSession user = room.join(userId, session);
+        final UserSession user = room.join(userId, session, communityId);
         registry.register(user);
         try {
             log.info("[redis] save key : {}, value : {}", roomId, userId);
@@ -160,7 +169,7 @@ public class MessageHandler extends TextWebSocketHandler {
     }
 
     private void leave(UserSession user) throws IOException {
-        final Room room = roomManager.getRoom(user.getRoomId());
+        final Room room = roomManager.getRoom(user.getRoomId(), user.getCommunityId());
         room.leave(user);
         // redis에서 유저 삭제
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
