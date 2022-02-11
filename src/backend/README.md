@@ -11,6 +11,7 @@ backend
 ---
 # 박병찬
 
+- [presence - server](https://github.com/stove-smooth/sgs-smooth/tree/develop/src/backend/presence#presence--server) 
 
 ---
 # 김희동
