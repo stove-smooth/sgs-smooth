@@ -1,9 +1,11 @@
 package com.example.communityserver.service;
 
+import com.example.communityserver.client.ChatClient;
 import com.example.communityserver.client.UserClient;
 import com.example.communityserver.domain.*;
 import com.example.communityserver.domain.type.CommonStatus;
 import com.example.communityserver.domain.type.CommunityMemberStatus;
+import com.example.communityserver.domain.type.UserState;
 import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.exception.CustomException;
@@ -12,10 +14,9 @@ import com.example.communityserver.repository.RoomMemberRepository;
 import com.example.communityserver.repository.RoomRepository;
 import com.example.communityserver.util.AmazonS3Connector;
 import com.example.communityserver.util.Base62;
+import com.example.communityserver.util.UserStateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,8 +35,6 @@ public class RoomService {
     private String HOST_ADDRESS;
     private String ROOM_INVITATION_PREFIX = "/r/";
 
-    // private final RedisTemplate redisTemplate;
-
     private final RoomRepository roomRepository;
     private final RoomMemberRepository roomMemberRepository;
     private final RoomInvitationRepository roomInvitationRepository;
@@ -44,6 +43,7 @@ public class RoomService {
     private final Base62 base62;
 
     private final UserClient userClient;
+    private final ChatClient chatClient;
 
     public RoomListResponse getRooms(Long userId, String token) {
 
@@ -51,6 +51,11 @@ public class RoomService {
                 .filter(rm -> rm.getStatus().equals(CommonStatus.NORMAL))
                 .map(RoomMember::getRoom)
                 .collect(Collectors.toList());
+
+        // 최신 메세지 순으로 정렬 요청하기
+        List<Long> roomIds = rooms.stream().map(Room::getId).collect(Collectors.toList());
+        List<MessageCountResponse> sortedRoomsWithCount = chatClient.getMyMessages(new MessageCountRequest(userId, roomIds));
+        List<Long> sortedRoomIds = sortedRoomsWithCount.stream().map(e -> e.getRoomId()).collect(Collectors.toList());
 
         // auth service에 요청보낼 user id 리스트
         List<Long> ids = new ArrayList<>();
@@ -61,20 +66,23 @@ public class RoomService {
                 ids.add(otherUserId);
             }
         });
-
         // 유저 정보 요청
         HashMap<Long, UserResponse> userMap = getUserMap(ids, token);
 
-        List<RoomResponse> roomResponses = rooms.stream()
-                .map(room -> RoomResponse.fromEntity(room))
-                .collect(Collectors.toList());
+        // 최신 메세지 순으로 DTO 생성
+        HashMap<Long, Room> roomHashMap = new HashMap<>();
+        for (Room room: rooms) {
+            roomHashMap.put(room.getId(), room);
+        }
+        List<RoomResponse> roomResponses = new ArrayList<>();
+        for (Long roomId: sortedRoomIds) {
+            roomResponses.add(RoomResponse.fromEntity(roomHashMap.get(roomId)));
+        }
         
         // 1:1 메시지방 유저 정보로 업데이트
         roomResponses.forEach(roomResponse -> {
             updateUserInfo(roomResponse, userMap, userId);
         });
-
-        // TODO 메세지 순으로 정렬
 
         return new RoomListResponse(roomResponses);
     }
@@ -104,7 +112,7 @@ public class RoomService {
             if (!Objects.isNull(otherUser)) {
                 roomResponse.setName(otherUser.getName());
                 roomResponse.setIcon(otherUser.getImage());
-                roomResponse.setState(otherUser.getState());
+                roomResponse.setState(UserStateUtil.status.get(otherUser.getId()));
             }
         }
     }

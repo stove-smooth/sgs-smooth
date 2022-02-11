@@ -1,3 +1,4 @@
+const communityId = "0";
 const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYWs3MzgwMUBuYXZlci5jb20iLCJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOjYsImlhdCI6MTY0MzI2OTU4NywiZXhwIjoxNjUxOTA5NTg3fQ.uTvrk45DfbhIWRk0Vt7HchvdE1XPujni-ZU1saMZKMU";
 // Local
 //var ws = new SockJS('/rtc', null, {
@@ -59,6 +60,7 @@ function register() {
         id : 'joinRoom',
         token : token,
         userId : name,
+        communityId : communityId,
         roomId : room
     }
     sendMessage(message);
