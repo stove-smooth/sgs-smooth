@@ -51,20 +51,4 @@ struct BaseResponse<Model: Codable>{
             return .failure(error)
         }
     }
-    
-    static func processCommonResponse(_ result: Result<Response, MoyaError>) -> Result<CommonResponse?, MoyaError> {
-        switch result {
-        case .success(let response):
-            do {
-                _ = try response.filterSuccessfulStatusCodes()
-                
-                let commonResponse = try JSONDecoder().decode(CommonResponse.self, from: response.data)
-                return .success(commonResponse)
-            } catch {
-                return .failure(error as! MoyaError)
-            }
-        case .failure(let error):
-            return .failure(error)
-        }
-    }
 }

@@ -25,12 +25,12 @@ struct UserService: Networkable, UserServiceProtocol {
     
     func signIn(email: String, password: String, _ completion: @escaping (SignIn?, MoyaError?) -> Void) {
         makeProvider().request(.signIn(email: email, password: password)) { result in
-            switch BaseResponse<SignIn>.processCommonResponse(result) {
+            switch BaseResponse<SignIn>.processResponse(result) {
             case .success(let response):
                 guard let response = response else {
                     return
                 }
-                return completion(response.result, nil)
+                return completion(response, nil)
             case .failure(let error):
                 return completion(nil, error)
             }
