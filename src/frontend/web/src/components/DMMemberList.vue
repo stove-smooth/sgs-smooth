@@ -8,17 +8,30 @@
           class="server-member-list"
           v-show="true"
         >
-          <h2 class="members-group-container" aria-label="멤버">멤버 -</h2>
-          <div v-for="(item, index) in 10" :key="index">
+          <h2 class="members-group-container" aria-label="멤버">
+            멤버-{{ directMessageMemberList.count }}
+          </h2>
+          <div
+            v-for="directMessageMember in directMessageMemberList.members"
+            :key="directMessageMember.id"
+          >
             <div class="primary-member-container clickable" role="listitem">
               <div class="primary-member-layout">
                 <div class="avatar-container">
                   <div class="profile-wrapper">
                     <div class="avatar-wrapper">
-                      <img class="avatar" src="" alt=" " />
+                      <img
+                        class="avatar"
+                        :src="directMessageMember.image"
+                        alt=" "
+                      />
                       <template aria-label="status-invisible">
                         <div class="status-ring">
-                          <div class="status-online"></div>
+                          <div
+                            v-if="directMessageMember.state == 'online'"
+                            class="status-online"
+                          />
+                          <div v-else class="status-offline" />
                         </div>
                       </template>
                     </div>
@@ -27,7 +40,11 @@
                 <div class="friends-contents">
                   <div class="friends-name-decorator">
                     <div class="friends-name">
-                      nickname<svg v-show="true" class="crown"></svg>
+                      {{ directMessageMember.nickname
+                      }}<svg
+                        v-show="directMessageMember.owner"
+                        class="crown"
+                      ></svg>
                     </div>
                   </div>
                 </div>
@@ -41,15 +58,17 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapState, mapActions } from "vuex";
 export default {
   /* mounted() {
     window.addEventListener("click", this.onClick);
   }, */
-  created(){
+  created() {
     this.fetchDirectMessageMemberList(this.$route.params.id);
   },
-  computed: {},
+  computed: {
+    ...mapState("dm", ["directMessageMemberList"]),
+  },
   methods: {
     ...mapActions("dm", ["fetchDirectMessageMemberList"]),
     /* ...mapMutations("server", ["setServerMemberPlusMenu"]),

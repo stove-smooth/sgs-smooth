@@ -31,12 +31,17 @@ const dm = {
   },
   actions: {
     async fetchDirectMessageList({ commit }) {
-      let result = await fetchDirectMessageList();
-      commit("setDirectMessageList", result.data.result.rooms);
+      try {
+        let result = await fetchDirectMessageList();
+
+        commit("setDirectMessageList", result.data.result.rooms);
+      } catch (err) {
+        console.log(err.response);
+      }
     },
     async fetchDirectMessageMemberList({ commit }, roomId) {
       let result = await fetchDirectMessageMemberList(roomId);
-      console.log("결과", result, commit);
+      commit("setDirectMessageMemberList", result.data.result);
     },
   },
 };

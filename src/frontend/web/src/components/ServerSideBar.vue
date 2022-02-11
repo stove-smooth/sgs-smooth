@@ -198,7 +198,7 @@ export default {
       "setCategorySettingModal",
       "setChannelSettingModal",
     ]),
-    ...mapMutations("voice", ["setVideo"]),
+    ...mapMutations("voice", ["setVideo", "setCurrentVoiceRoom"]),
     log: async function (evt) {
       if (evt.moved) {
         if (evt.moved.element.channels) {
@@ -352,6 +352,7 @@ export default {
         if (this.wsOpen) {
           this.sendMessage({ id: "leaveRoom" });
           this.leaveRoom();
+          this.setCurrentVoiceRoom(null);
         }
         const url = "https://sig.yoloyolo.org/rtc";
         await this.wsInit(url); //ws 전역 등록.

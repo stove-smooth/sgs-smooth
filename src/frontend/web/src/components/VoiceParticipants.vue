@@ -1,13 +1,9 @@
 <template>
   <div :id="containerId" class="video-unit-container">
-    <div
-      :id="videoWrapperId"
-      v-show="participant.rtcPeer.videoEnabled"
-      class="display-flex"
-    ></div>
-    <div v-show="!participant.rtcPeer.videoEnabled">
+    <div :id="videoWrapperId" class="display-flex"></div>
+    <!-- <div v-show="!participant.rtcPeer.videoEnabled">
       <img class="no-video-img" src="../assets/default_stove.png" />
-    </div>
+    </div> -->
     <span class="text-align-center">{{ nickname }}</span>
   </div>
 </template>
@@ -45,8 +41,6 @@ export default {
     },
   },
   mounted() {
-    //video위에 보이는지 유무
-    console.log("particiapntenabled", this.participant.rtcPeer.videoEnabled);
     document.getElementById(this.videoWrapperId).appendChild(this.video);
     var newArea = document.createElement("div");
     newArea.classList.add("video-unit-container");

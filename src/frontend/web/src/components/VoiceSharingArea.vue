@@ -55,31 +55,65 @@ export default {
   components: { VoiceParticipants },
   async created() {
     //들어온 채널의 상태를 보냄.
-    const msg = {
-      user_id: this.getUserId,
-      channel_id: `c-${this.$route.params.channelid}`,
-      type: "state",
-    };
-    this.stompSocketClient.send("/kafka/join-channel", JSON.stringify(msg), {});
-    //음성연결 입장 알림
-    let message = {
-      id: "joinRoom",
-      token: this.getAccessToken,
-      userId: this.getUserId,
-      roomId: `c-${this.$route.params.channelid}`,
-      communityId: this.$route.params.serverid,
-    };
-    let voiceRoomInfo = {
-      myName: this.getUserId,
-      roomName: `c-${this.$route.params.channelid}`,
-    };
-    this.sendMessage(message);
-    this.setVoiceInfo(voiceRoomInfo);
+    if (this.$route.params.channelid) {
+      //커뮤니티에 있을 경우
+      const msg = {
+        user_id: this.getUserId,
+        channel_id: `c-${this.$route.params.channelid}`,
+        type: "state",
+      };
+      this.stompSocketClient.send(
+        "/kafka/join-channel",
+        JSON.stringify(msg),
+        {}
+      );
+      //음성연결 입장 알림
+      let message = {
+        id: "joinRoom",
+        token: this.getAccessToken,
+        userId: this.getUserId,
+        roomId: `c-${this.$route.params.channelid}`,
+        communityId: this.$route.params.serverid,
+      };
+      let voiceRoomInfo = {
+        myName: this.getUserId,
+        roomName: `c-${this.$route.params.channelid}`,
+      };
+      const currentVoiceRoomInfo = {
+        type: "community",
+        name: this.communityInfo.name,
+      };
+      this.setCurrentVoiceRoom(currentVoiceRoomInfo);
+      this.sendMessage(message);
+      this.setVoiceInfo(voiceRoomInfo);
+    } else {
+      //DM에 있을 경우
+      //음성연결 입장 알림
+      let message = {
+        id: "joinRoom",
+        token: this.getAccessToken,
+        userId: this.getUserId,
+        roomId: `r-${this.$route.params.id}`,
+        communityId: 0,
+      };
+      let voiceRoomInfo = {
+        myName: this.getUserId,
+        roomName: `r-${this.$route.params.id}`,
+      };
+      const currentVoiceRoomInfo = {
+        type: "room",
+        name: this.directMessageMemberList.name,
+      };
+      this.setCurrentVoiceRoom(currentVoiceRoomInfo);
+      this.sendMessage(message);
+      this.setVoiceInfo(voiceRoomInfo);
+    }
   },
   computed: {
     ...mapGetters("user", ["getAccessToken", "getUserId"]),
     ...mapState("voice", ["participants", "ws", "mute", "video", "myName"]),
     ...mapState("server", ["currentChannelType", "communityInfo"]),
+    ...mapState("dm", ["directMessageMemberList"]),
     ...mapState("utils", ["stompSocketClient"]),
     voiceMembers() {
       //참여자 감지
@@ -104,7 +138,7 @@ export default {
       "leaveRoom",
       "onServerMessage",
     ]),
-    ...mapMutations("voice", ["setMute", "setVideo"]),
+    ...mapMutations("voice", ["setMute", "setVideo", "setCurrentVoiceRoom"]),
     toggleMic() {
       this.setMute();
       this.myParticipantObject.rtcPeer.audioEnabled = !this.mute;
@@ -129,29 +163,38 @@ export default {
     },
     //webRTC 연결을 끊을 시 서버내 다른 채팅 채널로 이동해야함
     leaveVoiceConnection() {
-      this.sendMessage({ id: "leaveRoom" });
-      console.log("leaveRoom");
-      this.leaveRoom();
-      if (this.currentChannelType != "TEXT") {
-        //첫번째 채널 혹은 welcomepage로 이동.
-        const categories = this.communityInfo.categories;
-        for (var category in categories) {
-          if (categories[category].channels != null) {
-            for (var channels in categories[category].channels) {
-              if (categories[category].channels[channels].type === "TEXT") {
-                const firstchannel = categories[category].channels[channels].id;
-                this.$router.push(
-                  "/channels/" +
-                    this.$route.params.serverid +
-                    "/" +
-                    firstchannel
-                );
-                return;
+      if (this.$route.params.channelid) {
+        this.sendMessage({ id: "leaveRoom" });
+        console.log("leaveRoom");
+        this.leaveRoom();
+        this.setCurrentVoiceRoom(null);
+        if (this.currentChannelType != "TEXT") {
+          //첫번째 채널 혹은 welcomepage로 이동.
+          const categories = this.communityInfo.categories;
+          for (var category in categories) {
+            if (categories[category].channels != null) {
+              for (var channels in categories[category].channels) {
+                if (categories[category].channels[channels].type === "TEXT") {
+                  const firstchannel =
+                    categories[category].channels[channels].id;
+                  this.$router.push(
+                    "/channels/" +
+                      this.$route.params.serverid +
+                      "/" +
+                      firstchannel
+                  );
+                  return;
+                }
               }
             }
           }
+          this.$router.push("/channels/" + this.$route.params.serverid);
         }
-        this.$router.push("/channels/" + this.$route.params.serverid);
+      } else {
+        this.sendMessage({ id: "leaveRoom" });
+        console.log("leaveRoom");
+        this.leaveRoom();
+        this.setCurrentVoiceRoom(null);
       }
     },
   },
@@ -181,8 +224,6 @@ export default {
 .voice-participant-sharing {
   position: relative;
   display: flex;
-  /*   -webkit-box-pack: end;
-  justify-content: end; */
   width: 100%;
   height: 100%;
   flex-direction: column;

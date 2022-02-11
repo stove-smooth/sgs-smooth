@@ -12,21 +12,10 @@
         </div>
         <div
           class="plus-action-label-container"
-          @click="setMessageFixId(messagePlusMenu.id)"
-        >
-          <div class="plus-action-label">메시지 고정하기</div>
-          <svg class="fixed-icon"></svg>
-        </div>
-        <div
-          class="plus-action-label-container"
           @click="messageReply(messagePlusMenu)"
         >
           <div class="plus-action-label">답장</div>
           <svg class="reply-button"></svg>
-        </div>
-        <div class="plus-action-label-container">
-          <div class="plus-action-label">스레드 만들기</div>
-          <svg class="thread-icon"></svg>
         </div>
         <div
           v-if="messagePlusMenu.userId == getUserId"
@@ -59,7 +48,6 @@ export default {
     ...mapMutations("server", [
       "setCommunityMessageReplyId",
       "setMessageEditId",
-      "setMessageFixId",
       "setMessageReadyToDelete",
     ]),
     ...mapMutations("dm", [

@@ -18,7 +18,7 @@
             ><div class="voice-sharing-container flex-direction-column">
               <server-chatting-menu-bar></server-chatting-menu-bar>
               <div class="server-activity-container1">
-                <server-voice-sharing-area></server-voice-sharing-area>
+                <voice-sharing-area></voice-sharing-area>
                 <server-member-list></server-member-list>
               </div></div
           ></template>
@@ -35,7 +35,7 @@ import UserSection from "../components/common/UserSection.vue";
 import ServerChattingMenuBar from "../components/ServerChattingMenuBar.vue";
 import ServerActivityArea from "../components/ServerActivityArea.vue";
 import ServerMemberList from "../components/ServerMemberList.vue";
-import ServerVoiceSharingArea from "../components/ServerVoiceSharingArea.vue";
+import VoiceSharingArea from "../components/VoiceSharingArea.vue";
 export default {
   components: {
     ServerSideBar,
@@ -43,7 +43,7 @@ export default {
     ServerChattingMenuBar,
     ServerActivityArea,
     ServerMemberList,
-    ServerVoiceSharingArea,
+    VoiceSharingArea,
   },
   async created() {
     await this.fetchCommunityInfo();
