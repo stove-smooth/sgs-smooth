@@ -12,7 +12,7 @@
           "
         >
           <h2 class="members-group-container" aria-label="온라인">
-            온라인 - 5
+            온라인 - {{ communityOnlineMemberList.length }}
           </h2>
           <div v-for="item in communityOnlineMemberList" :key="item.id">
             <div
@@ -55,7 +55,7 @@
           "
         >
           <h2 class="members-group-container" aria-label="오프라인">
-            오프라인 - 3
+            오프라인 - {{ communityOfflineMemberList.length }}
           </h2>
           <div v-for="item in communityOfflineMemberList" :key="item.id">
             <div class="primary-member-container clickable" role="listitem">
@@ -63,11 +63,7 @@
                 <div class="avatar-container">
                   <div class="profile-wrapper" aria-label="칭구1">
                     <div class="avatar-wrapper">
-                      <img
-                        class="avatar"
-                        src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=32"
-                        alt=" "
-                      />
+                      <img class="avatar" :src="item.profileImage" alt=" " />
                       <template aria-label="status-invisible">
                         <div class="status-ring">
                           <div class="status-offline"></div>
