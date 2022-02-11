@@ -127,10 +127,10 @@
 </template>
 
 <script>
-import Modal from "../../common/Modal.vue";
-import { converToThumbnail, dataUrlToFile } from "../../../utils/common.js";
 import { mapState, mapMutations } from "vuex";
-import { createNewCommunity } from "../../../api/index.js";
+import { createNewCommunity } from "@/api/index.js";
+import Modal from "@/components/common/Modal.vue";
+import { converToThumbnail, dataUrlToFile } from "@/utils/common.js";
 export default {
   components: {
     Modal,
@@ -144,10 +144,10 @@ export default {
     };
   },
   computed: {
-    ...mapState("server", ["createServer"]),
+    ...mapState("server", ["createServer", "communityList"]),
   },
   methods: {
-    ...mapMutations("server", ["setCreateServer"]),
+    ...mapMutations("server", ["setCreateServer", "setCommunityList"]),
     openSelectServer() {
       this.progress = "openSelect";
     },
@@ -158,30 +158,35 @@ export default {
       this.progress = "openSelect";
     },
     openFinalSelect(isPublic) {
-      console.log("누름", isPublic);
       this.progress = "finalSelect";
       this.isPublic = isPublic;
     },
     async uploadImage() {
       let image = this.$refs["image"].files[0];
-      console.log("image", image);
       this.thumbnail = await converToThumbnail(image);
     },
     async createNewServer() {
+      let newChannelId = "";
+      let result = "";
       if (!this.thumbnail) {
         let frm = new FormData();
         frm.append("name", this.serverName);
         frm.append("public", this.isPublic);
-        await createNewCommunity(frm);
+        result = await createNewCommunity(frm);
+        newChannelId = result.data.result.id;
       } else {
         const file = await dataUrlToFile(this.thumbnail);
         let frm = new FormData();
         frm.append("icon", file);
         frm.append("name", this.serverName);
         frm.append("public", this.isPublic);
-        await createNewCommunity(frm);
+        result = await createNewCommunity(frm);
+        newChannelId = result.data.result.id;
       }
-      window.location.reload();
+      this.communityList.unshift(result.data.result);
+      this.setCommunityList(this.communityList);
+      this.$router.push(`/channels/${newChannelId}`);
+      this.setCreateServer(false);
     },
     exitCreate() {
       this.setCreateServer(false);

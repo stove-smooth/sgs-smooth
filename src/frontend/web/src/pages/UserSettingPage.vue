@@ -125,6 +125,7 @@ export default {
       window.location.reload();
     },
     resetImage() {
+      //프로필을 내릴 시 유저코드에 맞는 기본 프로필을 제공한다.
       const classify = this.code % 4;
       const result = selectProfile(classify);
       console.log("reset", result);

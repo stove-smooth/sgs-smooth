@@ -199,6 +199,7 @@ export default {
       "setChannelSettingModal",
     ]),
     ...mapMutations("voice", ["setVideo", "setCurrentVoiceRoom"]),
+    /***drag and drop을 통해 바뀐 채널/카테고리 정보를 서버에 보내기 위한 로직 */
     log: async function (evt) {
       if (evt.moved) {
         if (evt.moved.element.channels) {
@@ -212,8 +213,7 @@ export default {
             next: this.new,
           };
           try {
-            const result = await moveCategory(movedCategoryInfo);
-            console.log(result);
+            await moveCategory(movedCategoryInfo);
           } catch (err) {
             console.log(err.response);
           }
@@ -241,8 +241,7 @@ export default {
             categoryId: evt.moved.element.categoryId,
           };
           try {
-            const result = await moveChannel(movedChannelInfo);
-            console.log(result);
+            await moveChannel(movedChannelInfo);
           } catch (err) {
             console.log(err.response);
           }
@@ -267,8 +266,7 @@ export default {
                       categoryId: this.communityInfo.categories[k].id,
                     };
                     try {
-                      const result = await moveChannel(movedChannelInfo);
-                      console.log(result);
+                      await moveChannel(movedChannelInfo);
                     } catch (err) {
                       console.log(err.response);
                     }
@@ -281,8 +279,7 @@ export default {
                           .categoryId,
                     };
                     try {
-                      const result = await moveChannel(movedChannelInfo);
-                      console.log(result);
+                      await moveChannel(movedChannelInfo);
                     } catch (err) {
                       console.log(err.response);
                     }

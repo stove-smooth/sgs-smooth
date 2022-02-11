@@ -145,6 +145,7 @@ export default {
       this.myParticipantObject.rtcPeer.audioEnabled = !this.mute;
     },
     toggleHeadPhone() {
+      //다른 참가자들의 비디오를 음소거한다.
       Object.keys(this.participants).forEach((key) => {
         let videoElement = this.participants[key].getVideoElement();
         if (key != this.getUserId) {

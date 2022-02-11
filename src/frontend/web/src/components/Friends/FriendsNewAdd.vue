@@ -70,6 +70,7 @@ export default {
     };
   },
   computed: {
+    //사용자 정보 입력이 올바르게 되었는지 확인한다.
     isUserInfoValid() {
       var user = this.userinfo.split("#");
       if (user[1]) {
@@ -80,6 +81,7 @@ export default {
     },
   },
   methods: {
+    //친구 요청을 하고, 성공/실패 결과를 사용자에게 알린다.
     async addNewFriends() {
       try {
         var user = this.userinfo.split("#");

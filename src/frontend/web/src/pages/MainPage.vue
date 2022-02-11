@@ -3,7 +3,7 @@
     <template v-if="this.stompSocketConnected">
       <div class="wrapper2">
         <div class="wrapper">
-          <div class="container">
+          <div class="container" :key="$route.params.serverid">
             <navigation-bar v-if="navbar"></navigation-bar>
             <router-view></router-view>
           </div>
@@ -12,7 +12,7 @@
       <server-popout />
       <friends-plus-action />
       <message-plus-action />
-      <create-server-modal />
+      <create-community-modal />
       <create-channel-modal />
       <friends-delete-modal />
       <friends-block-modal />
@@ -44,7 +44,7 @@ import SockJS from "sockjs-client";
 import { mapGetters, mapMutations, mapState } from "vuex";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import NavigationBar from "../components/NavigationBar.vue";
-import CreateServerModal from "../components/Community/Community/CreateServerModal.vue";
+import CreateCommunityModal from "../components/Community/Community/CreateCommunityModal.vue";
 import CreateChannelModal from "../components/Community/Channel/CreateChannelModal.vue";
 import FriendsPlusAction from "../components/Friends/FriendsPlusAction.vue";
 import FriendsDeleteModal from "../components/Friends/FriendsDeleteModal.vue";
@@ -70,7 +70,7 @@ export default {
   name: "App",
   components: {
     NavigationBar,
-    CreateServerModal,
+    CreateCommunityModal,
     CreateChannelModal,
     FriendsPlusAction,
     FriendsDeleteModal,

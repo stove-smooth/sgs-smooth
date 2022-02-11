@@ -4,7 +4,6 @@
       <div class="large-searchbar-inner">
         <input class="large-searchbar-input" placeholder="검색하기" />
         <div class="searchicon-wrapper">
-          <!-- <svg class="search-icon"></svg> -->
           <svg class="primary-close"></svg>
         </div>
       </div>
@@ -162,6 +161,7 @@ export default {
         console.log(err);
       }
     },
+    //친구 추가 기능을 보여주기 위해 마우스 좌표를 저장한다.
     clickPlusAction(event, userInfo) {
       const x = event.clientX;
       const y = event.clientY;
@@ -169,6 +169,7 @@ export default {
       this.setClientY(y);
       this.setFriendsPlusMenu(userInfo);
     },
+    //추가 기능 메뉴가 보여지고 있을때 다른 위치를 클릭하면 메뉴가 꺼진다.
     onClick(e) {
       if (this.friendsPlusMenu) {
         if (!e.target.parentNode.dataset.key) {
@@ -180,6 +181,7 @@ export default {
       await deleteFriend(id);
       window.location.reload();
     },
+    //1:1 메시지를 걸었을 경우 dm방을 찾아 있을 경우 이동하고, 없을 경우 생성 후 이동한다.
     async sendDirectMessage(userInfo) {
       for (let i = 0; i < this.directMessageList.length; i++) {
         if (this.directMessageList[i].group == false) {
