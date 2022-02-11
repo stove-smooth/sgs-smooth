@@ -69,19 +69,6 @@ public class PresenceService {
         }
     }
 
-    public Map<Long,Boolean> findRead(List<Long> requestAccountIds) {
-        Map<Long,Boolean> check = new HashMap<>();
-        List<Long> alarm = new ArrayList<>();
-        for (Long i : requestAccountIds) {
-            if (redisTemplate.opsForValue().get("USER" + i) == null) {
-                check.put(i,false);
-                alarm.add(i);
-            } else {
-                check.put(i,true);
-            }
-        }
-        return check;
-    }
 
     public Map<Long,String> getUsersState() {
         Map<Long,String> result = new HashMap<>();

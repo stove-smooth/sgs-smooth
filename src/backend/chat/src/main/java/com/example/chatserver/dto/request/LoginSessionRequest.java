@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -17,6 +18,7 @@ public class LoginSessionRequest implements Serializable {
     private String user_id;
     private String channel_id;
     private String community_id;
+    private List<Long> ids;
 
     @Override
     public String toString() {
@@ -26,6 +28,7 @@ public class LoginSessionRequest implements Serializable {
                 ", user_id='" + user_id + '\'' +
                 ", channel_id='" + channel_id + '\'' +
                 ", community_id='" + community_id + '\'' +
+                ", ids=" + ids +
                 '}';
     }
 }

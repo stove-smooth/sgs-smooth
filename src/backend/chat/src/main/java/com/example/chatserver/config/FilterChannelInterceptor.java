@@ -53,7 +53,6 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
         switch (accessor.getCommand()) {
             case CONNECT:
                 String session_id = accessor.getSessionId();
-                log.info("컨넥션:" + session_id);
                 String user_id = Objects.requireNonNull(accessor.getFirstNativeHeader("user-id"));
                 LoginSessionRequest loginSessionRequest = LoginSessionRequest.builder()
                                 .type("login")
@@ -64,7 +63,6 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
                 // todo disconnect 여러가지 테스트 (전원끄기, 랜선뽑기 등)
             case DISCONNECT:
                 String sessionId = accessor.getSessionId();
-                log.info("디스커넥션:" + sessionId);
                 LoginSessionRequest logoutSessionRequest = LoginSessionRequest.builder()
                                 .type("logout")
                                 .session_id(sessionId).build();

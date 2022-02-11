@@ -101,6 +101,16 @@ public class TcpService {
                 }
                 return lastRoom;
             }
+            case "direct":
+            case "community": {
+                List<Long> check = new ArrayList<>();
+                for (Long i : request.getIds()) {
+                    if (!String.valueOf(redisTemplate.opsForValue().get("USER" + i)).equals(request.getChannel_id())) {
+                        check.add(i);
+                    }
+                }
+                return String.valueOf(check);
+            }
         }
 
         return "반환메세지";
