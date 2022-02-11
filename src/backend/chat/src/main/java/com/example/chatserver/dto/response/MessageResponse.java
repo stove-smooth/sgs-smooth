@@ -17,6 +17,7 @@ public class MessageResponse {
     private String message;
     private String thumbnail;
     private String fileType;
+    private String type;
     private LocalDateTime time;
     private String parentName;
     private String parentContent;

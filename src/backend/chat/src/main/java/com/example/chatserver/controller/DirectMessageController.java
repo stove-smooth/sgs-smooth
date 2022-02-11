@@ -4,10 +4,7 @@ import com.example.chatserver.config.message.MessageSender;
 import com.example.chatserver.domain.DirectMessage;
 import com.example.chatserver.dto.request.FileUploadRequest;
 import com.example.chatserver.dto.request.MessageCountRequest;
-import com.example.chatserver.dto.response.CommonResponse;
-import com.example.chatserver.dto.response.FileUploadResponse;
-import com.example.chatserver.dto.response.MessageResponse;
-import com.example.chatserver.dto.response.DataResponse;
+import com.example.chatserver.dto.response.*;
 import com.example.chatserver.service.DirectMessageService;
 import com.example.chatserver.service.ResponseService;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +45,7 @@ public class DirectMessageController {
 
     @MessageMapping("/send-direct-message")
     public void sendMessage(@Payload DirectMessage directChat) {
+        directChat.setLocalDateTime(LocalDateTime.now());
         messageSender.sendToDirectChat(directChatTopic,directChat);
     }
     @MessageMapping("/send-direct-reply")
@@ -88,8 +86,8 @@ public class DirectMessageController {
         return responseService.getSuccessResponse();
     }
 
-    @GetMapping("/message-count")
-    public void messageCount(@RequestBody MessageCountRequest messageCountRequest) {
-        directChatService.messageCount(messageCountRequest);
+    @PostMapping("/message-count")
+    public List<MessageCountResponse> messageCount(@RequestBody MessageCountRequest messageCountRequest) {
+        return directChatService.messageCount(messageCountRequest);
     }
 }

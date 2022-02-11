@@ -45,4 +45,20 @@ public class Message {
         jsonObject.addProperty(SDP_ANSWER, ipSdpAnswer);
         return jsonObject;
     }
+
+    public static JsonObject videoStateAnswer(String userId, String video) {
+        final JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(ID, VIDEO_STATE_ANSWER);
+        jsonObject.addProperty(USER_ID, userId);
+        jsonObject.addProperty(VIDEO, video);
+        return jsonObject;
+    }
+
+    public static JsonObject audioStateAnswer(String userId, String audio) {
+        final JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty(ID, AUDIO_STATE_ANSWER);
+        jsonObject.addProperty(USER_ID, userId);
+        jsonObject.addProperty(AUDIO, audio);
+        return jsonObject;
+    }
 }

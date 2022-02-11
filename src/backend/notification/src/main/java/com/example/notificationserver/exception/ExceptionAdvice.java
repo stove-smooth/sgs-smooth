@@ -3,6 +3,7 @@ package com.example.notificationserver.exception;
 import com.example.notificationserver.dto.response.CommonResponse;
 import com.example.notificationserver.service.ResponseService;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -51,7 +52,7 @@ public class ExceptionAdvice {
 
     // Other exception
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public CommonResponse handleException(Exception e) {
         CustomExceptionStatus status = CustomExceptionStatus.INTERNAL_SERVER_ERROR;
         log.error("code: {}, message: {}",

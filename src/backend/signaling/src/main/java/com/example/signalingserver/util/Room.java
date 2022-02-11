@@ -1,5 +1,7 @@
 package com.example.signalingserver.util;
 
+import com.example.signalingserver.dto.request.AudioStateRequest;
+import com.example.signalingserver.dto.request.VideoStateRequest;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -24,12 +26,14 @@ import static com.example.signalingserver.util.Message.*;
 public class Room implements Closeable {
 
     private final String roomId;
+    private final String communityId;
     private final MediaPipeline pipeline;
     private final ConcurrentMap<String, UserSession> participants = new ConcurrentHashMap<>();
 
-    public Room(String roomId, MediaPipeline pipeline) {
+    public Room(String roomId, MediaPipeline pipeline, String communityId) {
         this.roomId = roomId;
         this.pipeline = pipeline;
+        this.communityId = communityId;
     }
 
     public String getRoomId() {
@@ -45,8 +49,8 @@ public class Room implements Closeable {
         this.close();
     }
 
-    public UserSession join(String userId, WebSocketSession session) throws IOException {
-        final UserSession participant = new UserSession(userId, this.roomId, session, this.pipeline);
+    public UserSession join(String userId, WebSocketSession session, String communityId) throws IOException {
+        final UserSession participant = new UserSession(userId, this.roomId, session, this.pipeline, communityId);
         joinRoom(participant);
         participants.put(participant.getUserId(), participant);
         sendParticipantNames(participant);
@@ -106,6 +110,20 @@ public class Room implements Closeable {
 
         final JsonObject existingParticipantsMsg = existingParticipants(participantsArray);
         user.sendMessage(existingParticipantsMsg);
+    }
+
+    public void updateVideo(VideoStateRequest request) throws IOException {
+        final JsonObject updateVideoStateJson = videoStateAnswer(request.getUserId(), request.getVideo());
+        for (final UserSession participant: participants.values()) {
+            participant.sendMessage(updateVideoStateJson);
+        }
+    }
+
+    public void updateAudio(AudioStateRequest request) throws IOException {
+        final JsonObject updateAudioStateJson = audioStateAnswer(request.getUserId(), request.getAudio());
+        for (final UserSession participant: participants.values()) {
+            participant.sendMessage(updateAudioStateJson);
+        }
     }
 
     public Collection<UserSession> getParticipants() {

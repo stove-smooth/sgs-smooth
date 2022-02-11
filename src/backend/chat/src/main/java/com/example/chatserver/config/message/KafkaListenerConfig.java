@@ -31,24 +31,9 @@ public class KafkaListenerConfig {
     private final String groupName = "chat-server-group";
 
     @Bean
-    public RetryTemplate retryTemplate() {
-        RetryTemplate retryTemplate = new RetryTemplate();
-        FixedBackOffPolicy fixedBackOffPolicy = new FixedBackOffPolicy();
-        fixedBackOffPolicy.setBackOffPeriod(1000L);
-        retryTemplate.setBackOffPolicy(fixedBackOffPolicy);
-        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
-        retryPolicy.setMaxAttempts(3);
-        retryTemplate.setRetryPolicy(retryPolicy);
-
-        return retryTemplate;
-    }
-
-    @Bean
     public ConcurrentKafkaListenerContainerFactory<String, DirectMessage> kafkaListenerContainerFactoryForDirect() {
         ConcurrentKafkaListenerContainerFactory<String, DirectMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactoryForDirect());
-        factory.setRetryTemplate(retryTemplate());
-        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
         return factory;
     }
 

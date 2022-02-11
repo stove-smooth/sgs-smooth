@@ -58,10 +58,9 @@ public class MessageListener {
 
     @KafkaListener(topics = topicNameForDirect, groupId = groupName, containerFactory = "kafkaListenerContainerFactoryForDirect")
     public void directMessageListener(DirectMessage directChat) throws JsonProcessingException {
-        directChat.setLocalDateTime(LocalDateTime.now());
         HashMap<String,String> msg = new HashMap<>();
-        log.info(directChat.getContent());
 
+        msg.put("type","message");
         msg.put("userId", String.valueOf(directChat.getUserId()));
         msg.put("name",directChat.getName());
         msg.put("profileImage",directChat.getProfileImage());
@@ -78,18 +77,19 @@ public class MessageListener {
 
     @KafkaListener(topics = topicNameForDirectEtc,groupId = groupName, containerFactory = "kafkaListenerContainerFactoryForDirect")
     public void directEctListener(DirectMessage directChat) throws JsonProcessingException {
-        log.info(directChat.getType());
         String type = directChat.getType();
         HashMap<String,String> msg = new HashMap<>();
 
         switch (type) {
             case "typing":
+                msg.put("type","typing");
                 msg.put("name", directChat.getContent());
                 break;
             case "reply": {
                 directChat.setLocalDateTime(LocalDateTime.now());
                 DirectMessage result = directChatRepository.save(directChat);
 
+                msg.put("type","reply");
                 msg.put("id", result.getId());
                 msg.put("userId", String.valueOf(result.getUserId()));
                 msg.put("name", result.getName());
@@ -108,6 +108,7 @@ public class MessageListener {
                 result.setContent(directChat.getContent());
                 directChatRepository.save(result);
 
+                msg.put("type","modify");
                 msg.put("id", result.getId());
                 msg.put("userId", String.valueOf(result.getUserId()));
                 msg.put("message", result.getContent());
@@ -125,8 +126,8 @@ public class MessageListener {
 
                 directChatRepository.deleteById(result.getId());
 
+                msg.put("type","delete");
                 msg.put("id", result.getId());
-                msg.put("delete", "yes");
 
                 break;
             }
@@ -140,10 +141,9 @@ public class MessageListener {
 
     @KafkaListener(topics = topicNameForCommunity, groupId = groupName, containerFactory = "kafkaListenerContainerFactoryForCommunity")
     public void communityChatListener(ChannelMessage channelMessage) throws JsonProcessingException {
-        channelMessage.setLocalDateTime(LocalDateTime.now());
         HashMap<String,String> msg = new HashMap<>();
-        log.info(channelMessage.getContent());
 
+        msg.put("type","message");
         msg.put("userId", String.valueOf(channelMessage.getUserId()));
         msg.put("name",channelMessage.getName());
         msg.put("profileImage",channelMessage.getProfileImage());
@@ -183,18 +183,19 @@ public class MessageListener {
 
     @KafkaListener(topics = topicNameForCommunityEtc,groupId = groupName, containerFactory = "kafkaListenerContainerFactoryForCommunity")
     public void CommunityEctListener(ChannelMessage channelMessage) throws JsonProcessingException {
-        log.info(channelMessage.getType());
         String type = channelMessage.getType();
         HashMap<String,String> msg = new HashMap<>();
 
         switch (type) {
             case "typing":
+                msg.put("type","typing");
                 msg.put("name", channelMessage.getContent());
                 break;
             case "reply": {
                 channelMessage.setLocalDateTime(LocalDateTime.now());
                 ChannelMessage result = channelChatRepository.save(channelMessage);
 
+                msg.put("type","reply");
                 msg.put("id", result.getId());
                 msg.put("userId", String.valueOf(result.getUserId()));
                 msg.put("name", result.getName());
@@ -213,6 +214,7 @@ public class MessageListener {
                 result.setContent(channelMessage.getContent());
                 channelChatRepository.save(result);
 
+                msg.put("type","modify");
                 msg.put("id", result.getId());
                 msg.put("userId", String.valueOf(result.getUserId()));
                 msg.put("message", result.getContent());
@@ -230,8 +232,8 @@ public class MessageListener {
 
                 channelChatRepository.deleteById(channelMessage.getId());
 
+                msg.put("type","delete");
                 msg.put("id", result.getId());
-                msg.put("delete", "yes");
                 break;
             }
         }

@@ -9,10 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class JoinRequest {
+public class AudioStateRequest {
     private String id;
-    private String token;
     private String userId;
-    private String communityId;
-    private String roomId;
+    private String audio;
 }
