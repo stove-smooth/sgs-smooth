@@ -1,5 +1,6 @@
 package com.example.communityserver.service;
 
+import com.example.communityserver.client.ChatClient;
 import com.example.communityserver.client.UserClient;
 import com.example.communityserver.domain.*;
 import com.example.communityserver.domain.type.CommonStatus;
@@ -12,11 +13,12 @@ import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.CommunityInvitationRepository;
 import com.example.communityserver.repository.CommunityMemberRepository;
 import com.example.communityserver.repository.CommunityRepository;
+import com.example.communityserver.repository.RoomMemberRepository;
 import com.example.communityserver.util.AmazonS3Connector;
 import com.example.communityserver.util.Base62;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,7 @@ import static com.example.communityserver.dto.response.MemberResponse.fromEntity
 import static com.example.communityserver.exception.CustomExceptionStatus.*;
 import static com.example.communityserver.service.ChannelService.CHANNEL_DEFAULT_NAME;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -42,11 +45,13 @@ public class CommunityService {
     private final CommunityRepository communityRepository;
     private final CommunityMemberRepository communityMemberRepository;
     private final CommunityInvitationRepository communityInvitationRepository;
+    private final RoomMemberRepository roomMemberRepository;
 
     private final AmazonS3Connector amazonS3Connector;
     private final Base62 base62;
 
     private final UserClient userClient;
+    private final ChatClient chatClient;
 
     @Transactional
     public CommunityResponse createCommunity(
@@ -342,28 +347,57 @@ public class CommunityService {
         return CommunityDetailResponse.fromEntity(community);
     }
 
-    public CommunityListResponse getCommunityList(Long userId) {
+    public MainResponse getCommunityList(Long userId) {
         CommunityMember firstNode = getFirstNode(userId);
 
+        // 소속 커뮤니티 조회
         List<Community> communities = new ArrayList<>();
-        if (Objects.isNull(firstNode))
-            return new CommunityListResponse(communities.stream()
-                            .map(CommunityResponse::fromEntity)
-                            .collect(Collectors.toList()));
-
-        communities.add(firstNode.getCommunity());
-        CommunityMember nextNode = firstNode.getNextNode();
-        while (!Objects.isNull(nextNode)) {
-            communities.add(nextNode.getCommunity());
-            nextNode = nextNode.getNextNode();
+        List<CommunityResponse> communityResponses;
+        if (Objects.isNull(firstNode)) {
+            communityResponses = communities.stream()
+                    .map(CommunityResponse::fromEntity)
+                    .collect(Collectors.toList());
+        } else {
+            communities.add(firstNode.getCommunity());
+            CommunityMember nextNode = firstNode.getNextNode();
+            while (!Objects.isNull(nextNode)) {
+                communities.add(nextNode.getCommunity());
+                nextNode = nextNode.getNextNode();
+            }
+            communityResponses = communities.stream()
+                    .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                    .map(CommunityResponse::fromEntity)
+                    .collect(Collectors.toList());
         }
 
-        List<CommunityResponse> responses = communities.stream()
-                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
-                .map(CommunityResponse::fromEntity)
+        List<Room> rooms = roomMemberRepository.findByUserId(userId).stream()
+                .filter(rm -> rm.getStatus().equals(CommonStatus.NORMAL))
+                .map(RoomMember::getRoom)
                 .collect(Collectors.toList());
+        List<Long> roomIds = rooms.stream().map(Room::getId).collect(Collectors.toList());
+        List<UnreceivedMessageRoomResponse> roomResponse = new ArrayList<>();
 
-        return new CommunityListResponse(responses);
+        try {
+            List<MessageCountResponse> sortedRoomsWithCount = chatClient.getMyMessages(new MessageCountRequest(userId, roomIds)).stream()
+                    .filter(e -> e.getCount() > 0)
+                    .collect(Collectors.toList());
+
+            // 최신 메세지 순으로 DTO 생성
+            HashMap<Long, Room> roomHashMap = new HashMap<>();
+            for (Room room: rooms) {
+                roomHashMap.put(room.getId(), room);
+            }
+
+            for (MessageCountResponse roomWithCount: sortedRoomsWithCount) {
+                roomResponse.add(UnreceivedMessageRoomResponse.fromEntity(
+                        roomHashMap.get(roomWithCount.getRoomId()), roomWithCount.getCount())
+                );
+            }
+        } catch (Exception e) {
+            log.error("CHAT SERVER ERROR");
+        }
+
+        return new MainResponse(roomResponse, communityResponses);
     }
 
     public CommunityMember getFirstNode(Long userId) {

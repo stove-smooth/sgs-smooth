@@ -1,13 +1,13 @@
 package com.example.communityserver.client;
 
+import com.example.communityserver.dto.request.MessageCountRequest;
+import com.example.communityserver.dto.response.MessageCountResponse;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "ChatFeign", url = "http://52.79.229.100:8000/chat-server")
+@FeignClient(name = "ChatFeign", url = "http://3.36.238.237:8080/chat-server")
 public interface ChatClient {
 
     @PutMapping("/community-user-list/{community_id}")
@@ -21,4 +21,7 @@ public interface ChatClient {
             @PathVariable(value = "room_id") Long room_id,
             @RequestBody List<Long> ids
     );
+
+    @PostMapping("/message-count")
+    List<MessageCountResponse> getMyMessages(@RequestBody MessageCountRequest request);
 }

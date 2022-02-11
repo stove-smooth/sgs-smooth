@@ -12,4 +12,5 @@ public class LoginSessionRequest {
     private String session_id;
     private String user_id;
     private String channel_id;
+    private String community_id;
 }

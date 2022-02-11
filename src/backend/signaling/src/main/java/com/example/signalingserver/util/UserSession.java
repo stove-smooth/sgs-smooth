@@ -24,15 +24,17 @@ public class UserSession implements Closeable {
     private final MediaPipeline pipeline;
 
     private final String roomId;
+    private final String communityId;
     private final WebRtcEndpoint outgoingMedia;
     private final ConcurrentMap<String, WebRtcEndpoint> incomingMedia = new ConcurrentHashMap<>();
 
-    public UserSession(String userId, String roomId, WebSocketSession session, MediaPipeline pipeline) {
+    public UserSession(String userId, String roomId, WebSocketSession session, MediaPipeline pipeline, String communityId) {
 
         this.userId = userId;
         this.session = session;
         this.pipeline = pipeline;
         this.roomId = roomId;
+        this.communityId = communityId;
         this.outgoingMedia = new WebRtcEndpoint.Builder(pipeline).build();
         this.outgoingMedia.addIceCandidateFoundListener(new EventListener<IceCandidateFoundEvent>() {
 
@@ -65,6 +67,8 @@ public class UserSession implements Closeable {
     public String getRoomId() {
         return this.roomId;
     }
+
+    public String getCommunityId() { return this.communityId; }
 
     public void receiveVideoFrom(UserSession sender, String sdpOffer) throws IOException {
         final String ipSdpAnswer = this.getEndpointForUser(sender).processOffer(sdpOffer);

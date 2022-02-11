@@ -13,10 +13,10 @@ public class RoomManager {
     private final KurentoClient kurento;
     private final ConcurrentMap<String, Room> rooms = new ConcurrentHashMap<>();
 
-    public Room getRoom(String roomId) {
+    public Room getRoom(String roomId, String communityId) {
         Room room = rooms.get(roomId);
         if (room == null) {
-            room = new Room(roomId, kurento.createMediaPipeline());
+            room = new Room(roomId, kurento.createMediaPipeline(), communityId);
             rooms.put(roomId, room);
         }
         return room;
