@@ -9,30 +9,30 @@
           </div>
         </div>
       </div>
-      <server-popout></server-popout>
-      <friends-plus-action></friends-plus-action>
-      <message-plus-action></message-plus-action>
-      <create-server-modal></create-server-modal>
-      <create-channel-modal></create-channel-modal>
-      <friends-delete-modal></friends-delete-modal>
-      <friends-block-modal></friends-block-modal>
-      <friends-profile-modal></friends-profile-modal>
-      <create-category-modal></create-category-modal>
-      <category-setting-modal></category-setting-modal>
-      <category-delete-modal></category-delete-modal>
-      <server-setting-modal></server-setting-modal>
+      <server-popout />
+      <friends-plus-action />
+      <message-plus-action />
+      <create-server-modal />
+      <create-channel-modal />
+      <friends-delete-modal />
+      <friends-block-modal />
+      <friends-profile-modal />
+      <create-category-modal />
+      <category-setting-modal />
+      <category-delete-modal />
+      <server-setting-modal />
       <template v-if="communityInviteModal">
-        <invite-community-modal></invite-community-modal>
+        <invite-community-modal />
       </template>
-      <channel-setting-modal></channel-setting-modal>
-      <community-delete-modal></community-delete-modal>
-      <channel-delete-modal></channel-delete-modal>
-      <community-exit-modal></community-exit-modal>
-      <fix-message-modal></fix-message-modal>
-      <fixed-messages-modal></fixed-messages-modal>
-      <server-members-plus-action></server-members-plus-action>
-      <community-banish-modal></community-banish-modal>
-      <create-direct-message-group-modal></create-direct-message-group-modal>
+      <channel-setting-modal />
+      <community-delete-modal />
+      <channel-delete-modal />
+      <community-exit-modal />
+      <fix-message-modal />
+      <fixed-messages-modal />
+      <server-members-plus-action />
+      <community-banish-modal />
+      <create-direct-message-group-modal />
     </template>
     <template v-else> <loading-spinner /> </template>
   </div>

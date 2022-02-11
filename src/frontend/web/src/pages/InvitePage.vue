@@ -1,5 +1,5 @@
 <template>
-  <div>오잉?</div>
+  <div></div>
 </template>
 
 <script>

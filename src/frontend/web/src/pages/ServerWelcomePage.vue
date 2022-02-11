@@ -3,18 +3,18 @@
     <div class="content-mypage">
       <template v-if="computed">
         <div class="sidebar">
-          <server-side-bar></server-side-bar>
-          <user-section></user-section>
+          <server-side-bar />
+          <user-section />
         </div>
         <div class="server-activity-container">
-          <server-chatting-menu-bar></server-chatting-menu-bar>
+          <server-chatting-menu-bar />
           <div class="server-activity-container1">
-            <server-welcome></server-welcome>
-            <server-member-list></server-member-list>
+            <server-welcome />
+            <server-member-list />
           </div>
         </div>
       </template>
-      <template v-else><loading-spinner></loading-spinner></template>
+      <template v-else><loading-spinner /></template>
     </div>
   </div>
 </template>

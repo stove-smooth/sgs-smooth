@@ -2,19 +2,19 @@
   <div class="layer">
     <div class="content-mypage">
       <div class="sidebar">
-        <friends-side-bar></friends-side-bar>
-        <user-section></user-section>
+        <friends-side-bar />
+        <user-section />
       </div>
       <div class="friends-state-container">
-        <friends-state-menu-bar></friends-state-menu-bar>
+        <friends-state-menu-bar />
         <div class="friends-state-container2">
           <template v-if="friendsStateMenu === 'addfriends'">
-            <friends-new-add></friends-new-add>
+            <friends-new-add />
           </template>
           <template v-else>
-            <friends-state-list></friends-state-list>
+            <friends-state-list />
           </template>
-          <friends-now-playing-list></friends-now-playing-list>
+          <friends-now-playing-list />
         </div>
       </div>
     </div>

@@ -2,17 +2,17 @@
   <div class="layer">
     <div class="content-mypage" :key="$route.params.id">
       <div class="sidebar">
-        <friends-side-bar></friends-side-bar>
-        <user-section></user-section>
+        <friends-side-bar />
+        <user-section />
       </div>
       <div class="friends-state-container">
-        <dm-menu-bar></dm-menu-bar>
+        <dm-menu-bar />
         <div class="friends-state-container2">
           <div class="dm-activity-container">
-            <div v-if="wsOpen"><voice-sharing-area></voice-sharing-area></div>
-            <dm-activity-area></dm-activity-area>
+            <div v-if="wsOpen"><voice-sharing-area /></div>
+            <dm-activity-area />
           </div>
-          <dm-member-list></dm-member-list>
+          <dm-member-list />
         </div>
       </div>
     </div>

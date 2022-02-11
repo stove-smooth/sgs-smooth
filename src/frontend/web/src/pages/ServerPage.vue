@@ -2,24 +2,24 @@
   <div class="base-container">
     <div class="content-mypage" :key="$route.params.channelid">
       <div class="sidebar">
-        <server-side-bar></server-side-bar>
-        <user-section></user-section>
+        <server-side-bar />
+        <user-section />
       </div>
       <div class="server-activity-container">
         <template v-if="isChattingChannel($route.params.channelid)">
-          <server-chatting-menu-bar></server-chatting-menu-bar>
+          <server-chatting-menu-bar />
           <div class="server-activity-container1">
-            <server-activity-area></server-activity-area>
-            <server-member-list></server-member-list>
+            <server-activity-area />
+            <server-member-list />
           </div>
         </template>
         <template v-else>
           <template v-if="wsOpen"
             ><div class="voice-sharing-container flex-direction-column">
-              <server-chatting-menu-bar></server-chatting-menu-bar>
+              <server-chatting-menu-bar />
               <div class="server-activity-container1">
-                <voice-sharing-area></voice-sharing-area>
-                <server-member-list></server-member-list>
+                <voice-sharing-area />
+                <server-member-list />
               </div></div
           ></template>
         </template>
