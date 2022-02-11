@@ -21,11 +21,11 @@
 
 <script>
 import { mapActions, mapState, mapGetters } from "vuex";
-import ServerSideBar from "../components/ServerSideBar.vue";
+import ServerSideBar from "../components/Community/Community/ServerSideBar.vue";
 import UserSection from "../components/common/UserSection.vue";
-import ServerChattingMenuBar from "../components/ServerChattingMenuBar.vue";
-import ServerMemberList from "../components/ServerMemberList.vue";
-import ServerWelcome from "../components/ServerWelcome.vue";
+import ServerChattingMenuBar from "../components/Community/Community/ServerChattingMenuBar.vue";
+import ServerMemberList from "../components/Community/Community/ServerMemberList.vue";
+import ServerWelcome from "../components/Community/Community/ServerWelcome.vue";
 import LoadingSpinner from "../components/common/LoadingSpinner.vue";
 export default {
   components: {

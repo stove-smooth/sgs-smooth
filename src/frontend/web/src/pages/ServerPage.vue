@@ -30,12 +30,12 @@
 
 <script>
 import { mapActions, mapState, mapMutations } from "vuex";
-import ServerSideBar from "../components/ServerSideBar.vue";
+import ServerSideBar from "../components/Community/Community/ServerSideBar.vue";
 import UserSection from "../components/common/UserSection.vue";
-import ServerChattingMenuBar from "../components/ServerChattingMenuBar.vue";
-import ServerActivityArea from "../components/ServerActivityArea.vue";
-import ServerMemberList from "../components/ServerMemberList.vue";
-import VoiceSharingArea from "../components/VoiceSharingArea.vue";
+import ServerChattingMenuBar from "../components/Community/Community/ServerChattingMenuBar.vue";
+import ServerActivityArea from "../components/Community/Community/ServerActivityArea.vue";
+import ServerMemberList from "../components/Community/Community/ServerMemberList.vue";
+import VoiceSharingArea from "../components/common/Voice/VoiceSharingArea.vue";
 export default {
   components: {
     ServerSideBar,

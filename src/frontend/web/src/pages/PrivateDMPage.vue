@@ -22,11 +22,11 @@
 <script>
 import { mapState } from "vuex";
 import UserSection from "../components/common/UserSection.vue";
-import DmActivityArea from "../components/DMActivityArea.vue";
-import DmMemberList from "../components/DMMemberList.vue";
-import DmMenuBar from "../components/DMMenuBar.vue";
-import FriendsSideBar from "../components/FriendsSideBar.vue";
-import VoiceSharingArea from "../components/VoiceSharingArea.vue";
+import DmActivityArea from "../components/DM/DMActivityArea.vue";
+import DmMemberList from "../components/DM/DMMemberList.vue";
+import DmMenuBar from "../components/DM/DMMenuBar.vue";
+import FriendsSideBar from "../components/Friends/FriendsSideBar.vue";
+import VoiceSharingArea from "../components/common/Voice/VoiceSharingArea.vue";
 export default {
   components: {
     FriendsSideBar,

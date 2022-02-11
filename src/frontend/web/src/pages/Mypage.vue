@@ -24,12 +24,12 @@
 <script>
 import { mapGetters, mapState } from "vuex";
 
-import FriendsSideBar from "../components/FriendsSideBar.vue";
-import FriendsStateList from "../components/FriendsStateList.vue";
-import FriendsStateMenuBar from "../components/FriendsStateMenuBar.vue";
+import FriendsSideBar from "../components/Friends/FriendsSideBar.vue";
+import FriendsStateList from "../components/Friends/FriendsStateList.vue";
+import FriendsStateMenuBar from "../components/Friends/FriendsStateMenuBar.vue";
 import UserSection from "../components/common/UserSection.vue";
-import FriendsNowPlayingList from "../components/FriendsNowPlayingList.vue";
-import FriendsNewAdd from "../components/FriendsNewAdd.vue";
+import FriendsNowPlayingList from "../components/Friends/FriendsNowPlayingList.vue";
+import FriendsNewAdd from "../components/Friends/FriendsNewAdd.vue";
 
 export default {
   components: {
