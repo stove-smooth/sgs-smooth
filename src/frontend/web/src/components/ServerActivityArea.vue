@@ -348,6 +348,9 @@
             </div>
           </div>
         </div>
+        <div class="chatting-state">
+          `${this.messageTyper}님께서 입력하고 있어요...`
+        </div>
       </div>
     </div>
   </div>
@@ -377,6 +380,8 @@ export default {
       more: false,
       prevScrollHeight: 0,
       modifyLogMessage: "",
+      recentChatted: null,
+      messageTyper: [],
     };
   },
   mounted() {
@@ -394,42 +399,121 @@ export default {
     ...mapGetters("user", ["getUserId"]),
   },
   async created() {
+    //들어온 채널의 상태를 보냄.
+    const msg = {
+      user_id: this.getUserId,
+      channel_id: `c-${this.$route.params.channelid}`,
+      type: "state",
+    };
+    this.stompSocketClient.send("/kafka/join-channel", JSON.stringify(msg), {});
+    //최신 50개 메시지 기록 읽음
     await this.readChannelMessage();
+    //실시간 메시지 구독
     this.stompSocketClient.subscribe(
       "/topic/group/" + this.$route.params.channelid,
       (res) => {
         console.log("구독으로 받은 메시지 입니다.", res.body);
-        const translatedTime = this.convertFromStringToDate(
-          JSON.parse(res.body).time
-        );
+        /**메세지의 종류: 일반 채팅, 이미지 채팅, 수정, 삭제, 답장, 타이핑 상태  */
+        //한국시간에 맞게 시간 커스텀
         const receivedForm = JSON.parse(res.body);
-        receivedForm.date = translatedTime[0];
-        receivedForm.time = translatedTime[1];
+        if (receivedForm.type != "typing" && receivedForm.type != "delete") {
+          console.log("날짜가 있는 메시지인 경우");
+          const translatedTime = this.convertFromStringToDate(
+            receivedForm.time
+          );
+          receivedForm.date = translatedTime[0];
+          receivedForm.time = translatedTime[1];
+          //연속된 메시지 처리(같은 유저의 메시지인지, 동일시간의 메시지인지 구분)
+          let isOther = true;
+          if (this.receiveList.length > 0) {
+            const timeResult = this.isSameTime(
+              this.receiveList[this.receiveList.length - 1],
+              receivedForm
+            );
+            if (
+              timeResult &&
+              this.receiveList[this.receiveList.length - 1].userId ==
+                receivedForm.userId
+            ) {
+              isOther = false;
+            }
+          }
+          receivedForm.isOther = isOther;
+        } else {
+          console.log("타이핑에 관한 구독이 등장.", receivedForm);
+        }
+
+        //이미지를 보낼시 이미지 처리
         if (receivedForm.fileType && receivedForm.fileType == "image") {
           receivedForm.thumbnail = this.urlify(receivedForm.thumbnail);
         }
-        let isOther = true;
-        if (this.receiveList.length > 0) {
-          const timeResult = this.isSameTime(
-            this.receiveList[this.receiveList.length - 1],
-            receivedForm
-          );
-          if (
-            timeResult &&
-            this.receiveList[this.receiveList.length - 1].userId ==
-              receivedForm.userId
-          ) {
-            isOther = false;
+        //메세지 타입이 충족되는 경우 모두 메시지 리스트에 넣고, 렌더링이 된다면 스크롤을 바닥으로 내림
+        if (
+          receivedForm.type != "typing" &&
+          receivedForm.type != "modify" &&
+          receivedForm.type != "delete"
+        ) {
+          console.log(" 일반메시지 수신", receivedForm);
+          this.receiveList.push(receivedForm);
+          this.$nextTick(function () {
+            this.scrollToBottom();
+          });
+        }
+        //수정 구독 메시지 수신시,현재 로드된 메시지 중 수정한 메시지가 있다면 수정을 해준다.
+        if (receivedForm.type == "modify") {
+          for (let i = 0; i < this.receiveList.length; i++) {
+            if (this.receiveList[i].id == receivedForm.id) {
+              this.receiveList[i].message = receivedForm.message;
+            }
           }
         }
-        receivedForm.isOther = isOther;
-
-        this.receiveList.push(receivedForm);
-        this.$nextTick(function () {
-          this.scrollToBottom();
-        });
+        //삭제 구독 메시지 수신시,현재 로드된 메시지 중 삭제한 메시지가 있다면 삭제해준다.
+        if (receivedForm.type == "delete") {
+          let array = this.receiveList.filter(
+            (element) => element.id !== receivedForm.id
+          );
+          this.receiveList = array;
+        }
       }
     );
+  },
+  watch: {
+    // text 변경을 감지할 경우.
+    text() {
+      if (this.recentChatted) {
+        //채팅한 기록이 있을 경우
+        if (new Date() - this.recentChatted >= 10000) {
+          console.log("메세지 입력 상태를 보냄.");
+          this.recentChatted = new Date();
+          const msg = {
+            content: this.nickname,
+            channelId: this.$route.params.channelid,
+            type: "typing",
+          };
+          this.stompSocketClient.send(
+            "/kafka/send-channel-typing",
+            JSON.stringify(msg),
+            {}
+          );
+        } else {
+          //메세지 입력 상태를 보내지 않고 참음
+        }
+      } else {
+        //최근에 채팅한 적이 없을 경우
+        console.log("메세지 입력 상태를 보냄.");
+        this.recentChatted = new Date();
+        const msg = {
+          content: this.nickname,
+          channelId: this.$route.params.channelid,
+          type: "typing",
+        };
+        this.stompSocketClient.send(
+          "/kafka/send-channel-typing",
+          JSON.stringify(msg),
+          {}
+        );
+      }
+    },
   },
   methods: {
     ...mapMutations("utils", ["setClientX", "setClientY"]),
@@ -522,6 +606,7 @@ export default {
           id: id,
           content: content,
           userId: this.getUserId,
+          channelId: this.$route.params.channelid,
           type: "modify",
         };
         this.stompSocketClient.send(
@@ -541,6 +626,7 @@ export default {
         id: id,
         userId: this.getUserId,
         type: "delete",
+        channelId: this.$route.params.channelid,
       };
       this.stompSocketClient.send(
         "/kafka/send-channel-delete",
@@ -563,9 +649,6 @@ export default {
     },
     async sendPicture() {
       const formData = new FormData();
-      //for (let i = 0; i < this.images.length; i++) {//사진이 여러개일경우.
-      //  formData.append("image", this.thumbnailFiles[i]);
-      //}
       formData.append("image", this.images[0]);
       formData.append("thumbnail", this.thumbnailFiles[0]);
       formData.append("userId", this.getUserId);
@@ -697,47 +780,50 @@ export default {
           this.$route.params.channelid,
           this.page
         );
-
-        if (result.data.result.length == 50) {
+        let receivedAllMessage = result.data.result;
+        if (receivedAllMessage.length == 50) {
           this.more = true;
         } else {
           this.more = false;
         }
         var array = [];
-        let imageCount = 0;
-        for (var i = 0; i < result.data.result.length; i++) {
+        for (var i = 0; i < receivedAllMessage.length; i++) {
           //시간을 한국 시간+디스코드에 맞게 변환
-          const translatedTime = this.convertFromStringToDate(
-            result.data.result[i].time
-          );
-          result.data.result[i].date = translatedTime[0];
-          result.data.result[i].time = translatedTime[1];
-          //사진이라면 image태그를 붙여줌.
           if (
-            result.data.result[i].fileType &&
-            result.data.result[i].fileType == "image"
+            receivedAllMessage[i].type != "typing" &&
+            receivedAllMessage[i].type != "delete"
           ) {
-            imageCount = imageCount + 1;
-            result.data.result[i].thumbnail = this.urlify(
-              result.data.result[i].thumbnail
+            const translatedTime = this.convertFromStringToDate(
+              receivedAllMessage[i].time
             );
-          }
-          //동일 시간(분)에 동일 유저가 보냈다면 다른 같은 메시지로 묶음.
-          let isOther = true;
-          if (i != 0) {
-            const timeResult = this.isSameTime(
-              result.data.result[i - 1],
-              result.data.result[i]
-            );
-            if (
-              timeResult &&
-              result.data.result[i - 1].userId == result.data.result[i].userId
-            ) {
-              isOther = false;
+            receivedAllMessage[i].date = translatedTime[0];
+            receivedAllMessage[i].time = translatedTime[1];
+            //연속된 메시지 처리(같은 유저의 메시지인지, 동일시간의 메시지인지 구분)
+            let isOther = true;
+            if (i != 0) {
+              const timeResult = this.isSameTime(
+                receivedAllMessage[i - 1],
+                receivedAllMessage[i]
+              );
+              if (
+                timeResult &&
+                receivedAllMessage[i - 1].userId == receivedAllMessage[i].userId
+              ) {
+                isOther = false;
+              }
             }
+            receivedAllMessage[i].isOther = isOther;
           }
-          result.data.result[i].isOther = isOther;
-          array.push(result.data.result[i]);
+          //이미지를 보낼시 이미지 처리
+          if (
+            receivedAllMessage[i].fileType &&
+            receivedAllMessage[i].fileType == "image"
+          ) {
+            receivedAllMessage[i].thumbnail = this.urlify(
+              receivedAllMessage[i].thumbnail
+            );
+          }
+          array.push(receivedAllMessage[i]);
         }
         let newarray = array.concat(this.receiveList);
         this.receiveList = newarray;
@@ -746,9 +832,6 @@ export default {
             this.scrollToBottom();
           });
         }
-        console.log("imageCount", imageCount * 100);
-        let scrollRef = this.$refs["scrollRef"];
-        scrollRef.scrollTop = scrollRef.scrollTop - imageCount * 100;
         if (this.prevScrollHeight != 0) {
           this.$nextTick(function () {
             let scrollRef = this.$refs["scrollRef"];
@@ -1358,15 +1441,23 @@ export default {
 .emoji-picker-popout {
   background-color: #2f3136 !important;
   position: absolute;
-  bottom: 70px;
+  bottom: 90px;
   right: 0;
   z-index: 10;
 }
 .reply-emoji-picker-popout {
   background-color: #2f3136 !important;
   position: absolute;
-  bottom: 70px;
+  bottom: 90px;
   right: 0;
   z-index: 10;
+}
+.chatting-state {
+  font-size: 12px;
+  font-weight: 600;
+  text-indent: 0;
+  color: #dcddde;
+  margin-left: 60px;
+  margin-top: 6px;
 }
 </style>

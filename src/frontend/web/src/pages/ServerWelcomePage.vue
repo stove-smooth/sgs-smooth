@@ -1,28 +1,32 @@
 <template>
   <div class="base-container">
     <div class="content-mypage">
-      <div class="sidebar">
-        <server-side-bar></server-side-bar>
-        <user-section></user-section>
-      </div>
-      <div class="server-activity-container">
-        <server-chatting-menu-bar></server-chatting-menu-bar>
-        <div class="server-activity-container1">
-          <server-welcome></server-welcome>
-          <server-member-list></server-member-list>
+      <template v-if="computed">
+        <div class="sidebar">
+          <server-side-bar></server-side-bar>
+          <user-section></user-section>
         </div>
-      </div>
+        <div class="server-activity-container">
+          <server-chatting-menu-bar></server-chatting-menu-bar>
+          <div class="server-activity-container1">
+            <server-welcome></server-welcome>
+            <server-member-list></server-member-list>
+          </div>
+        </div>
+      </template>
+      <template v-else><loading-spinner></loading-spinner></template>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapGetters } from "vuex";
 import ServerSideBar from "../components/ServerSideBar.vue";
 import UserSection from "../components/common/UserSection.vue";
 import ServerChattingMenuBar from "../components/ServerChattingMenuBar.vue";
 import ServerMemberList from "../components/ServerMemberList.vue";
 import ServerWelcome from "../components/ServerWelcome.vue";
+import LoadingSpinner from "../components/common/LoadingSpinner.vue";
 export default {
   components: {
     ServerSideBar,
@@ -30,6 +34,12 @@ export default {
     ServerChattingMenuBar,
     ServerMemberList,
     ServerWelcome,
+    LoadingSpinner,
+  },
+  data() {
+    return {
+      computed: false,
+    };
   },
   methods: {
     ...mapActions("server", ["FETCH_COMMUNITYINFO"]),
@@ -46,16 +56,30 @@ export default {
               this.$router.push(
                 "/channels/" + this.$route.params.serverid + "/" + firstchannel
               );
-              return true;
+              this.computed = true;
+              return;
             }
           }
         }
       }
-      return false;
+      this.computed = true;
+      //serverwelcomepage진입시 home으로 상태 판단
+      const msg = {
+        user_id: this.getUserId,
+        channel_id: "home",
+        type: "state",
+      };
+      this.stompSocketClient.send(
+        "/kafka/join-channel",
+        JSON.stringify(msg),
+        {}
+      );
     },
   },
   computed: {
     ...mapState("server", ["communityInfo"]),
+    ...mapState("utils", ["stompSocketClient"]),
+    ...mapGetters("user", ["getUserId"]),
   },
   watch: {
     // 라우터의 변경을 감시

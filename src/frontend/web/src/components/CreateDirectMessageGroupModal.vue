@@ -5,7 +5,7 @@
       <modal @exit="closeModal">
         <template slot="header">
           <h3 class="action-title margin-left-8px">친구 선택하기</h3>
-          <search-bar></search-bar>
+          <!-- <search-bar></search-bar> -->
         </template>
         <template slot="content">
           <div class="invite-scroller thin-scrollbar">
@@ -49,11 +49,9 @@
 import { mapState, mapMutations } from "vuex";
 import { createDirectMessage } from "../api";
 import Modal from "./common/Modal.vue";
-import SearchBar from "./common/SearchBar.vue";
 export default {
   components: {
     Modal,
-    SearchBar,
   },
   data() {
     return {
@@ -84,7 +82,6 @@ export default {
 
 <style>
 .createGroupDMButtonWrapper {
-  background-color: #202225;
   padding: 4px;
   display: flex;
 }

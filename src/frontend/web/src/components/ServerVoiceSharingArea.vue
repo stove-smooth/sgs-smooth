@@ -1,19 +1,25 @@
 <template>
   <div class="voice-participant-sharing">
-    <div class="voice-participant-container">
-      <!-- <div id="wrapper"> -->
-      <div>오잉{{ this.participants }}</div>
-      <!-- <div class="wrap">
-          <div class="scroll__wrap participant-scroller"> -->
-      <div v-for="voiceMember in voiceMembers" :key="voiceMember.name">
+    <div
+      class="voice-participant-container"
+      v-if="voiceMembers"
+      v-bind:class="{
+        'two-participant-container': voiceMembers.length <= 2,
+        'four-participant-container':
+          voiceMembers.length > 2 && voiceMembers.length <= 4,
+        'more-than-participant-container': voiceMembers.length > 4,
+      }"
+    >
+      <div
+        class="voice-participant-wrapper"
+        v-for="voiceMember in voiceMembers"
+        :key="voiceMember.name"
+      >
         <voice-participants
           :key="voiceMember.rtcPeer.videoEnabled"
           :participant="voiceMember"
         ></voice-participants>
       </div>
-      <!-- </div>
-        </div> -->
-      <!-- </div> -->
     </div>
     <div class="voice-bottom-control-section">
       <div class="voice-bottom-control-container">
@@ -48,13 +54,20 @@ import VoiceParticipants from "./VoiceParticipants.vue";
 export default {
   components: { VoiceParticipants },
   async created() {
-    console.log("servervoicesharingarea 접근");
-    //const rand_0_9 = Math.floor(Math.random() * 10);
+    //들어온 채널의 상태를 보냄.
+    const msg = {
+      user_id: this.getUserId,
+      channel_id: `c-${this.$route.params.channelid}`,
+      type: "state",
+    };
+    this.stompSocketClient.send("/kafka/join-channel", JSON.stringify(msg), {});
+    //음성연결 입장 알림
     let message = {
       id: "joinRoom",
       token: this.getAccessToken,
       userId: this.getUserId,
       roomId: `c-${this.$route.params.channelid}`,
+      communityId: this.$route.params.serverid,
     };
     let voiceRoomInfo = {
       myName: this.getUserId,
@@ -62,19 +75,12 @@ export default {
     };
     this.sendMessage(message);
     this.setVoiceInfo(voiceRoomInfo);
-    console.log("message", message, "voiceRoomInfo", voiceRoomInfo);
-    /* this.ws.onmessage = function (message) {
-      console.log("일로안오나?");
-      let parsedMessage = JSON.parse(message.data);
-      console.log("Received message: " + message.data);
-      this.onServerMessage(parsedMessage);
-    }; */
   },
-
   computed: {
     ...mapGetters("user", ["getAccessToken", "getUserId"]),
     ...mapState("voice", ["participants", "ws", "mute", "video", "myName"]),
     ...mapState("server", ["currentChannelType", "communityInfo"]),
+    ...mapState("utils", ["stompSocketClient"]),
     voiceMembers() {
       //참여자 감지
       if (this.participants) {
@@ -104,14 +110,24 @@ export default {
       this.myParticipantObject.rtcPeer.audioEnabled = !this.mute;
     },
     toggleVideo() {
+      //다른 참여자의 비디오 상태를 알기 위한 로직
+      /* if (this.video) {
+        this.sendMessage({
+          id: "videoStateFrom",
+          userId: this.getUserId,
+          video: "0",
+        });
+      } else {
+        this.sendMessage({
+          id: "videoStateFrom",
+          userId: this.getUserId,
+          video: "1",
+        });
+      } */
       this.myParticipantObject.rtcPeer.videoEnabled = !this.video;
       this.setVideo();
     },
-    /* leaveChannel() {
-      this.sendMessage({ id: "leaveRoom" });
-      console.log("leaveRoom");
-      this.leaveRoom();
-    }, */
+    //webRTC 연결을 끊을 시 서버내 다른 채팅 채널로 이동해야함
     leaveVoiceConnection() {
       this.sendMessage({ id: "leaveRoom" });
       console.log("leaveRoom");
@@ -163,8 +179,12 @@ export default {
   color: #fff;
 }
 .voice-participant-sharing {
-  flex: 1 1 0;
+  position: relative;
   display: flex;
+  /*   -webkit-box-pack: end;
+  justify-content: end; */
+  width: 100%;
+  height: 100%;
   flex-direction: column;
 }
 .voice-bottom-control-section {
@@ -175,7 +195,7 @@ export default {
   justify-content: center;
   line-height: 0;
   height: 80px;
-  background-color: blanchedalmond;
+  margin-bottom: 24px;
 }
 .voice-bottom-control-container {
   display: flex;
@@ -345,7 +365,37 @@ select {
   height: 500px;
 }
 .voice-participant-container {
+  margin: 0px auto;
+  display: grid;
+  width: 90%;
+  height: 90%;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+}
+.two-participant-container {
+  grid-template-rows: 100%;
+  max-width: 900px;
+  grid-template-columns: repeat(auto-fit, minmax(45%, 1fr));
+}
+.four-participant-container {
+  grid-template-rows: 50% 50%;
+  max-width: 900px;
+  grid-template-columns: repeat(auto-fit, minmax(45%, 1fr));
+}
+.more-than-participant-container {
+  grid-template-rows: 50% 50%;
+  max-width: 1500px;
+  grid-template-columns: repeat(auto-fit, minmax(30%, 1fr));
+}
+.voice-participant-wrapper {
   flex: 1 1 0;
+  justify-content: center;
+  align-items: center;
+  display: flex;
 }
 
 .join {

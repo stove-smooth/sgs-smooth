@@ -3,7 +3,7 @@
     <template v-if="serverMemberPlusMenu.id == getUserId">
       <div class="server-members-plus-action-container">
         <div class="plus-action-wrapper">
-          <div class="plus-action-label-container">자기꺼</div>
+          <div class="plus-action-label-container">프로필</div>
         </div>
       </div>
     </template>

@@ -277,6 +277,9 @@ export default {
   -webkit-box-pack: center;
   justify-content: center;
 }
+.action-button:hover {
+  background-color: #fff;
+}
 .send-message {
   display: flex;
   width: 20px;

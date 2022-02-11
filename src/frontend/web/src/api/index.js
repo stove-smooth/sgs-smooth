@@ -57,6 +57,9 @@ function deleteFriend(userId) {
 function blockFriend(userId) {
   return instance.patch("auth-server/auth/ban-friend?id=" + userId);
 }
+function fetchMemberInfo(id) {
+  return instance.get(`auth-server/name?id=${id}`);
+}
 async function createNewCommunity(userData) {
   try {
     const accesstoken = await store.getters["user/getAccessToken"];
@@ -169,6 +172,9 @@ function fetchDirectMessageList() {
 function createDirectMessage(membersInfo) {
   return instance.post(`community-server/room`, membersInfo);
 }
+function fetchDirectMessageMemberList(roomId) {
+  return instance.get(`community-server/room/${roomId}`);
+}
 function exitDirectMessage(roomId, memberId) {
   return instance.delete(
     `community-server/room/${roomId}/member?id=${memberId}`
@@ -182,6 +188,7 @@ export {
   friendRequest,
   fetchFriends,
   fetchUserInfo,
+  fetchMemberInfo,
   changeUserImage,
   acceptFriend,
   deleteFriend,
@@ -207,5 +214,6 @@ export {
   sendImageDirectChatting,
   fetchDirectMessageList,
   createDirectMessage,
+  fetchDirectMessageMemberList,
   exitDirectMessage,
 };

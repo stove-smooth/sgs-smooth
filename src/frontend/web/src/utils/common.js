@@ -54,4 +54,19 @@ async function dataUrlToFile(dataUrl) {
   console.log("time", time);
   return new File([blob], time, { type: "image/*" });
 }
-export { selectProfile, converToThumbnail, dataUrlToFile };
+
+function computeChannelName(id, communityInfo) {
+  let channel = "";
+  const categories = communityInfo.categories;
+  for (var category in categories) {
+    if (categories[category].channels != null) {
+      for (let i = 0; i < categories[category].channels.length; i++) {
+        if (categories[category].channels[i].id == id) {
+          channel = categories[category].channels[i].name;
+          return channel;
+        }
+      }
+    }
+  }
+}
+export { selectProfile, converToThumbnail, dataUrlToFile, computeChannelName };
