@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,8 +31,8 @@ public class NotificationService {
     private static ConcurrentHashMap<Long, List<MulticastMessage>> job = new ConcurrentHashMap<>();
 
     public void sendDirectMessage(DirectMessageRequest request) {
-
-        List<String> targetTokens = getTargetTokens(request.getTarget());
+        List<Long> ids = convertStringToList(request.getTarget());
+        List<String> targetTokens = getTargetTokens(ids);
         try {
             MulticastMessage msg = fcm.makeMessage(
                     targetTokens,
@@ -48,8 +49,8 @@ public class NotificationService {
 
     // Todo 채널 메세지 배치 처리
     public void sendChannelMessage(ChannelMessageRequest request) {
-
-        List<String> targetTokens = getTargetTokens(request.getTarget());
+        List<Long> ids = convertStringToList(request.getTarget());
+        List<String> targetTokens = getTargetTokens(ids);
         try {
             MulticastMessage msg = fcm.makeMessage(
                     targetTokens,
@@ -71,5 +72,21 @@ public class NotificationService {
             targetTokens.add(deviceTokens.get(key));
         }
         return targetTokens;
+    }
+
+    // Stirng "[1, 2, 3]" -> List [1, 2, 3]
+    private List<Long> convertStringToList(String target) {
+        if (target.length() <= 2)
+            return new ArrayList<Long>();
+        else {
+            target = target.substring(1, target.length()-1);
+            String[] split = target.split(", ");
+
+            List<Long> ids = new ArrayList<>();
+            for (String s: split) {
+                ids.add(Long.parseLong(s));
+            }
+            return ids;
+        }
     }
 }

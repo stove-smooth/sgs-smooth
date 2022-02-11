@@ -209,6 +209,7 @@ public class RoomService {
 
         RoomDetailResponse roomDetailResponse = RoomDetailResponse.fromEntity(room);
         roomDetailResponse.setMembers(room.getMembers().stream()
+                .filter(roomMember -> roomMember.getStatus().equals(CommonStatus.NORMAL))
                 .map(rm -> RoomMemberResponse.fromEntity(rm, userMap))
                 .collect(Collectors.toList()));
         updateUserInfo(roomDetailResponse, userMap, userId);
