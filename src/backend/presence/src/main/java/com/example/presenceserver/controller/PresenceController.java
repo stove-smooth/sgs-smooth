@@ -67,9 +67,4 @@ public class PresenceController {
     public Map<String,String> allInfo() {
         return presenceService.allInfo();
     }
-
-    @PostMapping("/read")
-    public Map<Long,Boolean> read(@RequestBody List<Long> requestAccountIds) {
-        return presenceService.findRead(requestAccountIds);
-    }
 }
