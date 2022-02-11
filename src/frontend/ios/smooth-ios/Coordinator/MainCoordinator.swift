@@ -19,14 +19,7 @@ class MainCoordinator: NSObject, Coordinator {
     init(window: UIWindow) {
         self.window = window
         
-        let navigationController = UINavigationController()
-        navigationController.navigationBar.tintColor = .white
-        navigationController.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white!]
-        
-        navigationController.navigationBar.barTintColor = UIColor.backgroundDarkGray
-        navigationController.navigationBar.shadowImage = UIImage()
-        navigationController.navigationBar.isTranslucent = false
-        
+        let navigationController = UINavigationController().setup
         navigationController.setNavigationBarHidden(true, animated: true)
         
         self.navigationController = navigationController
@@ -65,9 +58,8 @@ class MainCoordinator: NSObject, Coordinator {
     }
     
     func goToSignUp() {
-        let vc = SignUpViewController.instance()
+        let vc = SignupViewController.instance()
         vc.coordinator = self
-        navigationController.removeFromParent()
         navigationController.pushViewController(vc, animated: true)
     }
     

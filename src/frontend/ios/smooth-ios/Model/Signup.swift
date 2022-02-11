@@ -18,29 +18,3 @@ struct SignUpRequest: Encodable {
         ]
     }
 }
-
-struct SignUpResponse: Codable {
-    
-}
-
-struct SendMailRequest: Encodable {
-    let email: String
-    
-    var paramters: [String: Any] {
-        return [
-            "email": email,
-        ]
-    }
-}
-
-struct SendMailResponse: Codable {
-    
-}
-
-struct VerifyCodeRequest: Encodable {
-    let key: String
-}
-
-struct VerifyCodeResponse: Codable {
-    
-}

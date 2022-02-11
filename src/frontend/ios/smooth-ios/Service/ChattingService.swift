@@ -20,13 +20,13 @@ struct ChattingService: Networkable, ChattingServiceProtocol {
     func fetchMessgae(_ channelId: Int, page: Int, size: Int, _ completion: @escaping ([Message]?, MoyaError?) -> Void) {
         makeProvider().request(.fetchMessgae(channelId: channelId, page: page, size: size)) {
             result in
-            switch BaseResponse<[Message]>.processCommonResponse(result) {
+            switch BaseResponse<[Message]>.processResponse(result) {
             case .success(let response):
                 guard let response = response else {
                     return
                 }
                 
-                return completion(response.result, nil)
+                return completion(response, nil)
             
             case .failure(let error):
                 return completion(nil, error)
