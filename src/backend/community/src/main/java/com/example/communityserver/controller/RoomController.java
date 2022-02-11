@@ -171,7 +171,7 @@ public class RoomController {
             @PathVariable Long roomId
     ) {
         log.info("GET /community-server/room/{}/address", roomId);
-        AddressResponse response = roomService.getConnectAddress(Long.parseLong(userId), roomId);
+        AddressResponse response = roomService.getConnectAddress(roomId);
         return responseService.getDataResponse(response);
     }
 
