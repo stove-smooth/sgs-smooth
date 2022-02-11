@@ -125,10 +125,10 @@ export default {
     };
   },
   computed: {
-    ...mapState("server", ["createChannel"]),
+    ...mapState("server", ["createChannel", "communityInfo"]),
   },
   methods: {
-    ...mapMutations("server", ["setCreateChannel"]),
+    ...mapMutations("server", ["setCreateChannel", "setCommunityInfo"]),
     closeModal() {
       this.setCreateChannel(false);
     },
@@ -142,8 +142,29 @@ export default {
         type: this.isChatType,
         public: true,
       };
-      await createNewChannel(newChannelData);
-      window.location.reload();
+      const result = await createNewChannel(newChannelData);
+      for (let i = 0; i < this.communityInfo.categories.length; i++) {
+        if (
+          this.communityInfo.categories[i].id == result.data.result.categoryId
+        ) {
+          if (this.communityInfo.categories[i].channels == null) {
+            this.communityInfo.categories[i].channels = result.data.result;
+          } else {
+            this.communityInfo.categories[i].channels.unshift(
+              result.data.result
+            );
+          }
+          this.$router.push(
+            "/channels/" +
+              this.$route.params.serverid +
+              "/" +
+              result.data.result.id
+          );
+          this.setCommunityInfo(this.communityInfo);
+          this.setCreateChannel(false);
+          return;
+        }
+      }
     },
   },
 };

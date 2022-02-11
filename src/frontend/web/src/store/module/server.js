@@ -117,7 +117,6 @@ const server = {
   actions: {
     async FETCH_COMMUNITYLIST({ commit }) {
       const result = await fetchCommunityList();
-      console.log("communityList", result.data.result.communities);
       commit("setCommunityList", result.data.result.communities);
     },
     async FETCH_COMMUNITYINFO({ commit }, serverid) {

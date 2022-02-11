@@ -60,6 +60,9 @@ export default {
             categories[category].channels = array;
           }
         }
+        if (channelId == this.$route.params.channelid) {
+          this.$router.push(`/channels/${this.$route.params.serverid}`);
+        }
       } catch (err) {
         console.log(err.response, "에러");
       }

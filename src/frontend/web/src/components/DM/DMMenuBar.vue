@@ -4,7 +4,11 @@
       <div class="primary-icon-wrapper">
         <svg class="hashtag-icon"></svg>
       </div>
-      <h3 class="server-name" aria-label="channel-name">
+      <h3
+        class="server-name"
+        aria-label="channel-name"
+        v-if="directMessageMemberList != null"
+      >
         {{ directMessageMemberList.name }}
       </h3>
     </div>

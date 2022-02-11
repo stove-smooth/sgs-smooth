@@ -48,6 +48,32 @@ export default {
       this.setCategoryReadyToDelete(false);
     },
     async deleteCategory(categoryId) {
+      const categories = this.communityInfo.categories;
+
+      for (var category in categories) {
+        if (categories[category].channels != null) {
+          for (let i = 0; i < categories[category].channels.length; i++) {
+            if (
+              categories[category].channels[i].id ==
+              this.$route.params.channelid
+            ) {
+              if (categories[category].channels[i].categoryId == categoryId) {
+                let tempCommunityInfo = this.communityInfo;
+                await deleteCategory(categoryId);
+                let array = this.communityInfo.categories.filter(
+                  (element) => element.id !== categoryId
+                );
+                tempCommunityInfo.categories = array;
+                this.setCategoryReadyToDelete(false);
+                this.setCategorySettingModal(false);
+                this.$router.push(`/channels/${this.$route.params.serverid}`);
+                return;
+              }
+            }
+          }
+        }
+      }
+
       let tempCommunityInfo = this.communityInfo;
       await deleteCategory(categoryId);
       let array = this.communityInfo.categories.filter(

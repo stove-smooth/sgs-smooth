@@ -6,7 +6,7 @@
           role="list"
           aria-label="멤버"
           class="server-member-list"
-          v-show="directMessageMemberList != null"
+          v-if="directMessageMemberList != null"
         >
           <h2 class="members-group-container" aria-label="멤버">
             멤버-{{ directMessageMemberList.count }}
