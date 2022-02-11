@@ -14,6 +14,8 @@ const voice = {
     mute: false, //음소거시 true
     deafen: false, //헤드셋 막을시 true
     video: false, //video 보임 여부
+    //현재 음성 연결 위치
+    currentVoiceRoom: null,
   },
   mutations: {
     WS_INIT(state, url) {
@@ -50,6 +52,9 @@ const voice = {
     },
     setVideo(state) {
       state.video = !state.video;
+    },
+    setCurrentVoiceRoom(state, currentVoiceRoom) {
+      state.currentVoiceRoom = currentVoiceRoom;
     },
   },
   actions: {

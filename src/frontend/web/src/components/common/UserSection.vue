@@ -9,8 +9,8 @@
                 <svg class="ping"></svg>
                 <div class="rtc-connection-description">영상 연결됨</div>
               </div>
-              <div class="subtext" v-if="communityInfo">
-                {{ communityInfo.name }}
+              <div class="subtext" v-if="currentVoiceRoom">
+                {{ currentVoiceRoom.name }}
               </div>
             </div>
             <div
@@ -102,7 +102,12 @@
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   methods: {
-    ...mapMutations("voice", ["setMute", "setDeafen", "setVideo"]),
+    ...mapMutations("voice", [
+      "setMute",
+      "setDeafen",
+      "setVideo",
+      "setCurrentVoiceRoom",
+    ]),
     ...mapActions("user", ["FETCH_USERINFO"]),
     ...mapActions("voice", ["sendMessage", "leaveRoom"]),
     openSettings() {
@@ -112,6 +117,7 @@ export default {
       this.sendMessage({ id: "leaveRoom" });
       console.log("leaveRoom");
       this.leaveRoom();
+      this.setCurrentVoiceRoom(null);
       if (this.currentChannelType != "TEXT") {
         //첫번째 채널 혹은 welcomepage로 이동.
         const categories = this.communityInfo.categories;
@@ -159,6 +165,7 @@ export default {
       //"video",
       "myName",
       "participants",
+      "currentVoiceRoom",
     ]),
     myParticipantObject() {
       return this.participants[this.myName];
@@ -361,10 +368,5 @@ export default {
   background-image: url("../../assets/settings.svg");
   width: 16px;
   height: 16px;
-}
-.video-camera {
-  background-image: url("../../assets/video-camera.svg");
-  width: 20px;
-  height: 20px;
 }
 </style>
