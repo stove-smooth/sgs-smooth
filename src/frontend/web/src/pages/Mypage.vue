@@ -40,6 +40,14 @@ export default {
     FriendsNowPlayingList,
     FriendsNewAdd,
   },
+  created() {
+    const msg = {
+      user_id: this.getUserId,
+      channel_id: "home",
+      type: "state",
+    };
+    this.stompSocketClient.send("/kafka/join-channel", JSON.stringify(msg), {});
+  },
   computed: {
     ...mapState("friends", ["friendsStateMenu"]),
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),

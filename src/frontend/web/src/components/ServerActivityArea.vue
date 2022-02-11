@@ -399,7 +399,16 @@ export default {
     ...mapGetters("user", ["getUserId"]),
   },
   async created() {
+    //들어온 채널의 상태를 보냄.
+    const msg = {
+      user_id: this.getUserId,
+      channel_id: `c-${this.$route.params.channelid}`,
+      type: "state",
+    };
+    this.stompSocketClient.send("/kafka/join-channel", JSON.stringify(msg), {});
+    //최신 50개 메시지 기록 읽음
     await this.readChannelMessage();
+    //실시간 메시지 구독
     this.stompSocketClient.subscribe(
       "/topic/group/" + this.$route.params.channelid,
       (res) => {

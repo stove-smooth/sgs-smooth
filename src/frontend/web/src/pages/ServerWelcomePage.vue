@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapGetters } from "vuex";
 import ServerSideBar from "../components/ServerSideBar.vue";
 import UserSection from "../components/common/UserSection.vue";
 import ServerChattingMenuBar from "../components/ServerChattingMenuBar.vue";
@@ -57,15 +57,29 @@ export default {
                 "/channels/" + this.$route.params.serverid + "/" + firstchannel
               );
               this.computed = true;
+              return;
             }
           }
         }
       }
       this.computed = true;
+      //serverwelcomepage진입시 home으로 상태 판단
+      const msg = {
+        user_id: this.getUserId,
+        channel_id: "home",
+        type: "state",
+      };
+      this.stompSocketClient.send(
+        "/kafka/join-channel",
+        JSON.stringify(msg),
+        {}
+      );
     },
   },
   computed: {
     ...mapState("server", ["communityInfo"]),
+    ...mapState("utils", ["stompSocketClient"]),
+    ...mapGetters("user", ["getUserId"]),
   },
   watch: {
     // 라우터의 변경을 감시

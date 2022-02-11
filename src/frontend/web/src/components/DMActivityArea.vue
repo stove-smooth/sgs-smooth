@@ -381,6 +381,12 @@ export default {
     ...mapGetters("user", ["getUserId"]),
   },
   async created() {
+    const msg = {
+      user_id: this.getUserId,
+      channel_id: `r-${this.$route.params.id}`,
+      type: "state",
+    };
+    this.stompSocketClient.send("/kafka/join-channel", JSON.stringify(msg), {});
     await this.readChannelMessage();
     this.stompSocketClient.subscribe(
       "/topic/direct/" + this.$route.params.id,

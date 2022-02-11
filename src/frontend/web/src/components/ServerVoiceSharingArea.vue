@@ -54,13 +54,20 @@ import VoiceParticipants from "./VoiceParticipants.vue";
 export default {
   components: { VoiceParticipants },
   async created() {
-    console.log("servervoicesharingarea 접근");
-    //const rand_0_9 = Math.floor(Math.random() * 10);
+    //들어온 채널의 상태를 보냄.
+    const msg = {
+      user_id: this.getUserId,
+      channel_id: `c-${this.$route.params.channelid}`,
+      type: "state",
+    };
+    this.stompSocketClient.send("/kafka/join-channel", JSON.stringify(msg), {});
+    //음성연결 입장 알림
     let message = {
       id: "joinRoom",
       token: this.getAccessToken,
       userId: this.getUserId,
       roomId: `c-${this.$route.params.channelid}`,
+      communityId: this.$route.params.serverid,
     };
     let voiceRoomInfo = {
       myName: this.getUserId,
@@ -68,13 +75,12 @@ export default {
     };
     this.sendMessage(message);
     this.setVoiceInfo(voiceRoomInfo);
-    console.log("message", message, "voiceRoomInfo", voiceRoomInfo);
   },
-
   computed: {
     ...mapGetters("user", ["getAccessToken", "getUserId"]),
     ...mapState("voice", ["participants", "ws", "mute", "video", "myName"]),
     ...mapState("server", ["currentChannelType", "communityInfo"]),
+    ...mapState("utils", ["stompSocketClient"]),
     voiceMembers() {
       //참여자 감지
       if (this.participants) {
@@ -104,9 +110,24 @@ export default {
       this.myParticipantObject.rtcPeer.audioEnabled = !this.mute;
     },
     toggleVideo() {
+      //다른 참여자의 비디오 상태를 알기 위한 로직
+      /* if (this.video) {
+        this.sendMessage({
+          id: "videoStateFrom",
+          userId: this.getUserId,
+          video: "0",
+        });
+      } else {
+        this.sendMessage({
+          id: "videoStateFrom",
+          userId: this.getUserId,
+          video: "1",
+        });
+      } */
       this.myParticipantObject.rtcPeer.videoEnabled = !this.video;
       this.setVideo();
     },
+    //webRTC 연결을 끊을 시 서버내 다른 채팅 채널로 이동해야함
     leaveVoiceConnection() {
       this.sendMessage({ id: "leaveRoom" });
       console.log("leaveRoom");
