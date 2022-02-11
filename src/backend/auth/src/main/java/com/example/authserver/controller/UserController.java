@@ -117,10 +117,8 @@ public class UserController {
 
         return responseService.getDataResponse(accountService.getNameAndPhoto(id));
     }
-    @PutMapping("/last-access")
-    public CommonResponse changeLastAccess(@RequestParam(value = "id") Long id) {
-        accountService.changeLastAccess(id);
-        return responseService.getSuccessResponse();
+    @PostMapping("/device-token")
+    public Map<Long,String> getDeviceToken(@RequestBody List<Long> ids) {
+        return accountService.getDeviceToken(ids);
     }
-
 }

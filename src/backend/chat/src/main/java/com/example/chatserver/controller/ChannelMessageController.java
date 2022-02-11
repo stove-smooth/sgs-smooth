@@ -48,6 +48,7 @@ public class ChannelMessageController {
 
     @MessageMapping("/send-channel-message")
     public void sendMessage(@Payload ChannelMessage channelMessage) {
+        channelMessage.setLocalDateTime(LocalDateTime.now());
         messageSender.sendToChannelChat(communityChatTopic, channelMessage);
     }
 

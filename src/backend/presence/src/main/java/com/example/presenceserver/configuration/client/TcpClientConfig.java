@@ -1,33 +1,28 @@
-package com.example.chatserver.config;
+package com.example.presenceserver.configuration.client;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.Transformers;
 import org.springframework.integration.ip.dsl.Tcp;
-import org.springframework.integration.ip.tcp.TcpOutboundGateway;
 import org.springframework.integration.ip.tcp.connection.AbstractClientConnectionFactory;
 import org.springframework.integration.ip.tcp.connection.CachingClientConnectionFactory;
 import org.springframework.integration.ip.tcp.connection.TcpNioClientConnectionFactory;
 import org.springframework.integration.ip.tcp.serializer.ByteArrayCrLfSerializer;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.MessageHandler;
 
 @Configuration
 @EnableIntegration
 public class TcpClientConfig{
 
-    @Value("${tcp.server.host}")
+    @Value("${tcp.client.host}")
     private String host;
 
-    @Value("${tcp.server.port}")
+    @Value("${tcp.client.port}")
     private int port;
 
     @Value("${tcp.client.connection.poolSize}")
@@ -46,13 +41,13 @@ public class TcpClientConfig{
 
     @Bean
     public IntegrationFlow fileWriterFlow() {
-        return IntegrationFlows.from("outboundChannel")
+        return IntegrationFlows.from("communityChannel")
                 .handle(Tcp.outboundGateway(clientConnectionFactory()))
                 .transform(Transformers.objectToString()).get();
     }
 
     @Bean
-    public MessageChannel outboundChannel() {
+    public MessageChannel communityChannel() {
         return new DirectChannel();
     }
 

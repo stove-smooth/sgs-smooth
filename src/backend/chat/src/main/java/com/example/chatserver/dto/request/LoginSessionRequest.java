@@ -16,6 +16,7 @@ public class LoginSessionRequest implements Serializable {
     private String session_id;
     private String user_id;
     private String channel_id;
+    private String community_id;
 
     @Override
     public String toString() {
@@ -24,6 +25,7 @@ public class LoginSessionRequest implements Serializable {
                 ", session_id='" + session_id + '\'' +
                 ", user_id='" + user_id + '\'' +
                 ", channel_id='" + channel_id + '\'' +
+                ", community_id='" + community_id + '\'' +
                 '}';
     }
 }
