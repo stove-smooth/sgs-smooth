@@ -31,5 +31,6 @@ public class DirectMessageRequest {
     @NotNull
     private Long roomId;
 
-    private List<Long> target;
+    @NotNull
+    private String target;
 }

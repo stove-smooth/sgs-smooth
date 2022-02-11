@@ -34,5 +34,6 @@ public class ChannelMessageRequest {
     @NotNull
     private Long channelId;
 
-    private List<Long> target;
+    @NotNull
+    private String target;
 }
