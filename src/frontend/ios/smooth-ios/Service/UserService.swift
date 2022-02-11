@@ -11,11 +11,11 @@ import Moya
 protocol UserServiceProtocol {
     // MARK: POST
     func signIn(email: String, password: String, _ completion: @escaping (SignIn?, MoyaError?) -> Void)
-    func signUp(_ request: SignUpRequest, _ completion: @escaping (SignUpResponse?, MoyaError?) -> Void )
-    func sendMail(_ request: SendMailRequest, _ completion: @escaping (SendMailResponse?, MoyaError?) -> Void)
+    func signUp(_ request: SignUpRequest, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
+    func sendMail(_ email: String, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
     
     // MARK: GET
-    func checkEmail(_ request: VerifyCodeRequest, _ completion: @escaping (VerifyCodeResponse?, MoyaError?) -> Void)
+    func checkEmail(_ key: String, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
     func fetchUserInfo(_ completion: @escaping (User?, MoyaError?) -> Void)
     func fetchUserInfoById(userId: Int, _ completion: @escaping (UserInfo?, MoyaError?) -> Void)
 }
@@ -37,9 +37,9 @@ struct UserService: Networkable, UserServiceProtocol {
         }
     }
     
-    func signUp(_ request: SignUpRequest, _ completion: @escaping (SignUpResponse?, MoyaError?) -> Void ) {
+    func signUp(_ request: SignUpRequest, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void) {
         makeProvider().request(.signUp(param: request)) { result in
-            switch BaseResponse<SignUpResponse>.processJSONResponse(result) {
+            switch BaseResponse<DefaultResponse>.processJSONResponse(result) {
             case .success(let response):
                 return completion(response, nil)
             case .failure(let error):
@@ -49,9 +49,9 @@ struct UserService: Networkable, UserServiceProtocol {
     }
     
     
-    func sendMail(_ request: SendMailRequest, _ completion: @escaping (SendMailResponse?, MoyaError?) -> Void) {
-        makeProvider().request(.sendMail(param: request)) { result in
-            switch BaseResponse<SendMailResponse>.processJSONResponse(result) {
+    func sendMail(_ email: String, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void) {
+        makeProvider().request(.sendMail(email: email)) { result in
+            switch BaseResponse<DefaultResponse>.processJSONResponse(result) {
             case .success(let response):
                 return completion(response, nil)
             case .failure(let error):
@@ -60,9 +60,9 @@ struct UserService: Networkable, UserServiceProtocol {
         }
     }
     
-    func checkEmail(_ request: VerifyCodeRequest, _ completion: @escaping (VerifyCodeResponse?, MoyaError?) -> Void) {
-        makeProvider().request(.verifyCode(param: request)) { result in
-            switch BaseResponse<VerifyCodeResponse>.processJSONResponse(result) {
+    func checkEmail(_ key: String, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void) {
+        makeProvider().request(.verifyCode(key: key)) { result in
+            switch BaseResponse<DefaultResponse>.processJSONResponse(result) {
             case .success(let response):
                 return completion(response, nil)
             case .failure(let error):
@@ -103,4 +103,3 @@ struct UserService: Networkable, UserServiceProtocol {
         }
     }
 }
-

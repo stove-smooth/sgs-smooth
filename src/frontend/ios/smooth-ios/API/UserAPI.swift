@@ -12,10 +12,10 @@ enum UserTarget {
     // MARK: POST
     case signIn(email: String, password: String)
     case signUp(param: SignUpRequest)
-    case sendMail(param: SendMailRequest)
+    case sendMail(email: String)
 
     // MARK: GET
-    case verifyCode(param: VerifyCodeRequest)
+    case verifyCode(key: String)
     case fetchUserInfo
     case fetchUserInfoById(userId: Int)
 }
@@ -56,10 +56,10 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
             return .requestParameters(parameters: ["email": email, "password": password], encoding: JSONEncoding.default)
         case .signUp(let user):
             return .requestCustomJSONEncodable(user, encoder: JSONEncoder())
-        case .sendMail(let request):
-            return .requestParameters(parameters: ["email": request.email], encoding: URLEncoding.queryString)
-        case .verifyCode(let request):
-            return .requestParameters(parameters: ["key": request.key], encoding: URLEncoding.queryString)
+        case .sendMail(let email):
+            return .requestParameters(parameters: ["email": email], encoding: URLEncoding.queryString)
+        case .verifyCode(let key):
+            return .requestParameters(parameters: ["key": key], encoding: URLEncoding.queryString)
         case .fetchUserInfo:
             return .requestPlain
         case .fetchUserInfoById(let userId):

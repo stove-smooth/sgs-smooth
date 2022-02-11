@@ -1,0 +1,23 @@
+# Uncomment the next line to define a global platform for your project
+# platform :ios, '9.0'
+
+target 'smooth-ios' do
+  use_frameworks!
+  pod 'SnapKit', '~> 5'
+  pod 'Then'
+  
+  pod 'RxSwift', '~> 6'
+  pod 'RxCocoa', '~> 6'
+  pod 'RxDataSources', '~> 5'
+  pod 'RxGesture'
+  
+  pod 'Moya', '~> 15.0.0'
+  pod 'Moya/RxSwift'
+  pod 'StompClientLib'
+  
+  pod 'Kingfisher'
+  
+  pod 'PanModal'
+  pod 'Toast-Swift', '~> 5.0.1'
+  pod 'MessageKit'
+end
