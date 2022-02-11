@@ -136,7 +136,6 @@ export default {
       const serverURL = "http://3.36.238.237:8080/my-chat";
       let socket = new SockJS(serverURL);
       this.setStompSocketClient(Stomp.over(socket));
-      console.log(`소켓 연결을 시도합니다. 서버 주소: ${serverURL}`);
       this.stompSocketClient.connect(
         {
           "access-token": this.getAccessToken,

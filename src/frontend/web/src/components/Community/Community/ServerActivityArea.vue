@@ -13,11 +13,11 @@
         @select="onSelectEmoji"
       />
       <VEmojiPicker
-        v-show="this.replyEmojiPopout"
+        v-show="this.editEmojiPopout"
         class="reply-emoji-picker-popout"
         labelSearch="Search"
         lang="pt-BR"
-        @select="onSelectReplyEmoji"
+        @select="onSelectEditEmoji"
       />
       <div class="height-100">
         <div class="scroller-content">
@@ -87,14 +87,14 @@
                         <div class="channel-message-button-wrapper">
                           <div class="display-flex margin-right-8px">
                             <button
-                              @click="openReplyEmojiPopout(item.id)"
+                              @click="openEditEmojiPopout(item.id)"
                               class="emoji-button"
                               tabindex="0"
                               aria-label="이모티콘 선택하기"
                               type="button"
                             >
                               <svg
-                                v-if="replyEmojiPopout"
+                                v-if="editEmojiPopout"
                                 class="yellow-emotion"
                               ></svg>
                               <svg v-else class="add-emotion"></svg>
@@ -362,6 +362,7 @@ import { VEmojiPicker } from "v-emoji-picker";
 import { converToThumbnail, dataUrlToFile } from "../../../utils/common.js";
 import { mapState, mapMutations, mapGetters } from "vuex";
 import { sendImageChatting, readChatMessage } from "../../../api/index";
+import { convertFromStringToDate } from "@/utils/common.js";
 export default {
   components: {
     VEmojiPicker,
@@ -375,7 +376,7 @@ export default {
       thumbnailFiles: [],
       receiveList: [],
       emojiPopout: false,
-      replyEmojiPopout: "",
+      editEmojiPopout: "",
       page: 0,
       more: false,
       prevScrollHeight: 0,
@@ -418,9 +419,7 @@ export default {
         const receivedForm = JSON.parse(res.body);
         if (receivedForm.type != "typing" && receivedForm.type != "delete") {
           console.log("날짜가 있는 메시지인 경우");
-          const translatedTime = this.convertFromStringToDate(
-            receivedForm.time
-          );
+          const translatedTime = convertFromStringToDate(receivedForm.time);
           receivedForm.date = translatedTime[0];
           receivedForm.time = translatedTime[1];
           //연속된 메시지 처리(같은 유저의 메시지인지, 동일시간의 메시지인지 구분)
@@ -478,12 +477,13 @@ export default {
     );
   },
   watch: {
-    // text 변경을 감지할 경우.
+    /**메세지 타이핑 상태를 서버에 알리기 위한 로직
+     * text가 변경될 경우 , 10초에 텀을 두고 상태를 확인하고 서버에 다시 알릴지 결정한다.
+     */
     text() {
       if (this.recentChatted) {
         //채팅한 기록이 있을 경우
         if (new Date() - this.recentChatted >= 10000) {
-          console.log("메세지 입력 상태를 보냄.");
           this.recentChatted = new Date();
           const msg = {
             content: this.nickname,
@@ -496,11 +496,10 @@ export default {
             {}
           );
         } else {
-          //메세지 입력 상태를 보내지 않고 참음
+          // 10초가 지나지 않아 메세지 입력 상태를 보내지 않는다.
         }
       } else {
         //최근에 채팅한 적이 없을 경우
-        console.log("메세지 입력 상태를 보냄.");
         this.recentChatted = new Date();
         const msg = {
           content: this.nickname,
@@ -524,10 +523,13 @@ export default {
       "setMessageReadyToDelete",
     ]),
     sendMessage(e) {
+      //enter시 메시지를 보낸다.
       if (e.keyCode == 13 && !e.shiftKey && this.stompSocketConnected) {
+        //단, 텍스트 내용이 모두 스페이스 혹은 엔터로만 이루어져있다면 메시지를 보내지 않는다.
         if (this.text.trim().length == 0 && this.images.length == 0) {
           return;
         }
+        //답장/일반메시지/사진메시지를 구분한다.
         if (this.communityMessageReplyId) {
           this.reply();
           return;
@@ -540,11 +542,13 @@ export default {
         }
       }
     },
+    //메시지를 보낸 후 메시지를 초기화한다.
     initialMessage(e) {
       if (e.keyCode == 13 && !e.shiftKey && this.stompSocketConnected) {
         this.text = "";
       }
     },
+    //이미지를 썸네일로 변환해 사용자에게 미리 보여준다.
     async uploadImage() {
       this.images = [];
       this.thumbnails = [];
@@ -557,6 +561,7 @@ export default {
         this.thumbnailFiles.push(thumbnailFile);
       }
     },
+    //보낼 이미지 목록 중 원하는 이미지를 삭제할 수 있다.
     deleteAttachment(index) {
       this.thumbnails.splice(index, 1);
       this.images.splice(index, 1);
@@ -669,6 +674,7 @@ export default {
     messageHover(idx) {
       this.messageHovered = idx;
     },
+    //메시지 추가 기능을 위한 마우스 좌표
     clickPlusAction(event, messageInfo) {
       const x = event.clientX;
       const y = event.clientY;
@@ -677,11 +683,13 @@ export default {
       this.setMessagePlusMenu(messageInfo);
     },
     onClick(e) {
+      //메시지 플러스 메뉴가 등장한 상태에서 다른 영역을 클릭하면 메시지 플러스 메뉴는 꺼진다.
       if (this.messagePlusMenu != null) {
         if (!e.target.parentNode.dataset.key) {
           this.setMessagePlusMenu(null);
         }
       }
+      //이미지 팝아웃이 등장한 상태에서 다른 영역을 클릭하면 팝아웃은 꺼진다.
       if (this.emojiPopout) {
         var condition1 = e.target.parentNode.childNodes[0]._prevClass;
         var condition2 = e.target.parentNode.className;
@@ -697,8 +705,7 @@ export default {
           this.emojiPopout = false;
         }
       }
-
-      if (this.replyEmojiPopout) {
+      if (this.editEmojiPopout) {
         var condition3 = e.target.parentNode.childNodes[0]._prevClass;
         var condition4 = e.target.parentNode.className;
         if (
@@ -710,35 +717,16 @@ export default {
           condition4 !== "reply-emoji-picker-popout emoji-picker" &&
           condition3 !== "category"
         ) {
-          this.replyEmojiPopout = false;
+          this.editEmojiPopout = false;
         }
       }
-    },
-    convertFromStringToDate(responseDate) {
-      var time = {};
-      let dateComponents = responseDate.split("T");
-      dateComponents[0].split("-");
-      let timePieces = dateComponents[1].split(":");
-      let transDate;
-      if (parseInt(timePieces[0]) + 9 < 24) {
-        time.hour = parseInt(timePieces[0]) + 9;
-        let tempDate = new Date(dateComponents[0]);
-        transDate = tempDate.toLocaleDateString();
-      } else {
-        time.hour = parseInt(timePieces[0]) + 9 - 24;
-        var newDate = new Date(dateComponents[0]);
-        newDate.setDate(newDate.getDate() + 1);
-        transDate = newDate.toLocaleDateString();
-      }
-      time.minutes = parseInt(timePieces[1]);
-      return [transDate, time.hour + ":" + time.minutes];
     },
     onSelectEmoji(emoji) {
       this.text += emoji.data;
     },
-    onSelectReplyEmoji(emoji) {
+    onSelectEditEmoji(emoji) {
       for (var i = 0; i < this.receiveList.length; i++) {
-        if (this.receiveList[i].id == this.replyEmojiPopout) {
+        if (this.receiveList[i].id == this.editEmojiPopout) {
           this.receiveList[i].message += emoji.data;
           break;
         }
@@ -747,11 +735,11 @@ export default {
     openEmojiPopout() {
       this.emojiPopout = !this.emojiPopout;
     },
-    openReplyEmojiPopout(messageId) {
-      if (this.replyEmojiPopout) {
-        this.replyEmojiPopout = "";
+    openEditEmojiPopout(messageId) {
+      if (this.editEmojiPopout) {
+        this.editEmojiPopout = "";
       } else {
-        this.replyEmojiPopout = messageId;
+        this.editEmojiPopout = messageId;
       }
     },
     urlify(text) {
@@ -793,7 +781,7 @@ export default {
             receivedAllMessage[i].type != "typing" &&
             receivedAllMessage[i].type != "delete"
           ) {
-            const translatedTime = this.convertFromStringToDate(
+            const translatedTime = convertFromStringToDate(
               receivedAllMessage[i].time
             );
             receivedAllMessage[i].date = translatedTime[0];

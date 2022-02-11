@@ -6,7 +6,7 @@
           role="list"
           aria-label="멤버"
           class="server-member-list"
-          v-show="true"
+          v-show="directMessageMemberList != null"
         >
           <h2 class="members-group-container" aria-label="멤버">
             멤버-{{ directMessageMemberList.count }}
@@ -60,6 +60,7 @@
 <script>
 import { mapState, mapActions } from "vuex";
 export default {
+  //추가할지 말지 고려중인 동작입니다.
   /* mounted() {
     window.addEventListener("click", this.onClick);
   }, */
@@ -71,6 +72,7 @@ export default {
   },
   methods: {
     ...mapActions("dm", ["fetchDirectMessageMemberList"]),
+    //추가할지 말지 고려중인 동작입니다.
     /* ...mapMutations("server", ["setServerMemberPlusMenu"]),
     ...mapMutations("utils", ["setClientX", "setClientY"]), */
     /* clickMemberPlusAction(event, memberInfo) {

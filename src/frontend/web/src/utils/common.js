@@ -1,3 +1,4 @@
+//유저코드에 따라 기본 프로필을 설정한다.
 function selectProfile(code) {
   if (code == 0) {
     return "discord_blue";
@@ -40,21 +41,20 @@ function processFile2(tempImage) {
     };
   });
 }
+//이미지를 썸네일로 변환한다.
 async function converToThumbnail(image) {
   const result = await processFile(image);
   const thumbnail = await processFile2(result);
-  console.log("converToThumbnail", image, thumbnail);
   return thumbnail;
 }
-
+//썸네일을 파일로 만든다.
 async function dataUrlToFile(dataUrl) {
   const response = await fetch(dataUrl);
   const blob = await response.blob();
   const time = new Date().getTime();
-  console.log("time", time);
   return new File([blob], time, { type: "image/*" });
 }
-
+//채널의 이름을 계산한다.
 function computeChannelName(id, communityInfo) {
   let channel = "";
   const categories = communityInfo.categories;
@@ -69,4 +69,29 @@ function computeChannelName(id, communityInfo) {
     }
   }
 }
-export { selectProfile, converToThumbnail, dataUrlToFile, computeChannelName };
+function convertFromStringToDate(responseDate) {
+  var time = {};
+  let dateComponents = responseDate.split("T");
+  dateComponents[0].split("-");
+  let timePieces = dateComponents[1].split(":");
+  let transDate;
+  if (parseInt(timePieces[0]) + 9 < 24) {
+    time.hour = parseInt(timePieces[0]) + 9;
+    let tempDate = new Date(dateComponents[0]);
+    transDate = tempDate.toLocaleDateString();
+  } else {
+    time.hour = parseInt(timePieces[0]) + 9 - 24;
+    var newDate = new Date(dateComponents[0]);
+    newDate.setDate(newDate.getDate() + 1);
+    transDate = newDate.toLocaleDateString();
+  }
+  time.minutes = parseInt(timePieces[1]);
+  return [transDate, time.hour + ":" + time.minutes];
+}
+export {
+  selectProfile,
+  converToThumbnail,
+  dataUrlToFile,
+  computeChannelName,
+  convertFromStringToDate,
+};

@@ -9,7 +9,7 @@ const dm = {
     directMessageReadyToDelete: false,
     directMessageList: [],
     createDirectMessageGroupModal: false,
-    directMessageMemberList: [],
+    directMessageMemberList: null,
   },
 
   mutations: {

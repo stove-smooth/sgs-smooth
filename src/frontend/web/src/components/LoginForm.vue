@@ -122,8 +122,9 @@ export default {
           password: this.pwd,
         };
         await this.LOGIN(userData);
+        //만약 초대링크로 들어온 경우면, community로 이동시켜줌.
         if (this.path != "" && this.communityId != "") {
-          console.log(this.path, this.communityId);
+          //커뮤니티 초대링크라면 커뮤니티로 이동시킨다.
           if (this.path == "c") {
             const communityHashCode = {
               code: this.communityId,
