@@ -62,6 +62,7 @@ const voice = {
       };
       context.state.ws.onmessage = function (message) {
         let parsedMessage = JSON.parse(message.data);
+        console.log("Received message", message.data);
         context.dispatch("onServerMessage", parsedMessage);
       };
     },
@@ -93,6 +94,10 @@ const voice = {
               }
             }
           );
+          break;
+        }
+        case "videoStateAnswer": {
+          context.dispatch("videoStateTranslated", message);
           break;
         }
         default: {
@@ -132,11 +137,14 @@ const voice = {
           if (error) {
             return console.error(error);
           }
-          this.generateOffer(participant.offerToReceiveVideo.bind(participant));
+          /*  participant.audioEnabled = !context.state.mute;
+          participant.videoEnabled = context.state.video; */
           this.audioEnabled = !context.state.mute;
           this.videoEnabled = context.state.video;
+          this.generateOffer(participant.offerToReceiveVideo.bind(participant));
         }
       );
+      console.log("내가 참가", participant);
       const myName = context.state.myName;
       context.commit("addParticipant", { name: myName, participant });
       msg.members.forEach(function (sender) {
@@ -162,6 +170,14 @@ const voice = {
         }
       );
     },
+    //case video state를 받는다.
+    videoStateTranslated(context, result) {
+      if (result.video == 1) {
+        context.state.participants[result.userId].rtcPeer.videoEnabled = true;
+      } else {
+        context.state.participants[result.userId].rtcPeer.videoEnabled = false;
+      }
+    },
     // participant.dispose에서 오는 요청
     disposeParticipant(context, participantName) {
       context.commit("disposeParticipant", participantName);
@@ -170,7 +186,6 @@ const voice = {
     receiveVideo(context, sender) {
       var participant = new Participant(sender);
       var video = participant.getVideoElement();
-
       //추가
       var options = {
         remoteVideo: video,
@@ -183,10 +198,10 @@ const voice = {
           if (error) {
             return console.error(error);
           }
-
           this.generateOffer(participant.offerToReceiveVideo.bind(participant));
         }
       );
+      console.log("다른 참가자 video를 받습니다.", participant);
       context.commit("addParticipant", { name: sender, participant });
     },
     setVoiceInfo(context, voiceInfo) {

@@ -9,7 +9,9 @@
                 <svg class="ping"></svg>
                 <div class="rtc-connection-description">영상 연결됨</div>
               </div>
-              <div class="subtext">{{ communityInfo.name }}</div>
+              <div class="subtext" v-if="communityInfo">
+                {{ communityInfo.name }}
+              </div>
             </div>
             <div
               class="device-controll-wrapper"
@@ -24,23 +26,6 @@
               </button>
             </div>
           </div>
-          <!-- <div class="media-action-button">
-            <button
-              aria-label="영상"
-              type="button"
-              class="camera-share-button"
-              v-bind:class="{
-                'camera-share-off': video,
-              }"
-              @click="toggleVideo"
-            >
-              <div class="primary-text-content">
-                <svg class="video-camera"></svg>
-                <span v-if="!video">영상 켜기</span>
-                <span v-else class="white-color">영상 끄기</span>
-              </div>
-            </button>
-          </div> -->
         </div>
       </div>
       <div class="my-section-container">

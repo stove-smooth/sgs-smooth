@@ -58,7 +58,11 @@
             오프라인 - {{ communityOfflineMemberList.length }}
           </h2>
           <div v-for="item in communityOfflineMemberList" :key="item.id">
-            <div class="primary-member-container clickable" role="listitem">
+            <div
+              class="primary-member-container clickable"
+              @click="clickMemberPlusAction($event, item)"
+              role="listitem"
+            >
               <div class="primary-member-layout">
                 <div class="avatar-container">
                   <div class="profile-wrapper" aria-label="칭구1">
@@ -112,7 +116,6 @@ export default {
       this.setClientY(y);
       this.setServerMemberPlusMenu(memberInfo);
     },
-
     onClick(e) {
       if (this.serverMemberPlusMenu) {
         if (
