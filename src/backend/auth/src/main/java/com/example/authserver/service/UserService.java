@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -53,12 +54,13 @@ public class UserService extends BaseTimeEntity {
 
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
         User account = User.createAccount(dto);
-        accountRepository.save(account);
+        User save = accountRepository.save(account);
 
         Device device = Device.builder()
                 .user(account)
                 .last_access(LocalDateTime.now()).build();
         deviceRepository.save(device);
+        dto.setId(save.getId());
 
         return dto;
     }
@@ -199,8 +201,13 @@ public class UserService extends BaseTimeEntity {
     }
 
     @Transactional
-    public void changeLastAccess(Long id) {
-        Device device = deviceRepository.findByUserId(id);
-        device.setLast_access(LocalDateTime.now());
+    public Map<Long,String> getDeviceToken(List<Long> id) {
+        Map<Long,String> result = new HashMap<>();
+        List<Device> device = deviceRepository.findByUserId(id);
+        for (Device d : device) {
+            result.put(d.getUser().getId(), d.getToken());
+        }
+
+        return result;
     }
 }

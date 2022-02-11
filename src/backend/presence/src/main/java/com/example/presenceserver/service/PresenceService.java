@@ -8,10 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -99,6 +96,28 @@ public class PresenceService {
             }
         }
 
+        return result;
+    }
+
+    public Map<String,String> getState() {
+        Map<String,String> result = new HashMap<>();
+        List<String> keys = redisTemplate.keys("*").stream()
+                .filter(k -> String.valueOf(k).contains("STATUS")).collect(Collectors.toList());
+        for (String i : keys) {
+            String value = redisTemplate.opsForValue().get(i).toString();
+            result.put(i,value);
+        }
+        return result;
+    }
+
+    public Map<String, String> allInfo() {
+        Map<String,String> result = new HashMap<>();
+        List<String> keys = redisTemplate.keys("*").stream().collect(Collectors.toList());
+
+        for (String i : keys) {
+            String value = redisTemplate.opsForValue().get(i).toString();
+            result.put(i,value);
+        }
         return result;
     }
 }

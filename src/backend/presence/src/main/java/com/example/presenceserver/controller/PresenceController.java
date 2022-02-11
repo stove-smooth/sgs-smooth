@@ -54,8 +54,18 @@ public class PresenceController {
 
     // 유저들 on, off 상태 정보 반환
     @GetMapping("/user-state")
-    public DataResponse<Map<Long,String>> getUsersState() {
-        return responseService.getDataResponse(presenceService.getUsersState());
+    public Map<Long,String> getUsersState() {
+        return presenceService.getUsersState();
+    }
+
+    @GetMapping("/for-me")
+    public Map<String,String> getState () {
+        return presenceService.getState();
+    }
+
+    @GetMapping("/all-redis-info")
+    public Map<String,String> allInfo() {
+        return presenceService.allInfo();
     }
 
     @PostMapping("/read")

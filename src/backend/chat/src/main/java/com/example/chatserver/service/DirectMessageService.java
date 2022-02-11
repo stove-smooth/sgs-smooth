@@ -160,19 +160,44 @@ public class DirectMessageService {
         }
     }
 
-    public void messageCount(MessageCountRequest messageCountRequest) {
+    public List<MessageCountResponse> messageCount(MessageCountRequest messageCountRequest) {
         Long userId = messageCountRequest.getUserId();
         List<MessageCountResponse> count = new ArrayList<>();
+        Map<String,MessageCountResponse> sortMe = new HashMap<>();
         for (Long roomId: messageCountRequest.getRoomIds()) {
             String room = "r-" + roomId;
             MessageTime messageTime = messageTimeRepository.findByChannelId(room);
-            LocalDateTime start = messageTime.getRead().get(String.valueOf(userId));
-            start = start.plusHours(9);
-            List<DirectMessage> messages = directChatRepository.findByChannelIdAndLocalDateTimeBetween(roomId, start,LocalDateTime.now());
-            int size = messages.size();
-            LocalDateTime lastMessageTime = messages.get(size - 1).getLocalDateTime();
-//            lastMessageTime.
+            if (messageTime == null) {
+                MessageCountResponse temp = MessageCountResponse.builder()
+                        .roomId(roomId)
+                        .count(0).build();
+                sortMe.put(String.valueOf(LocalDateTime.now().minusYears(1)),temp);
+            } else {
+                LocalDateTime start = messageTime.getRead().get(String.valueOf(userId));
+                log.info(String.valueOf(start));
+                List<DirectMessage> messages = directChatRepository.findByChannelIdAndLocalDateTimeBetween(roomId, start,LocalDateTime.now());
+                int size = messages.size();
+                log.info(String.valueOf(size));
+                if (size == 0) {
+                    MessageCountResponse temp = MessageCountResponse.builder()
+                            .roomId(roomId)
+                            .count(0).build();
+                    sortMe.put(String.valueOf(start),temp);
+                } else {
+                    LocalDateTime lastMessageTime = messages.get(size - 1).getLocalDateTime();
+                    MessageCountResponse temp = MessageCountResponse.builder()
+                            .roomId(roomId)
+                            .count(size).build();
+                    sortMe.put(String.valueOf(lastMessageTime),temp);
+                }
+            }
         }
+        Object[] objects = sortMe.keySet().toArray();
+        Arrays.sort(objects);
+        for (String i : sortMe.keySet()) {
+            count.add(sortMe.get(i));
+        }
+        return count;
 
     }
 }
