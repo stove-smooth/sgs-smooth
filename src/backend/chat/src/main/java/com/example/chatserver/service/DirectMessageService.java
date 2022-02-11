@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -163,40 +164,59 @@ public class DirectMessageService {
     public List<MessageCountResponse> messageCount(MessageCountRequest messageCountRequest) {
         Long userId = messageCountRequest.getUserId();
         List<MessageCountResponse> count = new ArrayList<>();
-        Map<String,MessageCountResponse> sortMe = new HashMap<>();
+        List<MessageCountResponse> zero = new ArrayList<>();
+        Map<Long,MessageCountResponse> sortMe = new HashMap<>();
         for (Long roomId: messageCountRequest.getRoomIds()) {
             String room = "r-" + roomId;
             MessageTime messageTime = messageTimeRepository.findByChannelId(room);
-            if (messageTime == null) {
+            List<DirectMessage> messages = directChatRepository.findByChannelId(roomId);
+            if (messageTime == null || messages.size() == 0) {
                 MessageCountResponse temp = MessageCountResponse.builder()
                         .roomId(roomId)
                         .count(0).build();
-                sortMe.put(String.valueOf(LocalDateTime.now().minusYears(1)),temp);
+                zero.add(temp);
             } else {
+                // 해당 채널에서 유저의 마지막 접속 시간 확인
                 LocalDateTime start = messageTime.getRead().get(String.valueOf(userId));
-                log.info(String.valueOf(start));
-                List<DirectMessage> messages = directChatRepository.findByChannelIdAndLocalDateTimeBetween(roomId, start,LocalDateTime.now());
-                int size = messages.size();
-                log.info(String.valueOf(size));
-                if (size == 0) {
+
+                // 유저가 그 채널에 들어간적 없으면
+                if (start == null) {
+                    int Msize = messages.size();
                     MessageCountResponse temp = MessageCountResponse.builder()
                             .roomId(roomId)
-                            .count(0).build();
-                    sortMe.put(String.valueOf(start),temp);
-                } else {
-                    LocalDateTime lastMessageTime = messages.get(size - 1).getLocalDateTime();
-                    MessageCountResponse temp = MessageCountResponse.builder()
-                            .roomId(roomId)
-                            .count(size).build();
-                    sortMe.put(String.valueOf(lastMessageTime),temp);
+                            .count(messages.size())
+                            .localDateTime(messages.get(Msize-1).getLocalDateTime().format(DateTimeFormatter.ofPattern("yyyyMMddhhmmssSSS"))).build();
+                    sortMe.put(Long.valueOf(messages.get(Msize-1).getLocalDateTime().format(DateTimeFormatter.ofPattern("yyyyMMddhhmmssSSS"))),temp);
+                }
+                // 유저가 그 채널에 들어간적 있으면
+                else {
+                    List<DirectMessage> msg = directChatRepository.findByChannelIdAndLocalDateTimeBetween(roomId, start,LocalDateTime.now());
+                    int size = msg.size();
+                    // 메세지를 다 읽었으면
+                    if (size == 0) {
+                        int Msize = messages.size();
+                        MessageCountResponse temp = MessageCountResponse.builder()
+                                .roomId(roomId)
+                                .count(0)
+                                .localDateTime(messages.get(Msize-1).getLocalDateTime().format(DateTimeFormatter.ofPattern("yyyyMMddhhmmssSSS"))).build();
+                        sortMe.put(Long.valueOf(messages.get(Msize-1).getLocalDateTime().format(DateTimeFormatter.ofPattern("yyyyMMddhhmmssSSS"))),temp);
+                    }
+                    // 안 읽은 메세지가 있다면
+                    else {
+                        MessageCountResponse temp = MessageCountResponse.builder()
+                                .roomId(roomId)
+                                .count(size)
+                                .localDateTime(messages.get(size - 1).getLocalDateTime().format(DateTimeFormatter.ofPattern("yyyyMMddhhmmssSSS"))).build();
+                        sortMe.put(Long.valueOf(messages.get(size - 1).getLocalDateTime().format(DateTimeFormatter.ofPattern("yyyyMMddhhmmssSSS"))),temp);
+                    }
                 }
             }
         }
-        Object[] objects = sortMe.keySet().toArray();
-        Arrays.sort(objects);
-        for (String i : sortMe.keySet()) {
+        SortedSet<Long> keys = new TreeSet<>(sortMe.keySet()).descendingSet();
+        for (Long i : keys) {
             count.add(sortMe.get(i));
         }
+        count.addAll(zero);
         return count;
 
     }

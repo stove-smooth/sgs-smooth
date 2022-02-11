@@ -98,6 +98,11 @@ public class UserService extends BaseTimeEntity {
 
     @Transactional
     public MailResponse sendEmail(String email) {
+        User exist = accountRepository.findByEmail(email);
+        if (exist != null) {
+            throw new CustomException(CustomExceptionStatus.DUPLICATED_EMAIL);
+        }
+
         if (email == null) {
             throw new CustomException(CustomExceptionStatus.POST_USERS_EMPTY_EMAIL);
         }

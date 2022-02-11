@@ -1,10 +1,15 @@
 package com.example.chatserver.config.message;
 
 import com.example.chatserver.client.CommunityClient;
+import com.example.chatserver.client.NotificationClient;
 import com.example.chatserver.client.PresenceClient;
 import com.example.chatserver.client.UserClient;
+import com.example.chatserver.config.TcpClientGateway;
 import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.domain.DirectMessage;
+import com.example.chatserver.dto.request.ChannelNotiRequest;
+import com.example.chatserver.dto.request.DirectNotiRequest;
+import com.example.chatserver.dto.request.LoginSessionRequest;
 import com.example.chatserver.dto.response.CommunityFeignResponse;
 import com.example.chatserver.dto.response.FileUploadResponse;
 import com.example.chatserver.dto.response.UserInfoFeignResponse;
@@ -25,6 +30,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -50,8 +56,8 @@ public class MessageListener {
     private final RedisTemplate<String, CommunityFeignResponse.UserIdResponse> redisTemplateForIds;
     private final PresenceClient presenceClient;
     private final CommunityClient communityClient;
-//    private final TcpClientGateway tcpClientGateway;
-//    private final NotificationClient notificationClient;
+    private final TcpClientGateway tcpClientGateway;
+    private final NotificationClient notificationClient;
 
     // 레디스 채팅 저장 시간 2주
     private long TIME = 14 * 24 * 60 * 60 * 1000L;
@@ -67,11 +73,41 @@ public class MessageListener {
         msg.put("message",directChat.getContent());
         msg.put("time", String.valueOf(directChat.getLocalDateTime()));
 
+        Object Community_key = redisTemplateForIds.opsForValue().get("R" + directChat.getChannelId());
+        String send;
+        if (Community_key == null) {
+            // 커뮤니티에 속해 있는 유저 id값 반환
+            CommunityFeignResponse userIds = communityClient.getUserIdsFromDM(directChat.getChannelId());
+            redisTemplateForIds.opsForValue().set("R"+ directChat.getChannelId(),userIds.getResult(),TIME,TimeUnit.MILLISECONDS);
+            LoginSessionRequest loginSessionRequest = LoginSessionRequest.builder()
+                    .type("direct")
+                    .community_id("r-" + directChat.getChannelId())
+                    .ids(userIds.getResult().getMembers()).build();
+            send = tcpClientGateway.send(loginSessionRequest.toString());
+
+
+        } else {
+            CommunityFeignResponse.UserIdResponse userIdResponse = objectMapper.convertValue(Community_key, new TypeReference<>() {});
+            LoginSessionRequest loginSessionRequest = LoginSessionRequest.builder()
+                    .type("community")
+                    .community_id("c-" + directChat.getChannelId())
+                    .ids(userIdResponse.getMembers()).build();
+            send = tcpClientGateway.send(loginSessionRequest.toString());
+        }
+//        DirectNotiRequest request = DirectNotiRequest.builder()
+//                .userId(directChat.getUserId())
+//                .username(directChat.getName())
+//                .type("text")
+//                .roomName("DM")
+//                .content(directChat.getContent())
+//                .roomId(directChat.getChannelId())
+//                .target(send).build();
+//        notificationClient.directNoti(request);
+
         DirectMessage save = directChatRepository.save(directChat);
         msg.put("id",save.getId());
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(msg);
-        
         template.convertAndSend("/topic/direct/" + directChat.getChannelId(), json);
     }
 
@@ -152,26 +188,37 @@ public class MessageListener {
 
 
         Object Community_key = redisTemplateForIds.opsForValue().get("CH" + channelMessage.getCommunityId());
+        String send;
         if (Community_key == null) {
             // 커뮤니티에 속해 있는 유저 id값 반환
             CommunityFeignResponse userIds = communityClient.getUserIds(channelMessage.getCommunityId());
             redisTemplateForIds.opsForValue().set("CH"+ channelMessage.getCommunityId(),userIds.getResult(),TIME,TimeUnit.MILLISECONDS);
+            LoginSessionRequest loginSessionRequest = LoginSessionRequest.builder()
+                    .type("community")
+                    .community_id("c-" + channelMessage.getChannelId())
+                    .ids(userIds.getResult().getMembers()).build();
+            send = tcpClientGateway.send(loginSessionRequest.toString());
 
-            Map<Long, Boolean> readCheck = presenceClient.read(userIds.getResult().getMembers());
-            channelMessage.setRead(readCheck);
         } else {
             CommunityFeignResponse.UserIdResponse userIdResponse = objectMapper.convertValue(Community_key, new TypeReference<>() {
             });
-            Map<Long, Boolean> readCheck = presenceClient.read(userIdResponse.getMembers());
-            channelMessage.setRead(readCheck);
+            LoginSessionRequest loginSessionRequest = LoginSessionRequest.builder()
+                    .type("community")
+                    .community_id("c-" + channelMessage.getChannelId())
+                    .ids(userIdResponse.getMembers()).build();
+            send = tcpClientGateway.send(loginSessionRequest.toString());
         }
-//
-//        RequestPushMessage request = RequestPushMessage
-//                .builder()
-//                .title("방이름")
-//                .body(msg.get("name") + ":" + msg.get("message")).build();
-//
-//        notificationClient.notificationTopics("/topic/group",request);
+
+//        ChannelNotiRequest request = ChannelNotiRequest.builder()
+//                .userId(channelMessage.getUserId())
+//                .username(channelMessage.getName())
+//                .type("text")
+//                .content(channelMessage.getContent())
+//                .channelName("CHANNEL")
+//                .communityId(channelMessage.getCommunityId())
+//                .channelId(channelMessage.getChannelId())
+//                .target(send).build();
+//        notificationClient.channelNoti(request);
 
         ChannelMessage save = channelChatRepository.save(channelMessage);
         msg.put("id",save.getId());
