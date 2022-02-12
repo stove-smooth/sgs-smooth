@@ -340,6 +340,9 @@
             </div>
           </div>
         </div>
+        <div class="chatting-state" v-if="messageTyper">
+          {{ messageTyper }}님께서 입력하고 있어요
+        </div>
       </div>
     </div>
   </div>
@@ -370,6 +373,9 @@ export default {
       more: false,
       prevScrollHeight: 0,
       modifyLogMessage: "",
+      recentChatted: null,
+      messageTyper: "",
+      setTimeId: "",
     };
   },
   mounted() {
@@ -453,6 +459,10 @@ export default {
           );
           this.receiveList = array;
         }
+        //타이핑 구독 수신. 마지막으로 타이핑친 사람의 이름은 3초뒤에 사라진다.
+        if (receivedForm.type == "typing") {
+          this.messageTyper = receivedForm.name;
+        }
       }
     );
   },
@@ -463,15 +473,15 @@ export default {
     text() {
       if (this.recentChatted) {
         //채팅한 기록이 있을 경우
-        if (new Date() - this.recentChatted >= 10000) {
+        if (new Date() - this.recentChatted >= 6000) {
           this.recentChatted = new Date();
           const msg = {
             content: this.nickname,
-            channelId: this.$route.params.channelid,
+            channelId: this.$route.params.id,
             type: "typing",
           };
           this.stompSocketClient.send(
-            "/kafka/send-channel-typing",
+            "/kafka/send-direct-typing",
             JSON.stringify(msg),
             {}
           );
@@ -483,15 +493,26 @@ export default {
         this.recentChatted = new Date();
         const msg = {
           content: this.nickname,
-          channelId: this.$route.params.channelid,
+          channelId: this.$route.params.id,
           type: "typing",
         };
         this.stompSocketClient.send(
-          "/kafka/send-channel-typing",
+          "/kafka/send-direct-typing",
           JSON.stringify(msg),
           {}
         );
       }
+    },
+    //채팅 치는 사람을 표시하기 위함
+    messageTyper(newVal, oldVal) {
+      if (oldVal) {
+        if (this.setTimeId) {
+          clearTimeout(this.setTimeId);
+        }
+      }
+      this.setTimeId = setTimeout(() => {
+        this.messageTyper = "";
+      }, 3000);
     },
   },
   methods: {

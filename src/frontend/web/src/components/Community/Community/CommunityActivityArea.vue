@@ -348,8 +348,8 @@
             </div>
           </div>
         </div>
-        <div class="chatting-state">
-          `${this.messageTyper}님께서 입력하고 있어요...`
+        <div class="chatting-state" v-if="messageTyper">
+          {{ messageTyper }}님께서 입력하고 있어요
         </div>
       </div>
     </div>
@@ -382,7 +382,8 @@ export default {
       prevScrollHeight: 0,
       modifyLogMessage: "",
       recentChatted: null,
-      messageTyper: [],
+      messageTyper: "",
+      setTimeId: "",
     };
   },
   mounted() {
@@ -438,8 +439,6 @@ export default {
             }
           }
           receivedForm.isOther = isOther;
-        } else {
-          console.log("타이핑에 관한 구독이 등장.", receivedForm);
         }
 
         //이미지를 보낼시 이미지 처리
@@ -468,10 +467,16 @@ export default {
         }
         //삭제 구독 메시지 수신시,현재 로드된 메시지 중 삭제한 메시지가 있다면 삭제해준다.
         if (receivedForm.type == "delete") {
+          console.log("전체 메시지", this.receiveList);
           let array = this.receiveList.filter(
             (element) => element.id !== receivedForm.id
           );
           this.receiveList = array;
+          //console.log("전체 메시지", this.receiveList);
+        }
+        //타이핑 구독 수신. 마지막으로 타이핑친 사람의 이름은 3초뒤에 사라진다.
+        if (receivedForm.type == "typing") {
+          this.messageTyper = receivedForm.name;
         }
       }
     );
@@ -483,7 +488,7 @@ export default {
     text() {
       if (this.recentChatted) {
         //채팅한 기록이 있을 경우
-        if (new Date() - this.recentChatted >= 10000) {
+        if (new Date() - this.recentChatted >= 6000) {
           this.recentChatted = new Date();
           const msg = {
             content: this.nickname,
@@ -512,6 +517,17 @@ export default {
           {}
         );
       }
+    },
+    //채팅 치는 사람을 표시하기 위함
+    messageTyper(newVal, oldVal) {
+      if (oldVal) {
+        if (this.setTimeId) {
+          clearTimeout(this.setTimeId);
+        }
+      }
+      this.setTimeId = setTimeout(() => {
+        this.messageTyper = "";
+      }, 3000);
     },
   },
   methods: {
@@ -769,6 +785,7 @@ export default {
           this.page
         );
         let receivedAllMessage = result.data.result;
+        console.log(receivedAllMessage);
         if (receivedAllMessage.length == 50) {
           this.more = true;
         } else {

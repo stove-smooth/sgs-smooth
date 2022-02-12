@@ -34,6 +34,7 @@ const voice = {
       state.roomName = voiceInfo.roomName;
     },
     addParticipant(state, { name, participant }) {
+      console.log("나는 누구든 참여자가 늘어납니다.", name, participant);
       if (state.participants === null) {
         state.participants = {};
       }
@@ -198,6 +199,10 @@ const voice = {
         }
       );
       console.log("다른 참가자 video를 받습니다.", participant);
+      //처음 입장시 내 헤드셋이 꺼져있다면 다른 참가자들의 마이크가 음소거된다.
+      if (context.state.deafen) {
+        video.muted = true;
+      }
       context.commit("addParticipant", { name: sender, participant });
     },
     setVoiceInfo(context, voiceInfo) {
