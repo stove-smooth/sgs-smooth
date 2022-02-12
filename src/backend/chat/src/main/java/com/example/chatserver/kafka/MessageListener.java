@@ -62,7 +62,7 @@ public class MessageListener {
     // 레디스 채팅 저장 시간 2주
     private long TIME = 14 * 24 * 60 * 60 * 1000L;
 
-    @KafkaListener(topics = topicNameForDirect, groupId = directGroup, containerFactory = "kafkaListenerContainerFactoryForDirect")
+    @KafkaListener(topics = topicNameForDirect, groupId = directGroup, containerFactory = "directFactory")
     public void directMessageListener(DirectMessage directChat) throws JsonProcessingException {
         HashMap<String,String> msg = new HashMap<>();
 
@@ -176,7 +176,7 @@ public class MessageListener {
         template.convertAndSend("/topic/direct/" + directChat.getChannelId(), json);
     }
 
-    @KafkaListener(topics = topicNameForCommunity, groupId = channelGroup, containerFactory = "kafkaListenerContainerFactoryForCommunity")
+    @KafkaListener(topics = topicNameForCommunity, groupId = channelGroup, containerFactory = "communityFactory")
     public void communityChatListener(ChannelMessage channelMessage) throws JsonProcessingException {
         HashMap<String,String> msg = new HashMap<>();
 

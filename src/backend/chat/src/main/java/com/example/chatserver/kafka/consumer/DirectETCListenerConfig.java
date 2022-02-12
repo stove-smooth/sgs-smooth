@@ -29,17 +29,17 @@ public class DirectETCListenerConfig {
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, DirectMessage> directETCFactory() {
         ConcurrentKafkaListenerContainerFactory<String, DirectMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactoryForDirect());
+        factory.setConsumerFactory(consumerFactoryForDirectETC());
         return factory;
     }
 
     @Bean
-    public ConsumerFactory<String, DirectMessage> consumerFactoryForDirect() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(), new JsonDeserializer<>(DirectMessage.class));
+    public ConsumerFactory<String, DirectMessage> consumerFactoryForDirectETC() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigurationsForDirectETC(), new StringDeserializer(), new JsonDeserializer<>(DirectMessage.class));
     }
 
     @Bean
-    public Map<String, Object> consumerConfigurations() {
+    public Map<String, Object> consumerConfigurationsForDirectETC() {
         Map<String,Object> configurations = new HashMap<>();
         configurations.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configurations.put(ConsumerConfig.GROUP_ID_CONFIG, groupName);

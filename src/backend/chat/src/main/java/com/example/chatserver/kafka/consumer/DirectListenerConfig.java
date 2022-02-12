@@ -1,8 +1,6 @@
 package com.example.chatserver.kafka.consumer;
 
-import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.domain.DirectMessage;
-import com.example.chatserver.dto.response.FileUploadResponse;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +25,7 @@ public class DirectListenerConfig {
     private final String groupName = "direct-server-group";
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, DirectMessage> kafkaListenerContainerFactoryForDirect() {
+    public ConcurrentKafkaListenerContainerFactory<String, DirectMessage> directFactory() {
         ConcurrentKafkaListenerContainerFactory<String, DirectMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactoryForDirect());
         return factory;
@@ -35,11 +33,11 @@ public class DirectListenerConfig {
 
     @Bean
     public ConsumerFactory<String, DirectMessage> consumerFactoryForDirect() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(), new JsonDeserializer<>(DirectMessage.class));
+        return new DefaultKafkaConsumerFactory<>(consumerConfigurationsForDirect(), new StringDeserializer(), new JsonDeserializer<>(DirectMessage.class));
     }
 
     @Bean
-    public Map<String, Object> consumerConfigurations() {
+    public Map<String, Object> consumerConfigurationsForDirect() {
         Map<String,Object> configurations = new HashMap<>();
         configurations.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configurations.put(ConsumerConfig.GROUP_ID_CONFIG, groupName);

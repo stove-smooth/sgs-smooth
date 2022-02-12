@@ -27,7 +27,7 @@ public class ChannelListenerConfig {
     private final String groupName = "channel-server-group";
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, ChannelMessage> kafkaListenerContainerFactoryForCommunity() {
+    public ConcurrentKafkaListenerContainerFactory<String, ChannelMessage> communityFactory() {
         ConcurrentKafkaListenerContainerFactory<String,ChannelMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactoryForCommunity());
         return factory;
@@ -35,11 +35,11 @@ public class ChannelListenerConfig {
 
     @Bean
     public ConsumerFactory<String, ChannelMessage> consumerFactoryForCommunity() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(), new JsonDeserializer<>(ChannelMessage.class));
+        return new DefaultKafkaConsumerFactory<>(consumerConfigurationsForCommunity(), new StringDeserializer(), new JsonDeserializer<>(ChannelMessage.class));
     }
 
     @Bean
-    public Map<String, Object> consumerConfigurations() {
+    public Map<String, Object> consumerConfigurationsForCommunity() {
         Map<String,Object> configurations = new HashMap<>();
         configurations.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configurations.put(ConsumerConfig.GROUP_ID_CONFIG, groupName);

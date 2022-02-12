@@ -35,11 +35,11 @@ public class FileUploadListenerConfig {
 
     @Bean
     public ConsumerFactory<String, FileUploadResponse> consumerFactoryForFile() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigurations(),new StringDeserializer(), new JsonDeserializer<>(FileUploadResponse.class));
+        return new DefaultKafkaConsumerFactory<>(consumerConfigurationsForFile(),new StringDeserializer(), new JsonDeserializer<>(FileUploadResponse.class));
     }
 
     @Bean
-    public Map<String, Object> consumerConfigurations() {
+    public Map<String, Object> consumerConfigurationsForFile() {
         Map<String,Object> configurations = new HashMap<>();
         configurations.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configurations.put(ConsumerConfig.GROUP_ID_CONFIG, groupName);
