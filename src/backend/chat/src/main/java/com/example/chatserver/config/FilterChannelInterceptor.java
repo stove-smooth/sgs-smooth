@@ -1,8 +1,7 @@
 package com.example.chatserver.config;
 
 import com.example.chatserver.client.PresenceClient;
-import com.example.chatserver.client.UserClient;
-import com.example.chatserver.config.message.JwtTokenFilter;
+import com.example.chatserver.kafka.JwtTokenFilter;
 import com.example.chatserver.domain.MessageTime;
 import com.example.chatserver.dto.request.LoginSessionRequest;
 import com.example.chatserver.repository.MessageTimeRepository;

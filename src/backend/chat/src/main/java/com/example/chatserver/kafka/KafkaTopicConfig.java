@@ -1,4 +1,4 @@
-package com.example.chatserver.config;
+package com.example.chatserver.kafka;
 
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -40,26 +40,26 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic directMessage() {
-        return new NewTopic(directMessageTopic,3, (short) 3);
+        return new NewTopic(directMessageTopic,1, (short) 1);
     }
 
     @Bean
     public NewTopic etcDirectMessage() {
-        return new NewTopic(etcDirectTopic,3,(short) 3);
+        return new NewTopic(etcDirectTopic,1,(short) 1);
     }
 
     @Bean
     public NewTopic communityMessage() {
-        return new NewTopic(communityMessageTopic,3, (short) 3);
+        return new NewTopic(communityMessageTopic,1, (short) 1);
     }
 
     @Bean
     public NewTopic etcCommunityMessage() {
-        return new NewTopic(etcCommunityTopic,3,(short) 3);
+        return new NewTopic(etcCommunityTopic,1,(short) 1);
     }
 
     @Bean
     public NewTopic fileUpload() {
-        return new NewTopic(fileTopic,3, (short) 3);
+        return new NewTopic(fileTopic,1, (short) 1);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.chatserver.config.message;
+package com.example.chatserver.kafka;
 
 import com.example.chatserver.client.CommunityClient;
 import com.example.chatserver.client.NotificationClient;
@@ -7,8 +7,6 @@ import com.example.chatserver.client.UserClient;
 import com.example.chatserver.config.TcpClientGateway;
 import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.domain.DirectMessage;
-import com.example.chatserver.dto.request.ChannelNotiRequest;
-import com.example.chatserver.dto.request.DirectNotiRequest;
 import com.example.chatserver.dto.request.LoginSessionRequest;
 import com.example.chatserver.dto.response.CommunityFeignResponse;
 import com.example.chatserver.dto.response.FileUploadResponse;
@@ -30,8 +28,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -45,12 +41,16 @@ public class MessageListener {
     private final String topicNameForCommunity = "channel-server-topic";
     private final String topicNameForCommunityEtc = "etc-community-topic";
     private final String topicForFileUpload = "file-topic";
-    private final String groupName = "chat-server-group";
+
+    private final String directGroup = "direct-server-group";
+    private final String directETCGroup = "direct-etc-server-group";
+    private final String channelGroup = "channel-server-group";
+    private final String channelETCGroup = "channel-etc-server-group";
+    private final String fileGroup = "file-server-group";
 
     private final ObjectMapper objectMapper;
     private final SimpMessagingTemplate template;
     private final DirectMessageRepository directChatRepository;
-    private final UserClient userClient;
     private final ChannelMessageRepository channelChatRepository;
     private final RedisTemplate<String, UserInfoFeignResponse.UserInfoResponse> redisTemplate;
     private final RedisTemplate<String, CommunityFeignResponse.UserIdResponse> redisTemplateForIds;
@@ -62,10 +62,11 @@ public class MessageListener {
     // 레디스 채팅 저장 시간 2주
     private long TIME = 14 * 24 * 60 * 60 * 1000L;
 
-    @KafkaListener(topics = topicNameForDirect, groupId = groupName, containerFactory = "kafkaListenerContainerFactoryForDirect")
+    @KafkaListener(topics = topicNameForDirect, groupId = directGroup, containerFactory = "directFactory")
     public void directMessageListener(DirectMessage directChat) throws JsonProcessingException {
         HashMap<String,String> msg = new HashMap<>();
 
+        log.info("clear");
         msg.put("type","message");
         msg.put("userId", String.valueOf(directChat.getUserId()));
         msg.put("name",directChat.getName());
@@ -111,7 +112,7 @@ public class MessageListener {
         template.convertAndSend("/topic/direct/" + directChat.getChannelId(), json);
     }
 
-    @KafkaListener(topics = topicNameForDirectEtc,groupId = groupName, containerFactory = "kafkaListenerContainerFactoryForDirect")
+    @KafkaListener(topics = topicNameForDirectEtc,groupId = directETCGroup, containerFactory = "directETCFactory")
     public void directEctListener(DirectMessage directChat) throws JsonProcessingException {
         String type = directChat.getType();
         HashMap<String,String> msg = new HashMap<>();
@@ -175,7 +176,7 @@ public class MessageListener {
         template.convertAndSend("/topic/direct/" + directChat.getChannelId(), json);
     }
 
-    @KafkaListener(topics = topicNameForCommunity, groupId = groupName, containerFactory = "kafkaListenerContainerFactoryForCommunity")
+    @KafkaListener(topics = topicNameForCommunity, groupId = channelGroup, containerFactory = "communityFactory")
     public void communityChatListener(ChannelMessage channelMessage) throws JsonProcessingException {
         HashMap<String,String> msg = new HashMap<>();
 
@@ -228,7 +229,7 @@ public class MessageListener {
         template.convertAndSend("/topic/group/" + channelMessage.getChannelId(), json);
     }
 
-    @KafkaListener(topics = topicNameForCommunityEtc,groupId = groupName, containerFactory = "kafkaListenerContainerFactoryForCommunity")
+    @KafkaListener(topics = topicNameForCommunityEtc,groupId = channelETCGroup, containerFactory = "ChannelETCFactory")
     public void CommunityEctListener(ChannelMessage channelMessage) throws JsonProcessingException {
         String type = channelMessage.getType();
         HashMap<String,String> msg = new HashMap<>();
@@ -291,7 +292,7 @@ public class MessageListener {
         template.convertAndSend("/topic/group/" + channelMessage.getChannelId(), json);
     }
 
-    @KafkaListener(topics = topicForFileUpload,groupId = groupName, containerFactory = "kafkaListenerContainerFactoryForFile")
+    @KafkaListener(topics = topicForFileUpload,groupId = fileGroup, containerFactory = "kafkaListenerContainerFactoryForFile")
     public void fileUpload(FileUploadResponse fileUploadResponse) throws IOException {
         if (fileUploadResponse.getType().equals("direct")) {
             String json = objectMapper.writeValueAsString(fileUploadResponse);
