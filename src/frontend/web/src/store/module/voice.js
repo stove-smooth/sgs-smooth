@@ -16,9 +16,10 @@ const voice = {
     video: false, //video 보임 여부
     //현재 음성 연결 위치
     currentVoiceRoom: null,
+    currentVoiceRoomType: null,
   },
   mutations: {
-    WS_INIT(state, url) {
+    setWsInit(state, url) {
       state.ws = new SockJS(url, null, {
         transports: ["websocket", "xhr-streaming", "xhr-polling"],
       });
@@ -36,7 +37,6 @@ const voice = {
       if (state.participants === null) {
         state.participants = {};
       }
-      //state.participants[name] = participant;
       Vue.set(state.participants, name, participant);
     },
     disposeParticipant(state, participantName) {
@@ -56,11 +56,15 @@ const voice = {
     setCurrentVoiceRoom(state, currentVoiceRoom) {
       state.currentVoiceRoom = currentVoiceRoom;
     },
+    setCurrentVoiceRoomType(state, currentVoiceRoomType) {
+      state.currentVoiceRoomType = currentVoiceRoomType;
+    },
   },
   actions: {
-    wsInit(context, url) {
-      console.log("init");
-      context.commit("WS_INIT", url);
+    wsInit(context, info) {
+      console.log("init", info);
+      context.commit("setWsInit", info.url);
+      context.commit("setCurrentVoiceRoomType", info.type);
       context.state.ws.onopen = function () {
         console.log("connected");
         context.commit("setWsOpen", true);
@@ -111,18 +115,8 @@ const voice = {
       }
     },
     /**case */
-    //case 1 - 내가 참가했을때
+    //case -1 내가 참가했을때
     onExistingParticipants(context, msg) {
-      /* let constraints = {
-        audio: true,
-        video: {
-          mandatory: {
-            maxWidth: 320,
-            maxFrameRate: 15,
-            minFrameRate: 15,
-          },
-        },
-      }; */
       console.log(
         context.state.myName + " registered in room " + context.state.roomName
       );
@@ -132,7 +126,6 @@ const voice = {
 
       var options = {
         localVideo: video,
-        //mediaConstraints: constraints,
         onicecandidate: participant.onIceCandidate.bind(participant),
       };
 
@@ -142,8 +135,6 @@ const voice = {
           if (error) {
             return console.error(error);
           }
-          /*  participant.audioEnabled = !context.state.mute;
-          participant.videoEnabled = context.state.video; */
           this.audioEnabled = !context.state.mute;
           this.videoEnabled = context.state.video;
           this.generateOffer(participant.offerToReceiveVideo.bind(participant));
@@ -175,7 +166,7 @@ const voice = {
         }
       );
     },
-    //case video state를 받는다.
+    //case -6 video state를 받는다.
     videoStateTranslated(context, result) {
       if (result.video == 1) {
         context.state.participants[result.userId].rtcPeer.videoEnabled = true;
@@ -191,7 +182,7 @@ const voice = {
     receiveVideo(context, sender) {
       var participant = new Participant(sender);
       var video = participant.getVideoElement();
-      //추가
+
       var options = {
         remoteVideo: video,
         onicecandidate: participant.onIceCandidate.bind(participant),

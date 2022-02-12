@@ -351,8 +351,12 @@ export default {
           this.leaveRoom();
           this.setCurrentVoiceRoom(null);
         }
-        const url = "https://sig.yoloyolo.org/rtc";
-        await this.wsInit(url); //ws 전역 등록.
+        const wsInfo = {
+          url: "https://sig.yoloyolo.org/rtc",
+          type: "community",
+        };
+        //const url = "https://sig.yoloyolo.org/rtc";
+        await this.wsInit(wsInfo); //ws 전역 등록.
       }
       this.selected = id;
       if (this.video) {

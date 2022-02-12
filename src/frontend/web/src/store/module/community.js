@@ -7,15 +7,10 @@ import user from "./user.js";
 const community = {
   namespaced: true,
   state: {
+    //커뮤니티
     createCommunity: false,
-    createChannel: false,
-    createCategory: false,
-    categorySettingModal: false,
-    channelSettingModal: false,
     openCommunityPopout: null,
-    categoryReadyToDelete: false,
     communityReadyToDelete: false,
-    channelReadyToDelete: false,
     communityReadyToExit: false,
     communityReadyToBanish: false,
     communityList: [],
@@ -23,15 +18,29 @@ const community = {
     communityOnlineMemberList: [],
     communityOfflineMemberList: [],
     communitySettingModal: null,
-    messagePlusMenu: null,
     communityInviteModal: false,
     communityOwner: false,
     communityMessageReplyId: "",
+    communityMemberPlusMenu: null,
+
+    //카테고리
+    createCategory: false,
+    categorySettingModal: false,
+    categoryReadyToDelete: false,
+
+    //채널
+    createChannel: false,
+    channelSettingModal: false,
+    channelReadyToDelete: false,
+
+    //메시지
+    messagePlusMenu: null,
     messageEditId: "",
     messageFixId: "",
     openFixedMessagesModal: false,
-    communityMemberPlusMenu: null,
     messageReadyToDelete: false,
+
+    //현재 위치한 채널 타입
     currentChannelType: null,
   },
   mutations: {

@@ -3,6 +3,15 @@ const friends = {
   namespaced: true,
   state: {
     friendsStateMenu: "online",
+    /*
+    친구는 
+    online:온라인상태의 친구
+    accept:모든 친구
+    wait: 친구 요청온 사람
+    request: 친구가 되기 위해 요청 건 사람
+    ban: 차단한 사람
+    으로 구별된다.
+    **/
     friendsOnline: [],
     friendsAccept: [],
     friendsWait: [],

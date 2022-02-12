@@ -14,7 +14,7 @@
           </div>
         </template>
         <template v-else>
-          <template v-if="wsOpen"
+          <template v-if="wsOpen && currentVoiceRoomType == 'community'"
             ><div class="voice-sharing-container flex-direction-column">
               <community-chatting-menu-bar />
               <div class="server-activity-container1">
@@ -75,7 +75,7 @@ export default {
   },
   computed: {
     ...mapState("community", ["communityInfo"]),
-    ...mapState("voice", ["wsOpen"]),
+    ...mapState("voice", ["wsOpen", "currentVoiceRoomType"]),
   },
 };
 </script>
