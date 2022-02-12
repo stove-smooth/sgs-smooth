@@ -2,7 +2,7 @@
   <section class="primary-header">
     <div class="header-children-wrapper">
       <div class="primary-icon-wrapper">
-        <svg class="hashtag-icon"></svg>
+        <svg v-if="channelName" class="hashtag-icon"></svg>
       </div>
       <h3 class="server-name" aria-label="channel-name">{{ channelName }}</h3>
     </div>

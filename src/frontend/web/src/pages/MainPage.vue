@@ -9,7 +9,7 @@
           </div>
         </div>
       </div>
-      <server-popout />
+      <community-popout />
       <friends-plus-action />
       <message-plus-action />
       <create-community-modal />
@@ -20,7 +20,7 @@
       <create-category-modal />
       <category-setting-modal />
       <category-delete-modal />
-      <server-setting-modal />
+      <community-setting-modal />
       <template v-if="communityInviteModal">
         <invite-community-modal />
       </template>
@@ -30,7 +30,7 @@
       <community-exit-modal />
       <fix-message-modal />
       <fixed-messages-modal />
-      <server-members-plus-action />
+      <community-members-plus-action />
       <community-banish-modal />
       <create-direct-message-group-modal />
     </template>
@@ -48,13 +48,13 @@ import CreateCommunityModal from "../components/Community/Community/CreateCommun
 import CreateChannelModal from "../components/Community/Channel/CreateChannelModal.vue";
 import FriendsPlusAction from "../components/Friends/FriendsPlusAction.vue";
 import FriendsDeleteModal from "../components/Friends/FriendsDeleteModal.vue";
-import ServerPopout from "../components/Community/Community/ServerPopout.vue";
+import CommunityPopout from "../components/Community/Community/CommunityPopout.vue";
 import FriendsBlockModal from "../components/Friends/FriendsBlockModal.vue";
 import FriendsProfileModal from "../components/Friends/FriendsProfileModal.vue";
 import CreateCategoryModal from "../components/Community/Category/CreateCategoryModal.vue";
 import CategorySettingModal from "../components/Community/Category/CategorySettingModal.vue";
 import CategoryDeleteModal from "../components/Community/Category/CategoryDeleteModal.vue";
-import ServerSettingModal from "../components/Community/Community/ServerSettingModal.vue";
+import CommunitySettingModal from "../components/Community/Community/CommunitySettingModal.vue";
 import MessagePlusAction from "../components/common/Message/MessagePlusAction.vue";
 import InviteCommunityModal from "../components/Community/Community/InviteCommunityModal.vue";
 import ChannelSettingModal from "../components/Community/Channel/ChannelSettingModal.vue";
@@ -63,7 +63,7 @@ import ChannelDeleteModal from "../components/Community/Channel/ChannelDeleteMod
 import CommunityExitModal from "../components/Community/Community/CommunityExitModal.vue";
 import FixMessageModal from "../components/common/Message/FixMessageModal.vue";
 import FixedMessagesModal from "../components/common/Message/FixedMessagesModal.vue";
-import ServerMembersPlusAction from "../components/Community/Community/ServerMembersPlusAction.vue";
+import CommunityMembersPlusAction from "../components/Community/Community/CommunityMembersPlusAction.vue";
 import CommunityBanishModal from "../components/Community/Community/CommunityBanishModal.vue";
 import CreateDirectMessageGroupModal from "../components/DM/CreateDirectMessageGroupModal.vue";
 export default {
@@ -74,13 +74,13 @@ export default {
     CreateChannelModal,
     FriendsPlusAction,
     FriendsDeleteModal,
-    ServerPopout,
+    CommunityPopout,
     FriendsBlockModal,
     FriendsProfileModal,
     CreateCategoryModal,
     CategorySettingModal,
     CategoryDeleteModal,
-    ServerSettingModal,
+    CommunitySettingModal,
     LoadingSpinner,
     MessagePlusAction,
     InviteCommunityModal,
@@ -90,7 +90,7 @@ export default {
     CommunityExitModal,
     FixMessageModal,
     FixedMessagesModal,
-    ServerMembersPlusAction,
+    CommunityMembersPlusAction,
     CommunityBanishModal,
     CreateDirectMessageGroupModal,
   },

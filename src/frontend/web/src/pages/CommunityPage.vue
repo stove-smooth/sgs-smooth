@@ -2,12 +2,12 @@
   <div class="base-container">
     <div class="content-mypage" :key="$route.params.channelid">
       <div class="sidebar">
-        <server-side-bar />
+        <community-side-bar />
         <user-section />
       </div>
       <div class="server-activity-container">
         <template v-if="isChattingChannel($route.params.channelid)">
-          <server-chatting-menu-bar />
+          <community-chatting-menu-bar />
           <div class="server-activity-container1">
             <community-activity-area />
             <community-member-list />
@@ -16,10 +16,10 @@
         <template v-else>
           <template v-if="wsOpen"
             ><div class="voice-sharing-container flex-direction-column">
-              <server-chatting-menu-bar />
+              <community-chatting-menu-bar />
               <div class="server-activity-container1">
                 <voice-sharing-area />
-                <server-member-list />
+                <community-member-list />
               </div></div
           ></template>
         </template>
@@ -30,17 +30,17 @@
 
 <script>
 import { mapActions, mapState, mapMutations } from "vuex";
-import ServerSideBar from "../components/Community/Community/ServerSideBar.vue";
+import CommunitySideBar from "../components/Community/Community/CommunitySideBar.vue";
 import UserSection from "../components/common/UserSection.vue";
-import ServerChattingMenuBar from "../components/Community/Community/ServerChattingMenuBar.vue";
+import CommunityChattingMenuBar from "../components/Community/Community/CommunityChattingMenuBar.vue";
 import CommunityActivityArea from "../components/Community/Community/CommunityActivityArea.vue";
 import CommunityMemberList from "../components/Community/Community/CommunityMemberList.vue";
 import VoiceSharingArea from "../components/common/Voice/VoiceSharingArea.vue";
 export default {
   components: {
-    ServerSideBar,
+    CommunitySideBar,
     UserSection,
-    ServerChattingMenuBar,
+    CommunityChattingMenuBar,
     CommunityActivityArea,
     CommunityMemberList,
     VoiceSharingArea,

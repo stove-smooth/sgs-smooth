@@ -3,11 +3,11 @@
     <div class="content-mypage" :key="$route.params.serverid">
       <template v-if="computed">
         <div class="sidebar">
-          <server-side-bar />
+          <community-side-bar />
           <user-section />
         </div>
         <div class="server-activity-container">
-          <server-chatting-menu-bar />
+          <community-chatting-menu-bar />
           <div class="server-activity-container1">
             <community-welcome />
             <community-member-list />
@@ -21,17 +21,17 @@
 
 <script>
 import { mapActions, mapState, mapGetters } from "vuex";
-import ServerSideBar from "../components/Community/Community/ServerSideBar.vue";
+import CommunitySideBar from "../components/Community/Community/CommunitySideBar.vue";
 import UserSection from "../components/common/UserSection.vue";
-import ServerChattingMenuBar from "../components/Community/Community/ServerChattingMenuBar.vue";
+import CommunityChattingMenuBar from "../components/Community/Community/CommunityChattingMenuBar.vue";
 import CommunityMemberList from "../components/Community/Community/CommunityMemberList.vue";
 import CommunityWelcome from "../components/Community/Community/CommunityWelcome.vue";
 import LoadingSpinner from "../components/common/LoadingSpinner.vue";
 export default {
   components: {
-    ServerSideBar,
+    CommunitySideBar,
     UserSection,
-    ServerChattingMenuBar,
+    CommunityChattingMenuBar,
     CommunityMemberList,
     CommunityWelcome,
     LoadingSpinner,
