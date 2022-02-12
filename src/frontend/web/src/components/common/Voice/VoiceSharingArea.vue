@@ -53,13 +53,14 @@ import { mapGetters, mapActions, mapMutations, mapState } from "vuex";
 import VoiceParticipants from "./VoiceParticipants.vue";
 export default {
   components: { VoiceParticipants },
-  async created() {
+  created() {
     //들어온 채널의 상태를 보냄.
     if (this.$route.params.channelid) {
       //커뮤니티에 있을 경우
       const msg = {
         user_id: this.getUserId,
         channel_id: `c-${this.$route.params.channelid}`,
+        community_id: `${this.$route.params.serverid}`,
         type: "state",
       };
       this.stompSocketClient.send(

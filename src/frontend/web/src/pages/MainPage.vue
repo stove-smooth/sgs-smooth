@@ -33,7 +33,6 @@
       <community-members-plus-action />
       <community-banish-modal />
       <create-direct-message-group-modal />
-      <!-- <my-video-area></my-video-area> -->
     </template>
     <template v-else> <loading-spinner /> </template>
   </div>
@@ -67,7 +66,6 @@ import FixedMessagesModal from "../components/common/Message/FixedMessagesModal.
 import CommunityMembersPlusAction from "../components/Community/Community/CommunityMembersPlusAction.vue";
 import CommunityBanishModal from "../components/Community/Community/CommunityBanishModal.vue";
 import CreateDirectMessageGroupModal from "../components/DM/CreateDirectMessageGroupModal.vue";
-//import MyVideoArea from "../components/common/Voice/MyVideoArea.vue";
 export default {
   name: "App",
   components: {
@@ -95,7 +93,6 @@ export default {
     CommunityMembersPlusAction,
     CommunityBanishModal,
     CreateDirectMessageGroupModal,
-    //MyVideoArea,
   },
   data() {
     return {

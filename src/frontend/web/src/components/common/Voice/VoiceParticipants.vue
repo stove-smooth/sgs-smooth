@@ -42,9 +42,6 @@ export default {
   },
   mounted() {
     document.getElementById(this.videoWrapperId).appendChild(this.video);
-    var newArea = document.createElement("div");
-    newArea.classList.add("video-unit-container");
-    document.getElementById(this.videoWrapperId).appendChild(newArea);
   },
 };
 </script>

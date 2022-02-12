@@ -124,9 +124,12 @@
                       </p>
                     </div>
                     <div v-else class="message-content">
-                      <template v-if="item.fileType && item.fileType == 'image'"
-                        ><div v-html="item.thumbnail"></div
-                      ></template>
+                      <template
+                        v-if="item.fileType && item.fileType == 'image'"
+                      >
+                        <div v-if="!imageLoading" class="loading-img"></div>
+                        <div v-else v-html="item.thumbnail"></div>
+                      </template>
                       <template v-else
                         ><div>{{ item.message }}</div></template
                       >
@@ -376,6 +379,7 @@ export default {
       recentChatted: null,
       messageTyper: "",
       setTimeId: "",
+      imageLoading: false,
     };
   },
   mounted() {
@@ -399,7 +403,7 @@ export default {
     await this.readChannelMessage();
     this.stompSocketClient.subscribe(
       "/topic/direct/" + this.$route.params.id,
-      (res) => {
+      async (res) => {
         console.log("구독으로 받은 메시지 입니다.", res.body);
         /**메세지의 종류: 일반 채팅, 이미지 채팅, 수정, 삭제, 답장, 타이핑 상태  */
         //한국시간에 맞게 시간 커스텀
@@ -437,11 +441,12 @@ export default {
           receivedForm.type != "modify" &&
           receivedForm.type != "delete"
         ) {
-          console.log(" 일반메시지 수신", receivedForm);
+          this.imageLoading = false;
           this.receiveList.push(receivedForm);
-          this.$nextTick(function () {
+          await this.$nextTick(function () {
             this.scrollToBottom();
           });
+          this.imageLoading = true;
         }
         //수정 구독 메시지 수신시,현재 로드된 메시지 중 수정한 메시지가 있다면 수정을 해준다.
         if (receivedForm.type == "modify") {
@@ -812,10 +817,12 @@ export default {
         }
         let newarray = array.concat(this.receiveList);
         this.receiveList = newarray;
+
         if (this.page == 0) {
-          this.$nextTick(function () {
+          await this.$nextTick(function () {
             this.scrollToBottom();
           });
+          this.imageLoading = true;
         }
         if (this.prevScrollHeight != 0) {
           this.$nextTick(function () {
