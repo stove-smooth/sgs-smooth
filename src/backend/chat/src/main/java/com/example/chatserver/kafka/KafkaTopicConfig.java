@@ -1,4 +1,4 @@
-package com.example.chatserver.config;
+package com.example.chatserver.kafka;
 
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;

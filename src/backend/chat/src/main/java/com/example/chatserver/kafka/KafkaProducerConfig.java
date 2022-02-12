@@ -1,4 +1,4 @@
-package com.example.chatserver.config.message;
+package com.example.chatserver.kafka;
 
 import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.domain.DirectMessage;

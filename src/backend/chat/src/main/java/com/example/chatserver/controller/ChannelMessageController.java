@@ -2,7 +2,7 @@ package com.example.chatserver.controller;
 
 import com.example.chatserver.client.PresenceClient;
 import com.example.chatserver.config.TcpClientGateway;
-import com.example.chatserver.config.message.MessageSender;
+import com.example.chatserver.kafka.MessageSender;
 import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.dto.request.FileUploadRequest;
 import com.example.chatserver.dto.request.LoginSessionRequest;

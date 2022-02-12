@@ -1,4 +1,4 @@
-package com.example.chatserver.config.message;
+package com.example.chatserver.kafka;
 
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
