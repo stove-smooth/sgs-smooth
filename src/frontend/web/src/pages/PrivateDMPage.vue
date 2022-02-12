@@ -9,7 +9,9 @@
         <dm-menu-bar />
         <div class="friends-state-container2">
           <div class="dm-activity-container">
-            <div v-if="wsOpen"><voice-sharing-area /></div>
+            <div v-if="wsOpen && currentVoiceRoomType == 'room'">
+              <voice-sharing-area />
+            </div>
             <dm-activity-area />
           </div>
           <dm-member-list />
@@ -37,7 +39,7 @@ export default {
     VoiceSharingArea,
   },
   computed: {
-    ...mapState("voice", ["wsOpen"]),
+    ...mapState("voice", ["wsOpen", "currentVoiceRoomType"]),
   },
 };
 </script>

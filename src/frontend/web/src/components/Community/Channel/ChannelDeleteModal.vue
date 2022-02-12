@@ -36,10 +36,10 @@ import { deleteChannel } from "@/api";
 export default {
   components: { Modal },
   computed: {
-    ...mapState("server", ["channelReadyToDelete", "communityInfo"]),
+    ...mapState("community", ["channelReadyToDelete", "communityInfo"]),
   },
   methods: {
-    ...mapMutations("server", [
+    ...mapMutations("community", [
       "setChannelReadyToDelete",
       "setChannelSettingModal",
     ]),

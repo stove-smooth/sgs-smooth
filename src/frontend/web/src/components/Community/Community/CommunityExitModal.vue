@@ -41,11 +41,14 @@ export default {
     Modal,
   },
   computed: {
-    ...mapState("server", ["communityReadyToExit", "communityList"]),
+    ...mapState("community", ["communityReadyToExit", "communityList"]),
     ...mapGetters("user", ["getUserId"]),
   },
   methods: {
-    ...mapMutations("server", ["setCommunityReadyToExit", "setCommunityList"]),
+    ...mapMutations("community", [
+      "setCommunityReadyToExit",
+      "setCommunityList",
+    ]),
     exitModal() {
       this.setCommunityReadyToExit(false);
     },

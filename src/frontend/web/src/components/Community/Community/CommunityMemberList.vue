@@ -6,7 +6,7 @@
           role="list"
           aria-label="멤버"
           class="server-member-list"
-          v-show="
+          v-if="
             communityOnlineMemberList != null &&
             communityOnlineMemberList.length > 0
           "
@@ -49,7 +49,7 @@
           role="list"
           aria-label="멤버"
           class="server-member-list"
-          v-show="
+          v-if="
             communityOfflineMemberList != null &&
             communityOfflineMemberList.length > 0
           "
@@ -103,32 +103,32 @@ export default {
     await this.FETCH_COMMUNITYMEMBERLIST(this.$route.params.serverid);
   },
   computed: {
-    ...mapState("server", [
+    ...mapState("community", [
       "communityOnlineMemberList",
       "communityOfflineMemberList",
-      "serverMemberPlusMenu",
+      "communityMemberPlusMenu",
     ]),
   },
   methods: {
-    ...mapMutations("server", ["setServerMemberPlusMenu"]),
+    ...mapMutations("community", ["setCommunityMemberPlusMenu"]),
     ...mapMutations("utils", ["setClientX", "setClientY"]),
-    ...mapActions("server", ["FETCH_COMMUNITYMEMBERLIST"]),
+    ...mapActions("community", ["FETCH_COMMUNITYMEMBERLIST"]),
     clickMemberPlusAction(event, memberInfo) {
       const x = event.clientX;
       const y = event.clientY;
       this.setClientX(x);
       this.setClientY(y);
-      this.setServerMemberPlusMenu(memberInfo);
+      this.setCommunityMemberPlusMenu(memberInfo);
     },
     onClick(e) {
-      if (this.serverMemberPlusMenu) {
+      if (this.communityMemberPlusMenu) {
         if (
           e.target.className !== "friends-name" &&
           e.target.className !== "avatar-wrapper" &&
           e.target.className !== "primary-member-layout" &&
           e.target.className !== "friends-name-decorator"
         ) {
-          this.setServerMemberPlusMenu(null);
+          this.setCommunityMemberPlusMenu(null);
         }
       }
     },

@@ -158,7 +158,7 @@ export default {
   computed: {
     ...mapGetters("user", ["getUserId"]),
     ...mapState("user", ["code", "nickname", "userimage"]),
-    ...mapState("server", ["currentChannelType", "communityInfo"]),
+    ...mapState("community", ["currentChannelType", "communityInfo"]),
     ...mapState("voice", [
       "wsOpen",
       "mute",

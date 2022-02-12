@@ -35,8 +35,11 @@
           <div
             class="community-invite-container align-items-center justify-content-center"
           >
-            <div class="server-link-wrapper">{{ this.invitationUrl }}</div>
-            <button class="middle-button">복사</button>
+            <!-- <div class="server-link-wrapper">{{ this.invitationUrl }}</div> -->
+            <input id="inviteUrl" :value="this.invitationUrl" />
+            <button class="middle-button" @click="copyCommunityUrl">
+              복사
+            </button>
           </div>
         </template>
       </modal>
@@ -76,14 +79,20 @@ export default {
     this.invitationUrl = result.data.result.url;
   },
   computed: {
-    ...mapState("server", ["communityInviteModal", "communityList"]),
+    ...mapState("community", ["communityInviteModal", "communityList"]),
     ...mapState("friends", ["friendsAccept"]),
   },
   methods: {
     ...mapActions("friends", ["FETCH_FRIENDSLIST"]),
-    ...mapMutations("server", ["setCommunityInviteModal"]),
+    ...mapMutations("community", ["setCommunityInviteModal"]),
     closeModal() {
       this.setCommunityInviteModal(false);
+    },
+    copyCommunityUrl() {
+      const copyText = document.getElementById("inviteUrl");
+      copyText.select();
+      document.execCommand("copy");
+      alert(copyText.value + "을 복사했습니다.");
     },
   },
 };

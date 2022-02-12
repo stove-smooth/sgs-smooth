@@ -59,10 +59,10 @@ export default {
     };
   },
   computed: {
-    ...mapState("server", ["createCategory"]),
+    ...mapState("community", ["createCategory"]),
   },
   methods: {
-    ...mapMutations("server", ["setCreateCategory"]),
+    ...mapMutations("community", ["setCreateCategory"]),
     closeModal() {
       this.setCreateCategory(false);
     },

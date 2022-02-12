@@ -14,7 +14,7 @@
           </div>
         </template>
         <template v-else>
-          <template v-if="wsOpen"
+          <template v-if="wsOpen && currentVoiceRoomType == 'community'"
             ><div class="voice-sharing-container flex-direction-column">
               <community-chatting-menu-bar />
               <div class="server-activity-container1">
@@ -49,8 +49,8 @@ export default {
     await this.fetchCommunityInfo();
   },
   methods: {
-    ...mapActions("server", ["FETCH_COMMUNITYINFO"]),
-    ...mapMutations("server", ["setCurrentChannelType"]),
+    ...mapActions("community", ["FETCH_COMMUNITYINFO"]),
+    ...mapMutations("community", ["setCurrentChannelType"]),
     async fetchCommunityInfo() {
       await this.FETCH_COMMUNITYINFO(this.$route.params.serverid);
     },
@@ -74,8 +74,8 @@ export default {
     },
   },
   computed: {
-    ...mapState("server", ["communityInfo"]),
-    ...mapState("voice", ["wsOpen"]),
+    ...mapState("community", ["communityInfo"]),
+    ...mapState("voice", ["wsOpen", "currentVoiceRoomType"]),
   },
 };
 </script>

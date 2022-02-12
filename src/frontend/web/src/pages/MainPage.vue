@@ -125,7 +125,7 @@ export default {
   computed: {
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
     ...mapGetters("user", ["getEmail", "getUserId", "getAccessToken"]),
-    ...mapState("server", ["communityInviteModal"]),
+    ...mapState("community", ["communityInviteModal"]),
   },
   methods: {
     ...mapMutations("utils", [

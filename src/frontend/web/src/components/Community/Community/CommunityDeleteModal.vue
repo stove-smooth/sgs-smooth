@@ -36,12 +36,12 @@ import { deleteCommunity } from "@/api/index.js";
 export default {
   components: { Modal },
   computed: {
-    ...mapState("server", ["communityReadyToDelete", "communityList"]),
+    ...mapState("community", ["communityReadyToDelete", "communityList"]),
   },
   methods: {
-    ...mapMutations("server", [
+    ...mapMutations("community", [
       "setCommunityReadyToDelete",
-      "setServerSettingModal",
+      "setCommunitySettingModal",
       "setCommunityOnlineMemberList",
       "setCommunityOfflineMemberList",
       "setCommunityInfo",
@@ -54,7 +54,7 @@ export default {
       try {
         await deleteCommunity(communityId);
         this.setCommunityReadyToDelete(null);
-        this.setServerSettingModal(null);
+        this.setCommunitySettingModal(null);
         this.setCommunityOnlineMemberList(null);
         this.setCommunityOfflineMemberList(null);
         this.setCommunityInfo(null);

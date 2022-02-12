@@ -86,7 +86,7 @@
           </draggable>
         </div>
         <div class="primary-container">
-          <div class="listItem" @click="setCreateServer(true)">
+          <div class="listItem" @click="setCreateCommunity(true)">
             <div claass="listItem-wrapper">
               <div class="circleIcon-button">
                 <svg class="plus-icon"></svg>
@@ -117,8 +117,8 @@ export default {
     };
   },
   methods: {
-    ...mapActions("server", ["FETCH_COMMUNITYLIST"]),
-    ...mapMutations("server", ["setCreateServer"]),
+    ...mapActions("community", ["FETCH_COMMUNITYLIST"]),
+    ...mapMutations("community", ["setCreateCommunity"]),
     ...mapMutations("utils", ["setNavigationSelected"]),
     hover(index) {
       this.hovered = index;
@@ -154,7 +154,7 @@ export default {
   },
   computed: {
     ...mapState("friends", ["friendsWaitNumber"]),
-    ...mapState("server", ["communityList"]),
+    ...mapState("community", ["communityList"]),
     ...mapState("utils", ["navigationSelected"]),
   },
   async created() {

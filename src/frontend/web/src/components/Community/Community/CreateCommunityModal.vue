@@ -1,5 +1,5 @@
 <template>
-  <div v-show="createServer" class="modal">
+  <div v-show="createCommunity" class="modal">
     <div class="blurred-background" @click="exitCreate"></div>
     <div class="modal-container">
       <template v-if="progress === 'openCreate'">
@@ -144,10 +144,10 @@ export default {
     };
   },
   computed: {
-    ...mapState("server", ["createServer", "communityList"]),
+    ...mapState("community", ["createCommunity", "communityList"]),
   },
   methods: {
-    ...mapMutations("server", ["setCreateServer", "setCommunityList"]),
+    ...mapMutations("community", ["setCreateCommunity", "setCommunityList"]),
     openSelectServer() {
       this.progress = "openSelect";
     },
@@ -186,10 +186,10 @@ export default {
       this.communityList.unshift(result.data.result);
       this.setCommunityList(this.communityList);
       this.$router.push(`/channels/${newChannelId}`);
-      this.setCreateServer(false);
+      this.setCreateCommunity(false);
     },
     exitCreate() {
-      this.setCreateServer(false);
+      this.setCreateCommunity(false);
       this.thumbnail = "";
       this.progress = "openCreate";
       this.isPublic = false;

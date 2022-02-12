@@ -47,10 +47,10 @@ import Modal from "../Modal.vue";
 export default {
   components: { Modal },
   computed: {
-    ...mapState("server", ["openFixedMessagesModal"]),
+    ...mapState("community", ["openFixedMessagesModal"]),
   },
   methods: {
-    ...mapMutations("server", ["setOpenFixedMessagesModal"]),
+    ...mapMutations("community", ["setOpenFixedMessagesModal"]),
     exitModal() {
       this.setOpenFixedMessagesModal(false);
     },

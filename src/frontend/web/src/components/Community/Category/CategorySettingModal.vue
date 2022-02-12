@@ -66,10 +66,10 @@ export default {
     SettingModal,
   },
   computed: {
-    ...mapState("server", ["categorySettingModal"]),
+    ...mapState("community", ["categorySettingModal"]),
   },
   methods: {
-    ...mapMutations("server", [
+    ...mapMutations("community", [
       "setCategorySettingModal",
       "setCategoryReadyToDelete",
     ]),

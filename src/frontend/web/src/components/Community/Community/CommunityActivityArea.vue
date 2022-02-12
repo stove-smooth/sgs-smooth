@@ -391,7 +391,7 @@ export default {
   computed: {
     ...mapState("user", ["nickname", "userimage"]),
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
-    ...mapState("server", [
+    ...mapState("community", [
       "messagePlusMenu",
       "communityMessageReplyId",
       "messageEditId",
@@ -516,7 +516,7 @@ export default {
   },
   methods: {
     ...mapMutations("utils", ["setClientX", "setClientY"]),
-    ...mapMutations("server", [
+    ...mapMutations("community", [
       "setMessagePlusMenu",
       "setCommunityMessageReplyId",
       "setMessageEditId",

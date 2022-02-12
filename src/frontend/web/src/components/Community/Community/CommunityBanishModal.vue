@@ -38,14 +38,14 @@ import { exitCommunity } from "@/api";
 export default {
   components: { Modal },
   computed: {
-    ...mapState("server", [
+    ...mapState("community", [
       "communityReadyToBanish",
       "communityOnlineMemberList",
       "communityOfflineMemberList",
     ]),
   },
   methods: {
-    ...mapMutations("server", [
+    ...mapMutations("community", [
       "setCommunityReadyToBanish",
       "setCommunityOnlineMemberList",
       "setCommunityOfflineMemberList",

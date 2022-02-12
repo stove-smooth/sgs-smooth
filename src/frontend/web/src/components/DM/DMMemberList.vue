@@ -73,24 +73,24 @@ export default {
   methods: {
     ...mapActions("dm", ["fetchDirectMessageMemberList"]),
     //추가할지 말지 고려중인 동작입니다.
-    /* ...mapMutations("server", ["setServerMemberPlusMenu"]),
+    /* ...mapMutations("community", ["setCommunityMemberPlusMenu"]),
     ...mapMutations("utils", ["setClientX", "setClientY"]), */
     /* clickMemberPlusAction(event, memberInfo) {
       const x = event.clientX;
       const y = event.clientY;
       this.setClientX(x);
       this.setClientY(y);
-      this.setServerMemberPlusMenu(memberInfo);
+      this.setCommunityMemberPlusMenu(memberInfo);
     }, */
     /* onClick(e) {
-      if (this.serverMemberPlusMenu) {
+      if (this.communityMemberPlusMenu) {
         if (
           e.target.className !== "friends-name" &&
           e.target.className !== "avatar-wrapper" &&
           e.target.className !== "primary-member-layout" &&
           e.target.className !== "friends-name-decorator"
         ) {
-          this.setServerMemberPlusMenu(null);
+          this.setCommunityMemberPlusMenu(null);
         }
       }
     }, */

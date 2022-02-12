@@ -66,10 +66,10 @@ export default {
     SettingModal,
   },
   computed: {
-    ...mapState("server", ["channelSettingModal"]),
+    ...mapState("community", ["channelSettingModal"]),
   },
   methods: {
-    ...mapMutations("server", [
+    ...mapMutations("community", [
       "setChannelSettingModal",
       "setChannelReadyToDelete",
     ]),

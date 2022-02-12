@@ -35,7 +35,7 @@ import { mapState, mapMutations, mapGetters } from "vuex";
 export default {
   computed: {
     ...mapState("utils", ["clientX", "clientY"]),
-    ...mapState("server", ["messagePlusMenu"]),
+    ...mapState("community", ["messagePlusMenu"]),
     ...mapGetters("user", ["getUserId"]),
     cssProps() {
       return {
@@ -45,7 +45,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations("server", [
+    ...mapMutations("community", [
       "setCommunityMessageReplyId",
       "setMessageEditId",
       "setMessageReadyToDelete",

@@ -1,5 +1,5 @@
 <template>
-  <div v-show="openServerPopout" class="server-popout-container">
+  <div v-show="openCommunityPopout" class="server-popout-container">
     <div class="guild-popout-menu">
       <div class="thin-scrollbar nav-scroller" v-bind:style="{ width: '100%' }">
         <div>
@@ -26,7 +26,7 @@
           </div>
           <div
             class="plus-action-label-container hover-white"
-            @click="setCommunityReadyToExit(openServerPopout)"
+            @click="setCommunityReadyToExit(openCommunityPopout)"
           >
             <div class="plus-action-label red-color">서버 나가기</div>
             <svg class="exit-server"></svg>
@@ -41,23 +41,23 @@
 import { mapState, mapMutations } from "vuex";
 export default {
   computed: {
-    ...mapState("server", ["openServerPopout"]),
+    ...mapState("community", ["openCommunityPopout"]),
   },
   methods: {
-    ...mapMutations("server", [
+    ...mapMutations("community", [
       "setCreateCategory",
-      "setServerSettingModal",
+      "setCommunitySettingModal",
       "setCommunityInviteModal",
       "setCommunityReadyToExit",
     ]),
     createNewCategory() {
-      this.setCreateCategory(this.openServerPopout);
+      this.setCreateCategory(this.openCommunityPopout);
     },
     openServerSetting() {
-      this.setServerSettingModal(this.openServerPopout);
+      this.setCommunitySettingModal(this.openCommunityPopout);
     },
     createInviteModal() {
-      this.setCommunityInviteModal(this.openServerPopout);
+      this.setCommunityInviteModal(this.openCommunityPopout);
     },
   },
 };

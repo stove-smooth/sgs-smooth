@@ -13,7 +13,7 @@
 import { mapState } from "vuex";
 export default {
   computed: {
-    ...mapState("server", ["communityInfo"]),
+    ...mapState("community", ["communityInfo"]),
   },
 };
 </script>

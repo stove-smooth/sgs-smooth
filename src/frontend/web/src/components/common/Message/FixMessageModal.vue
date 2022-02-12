@@ -30,10 +30,10 @@ import Modal from "../Modal.vue";
 export default {
   components: { Modal },
   computed: {
-    ...mapState("server", ["messageFixId"]),
+    ...mapState("community", ["messageFixId"]),
   },
   methods: {
-    ...mapMutations("server", ["setMessageFixId"]),
+    ...mapMutations("community", ["setMessageFixId"]),
     exitModal() {
       this.setMessageFixId("");
     },

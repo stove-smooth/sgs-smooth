@@ -21,10 +21,10 @@ export default {
     SearchBar,
   },
   methods: {
-    ...mapMutations("server", ["setOpenFixedMessagesModal"]),
+    ...mapMutations("community", ["setOpenFixedMessagesModal"]),
   },
   computed: {
-    ...mapState("server", ["communityInfo"]),
+    ...mapState("community", ["communityInfo"]),
     channelName() {
       let channel = computeChannelName(
         this.$route.params.channelid,
