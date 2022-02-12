@@ -9,8 +9,8 @@
         <template v-if="isChattingChannel($route.params.channelid)">
           <server-chatting-menu-bar />
           <div class="server-activity-container1">
-            <server-activity-area />
-            <server-member-list />
+            <community-activity-area />
+            <community-member-list />
           </div>
         </template>
         <template v-else>
@@ -33,30 +33,26 @@ import { mapActions, mapState, mapMutations } from "vuex";
 import ServerSideBar from "../components/Community/Community/ServerSideBar.vue";
 import UserSection from "../components/common/UserSection.vue";
 import ServerChattingMenuBar from "../components/Community/Community/ServerChattingMenuBar.vue";
-import ServerActivityArea from "../components/Community/Community/ServerActivityArea.vue";
-import ServerMemberList from "../components/Community/Community/ServerMemberList.vue";
+import CommunityActivityArea from "../components/Community/Community/CommunityActivityArea.vue";
+import CommunityMemberList from "../components/Community/Community/CommunityMemberList.vue";
 import VoiceSharingArea from "../components/common/Voice/VoiceSharingArea.vue";
 export default {
   components: {
     ServerSideBar,
     UserSection,
     ServerChattingMenuBar,
-    ServerActivityArea,
-    ServerMemberList,
+    CommunityActivityArea,
+    CommunityMemberList,
     VoiceSharingArea,
   },
   async created() {
     await this.fetchCommunityInfo();
   },
   methods: {
-    ...mapActions("server", [
-      "FETCH_COMMUNITYINFO",
-      "FETCH_COMMUNITYMEMBERLIST",
-    ]),
+    ...mapActions("server", ["FETCH_COMMUNITYINFO"]),
     ...mapMutations("server", ["setCurrentChannelType"]),
     async fetchCommunityInfo() {
       await this.FETCH_COMMUNITYINFO(this.$route.params.serverid);
-      await this.FETCH_COMMUNITYMEMBERLIST(this.$route.params.serverid);
     },
     isChattingChannel(channelId) {
       const categories = this.communityInfo.categories;

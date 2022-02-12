@@ -9,7 +9,7 @@ import UserSettingPage from "../pages/UserSettingPage.vue";
 import PrivateDMPage from "../pages/PrivateDMPage.vue";
 import MainPage from "../pages/MainPage.vue";
 import InvitePage from "../pages/InvitePage.vue";
-import ServerWelcomePage from "../pages/ServerWelcomePage.vue";
+import CommunityWelcomePage from "../pages/CommunityWelcomePage.vue";
 import ServerPage from "../pages/ServerPage.vue";
 
 Vue.use(VueRouter);
@@ -66,8 +66,8 @@ export const router = new VueRouter({
         //커뮤니티 page, 커뮤니티에 채팅 채널이 존재하지 않을 경우 이 페이지로 이동한다.
         {
           path: "channels/:serverid",
-          name: "ServerWelcomePage",
-          component: ServerWelcomePage,
+          name: "CommunityWelcomePage",
+          component: CommunityWelcomePage,
         },
       ],
     },

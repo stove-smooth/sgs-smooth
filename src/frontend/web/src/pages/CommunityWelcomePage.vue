@@ -1,6 +1,6 @@
 <template>
   <div class="base-container">
-    <div class="content-mypage">
+    <div class="content-mypage" :key="$route.params.serverid">
       <template v-if="computed">
         <div class="sidebar">
           <server-side-bar />
@@ -9,8 +9,8 @@
         <div class="server-activity-container">
           <server-chatting-menu-bar />
           <div class="server-activity-container1">
-            <server-welcome />
-            <server-member-list />
+            <community-welcome />
+            <community-member-list />
           </div>
         </div>
       </template>
@@ -24,16 +24,16 @@ import { mapActions, mapState, mapGetters } from "vuex";
 import ServerSideBar from "../components/Community/Community/ServerSideBar.vue";
 import UserSection from "../components/common/UserSection.vue";
 import ServerChattingMenuBar from "../components/Community/Community/ServerChattingMenuBar.vue";
-import ServerMemberList from "../components/Community/Community/ServerMemberList.vue";
-import ServerWelcome from "../components/Community/Community/ServerWelcome.vue";
+import CommunityMemberList from "../components/Community/Community/CommunityMemberList.vue";
+import CommunityWelcome from "../components/Community/Community/CommunityWelcome.vue";
 import LoadingSpinner from "../components/common/LoadingSpinner.vue";
 export default {
   components: {
     ServerSideBar,
     UserSection,
     ServerChattingMenuBar,
-    ServerMemberList,
-    ServerWelcome,
+    CommunityMemberList,
+    CommunityWelcome,
     LoadingSpinner,
   },
   data() {
@@ -63,7 +63,7 @@ export default {
         }
       }
       this.computed = true;
-      //serverwelcomepage진입시 home으로 상태 판단
+      //communitywelcomepage진입시 home으로 상태 판단
       const msg = {
         user_id: this.getUserId,
         channel_id: "home",

@@ -47,33 +47,7 @@ export default {
     exitModal() {
       this.setCategoryReadyToDelete(false);
     },
-    async deleteCategory(categoryId) {
-      const categories = this.communityInfo.categories;
-
-      for (var category in categories) {
-        if (categories[category].channels != null) {
-          for (let i = 0; i < categories[category].channels.length; i++) {
-            if (
-              categories[category].channels[i].id ==
-              this.$route.params.channelid
-            ) {
-              if (categories[category].channels[i].categoryId == categoryId) {
-                let tempCommunityInfo = this.communityInfo;
-                await deleteCategory(categoryId);
-                let array = this.communityInfo.categories.filter(
-                  (element) => element.id !== categoryId
-                );
-                tempCommunityInfo.categories = array;
-                this.setCategoryReadyToDelete(false);
-                this.setCategorySettingModal(false);
-                this.$router.push(`/channels/${this.$route.params.serverid}`);
-                return;
-              }
-            }
-          }
-        }
-      }
-
+    async updateCommunityInfo(categoryId) {
       let tempCommunityInfo = this.communityInfo;
       await deleteCategory(categoryId);
       let array = this.communityInfo.categories.filter(
@@ -82,6 +56,28 @@ export default {
       tempCommunityInfo.categories = array;
       this.setCategoryReadyToDelete(false);
       this.setCategorySettingModal(false);
+    },
+    async deleteCategory(categoryId) {
+      const categories = this.communityInfo.categories;
+      //본인이 위치한 카테고리를 삭제할 경우 서버에 재접한다.
+      for (var category in categories) {
+        if (categories[category].channels != null) {
+          for (let i = 0; i < categories[category].channels.length; i++) {
+            if (
+              categories[category].channels[i].id ==
+              this.$route.params.channelid
+            ) {
+              if (categories[category].channels[i].categoryId == categoryId) {
+                await this.updateCommunityInfo(categoryId);
+                this.$router.push(`/channels/${this.$route.params.serverid}`);
+                return;
+              }
+            }
+          }
+        }
+      }
+      //커뮤니티에 카테고리 삭제를 반영한다.
+      await this.updateCommunityInfo(categoryId);
     },
   },
 };

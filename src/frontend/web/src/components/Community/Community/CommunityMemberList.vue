@@ -94,10 +94,13 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 export default {
   mounted() {
     window.addEventListener("click", this.onClick);
+  },
+  async created() {
+    await this.FETCH_COMMUNITYMEMBERLIST(this.$route.params.serverid);
   },
   computed: {
     ...mapState("server", [
@@ -109,6 +112,7 @@ export default {
   methods: {
     ...mapMutations("server", ["setServerMemberPlusMenu"]),
     ...mapMutations("utils", ["setClientX", "setClientY"]),
+    ...mapActions("server", ["FETCH_COMMUNITYMEMBERLIST"]),
     clickMemberPlusAction(event, memberInfo) {
       const x = event.clientX;
       const y = event.clientY;
