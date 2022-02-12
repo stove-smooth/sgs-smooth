@@ -76,12 +76,12 @@ export default {
     this.invitationUrl = result.data.result.url;
   },
   computed: {
-    ...mapState("server", ["communityInviteModal", "communityList"]),
+    ...mapState("community", ["communityInviteModal", "communityList"]),
     ...mapState("friends", ["friendsAccept"]),
   },
   methods: {
     ...mapActions("friends", ["FETCH_FRIENDSLIST"]),
-    ...mapMutations("server", ["setCommunityInviteModal"]),
+    ...mapMutations("community", ["setCommunityInviteModal"]),
     closeModal() {
       this.setCommunityInviteModal(false);
     },

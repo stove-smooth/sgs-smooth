@@ -73,7 +73,7 @@ export default {
   methods: {
     ...mapActions("dm", ["fetchDirectMessageMemberList"]),
     //추가할지 말지 고려중인 동작입니다.
-    /* ...mapMutations("server", ["setServerMemberPlusMenu"]),
+    /* ...mapMutations("community", ["setServerMemberPlusMenu"]),
     ...mapMutations("utils", ["setClientX", "setClientY"]), */
     /* clickMemberPlusAction(event, memberInfo) {
       const x = event.clientX;

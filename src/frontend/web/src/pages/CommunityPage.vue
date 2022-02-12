@@ -49,8 +49,8 @@ export default {
     await this.fetchCommunityInfo();
   },
   methods: {
-    ...mapActions("server", ["FETCH_COMMUNITYINFO"]),
-    ...mapMutations("server", ["setCurrentChannelType"]),
+    ...mapActions("community", ["FETCH_COMMUNITYINFO"]),
+    ...mapMutations("community", ["setCurrentChannelType"]),
     async fetchCommunityInfo() {
       await this.FETCH_COMMUNITYINFO(this.$route.params.serverid);
     },
@@ -74,7 +74,7 @@ export default {
     },
   },
   computed: {
-    ...mapState("server", ["communityInfo"]),
+    ...mapState("community", ["communityInfo"]),
     ...mapState("voice", ["wsOpen"]),
   },
 };

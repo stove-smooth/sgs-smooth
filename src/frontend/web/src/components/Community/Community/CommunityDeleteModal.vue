@@ -36,10 +36,10 @@ import { deleteCommunity } from "@/api/index.js";
 export default {
   components: { Modal },
   computed: {
-    ...mapState("server", ["communityReadyToDelete", "communityList"]),
+    ...mapState("community", ["communityReadyToDelete", "communityList"]),
   },
   methods: {
-    ...mapMutations("server", [
+    ...mapMutations("community", [
       "setCommunityReadyToDelete",
       "setServerSettingModal",
       "setCommunityOnlineMemberList",

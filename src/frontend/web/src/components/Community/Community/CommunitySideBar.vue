@@ -184,7 +184,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("server", ["openServerPopout", "communityInfo"]),
+    ...mapState("community", ["openServerPopout", "communityInfo"]),
     ...mapState("voice", ["wsOpen", "video"]),
   },
   mounted() {
@@ -192,7 +192,7 @@ export default {
   },
   methods: {
     ...mapActions("voice", ["wsInit", "sendMessage", "leaveRoom"]),
-    ...mapMutations("server", [
+    ...mapMutations("community", [
       "setCreateChannel",
       "setOpenServerPopout",
       "setCategorySettingModal",

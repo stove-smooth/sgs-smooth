@@ -125,10 +125,10 @@ export default {
     };
   },
   computed: {
-    ...mapState("server", ["createChannel", "communityInfo"]),
+    ...mapState("community", ["createChannel", "communityInfo"]),
   },
   methods: {
-    ...mapMutations("server", ["setCreateChannel", "setCommunityInfo"]),
+    ...mapMutations("community", ["setCreateChannel", "setCommunityInfo"]),
     closeModal() {
       this.setCreateChannel(false);
     },

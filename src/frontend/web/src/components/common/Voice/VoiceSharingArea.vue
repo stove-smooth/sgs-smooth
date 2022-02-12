@@ -112,7 +112,7 @@ export default {
   computed: {
     ...mapGetters("user", ["getAccessToken", "getUserId"]),
     ...mapState("voice", ["participants", "ws", "mute", "video", "myName"]),
-    ...mapState("server", ["currentChannelType", "communityInfo"]),
+    ...mapState("community", ["currentChannelType", "communityInfo"]),
     ...mapState("dm", ["directMessageMemberList"]),
     ...mapState("utils", ["stompSocketClient"]),
     voiceMembers() {

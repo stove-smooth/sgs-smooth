@@ -378,7 +378,7 @@ export default {
   computed: {
     ...mapState("user", ["nickname", "userimage"]),
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
-    ...mapState("server", ["messagePlusMenu", "messageEditId"]),
+    ...mapState("community", ["messagePlusMenu", "messageEditId"]),
     ...mapState("dm", ["directMessageReplyId", "directMessageReadyToDelete"]),
     ...mapGetters("user", ["getUserId"]),
   },
@@ -496,7 +496,7 @@ export default {
   },
   methods: {
     ...mapMutations("utils", ["setClientX", "setClientY"]),
-    ...mapMutations("server", ["setMessagePlusMenu", "setMessageEditId"]),
+    ...mapMutations("community", ["setMessagePlusMenu", "setMessageEditId"]),
     ...mapMutations("dm", [
       "setDirectMessageReplyId",
       "setDirectMessageReadyToDelete",

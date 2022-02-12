@@ -117,8 +117,8 @@ export default {
     };
   },
   methods: {
-    ...mapActions("server", ["FETCH_COMMUNITYLIST"]),
-    ...mapMutations("server", ["setCreateServer"]),
+    ...mapActions("community", ["FETCH_COMMUNITYLIST"]),
+    ...mapMutations("community", ["setCreateServer"]),
     ...mapMutations("utils", ["setNavigationSelected"]),
     hover(index) {
       this.hovered = index;
@@ -154,7 +154,7 @@ export default {
   },
   computed: {
     ...mapState("friends", ["friendsWaitNumber"]),
-    ...mapState("server", ["communityList"]),
+    ...mapState("community", ["communityList"]),
     ...mapState("utils", ["navigationSelected"]),
   },
   async created() {

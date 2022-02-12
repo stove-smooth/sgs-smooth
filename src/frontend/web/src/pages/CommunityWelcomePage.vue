@@ -42,7 +42,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions("server", ["FETCH_COMMUNITYINFO"]),
+    ...mapActions("community", ["FETCH_COMMUNITYINFO"]),
     async fetchCommunityInfo() {
       await this.FETCH_COMMUNITYINFO(this.$route.params.serverid);
     },
@@ -77,7 +77,7 @@ export default {
     },
   },
   computed: {
-    ...mapState("server", ["communityInfo"]),
+    ...mapState("community", ["communityInfo"]),
     ...mapState("utils", ["stompSocketClient"]),
     ...mapGetters("user", ["getUserId"]),
   },

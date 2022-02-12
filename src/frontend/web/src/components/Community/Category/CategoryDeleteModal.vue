@@ -36,10 +36,10 @@ import { deleteCategory } from "@/api/index.js";
 export default {
   components: { Modal },
   computed: {
-    ...mapState("server", ["categoryReadyToDelete", "communityInfo"]),
+    ...mapState("community", ["categoryReadyToDelete", "communityInfo"]),
   },
   methods: {
-    ...mapMutations("server", [
+    ...mapMutations("community", [
       "setCategoryReadyToDelete",
       "setCategorySettingModal",
       "setCommunityInfo",

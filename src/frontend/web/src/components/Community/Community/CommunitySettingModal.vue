@@ -289,14 +289,14 @@ export default {
     console.log(this.$route.params.serverid);
   },
   computed: {
-    ...mapState("server", [
+    ...mapState("community", [
       "serverSettingModal",
       "communityOwner",
       "communityList",
     ]),
   },
   methods: {
-    ...mapMutations("server", [
+    ...mapMutations("community", [
       "setServerSettingModal",
       "setCommunityReadyToDelete",
     ]),

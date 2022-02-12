@@ -41,10 +41,10 @@
 import { mapState, mapMutations } from "vuex";
 export default {
   computed: {
-    ...mapState("server", ["openServerPopout"]),
+    ...mapState("community", ["openServerPopout"]),
   },
   methods: {
-    ...mapMutations("server", [
+    ...mapMutations("community", [
       "setCreateCategory",
       "setServerSettingModal",
       "setCommunityInviteModal",

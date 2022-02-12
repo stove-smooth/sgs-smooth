@@ -103,16 +103,16 @@ export default {
     await this.FETCH_COMMUNITYMEMBERLIST(this.$route.params.serverid);
   },
   computed: {
-    ...mapState("server", [
+    ...mapState("community", [
       "communityOnlineMemberList",
       "communityOfflineMemberList",
       "serverMemberPlusMenu",
     ]),
   },
   methods: {
-    ...mapMutations("server", ["setServerMemberPlusMenu"]),
+    ...mapMutations("community", ["setServerMemberPlusMenu"]),
     ...mapMutations("utils", ["setClientX", "setClientY"]),
-    ...mapActions("server", ["FETCH_COMMUNITYMEMBERLIST"]),
+    ...mapActions("community", ["FETCH_COMMUNITYMEMBERLIST"]),
     clickMemberPlusAction(event, memberInfo) {
       const x = event.clientX;
       const y = event.clientY;

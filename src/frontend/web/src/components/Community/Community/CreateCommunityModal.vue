@@ -144,10 +144,10 @@ export default {
     };
   },
   computed: {
-    ...mapState("server", ["createServer", "communityList"]),
+    ...mapState("community", ["createServer", "communityList"]),
   },
   methods: {
-    ...mapMutations("server", ["setCreateServer", "setCommunityList"]),
+    ...mapMutations("community", ["setCreateServer", "setCommunityList"]),
     openSelectServer() {
       this.progress = "openSelect";
     },
