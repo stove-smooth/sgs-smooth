@@ -1,4 +1,4 @@
-package com.example.chatserver.config.message;
+package com.example.chatserver.kafka.consumer;
 
 import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.domain.DirectMessage;
@@ -12,47 +12,19 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.springframework.retry.backoff.FixedBackOffPolicy;
-import org.springframework.retry.policy.SimpleRetryPolicy;
-import org.springframework.retry.support.RetryTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @EnableKafka
 @Configuration
-public class KafkaListenerConfig {
+public class FileUploadListenerConfig {
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    private final String groupName = "chat-server-group";
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, DirectMessage> kafkaListenerContainerFactoryForDirect() {
-        ConcurrentKafkaListenerContainerFactory<String, DirectMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactoryForDirect());
-        return factory;
-    }
-
-    @Bean
-    public ConsumerFactory<String, DirectMessage> consumerFactoryForDirect() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(), new JsonDeserializer<>(DirectMessage.class));
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, ChannelMessage> kafkaListenerContainerFactoryForCommunity() {
-        ConcurrentKafkaListenerContainerFactory<String,ChannelMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactoryForCommunity());
-        return factory;
-    }
-
-    @Bean
-    public ConsumerFactory<String, ChannelMessage> consumerFactoryForCommunity() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(), new JsonDeserializer<>(ChannelMessage.class));
-    }
+    private final String groupName = "file-server-group";
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, FileUploadResponse> kafkaListenerContainerFactoryForFile() {

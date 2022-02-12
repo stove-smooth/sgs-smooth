@@ -1,6 +1,6 @@
 package com.example.chatserver.controller;
 
-import com.example.chatserver.config.message.MessageSender;
+import com.example.chatserver.kafka.MessageSender;
 import com.example.chatserver.domain.DirectMessage;
 import com.example.chatserver.dto.request.FileUploadRequest;
 import com.example.chatserver.dto.request.MessageCountRequest;

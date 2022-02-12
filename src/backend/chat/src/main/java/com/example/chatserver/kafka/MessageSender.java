@@ -1,4 +1,4 @@
-package com.example.chatserver.config.message;
+package com.example.chatserver.kafka;
 
 import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.domain.DirectMessage;
@@ -20,6 +20,7 @@ public class MessageSender {
     private final KafkaTemplate<String, FileUploadResponse> kafkaTemplateForFileUpload;
 
     public void sendToDirectChat(String topic, DirectMessage directChat) {
+        log.info("send");
         kafkaTemplateForDirectMessage.send(topic, directChat);
     }
 
