@@ -29,17 +29,17 @@ public class ChannelETCListenerConfig {
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, ChannelMessage> ChannelETCFactory() {
         ConcurrentKafkaListenerContainerFactory<String,ChannelMessage> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactoryForCommunity());
+        factory.setConsumerFactory(consumerFactoryForCommunityETC());
         return factory;
     }
 
     @Bean
-    public ConsumerFactory<String, ChannelMessage> consumerFactoryForCommunity() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(), new JsonDeserializer<>(ChannelMessage.class));
+    public ConsumerFactory<String, ChannelMessage> consumerFactoryForCommunityETC() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigurationsForCommunityETC(), new StringDeserializer(), new JsonDeserializer<>(ChannelMessage.class));
     }
 
     @Bean
-    public Map<String, Object> consumerConfigurations() {
+    public Map<String, Object> consumerConfigurationsForCommunityETC() {
         Map<String,Object> configurations = new HashMap<>();
         configurations.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configurations.put(ConsumerConfig.GROUP_ID_CONFIG, groupName);
