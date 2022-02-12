@@ -1,4 +1,5 @@
-import { loginUser, fetchUserInfo } from "../../api/index.js";
+import { fetchUserInfo } from "../../api/index.js";
+import { loginUser } from "@/api/index.js";
 const user = {
   namespaced: true,
   state: {

@@ -1,13 +1,11 @@
 <template>
-  <div>오잉?</div>
+  <div></div>
 </template>
 
 <script>
 import { joinCommunity } from "../api";
 export default {
   created() {
-    console.log(window.location.pathname);
-    console.log(this.$route.params);
     if (this.$route.params.invitePath == "c") {
       this.joinCommunity(
         this.$route.params.communityId,
@@ -17,7 +15,6 @@ export default {
   },
   methods: {
     async joinCommunity(communityId) {
-      console.log("join", communityId);
       const communityHashCode = {
         code: communityId,
       };

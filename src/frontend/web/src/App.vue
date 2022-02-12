@@ -9,9 +9,11 @@ import { mapGetters } from "vuex";
 export default {
   mounted() {
     if (!this.getEmail) {
+      //로그인이 안되어 있을경우
       if (!this.$route.params.invitePath) {
         this.$router.replace("/login");
       } else {
+        //초대장 코드로 들어왔다면, 로그인 페이지에 초대장 정보를 함께 전송
         this.$router.push({
           name: "LoginPage",
           query: {
@@ -22,7 +24,7 @@ export default {
       }
     } else {
       if (this.$route.path == "/") {
-        //this.$router.replace("/channels/@me");
+        this.$router.replace("/channels/@me");
       }
     }
   },
