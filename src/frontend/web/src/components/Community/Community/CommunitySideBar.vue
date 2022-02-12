@@ -169,7 +169,7 @@
 
 <script>
 import draggable from "vuedraggable";
-import { mapState, mapMutations, mapActions } from "vuex";
+import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
 import { moveCategory, moveChannel } from "../../../api/index.js";
 export default {
   components: {
@@ -186,6 +186,8 @@ export default {
   computed: {
     ...mapState("community", ["openCommunityPopout", "communityInfo"]),
     ...mapState("voice", ["wsOpen", "video"]),
+    ...mapState("utils", ["stompSocketClient"]),
+    ...mapGetters("user", ["getUserId"]),
   },
   mounted() {
     window.addEventListener("click", this.onClick);
@@ -355,8 +357,19 @@ export default {
           url: "https://sig.yoloyolo.org/rtc",
           type: "community",
         };
-        //const url = "https://sig.yoloyolo.org/rtc";
         await this.wsInit(wsInfo); //ws 전역 등록.
+
+        const msg = {
+          user_id: this.getUserId,
+          channel_id: `c-${this.$route.params.channelid}`,
+          community_id: this.$route.params.serverid,
+          type: "enter",
+        };
+        this.stompSocketClient.send(
+          "/kafka/signaling",
+          JSON.stringify(msg),
+          {}
+        );
       }
       this.selected = id;
       if (this.video) {

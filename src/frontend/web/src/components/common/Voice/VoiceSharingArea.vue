@@ -57,17 +57,6 @@ export default {
     //들어온 채널의 상태를 보냄.
     if (this.$route.params.channelid) {
       //커뮤니티에 있을 경우
-      const msg = {
-        user_id: this.getUserId,
-        channel_id: `c-${this.$route.params.channelid}`,
-        community_id: `${this.$route.params.serverid}`,
-        type: "state",
-      };
-      this.stompSocketClient.send(
-        "/kafka/join-channel",
-        JSON.stringify(msg),
-        {}
-      );
       //음성연결 입장 알림
       let message = {
         id: "joinRoom",
