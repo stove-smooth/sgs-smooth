@@ -4,15 +4,15 @@ import {
   fetchCommunityMemberList,
 } from "../../api/index.js";
 import user from "./user.js";
-const server = {
+const community = {
   namespaced: true,
   state: {
-    createServer: false,
+    createCommunity: false,
     createChannel: false,
     createCategory: false,
     categorySettingModal: false,
     channelSettingModal: false,
-    openServerPopout: null,
+    openCommunityPopout: null,
     categoryReadyToDelete: false,
     communityReadyToDelete: false,
     channelReadyToDelete: false,
@@ -22,7 +22,7 @@ const server = {
     communityInfo: null,
     communityOnlineMemberList: [],
     communityOfflineMemberList: [],
-    serverSettingModal: null,
+    communitySettingModal: null,
     messagePlusMenu: null,
     communityInviteModal: false,
     communityOwner: false,
@@ -30,19 +30,19 @@ const server = {
     messageEditId: "",
     messageFixId: "",
     openFixedMessagesModal: false,
-    serverMemberPlusMenu: null,
+    communityMemberPlusMenu: null,
     messageReadyToDelete: false,
     currentChannelType: null,
   },
   mutations: {
-    setCreateServer(state, createServer) {
-      state.createServer = createServer;
+    setCreateCommunity(state, createCommunity) {
+      state.createCommunity = createCommunity;
     },
     setCreateChannel(state, createChannel) {
       state.createChannel = createChannel;
     },
-    setOpenServerPopout(state, openServerPopout) {
-      state.openServerPopout = openServerPopout;
+    setOpenCommunityPopout(state, openCommunityPopout) {
+      state.openCommunityPopout = openCommunityPopout;
     },
     setCommunityList(state, communityList) {
       state.communityList = communityList;
@@ -71,8 +71,8 @@ const server = {
     setChannelReadyToDelete(state, channelReadyToDelete) {
       state.channelReadyToDelete = channelReadyToDelete;
     },
-    setServerSettingModal(state, serverSettingModal) {
-      state.serverSettingModal = serverSettingModal;
+    setCommunitySettingModal(state, communitySettingModal) {
+      state.communitySettingModal = communitySettingModal;
     },
     setChannelSettingModal(state, channelSettingModal) {
       state.channelSettingModal = channelSettingModal;
@@ -104,8 +104,8 @@ const server = {
     setOpenFixedMessagesModal(state, openFixedMessagesModal) {
       state.openFixedMessagesModal = openFixedMessagesModal;
     },
-    setServerMemberPlusMenu(state, serverMemberPlusMenu) {
-      state.serverMemberPlusMenu = serverMemberPlusMenu;
+    setCommunityMemberPlusMenu(state, communityMemberPlusMenu) {
+      state.communityMemberPlusMenu = communityMemberPlusMenu;
     },
     setMessageReadyToDelete(state, messageReadyToDelete) {
       state.messageReadyToDelete = messageReadyToDelete;
@@ -150,4 +150,4 @@ const server = {
   },
 };
 
-export default server;
+export default community;

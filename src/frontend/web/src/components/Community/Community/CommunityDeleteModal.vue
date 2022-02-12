@@ -41,7 +41,7 @@ export default {
   methods: {
     ...mapMutations("community", [
       "setCommunityReadyToDelete",
-      "setServerSettingModal",
+      "setCommunitySettingModal",
       "setCommunityOnlineMemberList",
       "setCommunityOfflineMemberList",
       "setCommunityInfo",
@@ -54,7 +54,7 @@ export default {
       try {
         await deleteCommunity(communityId);
         this.setCommunityReadyToDelete(null);
-        this.setServerSettingModal(null);
+        this.setCommunitySettingModal(null);
         this.setCommunityOnlineMemberList(null);
         this.setCommunityOfflineMemberList(null);
         this.setCommunityInfo(null);

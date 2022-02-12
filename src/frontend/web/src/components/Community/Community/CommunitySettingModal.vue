@@ -1,6 +1,9 @@
 <template>
-  <div class="modal" v-if="serverSettingModal">
-    <div class="blurred-background" @click="setServerSettingModal(null)"></div>
+  <div class="modal" v-if="communitySettingModal">
+    <div
+      class="blurred-background"
+      @click="setCommunitySettingModal(null)"
+    ></div>
     <setting-modal>
       <template slot="setting-sidebar">
         <div class="channel-default-container">
@@ -99,7 +102,7 @@
             <div class="channel-content-wrapper" role="listitem">
               <div
                 class="channel-content margin-right-8px"
-                @click="setCommunityReadyToDelete(serverSettingModal)"
+                @click="setCommunityReadyToDelete(communitySettingModal)"
                 @mouseover="hover('서버 삭제')"
                 v-bind:class="{
                   'channel-content-hover': hovered === '서버 삭제',
@@ -130,7 +133,7 @@
               <div
                 class="avatar-uploader-image white-color justify-content-center align-items-center"
               >
-                {{ serverSettingModal.serverName }}
+                {{ communitySettingModal.serverName }}
               </div>
             </template>
 
@@ -161,7 +164,7 @@
                   type="text"
                   maxlength="100"
                   class="channel-name-input"
-                  v-model="serverSettingModal.serverName"
+                  v-model="communitySettingModal.serverName"
                 />
               </div>
             </div>
@@ -290,14 +293,14 @@ export default {
   },
   computed: {
     ...mapState("community", [
-      "serverSettingModal",
+      "communitySettingModal",
       "communityOwner",
       "communityList",
     ]),
   },
   methods: {
     ...mapMutations("community", [
-      "setServerSettingModal",
+      "setCommunitySettingModal",
       "setCommunityReadyToDelete",
     ]),
     hover(index) {

@@ -15,7 +15,7 @@
           role="button"
         ></div>
         <div class="sidebar-header-expand-button">
-          <svg v-if="openServerPopout" class="small-close"></svg>
+          <svg v-if="openCommunityPopout" class="small-close"></svg>
           <svg v-else class="expand-down-arrow-icon"></svg>
         </div>
       </header>
@@ -184,7 +184,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("community", ["openServerPopout", "communityInfo"]),
+    ...mapState("community", ["openCommunityPopout", "communityInfo"]),
     ...mapState("voice", ["wsOpen", "video"]),
   },
   mounted() {
@@ -194,7 +194,7 @@ export default {
     ...mapActions("voice", ["wsInit", "sendMessage", "leaveRoom"]),
     ...mapMutations("community", [
       "setCreateChannel",
-      "setOpenServerPopout",
+      "setOpenCommunityPopout",
       "setCategorySettingModal",
       "setChannelSettingModal",
     ]),
@@ -322,26 +322,26 @@ export default {
       this.setCategorySettingModal(categoryData);
     },
     onClick(e) {
-      if (this.openServerPopout) {
+      if (this.openCommunityPopout) {
         var temp = e.target.parentNode.childNodes[0]._prevClass;
         if (
           temp !== "server-name" &&
           temp !== "server-sidebar-header" &&
           temp !== "expand-down-arrow-icon"
         ) {
-          this.setOpenServerPopout();
+          this.setOpenCommunityPopout();
         }
       }
     },
     clickServerPopout() {
-      if (this.openServerPopout) {
-        this.setOpenServerPopout();
+      if (this.openCommunityPopout) {
+        this.setOpenCommunityPopout();
       } else {
         const serverInfo = {
           serverId: this.communityInfo.id,
           serverName: this.communityInfo.name,
         };
-        this.setOpenServerPopout(serverInfo);
+        this.setOpenCommunityPopout(serverInfo);
       }
     },
     async routeChannel(id, type) {

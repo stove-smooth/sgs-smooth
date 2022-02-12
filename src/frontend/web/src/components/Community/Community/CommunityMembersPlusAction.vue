@@ -1,6 +1,6 @@
 <template>
-  <div :style="cssProps" v-if="serverMemberPlusMenu">
-    <template v-if="serverMemberPlusMenu.id == getUserId">
+  <div :style="cssProps" v-if="communityMemberPlusMenu">
+    <template v-if="communityMemberPlusMenu.id == getUserId">
       <div class="server-members-plus-action-container">
         <div class="plus-action-wrapper">
           <div class="plus-action-label-container">프로필</div>
@@ -22,7 +22,7 @@
           <div
             v-if="communityOwner"
             class="plus-action-label-container hover-white"
-            @click="setCommunityReadyToBanish(serverMemberPlusMenu)"
+            @click="setCommunityReadyToBanish(communityMemberPlusMenu)"
           >
             <div class="plus-action-label red-color">추방하기</div>
           </div>
@@ -37,7 +37,7 @@ import { mapState, mapMutations, mapGetters } from "vuex";
 export default {
   computed: {
     ...mapState("utils", ["clientX", "clientY"]),
-    ...mapState("community", ["serverMemberPlusMenu", "communityOwner"]),
+    ...mapState("community", ["communityMemberPlusMenu", "communityOwner"]),
     ...mapGetters("user", ["getUserId"]),
     cssProps() {
       return {
