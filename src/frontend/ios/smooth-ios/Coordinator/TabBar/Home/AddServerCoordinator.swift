@@ -41,13 +41,6 @@ class AddServerCoordinator: NSObject, Coordinator {
         navigationController.present(modalNav, animated: true, completion: nil)
     }
     
-    func goToMain() {
-        self.coordinatorDidFinish()
-        
-        let coordinator = MainTabBarCoordinator(navigationController: navigationController)
-        coordinator.start()
-    }
-    
     func goToJoin() {
         let joinVC = JoinServerViewController.instance()
         joinVC.coordinator = self
