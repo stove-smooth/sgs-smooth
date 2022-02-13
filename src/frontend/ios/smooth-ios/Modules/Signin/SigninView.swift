@@ -8,7 +8,7 @@
 import UIKit
 import Then
 
-class SignInView: BaseView {
+class SigninView: BaseView {
     
     let titleLabel = UILabel().then {
         $0.text = "돌아오신 것을 환영해요!"
@@ -49,7 +49,7 @@ class SignInView: BaseView {
     let loginButton = UIButton().then {
         $0.setTitle("로그인", for: .normal)
         $0.setTitleColor(.white, for: .normal)
-        $0.backgroundColor = UIColor.blurple
+        $0.backgroundColor = .blurple
         $0.layer.cornerRadius = 5
     }
     
@@ -63,7 +63,6 @@ class SignInView: BaseView {
         ].forEach {
             self.addSubview($0)
         }
-        
     }
     
     override func bindConstraints() {

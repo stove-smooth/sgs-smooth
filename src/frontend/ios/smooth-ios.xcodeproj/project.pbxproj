@@ -130,9 +130,9 @@
 		C1D47EDD27795A6A00DBA3CA /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EDC27795A6A00DBA3CA /* SplashViewController.swift */; };
 		C1D47EDF27795A9200DBA3CA /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EDE27795A9200DBA3CA /* SplashView.swift */; };
 		C1D47EE127795AA800DBA3CA /* SplashViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EE027795AA800DBA3CA /* SplashViewModel.swift */; };
-		C1D47EE527795C9600DBA3CA /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EE427795C9600DBA3CA /* SignInViewController.swift */; };
-		C1D47EE727795CAD00DBA3CA /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EE627795CAD00DBA3CA /* SignInView.swift */; };
-		C1D47EE927795CCB00DBA3CA /* SignInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EE827795CCB00DBA3CA /* SignInViewModel.swift */; };
+		C1D47EE527795C9600DBA3CA /* SigninViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EE427795C9600DBA3CA /* SigninViewController.swift */; };
+		C1D47EE727795CAD00DBA3CA /* SigninView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EE627795CAD00DBA3CA /* SigninView.swift */; };
+		C1D47EE927795CCB00DBA3CA /* SigninViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EE827795CCB00DBA3CA /* SigninViewModel.swift */; };
 		C1D47EEC27795D0900DBA3CA /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EEB27795D0900DBA3CA /* BaseViewController.swift */; };
 		C1D47EEE27795D1300DBA3CA /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EED27795D1300DBA3CA /* BaseView.swift */; };
 		C1D47EF027795D1E00DBA3CA /* BaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1D47EEF27795D1E00DBA3CA /* BaseViewModel.swift */; };
@@ -294,9 +294,9 @@
 		C1D47EDC27795A6A00DBA3CA /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		C1D47EDE27795A9200DBA3CA /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		C1D47EE027795AA800DBA3CA /* SplashViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewModel.swift; sourceTree = "<group>"; };
-		C1D47EE427795C9600DBA3CA /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
-		C1D47EE627795CAD00DBA3CA /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
-		C1D47EE827795CCB00DBA3CA /* SignInViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewModel.swift; sourceTree = "<group>"; };
+		C1D47EE427795C9600DBA3CA /* SigninViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigninViewController.swift; sourceTree = "<group>"; };
+		C1D47EE627795CAD00DBA3CA /* SigninView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigninView.swift; sourceTree = "<group>"; };
+		C1D47EE827795CCB00DBA3CA /* SigninViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigninViewModel.swift; sourceTree = "<group>"; };
 		C1D47EEB27795D0900DBA3CA /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		C1D47EED27795D1300DBA3CA /* BaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseView.swift; sourceTree = "<group>"; };
 		C1D47EEF27795D1E00DBA3CA /* BaseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewModel.swift; sourceTree = "<group>"; };
@@ -729,7 +729,7 @@
 			isa = PBXGroup;
 			children = (
 				C1D47EE227795AB300DBA3CA /* Splash */,
-				C1D47EEA27795CE400DBA3CA /* SignIn */,
+				C1D47EEA27795CE400DBA3CA /* Signin */,
 				C1D47F362784747D00DBA3CA /* Signup */,
 				C1D47F0727795F1600DBA3CA /* Home */,
 				C129ADE2278BED1A00AC1092 /* AddServer */,
@@ -738,14 +738,14 @@
 			path = Modules;
 			sourceTree = "<group>";
 		};
-		C1D47EEA27795CE400DBA3CA /* SignIn */ = {
+		C1D47EEA27795CE400DBA3CA /* Signin */ = {
 			isa = PBXGroup;
 			children = (
-				C1D47EE627795CAD00DBA3CA /* SignInView.swift */,
-				C1D47EE427795C9600DBA3CA /* SignInViewController.swift */,
-				C1D47EE827795CCB00DBA3CA /* SignInViewModel.swift */,
+				C1D47EE627795CAD00DBA3CA /* SigninView.swift */,
+				C1D47EE427795C9600DBA3CA /* SigninViewController.swift */,
+				C1D47EE827795CCB00DBA3CA /* SigninViewModel.swift */,
 			);
-			path = SignIn;
+			path = Signin;
 			sourceTree = "<group>";
 		};
 		C1D47EF127795D3C00DBA3CA /* Base */ = {
@@ -1006,7 +1006,7 @@
 				C1C44F1F27A6A05900A408A4 /* ServerSettingViewController.swift in Sources */,
 				C1244F8227A64AD200BEC173 /* EditServerInfoView.swift in Sources */,
 				C1024148279DA8C300B702DB /* ServerService.swift in Sources */,
-				C1D47EE527795C9600DBA3CA /* SignInViewController.swift in Sources */,
+				C1D47EE527795C9600DBA3CA /* SigninViewController.swift in Sources */,
 				C1C8B21D27A82F9C00E8758E /* EditCategoryView.swift in Sources */,
 				C1024152279E346000B702DB /* MenuView.swift in Sources */,
 				C1786DF627A2622900170D4F /* InviteServerViewController.swift in Sources */,
@@ -1073,7 +1073,7 @@
 				C1D47EEC27795D0900DBA3CA /* BaseViewController.swift in Sources */,
 				C102413D279CF7BC00B702DB /* FriendListView.swift in Sources */,
 				33E17F772788937B0084CE1A /* MenuViewModel.swift in Sources */,
-				C1D47EE927795CCB00DBA3CA /* SignInViewModel.swift in Sources */,
+				C1D47EE927795CCB00DBA3CA /* SigninViewModel.swift in Sources */,
 				270916272791749100A0772D /* FriendRequestViewModel.swift in Sources */,
 				C1D47EC32779570000DBA3CA /* AppDelegate.swift in Sources */,
 				C1244F7827A624FC00BEC173 /* AlertUtils.swift in Sources */,
@@ -1092,7 +1092,7 @@
 				2709161927912BBA00A0772D /* FriendListViewController.swift in Sources */,
 				C118D2D027A6EB7E009CB96C /* ServerInviteCell.swift in Sources */,
 				C1DF653127AC261A007FC317 /* ChannelReorderViewModel.swift in Sources */,
-				C1D47EE727795CAD00DBA3CA /* SignInView.swift in Sources */,
+				C1D47EE727795CAD00DBA3CA /* SigninView.swift in Sources */,
 				C1D47F352784488200DBA3CA /* CustomComponent.swift in Sources */,
 				C1C8B22227A82FDB00E8758E /* EditCategoryViewModel.swift in Sources */,
 				C1244F7627A61A5C00BEC173 /* ServerInfoCell.swift in Sources */,
