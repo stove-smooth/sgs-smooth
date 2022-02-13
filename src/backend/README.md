@@ -8,11 +8,3 @@ backend
    ├── signaling      // 시그널링 서버
    └── code-review    // 코드리뷰 가이드
 ```
----
-# 박병찬
-
-- [presence - server](https://github.com/stove-smooth/sgs-smooth/tree/develop/src/backend/presence#presence--server) 
-- [chat - server](https://github.com/stove-smooth/sgs-smooth/tree/develop/src/backend/chat#chat-server)
-
----
-# 김희동
