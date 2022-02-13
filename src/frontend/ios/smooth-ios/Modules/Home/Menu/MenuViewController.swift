@@ -78,14 +78,9 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         
     }
     
-    
     override func viewDidLoad() {
         self.view = menuView
         super.viewDidLoad()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
     }
     
     override func bindEvent() {

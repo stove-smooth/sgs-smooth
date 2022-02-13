@@ -22,6 +22,7 @@ class ChattingViewController: MessagesViewController {
     weak var coordinator: HomeCoordinator?
     weak var delegate: ChattingViewControllerDelegate?
     
+    private let emptyView = ChannelEmptyView()
     private let viewModel: ChattingViewModel
     
     lazy var messageList: [MockMessage] = []
@@ -29,7 +30,6 @@ class ChattingViewController: MessagesViewController {
     
     var channel: Channel?
     var communityId: Int?
-    var inputBarisHide = false
     
     static func instance() -> ChattingViewController {
         return ChattingViewController()
@@ -50,7 +50,7 @@ class ChattingViewController: MessagesViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        self.tabBarController?.tabBar.isHidden = true
+        self.messageInputBar.isHidden = false
         delegate?.dismiss(channel: channel, communityId: communityId)
         
         super.viewWillAppear(animated)
@@ -113,6 +113,20 @@ class ChattingViewController: MessagesViewController {
                 self.showToast(message: message, isWarning: true)
             })
             .disposed(by: disposeBag)
+        
+        self.viewModel.output.showEmpty
+            .asDriver(onErrorJustReturn: false)
+            .drive(onNext: { [self] isEmpty in
+                if (isEmpty) {
+                    view.addSubview(emptyView)
+                    emptyView.snp.makeConstraints {
+                        $0.edges.equalToSuperview()
+                    }
+                } else {
+                    emptyView.removeFromSuperview()
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     func showToast(message: String, isWarning: Bool) {
@@ -140,8 +154,6 @@ extension ChattingViewController: HomeViewControllerDelegate {
 
 // MARK: - Message
 extension ChattingViewController {
-
-    
     @objc func loadMoreMessages() {
         self.viewModel.output.messages
             .asDriver(onErrorJustReturn: [])

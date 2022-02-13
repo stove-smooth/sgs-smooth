@@ -65,8 +65,6 @@ class ChattingViewModel: BaseViewModel {
                 
             })
             .disposed(by: disposeBag)
-        
-        
     }
     
     private func fetchMessgae(chattingId: Int) {
@@ -97,7 +95,7 @@ class ChattingViewModel: BaseViewModel {
                         )
                     case .file: break
                     case .video: break
-                    case .reply: // TODO: 이미지 답글인 경우 확인 필요 
+                    case .reply: // TODO: 이미지 답글인 경우 확인 필요
                         newMessage = MockMessage(
                             kind: MessageKind.text(msg.message),
                             user: MockUser(senderId: "\(msg.userId)",

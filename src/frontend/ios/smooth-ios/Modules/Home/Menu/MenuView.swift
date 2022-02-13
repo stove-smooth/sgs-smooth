@@ -26,19 +26,22 @@ class MenuView: BaseView {
         serverView.snp.makeConstraints {
             $0.width.equalTo(80)
             $0.left.equalToSuperview()
-            $0.top.bottom.equalTo(safeAreaLayoutGuide)
+            $0.top.equalTo(safeAreaLayoutGuide)
+            $0.bottom.equalToSuperview().offset(-80)
         }
         
         channelView.snp.makeConstraints {
             $0.left.equalTo(serverView.snp.right)
             $0.trailing.equalToSuperview().offset(-60)
-            $0.top.bottom.equalTo(safeAreaLayoutGuide)
+            $0.top.equalTo(safeAreaLayoutGuide)
+            $0.bottom.equalToSuperview().offset(-80)
         }
         
         directView.snp.makeConstraints {
             $0.left.equalTo(serverView.snp.right)
             $0.trailing.equalToSuperview().offset(-60)
-            $0.top.bottom.equalTo(safeAreaLayoutGuide)
+            $0.top.equalTo(safeAreaLayoutGuide)
+            $0.bottom.equalToSuperview().offset(-80)
         }
     }
 }
