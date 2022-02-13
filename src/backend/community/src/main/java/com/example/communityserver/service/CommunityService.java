@@ -244,9 +244,10 @@ public class CommunityService {
     @Transactional
     public CommunityResponse join(Long userId, JoinRequest request, String token) {
 
-        CommunityInvitation invitation = communityInvitationRepository.findByCode(request.getCode())
+        CommunityInvitation invitation = communityInvitationRepository.findByCode(request.getCode()).stream()
                 .filter(i -> i.isActivate())
-                .orElseThrow(() -> new CustomException(NON_VALID_INVITATION));
+                .filter(i -> i.getCode().equals(request.getCode()))
+                .findAny().orElseThrow(() -> new CustomException(NON_VALID_INVITATION));
 
         Community community = invitation.getCommunity();
 
