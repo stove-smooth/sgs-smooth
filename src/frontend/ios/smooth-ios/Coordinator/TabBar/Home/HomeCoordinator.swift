@@ -24,7 +24,6 @@ class HomeCoordinator: NSObject, Coordinator {
         let homeVC = HomeViewController.instance()
         homeVC.coordinator = self
         
-        navigationController.tabBarController?.tabBar.setUpUITabBar()
         navigationController.setNavigationBarHidden(true, animated: false)
         navigationController.pushViewController(homeVC, animated: false)
     }

@@ -15,12 +15,6 @@ class FriendCoordinator: NSObject, Coordinator {
     var navigationController: UINavigationController
     
     init(navigationController: UINavigationController) {
-        navigationController.navigationBar.backgroundColor = .backgroundDarkGray
-        navigationController.navigationBar.tintColor = .white
-        navigationController.navigationBar.barTintColor = .backgroundDarkGray
-        navigationController.navigationBar.shadowImage = UIImage()
-        navigationController.navigationBar.isTranslucent = false
-        
         self.navigationController = navigationController
         self.childCoordinators = []
     }
@@ -32,9 +26,15 @@ class FriendCoordinator: NSObject, Coordinator {
         navigationController.pushViewController(friendVC, animated: true)
     }
     
+    func goToMain() {
+        let coordinator = HomeCoordinator(navigationController: navigationController)
+        childCoordinators.append(coordinator)
+        coordinator.start()
+    }
+    
     func goToRequest() {
         let requestVC = FriendRequestViewController.instance()
-    
+        
         requestVC.modalPresentationStyle = .fullScreen
         navigationController.present(requestVC, animated: true, completion: nil)
     }
