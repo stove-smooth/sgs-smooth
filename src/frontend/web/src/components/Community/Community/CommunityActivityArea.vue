@@ -354,6 +354,7 @@
         <div class="chatting-state" v-if="messageTyper">
           {{ messageTyper }}님께서 입력하고 있어요
         </div>
+        <div class="no-chatting-state-area" v-else></div>
       </div>
     </div>
   </div>
@@ -1077,7 +1078,7 @@ export default {
   padding-right: 16px;
 }
 .channel-message-area {
-  margin-bottom: 24px;
+  margin-bottom: 12px;
   background-color: #36393f;
   position: relative;
   width: 100%;
@@ -1485,5 +1486,8 @@ export default {
   color: #dcddde;
   margin-left: 60px;
   margin-top: 6px;
+}
+.no-chatting-state-area {
+  height: 22px;
 }
 </style>

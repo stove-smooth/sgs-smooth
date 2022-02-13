@@ -346,6 +346,7 @@
         <div class="chatting-state" v-if="messageTyper">
           {{ messageTyper }}님께서 입력하고 있어요
         </div>
+        <div class="no-chatting-state-area" v-else></div>
       </div>
     </div>
   </div>
