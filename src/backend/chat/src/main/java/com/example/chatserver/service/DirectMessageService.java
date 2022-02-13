@@ -51,6 +51,7 @@ public class DirectMessageService {
         UserInfoListFeignResponse userInfoList = userClient.getUserInfoList(ids);
         List<MessageResponse> reads = new ArrayList<>();
         result.forEach((i) -> {
+            String parentId = null;
             String parentName = null;
             String parentContent= null;
             if (i.getParentId() != null) {
@@ -60,6 +61,7 @@ public class DirectMessageService {
                     parentName = "";
                     parentContent = "삭제된 메세지입니다.";
                 } else {
+                    parentId = parent.getId();
                     parentName = userInfoList.getResult().get(i.getUserId()).getName();
                     parentContent = parent.getContent();
                 }
@@ -74,6 +76,7 @@ public class DirectMessageService {
                     .message(i.getContent())
                     .thumbnail(i.getThumbnail())
                     .fileType(i.getType())
+                    .parentId(parentId)
                     .parentName(parentName)
                     .parentContent(parentContent)
                     .time(i.getLocalDateTime()).build();

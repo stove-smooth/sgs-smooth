@@ -20,7 +20,6 @@ public class MessageSender {
     private final KafkaTemplate<String, FileUploadResponse> kafkaTemplateForFileUpload;
 
     public void sendToDirectChat(String topic, DirectMessage directChat) {
-        log.info("send");
         kafkaTemplateForDirectMessage.send(topic, directChat);
     }
 

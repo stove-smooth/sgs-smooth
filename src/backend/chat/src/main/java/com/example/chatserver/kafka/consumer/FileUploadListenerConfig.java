@@ -24,7 +24,8 @@ public class FileUploadListenerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    private final String groupName = "file-server-group";
+    @Value("${spring.kafka.consumer.group-id.file-upload}")
+    private String groupName;
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, FileUploadResponse> kafkaListenerContainerFactoryForFile() {

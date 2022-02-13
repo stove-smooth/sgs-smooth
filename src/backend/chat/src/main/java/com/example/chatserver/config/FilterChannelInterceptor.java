@@ -28,7 +28,6 @@ import java.util.Objects;
 public class FilterChannelInterceptor implements ChannelInterceptor {
 
     private final JwtTokenFilter jwtTokenFilter;
-    private final PresenceClient presenceClient;
     private final TcpClientGateway tcpClientGateway;
     private final MessageTimeRepository messageTimeRepository;
 
@@ -57,7 +56,6 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
                                 .type("login")
                                 .session_id(session_id).user_id(user_id).build();
                 tcpClientGateway.send(loginSessionRequest.toString());
-//                presenceClient.uploadState(loginSessionRequest);
                 break;
                 // todo disconnect 여러가지 테스트 (전원끄기, 랜선뽑기 등)
             case DISCONNECT:
@@ -66,11 +64,8 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
                                 .type("logout")
                                 .session_id(sessionId).build();
                 String id = tcpClientGateway.send(logoutSessionRequest.toString());
-                log.info("반환값 " + id);
                 String[] items = id.split(",");
                 setRoomTime(items[0],items[1]);
-
-//                presenceClient.deleteState(logoutSessionRequest);
                 break;
             default:
                 break;
