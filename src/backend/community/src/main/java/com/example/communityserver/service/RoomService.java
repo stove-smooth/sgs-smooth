@@ -295,6 +295,7 @@ public class RoomService {
 
         RoomInvitation invitation = roomInvitationRepository.findByCode(request.getCode()).stream()
                 .filter(i -> i.getExpiredAt().isAfter(now))
+                .filter(i -> i.getCode().equals(request.getCode()))
                 .findAny().orElseThrow(() -> new CustomException(NON_VALID_INVITATION));
 
         // 중복 초대 확인

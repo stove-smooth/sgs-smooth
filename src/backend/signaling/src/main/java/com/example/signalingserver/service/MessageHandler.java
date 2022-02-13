@@ -71,9 +71,6 @@ public class MessageHandler extends TextWebSocketHandler {
                 case JOIN:
                     JoinRequest joinRequest = mapper.readValue(message.getPayload(), JoinRequest.class);
                     join(joinRequest, session);
-                    // 상태관리 서버로 접속 정보 전송
-                    StateRequest loginRequest = new StateRequest(State.LOGIN, session.getId(), joinRequest.getUserId(), joinRequest.getCommunityId(), joinRequest.getRoomId());
-                    tcpClientGateway.send(loginRequest.toString());
                     break;
                 // SDP 정보 전송
                 case RECEIVE_VIDEO_FROM:
@@ -128,7 +125,7 @@ public class MessageHandler extends TextWebSocketHandler {
         roomManager.getRoom(user.getRoomId(), user.getCommunityId()).leave(user);
 
         // 상태관리 서버로 접속 정보 전송
-        StateRequest logoutRequest = new StateRequest(State.LOGOUT, session.getId(), user.getUserId(), user.getCommunityId(), user.getRoomId());
+        StateRequest logoutRequest = new StateRequest(State.DISCONNECT, user.getUserId(), user.getCommunityId(), user.getRoomId());
         tcpClientGateway.send(logoutRequest.toString());
     }
 

@@ -5,8 +5,8 @@ import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.Map.Entry;
 
 import static com.example.notificationserver.exception.CustomExceptionStatus.MESSAGE_TYPE_ERROR;
 import static com.example.notificationserver.util.MessageType.*;
@@ -17,31 +17,45 @@ public class FcmUtil {
 
     private final FirebaseMessaging instance;
 
+    private final static String CID = "communityId";
+    private final static String RID = "channelId";
+
     // 단일 전송 메세지 만들기
-    public Message makeMessage(String targetToken, String title, String body, String image, Map<String, String> data) throws FirebaseMessagingException {
+    public Message makeMessage(String targetToken, String title, String body, String image, String platform, Map<String, String> data) throws FirebaseMessagingException {
         Notification notification = Notification
                 .builder()
                 .setTitle(title)
                 .setBody(body)
                 .setImage(image).build();
-        Message msg = Message
-                .builder()
-                .setToken(targetToken)
-                .setNotification(notification).build();
-        return msg;
+
+        Message.Builder messageBuilder = Message.builder();
+        messageBuilder.setToken(targetToken);
+        messageBuilder.setNotification(notification);
+        if (platform.equals(DeviceType.WEB)) {
+            messageBuilder.setWebpushConfig(makeWebpushConfig(data));
+        } else {
+            messageBuilder.setApnsConfig(makeApnsConfig(data));
+        }
+        return messageBuilder.build();
     }
 
     // 일괄 전송 메세지 만들기
-    public MulticastMessage makeMessage(List<String> targetTokens, String title, String body, String image, Map<String, String> data) throws FirebaseMessagingException {
+    public MulticastMessage makeMessage(List<String> targetTokens, String title, String body, String image, String platform, Map<String, String> data) throws FirebaseMessagingException {
         Notification notification = Notification
                 .builder()
                 .setTitle(title)
                 .setBody(body)
                 .setImage(image).build();
-        MulticastMessage.Builder builder = MulticastMessage.builder();
-        // Optional.ofNullable(data.getData()).ifPresent(sit -> builder.putAllData(sit));
-        MulticastMessage msg = builder.addAllTokens(targetTokens).setNotification(notification).build();
-        return msg;
+
+        MulticastMessage.Builder messageBuilder = MulticastMessage.builder();
+        messageBuilder.addAllTokens(targetTokens);
+        messageBuilder.setNotification(notification);
+        if (platform.equals(DeviceType.WEB)) {
+            messageBuilder.setWebpushConfig(makeWebpushConfig(data));
+        } else {
+            messageBuilder.setApnsConfig(makeApnsConfig(data));
+        }
+        return messageBuilder.build();
     }
 
     // 단일 메시지 전송
@@ -79,5 +93,35 @@ public class FcmUtil {
             return content;
         else
             return null;
+    }
+
+    // custom data 만들기
+    public Map<String, String> makeCustomData(Long communityId, Long channelId) {
+        Map<String, String> customData = new HashMap<>();
+        String cid = Objects.isNull(communityId) ? "0" : communityId.toString();
+        String rid = channelId.toString();
+        customData.put(CID, cid);
+        customData.put(RID, rid);
+        return customData;
+    }
+
+    private WebpushConfig makeWebpushConfig(Map<String, String> data) {
+        String cid = data.get(CID);
+        String rid = data.get(RID);
+        WebpushConfig.Builder webpushConfigBuilder = WebpushConfig.builder();
+        Optional.ofNullable(data).ifPresent(sit -> webpushConfigBuilder.putAllData(sit));
+        String link = "/channels/" + (cid.equals("0") ? "@me" : cid) + "/" + rid;
+        webpushConfigBuilder.setFcmOptions(WebpushFcmOptions.withLink(link));
+        return webpushConfigBuilder.build();
+    }
+
+    private ApnsConfig makeApnsConfig(Map<String, String> data) {
+        ApnsConfig.Builder apnsConfigBuilder = ApnsConfig.builder();
+        Map<String, Object> map = new HashMap<>();
+        for (Entry<String, String> entry: data.entrySet()) {
+            map.put(entry.getKey(), entry.getValue());
+        }
+        Optional.ofNullable(map).ifPresent(sit -> apnsConfigBuilder.putAllCustomData(sit));
+        return apnsConfigBuilder.build();
     }
 }
