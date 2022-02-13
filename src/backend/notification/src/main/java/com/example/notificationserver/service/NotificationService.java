@@ -29,9 +29,9 @@ public class NotificationService {
     private static ConcurrentHashMap<Long, List<MulticastMessage>> job = new ConcurrentHashMap<>();
 
     public void send(DirectMessageRequest request) {
-         List<Long> ids = convertStringToList(request.getTarget());
-         Map<Long, DeviceTokenResponse> deviceTokens = userClient.getUserDeviceToken(ids);
-         Map<String, List<String>> targetTokensByPlatform = getTokensByPlatform(deviceTokens);
+        List<Long> ids = convertStringToList(request.getTarget());
+        Map<Long, DeviceTokenResponse> deviceTokens = userClient.getUserDeviceToken(ids);
+        Map<String, List<String>> targetTokensByPlatform = getTokensByPlatform(deviceTokens);
         for (Entry<String, List<String>> platform: targetTokensByPlatform.entrySet()) {
             sendMessage(platform.getValue(), request, platform.getKey());
         }
@@ -100,6 +100,26 @@ public class NotificationService {
                     fcm.makeImage(request.getType(), request.getContent()),
                     platform,
                     fcm.makeCustomData(request.getCommunityId(), request.getChannelId())
+            );
+            fcm.sendMessage(msg);
+        } catch (FirebaseMessagingException e) {
+            log.error("FIREBASE ERROR : {}", e);
+        }
+    }
+
+    public void sendTestMessage(TestRequest request) {
+        List<String> targetTokens = new ArrayList<>();
+        Map<String, String> customData = new HashMap<>();
+        customData.put("test", "test");
+        targetTokens.add(request.getToken());
+        try {
+            MulticastMessage msg = fcm.makeMessage(
+                    targetTokens,
+                    fcm.makeTitle("테스트 유저", "테스트 채널"),
+                    fcm.makeBody("text","테스트 내용"),
+                    fcm.makeImage("text", null),
+                    "web",
+                    customData
             );
             fcm.sendMessage(msg);
         } catch (FirebaseMessagingException e) {

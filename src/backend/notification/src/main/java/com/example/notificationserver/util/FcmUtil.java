@@ -17,6 +17,9 @@ public class FcmUtil {
 
     private final FirebaseMessaging instance;
 
+    private final static String CID = "communityId";
+    private final static String RID = "channelId";
+
     // 단일 전송 메세지 만들기
     public Message makeMessage(String targetToken, String title, String body, String image, String platform, Map<String, String> data) throws FirebaseMessagingException {
         Notification notification = Notification
@@ -95,14 +98,20 @@ public class FcmUtil {
     // custom data 만들기
     public Map<String, String> makeCustomData(Long communityId, Long channelId) {
         Map<String, String> customData = new HashMap<>();
-        customData.put("communityId", Objects.isNull(communityId) ? "0" : communityId.toString());
-        customData.put("channelId", channelId.toString());
+        String cid = Objects.isNull(communityId) ? "0" : communityId.toString();
+        String rid = channelId.toString();
+        customData.put(CID, cid);
+        customData.put(RID, rid);
         return customData;
     }
 
     private WebpushConfig makeWebpushConfig(Map<String, String> data) {
+        String cid = data.get(CID);
+        String rid = data.get(RID);
         WebpushConfig.Builder webpushConfigBuilder = WebpushConfig.builder();
         Optional.ofNullable(data).ifPresent(sit -> webpushConfigBuilder.putAllData(sit));
+        String link = "/channels/" + (cid.equals("0") ? "@me" : cid) + "/" + rid;
+        webpushConfigBuilder.setFcmOptions(WebpushFcmOptions.withLink(link));
         return webpushConfigBuilder.build();
     }
 

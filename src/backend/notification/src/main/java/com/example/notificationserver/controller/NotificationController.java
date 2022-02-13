@@ -34,4 +34,11 @@ public class NotificationController {
         notificationService.send(request);
         return responseService.getSuccessResponse();
     }
+
+    @PostMapping("/test")
+    public CommonResponse sendTestMessage(@Valid @RequestBody TestRequest request) {
+        log.info("POST /notification-server/test");
+        notificationService.sendTestMessage(request);
+        return responseService.getSuccessResponse();
+    }
 }
