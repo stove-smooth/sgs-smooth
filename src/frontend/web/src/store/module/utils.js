@@ -7,6 +7,8 @@ const utils = {
     //Socket연결을 관리하기 위한 변수
     stompSocketClient: null,
     stompSocketConnected: false,
+    //알림용 토큰
+    webPushToken: null,
     //navigationBar의 선택된 커뮤니티를 알기 위한 변수
     navigationSelected: "@me",
   },
@@ -30,6 +32,9 @@ const utils = {
     },
     setNavigationSelected(state, navigationSelected) {
       state.navigationSelected = navigationSelected;
+    },
+    setWebPushToken(state, webPushToken) {
+      state.webPushToken = webPushToken;
     },
   },
 };
