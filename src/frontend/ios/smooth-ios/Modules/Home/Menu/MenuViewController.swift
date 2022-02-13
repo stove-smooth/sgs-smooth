@@ -16,14 +16,17 @@ protocol MenuViewControllerDelegate: AnyObject {
 
 extension MenuViewController: DeliveryDelegate{
     func appear(channel: Channel?, communityId: Int?) {
-        guard let servers = self.viewModel.model.servers else { return }
+        let servers = self.viewModel.model.servers
         
-        for index in 0...servers.count-1 {
-            if(servers[index].id == communityId) {
-                self.viewModel.input.tapServer.onNext(IndexPath(row: index, section: 1))
-                break 
+        if (servers.count > 0) {
+            for index in 0...servers.count-1 {
+                if(servers[index].id == communityId) {
+                    self.viewModel.input.tapServer.onNext(IndexPath(row: index, section: 1))
+                    break
+                }
             }
         }
+        
     }
 }
 
@@ -109,7 +112,7 @@ class MenuViewController: BaseViewController, CoordinatorContext {
                 guard let index = self.viewModel.model.selectedServerIndex else { return }
                 
                 self.showServerInfoModal(
-                    server: self.viewModel.model.servers![index],
+                    server: self.viewModel.model.servers[index],
                     member: self.viewModel.model.me!
                 )
             })
@@ -132,7 +135,7 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             
             switch channel.type {
             case .text :
-                let server = self.viewModel.model.servers![self.viewModel.model.selectedServerIndex!]
+                let server = self.viewModel.model.servers[self.viewModel.model.selectedServerIndex!]
                 
                 self.delegate?.swipe(channel: channel, communityId: server.id)
             case .voice:

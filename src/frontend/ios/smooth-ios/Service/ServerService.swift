@@ -11,7 +11,7 @@ import RxSwift
 
 protocol ServerServiceProtocol {
     // MARK: GET
-    func fetchServer(_ completion: @escaping ([Server]?, MoyaError?) -> Void)
+    func fetchCommunity(_ completion: @escaping (Community?, MoyaError?) -> Void)
     func getServerById(_ request: Int, _ completion: @escaping (CommunityInfo?, MoyaError?) -> Void)
     func getMemberFromServer(_ serverId: Int, _ completion: @escaping ([Member]?, MoyaError?) -> Void)
     func getInvitByServer(_ serverId: Int, _ completion: @escaping ([Invitation]?, MoyaError?) -> Void)
@@ -35,14 +35,14 @@ protocol ServerServiceProtocol {
 struct ServerService: Networkable, ServerServiceProtocol {
     typealias Target = ServerTarget
     
-    func fetchServer(_ completion: @escaping ([Server]?, MoyaError?) -> Void) {
-        makeProvider().request(.fetchServer) { result in
+    func fetchCommunity(_ completion: @escaping (Community?, MoyaError?) -> Void) {
+        makeProvider().request(.fetchCommunity) { result in
             switch BaseResponse<Community>.processResponse(result) {
             case .success(let response):
                 guard let response = response else {
                     return
                 }
-                return completion(response.communities, nil)
+                return completion(response, nil)
             
             case .failure(let error):
                 return completion(nil, error)

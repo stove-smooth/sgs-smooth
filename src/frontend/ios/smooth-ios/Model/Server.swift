@@ -12,6 +12,7 @@ struct Server: Codable, Equatable, IdentifiableType {
     let id: Int
     let name: String
     let icon: String?
+    let count: Int?
     
     var identity: Int {
         return self.id
@@ -21,12 +22,14 @@ struct Server: Codable, Equatable, IdentifiableType {
         self.id = 0
         self.name = ""
         self.icon = nil
+        self.count = nil
     }
     
     init(id: Int, name: String, icon: String?) {
         self.id = 0
         self.name = ""
         self.icon = nil
+        self.count = nil
     }
 }
 

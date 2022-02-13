@@ -165,6 +165,7 @@
 		C1FAF63C27AD812F00269EEF /* MessageAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FAF63B27AD812F00269EEF /* MessageAppearance.swift */; };
 		C1FAF63E27AD81DE00269EEF /* ChattingDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FAF63D27AD81DE00269EEF /* ChattingDataSource.swift */; };
 		C1FAF64027B15B3800269EEF /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FAF63F27B15B3800269EEF /* String+Extension.swift */; };
+		C1FF757A27B92984005AAAB9 /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FF757927B92984005AAAB9 /* Room.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -329,6 +330,7 @@
 		C1FAF63B27AD812F00269EEF /* MessageAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAppearance.swift; sourceTree = "<group>"; };
 		C1FAF63D27AD81DE00269EEF /* ChattingDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChattingDataSource.swift; sourceTree = "<group>"; };
 		C1FAF63F27B15B3800269EEF /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
+		C1FF757927B92984005AAAB9 /* Room.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
 		C621E57B9EB3150F8810E412 /* Pods-smooth-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-smooth-ios.debug.xcconfig"; path = "Target Support Files/Pods-smooth-ios/Pods-smooth-ios.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -779,6 +781,7 @@
 				C118D2E027A78A9F009CB96C /* Category.swift */,
 				C1C8B23527A97B2100E8758E /* Message.swift */,
 				C1C8B24527AA438900E8758E /* MockMessage.swift */,
+				C1FF757927B92984005AAAB9 /* Room.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1145,6 +1148,7 @@
 				C1DF653627AC32B2007FC317 /* ChannelReorderCell.swift in Sources */,
 				C1024167279F919400B702DB /* AddServerView.swift in Sources */,
 				C118D2C427A6BA5D009CB96C /* ServerSettingHeaderCell.swift in Sources */,
+				C1FF757A27B92984005AAAB9 /* Room.swift in Sources */,
 				C1D47F3A2784749C00DBA3CA /* SignupViewModel.swift in Sources */,
 				2709162227916E6F00A0772D /* FriendRequestView.swift in Sources */,
 				C1FAF63E27AD81DE00269EEF /* ChattingDataSource.swift in Sources */,

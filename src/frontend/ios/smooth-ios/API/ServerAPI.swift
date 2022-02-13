@@ -11,7 +11,7 @@ import UIKit
 
 enum ServerTarget {
     // MARK: GET
-    case fetchServer
+    case fetchCommunity
     case getServerById(param: Int)
     case getMemberFromServer(param: Int)
     case getInvitByServer(serverId: Int)
@@ -35,7 +35,7 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
     
     var path: String {
         switch self {
-        case .fetchServer:
+        case .fetchCommunity:
             return "/community-server/community"
         case .getServerById(let serverId):
             return "/community-server/community/\(serverId)"
@@ -67,7 +67,7 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
     
     var method: Moya.Method {
         switch self {
-        case .fetchServer: return .get
+        case .fetchCommunity: return .get
         case .getServerById: return .get
         case .getMemberFromServer: return .get
         case .getInvitByServer: return .get
@@ -87,7 +87,7 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
     
     var task: Task {
         switch self {
-        case .fetchServer:
+        case .fetchCommunity:
             return .requestPlain
         case .getServerById:
             return .requestPlain
@@ -156,7 +156,7 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
     
     var authorizationType: AuthorizationType? {
         switch self {
-        case .fetchServer:
+        case .fetchCommunity:
             return .custom("")
         case .getServerById:
             return .custom("")
