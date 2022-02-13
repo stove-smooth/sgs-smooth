@@ -2,23 +2,26 @@
 
 # smooth-iOS
 
-- [Overview](#Overview)
+- [Overview](#overview)
 - [사용 기술 및 라이브러리](#사용-기술-및-라이브러리)
 - [기술스택](#기술스택)
 - [화면](#화면)
 - [개발일지](#개발일지)
-- [Run](#Run)
+- [](#실행하기)
 ---
-<br><br>
+<br>
 
 ### Overview
+>  다양한 상황(또는 화면)에서 Rx를 통해 비동기 처리를 이해하며 적용해보고, 실시간 통신을 바탕으로 다양한 모듈(또는 기능)을 구조화 하는 것에 중점을 두고 프로젝트 개발하였습니다.
+
+<br>
+
 ```
 - 프로젝트 주제 : 디스코드 클론!
 - 주요 기능 : 실시간 채팅, 실사긴 음성/화상 채팅
 ```
 <br>
 
->  다양한 상황(또는 화면)에서 Rx를 통해 비동기 처리를 이해하며 적용해보고, 실시간 통신을 바탕으로 다양한 모듈(또는 기능)을 구조화 하는 것에 중점을 두고 프로젝트 개발하였습니다.
 
 <br>
 
@@ -80,16 +83,39 @@ smooth-ios
 ```
 
 
-### 화면
-<br><br>
 
+### 화면
+| 회원가입 | 로그인 |
+|:---:|:---:|
+<img src = "https://user-images.githubusercontent.com/26545623/153777444-9f75364f-5c1b-466f-83cf-1613eaf30586.gif?raw=true" width = 200> |<img src = "https://user-images.githubusercontent.com/26545623/153777883-5c5862ab-5fe6-4e4e-bd96-ffa370047d13.gif" width = 200>|
+
+| 서버 생성 | 서버 설정 | 서버 초대 |
+|:---:|:---:|:---:|
+|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|
+
+
+| 채널 생성 | 채널 배치 |
+|:---:|:---:|
+|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|
+
+
+| 텍스트 전송 | 파일 전송 | 채팅방 불러오기 | 메시지 삭제 |
+|:---:|:---:|:---:|:---:|
+|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|
+
+| 친구 추가 | 친구 목록 | 친구 차단/삭제 |
+|:---:|:---:|:---:|
+|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|
+
+
+<br><br>
 
 ### 개발일지
 - [notion](https://doitduri.notion.site/7ea66898d85e4679bfd4773471de6eef?v=f6ea07e4a18145f4af8e5f8568c3a2c4) (개발 몰입기간에는 일지가 많이 빠져있습니다.)
 - 주차별 요약(표로)
 
 ----
-### Run
+### 실행하기
 #### Cocoapods
 ```bash
 $ cd ~/src/frontend/ios
