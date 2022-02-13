@@ -14,7 +14,7 @@
           <template v-else>
             <friends-state-list />
           </template>
-          <friends-now-playing-list />
+          <!-- <friends-now-playing-list /> -->
         </div>
       </div>
     </div>
@@ -28,7 +28,7 @@ import FriendsSideBar from "../components/Friends/FriendsSideBar.vue";
 import FriendsStateList from "../components/Friends/FriendsStateList.vue";
 import FriendsStateMenuBar from "../components/Friends/FriendsStateMenuBar.vue";
 import UserSection from "../components/common/UserSection.vue";
-import FriendsNowPlayingList from "../components/Friends/FriendsNowPlayingList.vue";
+//import FriendsNowPlayingList from "../components/Friends/FriendsNowPlayingList.vue";
 import FriendsNewAdd from "../components/Friends/FriendsNewAdd.vue";
 
 export default {
@@ -37,7 +37,7 @@ export default {
     UserSection,
     FriendsStateMenuBar,
     FriendsStateList,
-    FriendsNowPlayingList,
+    //FriendsNowPlayingList,
     FriendsNewAdd,
   },
   created() {

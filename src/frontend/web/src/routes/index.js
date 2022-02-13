@@ -52,11 +52,6 @@ export const router = new VueRouter({
           name: "MyPage",
           component: MyPage,
         },
-        {
-          path: "settings",
-          name: "UserSettingPage",
-          component: UserSettingPage,
-        },
         //커뮤니티 내 채널 page
         {
           path: "channels/:serverid/:channelid",
@@ -68,6 +63,12 @@ export const router = new VueRouter({
           path: "channels/:serverid",
           name: "CommunityWelcomePage",
           component: CommunityWelcomePage,
+        },
+        //개인 정보 설정 page
+        {
+          path: "settings",
+          name: "UserSettingPage",
+          component: UserSettingPage,
         },
       ],
     },
