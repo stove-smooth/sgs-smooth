@@ -18,6 +18,7 @@ extension UINavigationController {
         navigationController.navigationBar.tintColor = .white
         navigationController.navigationBar.barTintColor = UIColor.backgroundDarkGray
         navigationController.navigationBar.backgroundColor = .backgroundDarkGray
+        navigationController.navigationBar.shadowImage = UIImage()
 
         navigationController.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white!]
 

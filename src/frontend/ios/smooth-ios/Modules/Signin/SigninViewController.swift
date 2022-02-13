@@ -1,5 +1,5 @@
 //
-//  SignInViewController.swift
+//  SigninViewController.swift
 //  smooth-ios
 //
 //  Created by 김두리 on 2021/12/27.
@@ -8,23 +8,31 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import Then
 
-class SignInViewController: BaseViewController {
-    private let authView = SignInView()
-    private let viewModel = SignInViewModel(
-        userDefaults: UserDefaultsUtil(),
-        userService: UserService()
-    )
-    
+class SigninViewController: BaseViewController {
     weak var coordinator: MainCoordinator?
     
-    static func instance() -> SignInViewController {
-        return SignInViewController(nibName: nil, bundle: nil)
+    private let signinView = SigninView()
+    private let viewModel: SigninViewModel
+    
+    init() {
+        self.viewModel = SigninViewModel(
+            userDefaults: UserDefaultsUtil(),
+            userService: UserService()
+        )
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    static func instance() -> SigninViewController {
+        return SigninViewController()
     }
     
     override func loadView() {
-        super.view = self.authView
+        super.view = self.signinView
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -39,6 +47,13 @@ class SignInViewController: BaseViewController {
     }
     
     override func bindEvent() {
+        self.viewModel.showToastMessage
+            .asDriver(onErrorJustReturn: "")
+            .drive(onNext: { message in
+                self.showToast(message: message, isWarning: false)
+            })
+            .disposed(by: disposeBag)
+        
         self.viewModel.showErrorMessage
             .asDriver(onErrorJustReturn: "")
             .drive(onNext: { message in
@@ -48,23 +63,24 @@ class SignInViewController: BaseViewController {
     }
     
     override func bindViewModel() {
-        self.authView.emailField.rx.text
+        self.signinView.emailField.rx.text
             .orEmpty
             .bind(to: self.viewModel.input.emailTextField)
             .disposed(by: disposeBag)
         
-        self.authView.passwordField.rx.text
+        self.signinView.passwordField.rx.text
             .orEmpty
             .bind(to: self.viewModel.input.passwordTextFiled)
             .disposed(by: disposeBag)
-    
-        self.authView.loginButton.rx.tap
-            .bind(to: self.viewModel.input.tapLoginButton)
+        
+        self.signinView.loginButton.rx.tap
+            .bind(onNext: {
+                self.viewModel.input.tapLoginButton.onNext(())
+            })
             .disposed(by: disposeBag)
         
         self.viewModel.output.goToMain
-            .debug()
-            .observe(on: MainScheduler.instance)
+            .delay(DispatchTimeInterval.seconds(1), scheduler: MainScheduler.instance)
             .bind(onNext: self.goToMain)
             .disposed(by: disposeBag)
     }

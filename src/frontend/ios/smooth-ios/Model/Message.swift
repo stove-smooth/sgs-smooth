@@ -16,7 +16,10 @@ struct Message: Codable {
     let message: String
     let thumbnail: String?
     let fileType: FileType?
+    let type: RoomType?
     let time: String
+    
+    let parentId: String?
     let parentName: String?
     let parentContent: String?
 }
@@ -50,6 +53,7 @@ enum FileType: String, Codable {
     case image = "image"
     case video = "video"
     case file = "file"
+    case reply = "reply"
 }
 
 struct FileMessageRequest: Codable {

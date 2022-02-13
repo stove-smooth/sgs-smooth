@@ -14,6 +14,7 @@ enum MemberRole: String, Codable {
 
 enum MemberStatus: String, Codable {
     case online = "online"
+    case offline = "offline"
 }
 
 struct Member: Codable {

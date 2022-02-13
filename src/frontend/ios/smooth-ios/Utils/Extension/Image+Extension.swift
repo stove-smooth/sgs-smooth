@@ -38,4 +38,10 @@ extension UIImage {
 
         return UIImage(cgImage: image)
     }
+    
+    var icon: UIImage {
+        let img = self.resizeImage(size: CGSize(width: 25, height: 25))
+        
+        return self
+    }
 }

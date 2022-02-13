@@ -8,7 +8,7 @@
 import RxSwift
 import RxCocoa
 
-class SignInViewModel: BaseViewModel {
+class SigninViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     
@@ -23,9 +23,7 @@ class SignInViewModel: BaseViewModel {
     
     struct Output {
         let goToMain = PublishRelay<Void>()
-        // TODO 회원가입으로 가기 만들기
     }
-    
     
     init(
         userDefaults: UserDefaultsUtil,
@@ -37,18 +35,6 @@ class SignInViewModel: BaseViewModel {
     }
     
     override func bind() {
-        self.input.emailTextField
-            .subscribe(onNext: {
-                print($0)
-            })
-            .disposed(by: disposeBag)
-        
-        self.input.passwordTextFiled
-            .subscribe(onNext: {
-                print($0)
-            })
-            .disposed(by: disposeBag)
-        
         self.input.tapLoginButton
             .asDriver(onErrorJustReturn: ())
             .drive(onNext: {
@@ -68,6 +54,7 @@ class SignInViewModel: BaseViewModel {
             } else {
                 self.userDefaults.setUserToken(token: response!.accessToken)
                 self.fetchUserInfo()
+                self.showToastMessage.accept("로그인 성공")
                 
                 self.output.goToMain.accept(())
             }

@@ -11,10 +11,10 @@ import RxCocoa
 class ServerInfoViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
-
+    let model: Model
+    
     let serverService: ServerService
-    let server: Server
-    let member: Member
+    
     
     struct Input {
         let tapLeaveServer = PublishSubject<Void>()
@@ -24,13 +24,17 @@ class ServerInfoViewModel: BaseViewModel {
         let leaveServer = PublishRelay<Void>()
     }
     
+    struct Model {
+        var server: Server
+        var member: Member
+    }
+    
     init(
         server: Server,
         member: Member,
         serverService: ServerService
     ) {
-        self.server = server
-        self.member = member
+        self.model = Model(server: server, member: member)
         self.serverService = serverService
         super.init()
     }
@@ -38,7 +42,7 @@ class ServerInfoViewModel: BaseViewModel {
     override func bind() {
         self.input.tapLeaveServer
             .bind(onNext: {
-                self.leaveServer(serverId: self.server.id, memberId: self.member.id)
+                self.leaveServer(serverId: self.model.server.id, memberId: self.model.member.id)
             })
             .disposed(by: disposeBag)
     }

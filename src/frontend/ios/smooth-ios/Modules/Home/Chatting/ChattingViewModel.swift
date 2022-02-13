@@ -65,8 +65,6 @@ class ChattingViewModel: BaseViewModel {
                 
             })
             .disposed(by: disposeBag)
-        
-        
     }
     
     private func fetchMessgae(chattingId: Int) {
@@ -90,17 +88,28 @@ class ChattingViewModel: BaseViewModel {
                     switch msg.fileType {
                     case .image:
                         newMessage = MockMessage(image: msg.message.toUIImage()!,
-                                                 user: MockUser(senderId: "\(msg.userId)", displayName: msg.name, profileImage: msg.profileImage),
+                                                 user: MockUser(senderId: "\(msg.userId)", displayName: msg.name,
+                                                profileImage: msg.profileImage),
                                                  messageId: msg.id,
                                                  date: msg.time.ISOtoDate
                         )
                     case .file: break
                     case .video: break
-                        
+                    case .reply: // TODO: 이미지 답글인 경우 확인 필요
+                        newMessage = MockMessage(
+                            kind: MessageKind.text(msg.message),
+                            user: MockUser(senderId: "\(msg.userId)",
+                                           displayName: msg.name,
+                                           profileImage: msg.profileImage),
+                            messageId: msg.id,
+                            date: msg.time.ISOtoDate
+                        )
                     case .none:
                         newMessage = MockMessage(
                             kind: MessageKind.text(msg.message),
-                            user: MockUser(senderId: "\(msg.userId)", displayName: msg.name, profileImage: msg.profileImage),
+                            user: MockUser(senderId: "\(msg.userId)",
+                                           displayName: msg.name,
+                                           profileImage: msg.profileImage),
                             messageId: msg.id,
                             date: msg.time.ISOtoDate
                         )

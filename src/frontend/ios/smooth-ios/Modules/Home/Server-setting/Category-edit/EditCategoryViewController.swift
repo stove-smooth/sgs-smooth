@@ -41,7 +41,6 @@ class EditCategoryViewController: BaseViewController {
     
     private func dismiss() {
         self.dismiss(animated: true, completion: nil)
-//        self.coordinator?.goToMenu()
     }
     
     override func loadView() {

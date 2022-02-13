@@ -83,7 +83,7 @@ extension UIColor {
         
         let randomColorChip = [
             UIColor.blurple, UIColor.orange, UIColor.red,
-            UIColor(hex: "0xfaa61a"), UIColor.green
+            UIColor.streaming, UIColor.green
         ]
         
         return randomColorChip[code]!

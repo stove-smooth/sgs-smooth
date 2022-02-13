@@ -11,7 +11,7 @@ import Moya
 protocol UserServiceProtocol {
     // MARK: POST
     func signIn(email: String, password: String, _ completion: @escaping (SignIn?, MoyaError?) -> Void)
-    func signUp(_ request: SignUpRequest, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
+    func signUp(email: String, password: String, name: String, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
     func sendMail(_ email: String, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
     
     // MARK: GET
@@ -37,8 +37,8 @@ struct UserService: Networkable, UserServiceProtocol {
         }
     }
     
-    func signUp(_ request: SignUpRequest, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void) {
-        makeProvider().request(.signUp(param: request)) { result in
+    func signUp(email: String, password: String, name: String, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void) {
+        makeProvider().request(.signUp(email: email, password: password, name: name)) { result in
             switch BaseResponse<DefaultResponse>.processJSONResponse(result) {
             case .success(let response):
                 return completion(response, nil)

@@ -27,6 +27,8 @@ class HomeViewController: BaseViewController, CoordinatorContext {
     
     weak var coordinator: HomeCoordinator?
     
+    private let tabBarView = TabBarView()
+    
     weak var delegate: HomeViewControllerDelegate?
     weak var delivery: DeliveryDelegate?
     
@@ -44,6 +46,16 @@ class HomeViewController: BaseViewController, CoordinatorContext {
     override func viewDidLoad() {
         super.viewDidLoad()
         addChildVCs()
+        
+        self.tabBarView.setItem(tag: .home)
+        view.addSubview(tabBarView)
+        
+        
+        tabBarView.snp.makeConstraints {
+            $0.left.right.equalToSuperview()
+            $0.bottom.equalToSuperview()
+            $0.height.equalTo(80)
+        }
     }
     
     private func addChildVCs() {
@@ -67,6 +79,23 @@ class HomeViewController: BaseViewController, CoordinatorContext {
         
         navVC.navigationBar.barTintColor = UIColor.backgroundDarkGray
         self.navigationViewController = navVC
+    }
+    
+    override func bindEvent() {
+        self.tabBarView.homeButton.rx.tap
+            .asDriver()
+            .drive(onNext: {
+                self.coordinator?.start()
+            })
+            .disposed(by: disposeBag)
+        
+        self.tabBarView.friendButton.rx.tap
+            .asDriver()
+            .drive(onNext: {
+                self.coordinator?.goToFriend()
+            })
+            .disposed(by: disposeBag)
+        
     }
 }
 
@@ -95,7 +124,7 @@ extension HomeViewController: ChattingViewControllerDelegate {
     func toggleMenu(completion: (() -> Void)?) {
         switch menuState {
         case .opened:
-            self.tabBarController?.tabBar.isHidden = false
+            self.tabBarView.isHidden = false
             self.chattingViewController.messageInputBar.isHidden = true
             
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseOut){
@@ -108,7 +137,7 @@ extension HomeViewController: ChattingViewControllerDelegate {
             }
             
         case .closed:
-            self.tabBarController?.tabBar.isHidden = true
+            self.tabBarView.isHidden = true
             self.chattingViewController.messageInputBar.isHidden = false
             
             UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: .curveEaseOut){

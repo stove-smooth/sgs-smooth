@@ -12,6 +12,7 @@ class VerifyCodeViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
     
+    let email: String
     let userService: UserServiceProtocol
     
     struct Input {
@@ -20,12 +21,14 @@ class VerifyCodeViewModel: BaseViewModel {
     }
     
     struct Output {
-        let goToSignUpInfo = PublishRelay<Void>()
+        let goToSignUpInfo = PublishRelay<String>()
     }
     
     init(
+        email: String,
         userService: UserServiceProtocol
     ) {
+        self.email = email
         self.userService = userService
         super.init()
     }
@@ -46,7 +49,8 @@ class VerifyCodeViewModel: BaseViewModel {
             }
 
             if response.isSuccess {
-                self.output.goToSignUpInfo.accept(())
+                self.showToastMessage.accept("인증 성공")
+                self.output.goToSignUpInfo.accept(self.email)
             } else {
                 self.showErrorMessage.accept(response.message)
             }

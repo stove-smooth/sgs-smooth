@@ -28,21 +28,22 @@ class FriendListView: BaseView {
         $0.separatorStyle = .none
     }
     
-    let loadingView = UIView().then {
-        $0.backgroundColor = .blurple
-    }
-    
+    let loadingView = UIActivityIndicatorView()
     let emptyView = FriendEmptyView()
+    
+    let tabBarView = TabBarView()
     
     override func setup() {
         self.backgroundColor = .messageBarDarkGray
         
         [
             navigationView, naviTitleLabel, requestButton,
-            tableView
+            tableView, tabBarView
         ].forEach {
             self.addSubview($0)
         }
+        
+        tabBarView.setItem(tag: .friend)
     }
     
     override func bindConstraints() {
@@ -62,17 +63,23 @@ class FriendListView: BaseView {
         }
         
         tableView.snp.makeConstraints {
-            $0.left.right.bottom.equalToSuperview()
+            $0.left.right.equalToSuperview()
             $0.top.equalTo(navigationView.snp.bottom)
+            $0.bottom.equalTo(tabBarView.snp.top)
         }
         
+        tabBarView.snp.makeConstraints {
+            $0.left.right.equalToSuperview()
+            $0.bottom.equalToSuperview()
+            $0.height.equalTo(80)
+        }
     }
     
     override func showLoading(isShow: Bool) {
         if isShow {
             addSubview(loadingView)
             loadingView.snp.makeConstraints {
-                $0.edges.equalTo(0)
+                $0.centerX.centerY.equalToSuperview()
             }
         } else {
             loadingView.removeFromSuperview()

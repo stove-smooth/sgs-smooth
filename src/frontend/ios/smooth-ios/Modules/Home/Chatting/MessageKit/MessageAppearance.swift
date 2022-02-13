@@ -45,11 +45,13 @@ extension ChattingViewController: MessagesDisplayDelegate {
         if user.profileImage != nil {
             avatarView.setImage(URL(string: user.profileImage!)!)
         } else {
-            let img = UIImage(named: "Logo")
+            let user = UserDefaultsUtil().getUserInfo()!
+            
+            
+            let img = UIImage(named: "profile-\(Int(user.code)! % 5)")
             avatarView.image = img
         }
         
-        avatarView.backgroundColor = UIColor.random(code: Int(user.senderId) ?? 0)
         avatarView.isHidden = isPreviousMessageSameSender(at: indexPath)
     }
     

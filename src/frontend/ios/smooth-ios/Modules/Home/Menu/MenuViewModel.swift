@@ -42,11 +42,11 @@ class MenuViewModel: BaseViewModel {
     }
     
     struct Model {
-        var servers: [Server]?
-        var selectedServerIndex: Int?
+        var servers: [Server] = []
+        var directs: [Server] = []
         
+        var selectedServerIndex: Int?
         var communityInfo: CommunityInfo?
-        var directs: [String]?
         
         var members: [Member]?
         var me: Member?
@@ -64,7 +64,7 @@ class MenuViewModel: BaseViewModel {
     
     override func bind() {
         self.input.fetch
-            .bind(onNext: self.fetchServer)
+            .bind(onNext: self.fetchCommunity)
             .disposed(by: disposeBag)
         
         self.input.tapServer
@@ -78,8 +78,8 @@ class MenuViewModel: BaseViewModel {
                     self.output.selectedServer.accept(nil)
                     self.fetchDirect()
                 case 1: // 서버 리스트
-                    let server = self.model.servers![indexPath.row]
-                    self.model.selectedServerIndex = self.model.servers?.firstIndex(of: server)
+                    let server = self.model.servers[indexPath.row]
+                    self.model.selectedServerIndex = self.model.servers.firstIndex(of: server)
                     
                     self.output.selectedServer.accept(self.model.selectedServerIndex)
                     self.fetchChannel(server: server)
@@ -96,22 +96,24 @@ class MenuViewModel: BaseViewModel {
             .disposed(by: disposeBag)
     }
     
-    private func fetchServer() {
+    private func fetchCommunity() {
         self.showLoading.accept(true)
-        self.serverService.fetchServer { servers, _ in
+        self.serverService.fetchCommunity { community, _ in
             
-            guard let servers = servers else {
+            guard let community = community else {
                 return
             }
             
-            self.model.servers = servers
+            self.model.directs = community.rooms
+            self.model.servers = community.communities
             
+
             if (self.model.selectedServerIndex != nil) {
-                self.fetchChannel(server: servers[0])
-                self.fetchMemebr(server: servers[0])
+                self.fetchChannel(server: self.model.servers[0])
+                self.fetchMemebr(server: self.model.servers[0])
             }
             
-            self.output.servers.accept(servers)
+            self.output.servers.accept(self.model.servers)
             self.output.selectedServer.accept(self.model.selectedServerIndex)
             self.output.showLoading.accept(false)
         }
