@@ -93,7 +93,7 @@ export default {
   async created() {
     await this.fetchCommunityInfo();
     this.stompSocketClient.subscribe(
-      `/topic/community/ + ${this.$route.params.serverid}`,
+      `/topic/community/${this.$route.params.serverid}`,
       async (res) => {
         console.log("시그널링 서버 상태 구독입니다", res.body);
       }
