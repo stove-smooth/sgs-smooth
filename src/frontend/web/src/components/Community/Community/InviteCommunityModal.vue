@@ -2,40 +2,53 @@
   <div class="modal">
     <div class="blurred-background" @click="closeModal"></div>
     <div class="modal-container">
-      <modal @exit="closeModal">
+      <modal @exit="closeModal" :backgroudColor="blackColor">
         <template slot="header">
-          <h3 class="action-title margin-left-8px">
+          <h3 class="white-action-title margin-left-8px">
             친구를 {{ communityInviteModal.serverName }} 그룹으로 초대하기
           </h3>
-          <search-bar></search-bar>
         </template>
         <template slot="content">
-          <div class="invite-scroller thin-scrollbar">
+          <div
+            class="invite-scroller thin-scrollbar"
+            v-if="inviteeFriends.length > 0"
+          >
             <div
               class="invite-row justify-content-space-between align-items-center"
-              v-for="friend in friendsAccept"
-              :key="friend.id"
+              v-for="(friend, index) in inviteeFriends"
+              :key="friend.userId"
             >
               <div class="align-items-center">
                 <div class="invite-avatar margin-right-8px">
                   <img class="avatar" :src="friend.profileImage" alt=" " />
                 </div>
-                <div class="primary-text-content">{{ friend.name }}</div>
+                <div class="primary-text-content white-color">
+                  {{ friend.name }}
+                </div>
               </div>
-              <button class="invite-button positive-border-color">
-                <div class="primary-text-content">초대하기</div>
+              <button
+                class="invite-button positive-border-color"
+                @click="inviteFriendToCommunity(friend, index)"
+                :disabled="isInvited[index] == 1 ? true : false"
+              >
+                <div v-if="isInvited[index] == 0" class="primary-text-content">
+                  초대하기
+                </div>
+                <div v-else class="primary-text-content">전송됨</div>
               </button>
             </div>
           </div>
+          <div v-else class="primary-text-content white-color">
+            초대할 친구가 없습니다.
+          </div>
         </template>
         <template slot="footer"
-          ><h5 class="margin-left-8px no-margin-bottom">
+          ><h5 class="margin-left-8px no-margin-bottom white-color">
             또는 친구에게 서버 초대 링크 전송하기
           </h5>
           <div
             class="community-invite-container align-items-center justify-content-center"
           >
-            <!-- <div class="server-link-wrapper">{{ this.invitationUrl }}</div> -->
             <input id="inviteUrl" :value="this.invitationUrl" />
             <button class="middle-button" @click="copyCommunityUrl">
               복사
@@ -50,16 +63,17 @@
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
 import Modal from "@/components/common/Modal.vue";
-import SearchBar from "@/components/common/SearchBar.vue";
-import { createInvitation } from "@/api/index.js";
+import { createInvitation, createDirectMessage } from "@/api/index.js";
 export default {
   components: {
     Modal,
-    SearchBar,
   },
   data() {
     return {
       invitationUrl: "",
+      blackColor: "#36393f",
+      isInvited: [],
+      inviteeFriends: [],
     };
   },
   async created() {
@@ -77,10 +91,35 @@ export default {
     };
     const result = await createInvitation(invitationData);
     this.invitationUrl = result.data.result.url;
+    //초대대상을 정합니다.
+    let friendsMember = this.friendsAccept;
+    let communityMember = this.communityOnlineMemberList.concat(
+      this.communityOfflineMemberList
+    );
+    for (let i = 0; i < friendsMember.length; i++) {
+      for (let j = 0; j < communityMember.length; j++) {
+        if (friendsMember[i] != "해당안됨") {
+          if (friendsMember[i].userId == communityMember[j].id) {
+            friendsMember[i] = "해당안됨";
+          }
+        }
+      }
+    }
+    this.inviteeFriends = friendsMember.filter(
+      (element) => element !== "해당안됨"
+    );
+    console.log(this.inviteeFriends);
+    this.isInvited = [...Array(this.inviteeFriends.length)].map(() => 0);
   },
   computed: {
-    ...mapState("community", ["communityInviteModal", "communityList"]),
+    ...mapState("community", [
+      "communityInviteModal",
+      "communityList",
+      "communityOnlineMemberList",
+      "communityOfflineMemberList",
+    ]),
     ...mapState("friends", ["friendsAccept"]),
+    ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
   },
   methods: {
     ...mapActions("friends", ["FETCH_FRIENDSLIST"]),
@@ -94,6 +133,36 @@ export default {
       document.execCommand("copy");
       alert(copyText.value + "을 복사했습니다.");
     },
+    async inviteFriendToCommunity(friend, index) {
+      console.log("community 로 초대", friend.userId);
+      const dmMembers = {
+        members: [friend.userId],
+      };
+      const result = await createDirectMessage(dmMembers);
+      const msg = {
+        content: this.invitationUrl,
+        channelId: result.data.result.id,
+        userId: friend.userId,
+        name: friend.name,
+        profileImage: friend.profileImage,
+      };
+      this.stompSocketClient.send(
+        "/kafka/send-direct-message",
+        JSON.stringify(msg),
+        {}
+      );
+      console.log(this.isInvited, index);
+      this.isInvited[index] = 1;
+      console.log(this.isInvited);
+    },
+    /* friendsInvited(index) {
+      console.log(this.isInvited[index]);
+      if (this.isInvited[index] == 0) {
+        return 0;
+      } else {
+        return 1;
+      }
+    }, */
   },
 };
 </script>
@@ -145,15 +214,19 @@ export default {
   background-color: #2f3136;
   border: 1px solid rgba(0, 0, 0, 0.3);
   margin: 8px;
+  justify-content: space-between;
 }
-.server-link-wrapper {
-  box-sizing: border-box;
-  width: 100%;
-  border-radius: 3px;
-  color: #dcddde;
-  background-color: rgba(0, 0, 0, 0.1);
+.white-action-title {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 16px;
-  padding: 10px;
-  height: 40px;
+  line-height: 20px;
+  color: #fff;
+}
+#inviteUrl {
+  color: white;
+  background: none;
+  border: none;
 }
 </style>

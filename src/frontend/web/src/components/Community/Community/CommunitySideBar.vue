@@ -146,14 +146,30 @@
                   </div>
                 </div>
                 <!----음성 참여자 목록-->
-                <div class="voice-participants-list" v-show="false">
-                  <div class="voice-user-wrapper clickable">
-                    <div class="voice-user-content">
-                      <div class="small-avatar-wrapper">
-                        <img src="" alt=" " />
-                      </div>
-                      <div class="voice-participants-username-wrapper">
-                        밍디
+                <div
+                  class="voice-participants-list"
+                  v-if="
+                    el.type === 'VOICE' &&
+                    voiceChannelMember[el.id] != 'undefined'
+                  "
+                >
+                  <div
+                    v-for="(item, index) in voiceChannelMember[el.id]"
+                    :key="index"
+                  >
+                    <div class="voice-user-wrapper clickable">
+                      <div class="voice-user-content">
+                        <div class="small-avatar-wrapper">
+                          <img
+                            class="voice-member-profile"
+                            :src="voiceMemberInfo(item).profileImage"
+                            alt=" "
+                          />
+                        </div>
+                        <div class="voice-participants-username-wrapper">
+                          {{ voiceMemberInfo(item).name }}
+                          <!-- {{ item }} -->
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -169,7 +185,7 @@
 
 <script>
 import draggable from "vuedraggable";
-import { mapState, mapMutations, mapActions } from "vuex";
+import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
 import { moveCategory, moveChannel } from "../../../api/index.js";
 export default {
   components: {
@@ -181,11 +197,38 @@ export default {
       hovered: "",
       categoryhovered: "",
       new: 0,
+      voiceChannelMember: [],
     };
   },
+  created() {
+    this.stompSocketClient.subscribe(
+      `/topic/community/${this.$route.params.serverid}`,
+      (res) => {
+        console.log("시그널링 서버 상태 구독입니다", JSON.parse(res.body));
+        this.voiceChannelMember = JSON.parse(res.body);
+      }
+    );
+    const msg = {
+      user_id: this.getUserId,
+      community_id: this.$route.params.serverid,
+      type: "before-enter",
+    };
+    this.stompSocketClient.send(
+      "/kafka/community-signaling",
+      JSON.stringify(msg),
+      {}
+    );
+  },
   computed: {
-    ...mapState("community", ["openCommunityPopout", "communityInfo"]),
+    ...mapState("community", [
+      "openCommunityPopout",
+      "communityInfo",
+      "communityOnlineMemberList",
+      "communityOfflineMemberList",
+    ]),
     ...mapState("voice", ["wsOpen", "video"]),
+    ...mapState("utils", ["stompSocketClient"]),
+    ...mapGetters("user", ["getUserId"]),
   },
   mounted() {
     window.addEventListener("click", this.onClick);
@@ -355,14 +398,30 @@ export default {
           url: "https://sig.yoloyolo.org/rtc",
           type: "community",
         };
-        //const url = "https://sig.yoloyolo.org/rtc";
         await this.wsInit(wsInfo); //ws 전역 등록.
+        this.$router.push("/channels/" + this.communityInfo.id + "/" + id);
+        this.selected = id;
+        if (this.video) {
+          this.setVideo();
+        }
+      } else {
+        this.selected = id;
+        this.$router.push("/channels/" + this.communityInfo.id + "/" + id);
       }
-      this.selected = id;
-      if (this.video) {
-        this.setVideo();
+    },
+    voiceMemberInfo(id) {
+      let communityMembers = this.communityOnlineMemberList.concat(
+        this.communityOfflineMemberList
+      );
+      for (let i = 0; i < communityMembers.length; i++) {
+        if (communityMembers[i].id == id) {
+          let memberInfo = {
+            name: communityMembers[i].communityName,
+            profileImage: communityMembers[i].profileImage,
+          };
+          return memberInfo;
+        }
       }
-      this.$router.push("/channels/" + this.communityInfo.id + "/" + id);
     },
   },
 };
@@ -677,5 +736,10 @@ export default {
 .none-settings {
   width: 16px;
   height: 12px;
+}
+.voice-member-profile {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
 }
 </style>

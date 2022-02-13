@@ -1,7 +1,7 @@
 <template>
   <div>
     <section class="my-section">
-      <div class="primary-container" v-show="wsOpen">
+      <div class="primary-container" v-if="wsOpen">
         <div class="media-connected-container">
           <div class="display-flex">
             <div class="media-connected-title-inner">
@@ -141,17 +141,25 @@ export default {
       }
     },
     toggleMic() {
+      //음성 연결에 참여했을 경우, 내 mic를 조절한다.
+      //음성 연결에 참여하지 않았을 경우, mic상태만 변경한다.
+      if (this.wsOpen) {
+        this.myParticipantObject.rtcPeer.audioEnabled = !this.mute;
+      }
       this.setMute();
-      this.myParticipantObject.rtcPeer.audioEnabled = !this.mute;
     },
     toggleHeadPhone() {
-      //다른 참가자들의 비디오를 음소거한다.
-      Object.keys(this.participants).forEach((key) => {
-        let videoElement = this.participants[key].getVideoElement();
-        if (key != this.getUserId) {
-          videoElement.muted = !this.deafen;
-        }
-      });
+      //음성 연결에 참여했을 경우, 다른 참가자들의 비디오를 음소거한다. 혹은 음소거를 해제한다.
+      //음성 연결에 참여하지 않았을 경우, 상태만 변경한다.
+      if (this.wsOpen) {
+        Object.keys(this.participants).forEach((key) => {
+          let videoElement = this.participants[key].getVideoElement();
+          if (key != this.getUserId) {
+            videoElement.muted = !this.deafen;
+          }
+        });
+      }
+
       this.setDeafen();
     },
   },

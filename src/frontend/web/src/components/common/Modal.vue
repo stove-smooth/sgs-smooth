@@ -1,5 +1,5 @@
 <template>
-  <div class="create-server-form-wrapper">
+  <div :style="cssProps" class="create-server-form-wrapper">
     <div class="create-server-form-header">
       <slot name="header"></slot>
       <button
@@ -20,9 +20,21 @@
 
 <script>
 export default {
+  props: {
+    backgroudColor: {
+      type: String,
+    },
+  },
   methods: {
     exitCreate() {
       this.$emit("exit");
+    },
+  },
+  computed: {
+    cssProps() {
+      return {
+        "--modal-background": this.backgroudColor,
+      };
     },
   },
 };
@@ -30,7 +42,7 @@ export default {
 
 <style>
 .create-server-form-wrapper {
-  background: var(--white-color);
+  background: var(--modal-background);
   opacity: 1;
   width: 440px;
   max-height: 720px;
@@ -47,11 +59,10 @@ export default {
   top: 12px;
   right: 12px;
   height: 26px;
-  opacity: 0.5;
   cursor: pointer;
   border-radius: 3px;
   color: #4f5660;
-  background-color: var(--white-color);
+  background-color: transparent;
   box-sizing: content-box;
   width: auto;
   border: 0;

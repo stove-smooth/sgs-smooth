@@ -123,9 +123,12 @@
                       </p>
                     </div>
                     <div v-else class="message-content">
-                      <template v-if="item.fileType && item.fileType == 'image'"
-                        ><div v-html="item.thumbnail"></div
-                      ></template>
+                      <template
+                        v-if="item.fileType && item.fileType == 'image'"
+                      >
+                        <div v-if="!imageLoading" class="loading-img"></div>
+                        <div v-else v-html="item.thumbnail"></div>
+                      </template>
                       <template v-else
                         ><div>{{ item.message }}</div></template
                       >
@@ -348,8 +351,8 @@
             </div>
           </div>
         </div>
-        <div class="chatting-state">
-          `${this.messageTyper}님께서 입력하고 있어요...`
+        <div class="chatting-state" v-if="messageTyper">
+          {{ messageTyper }}님께서 입력하고 있어요
         </div>
       </div>
     </div>
@@ -382,7 +385,9 @@ export default {
       prevScrollHeight: 0,
       modifyLogMessage: "",
       recentChatted: null,
-      messageTyper: [],
+      messageTyper: "",
+      setTimeId: "",
+      imageLoading: false,
     };
   },
   mounted() {
@@ -412,7 +417,7 @@ export default {
     //실시간 메시지 구독
     this.stompSocketClient.subscribe(
       "/topic/group/" + this.$route.params.channelid,
-      (res) => {
+      async (res) => {
         console.log("구독으로 받은 메시지 입니다.", res.body);
         /**메세지의 종류: 일반 채팅, 이미지 채팅, 수정, 삭제, 답장, 타이핑 상태  */
         //한국시간에 맞게 시간 커스텀
@@ -438,8 +443,6 @@ export default {
             }
           }
           receivedForm.isOther = isOther;
-        } else {
-          console.log("타이핑에 관한 구독이 등장.", receivedForm);
         }
 
         //이미지를 보낼시 이미지 처리
@@ -452,11 +455,12 @@ export default {
           receivedForm.type != "modify" &&
           receivedForm.type != "delete"
         ) {
-          console.log(" 일반메시지 수신", receivedForm);
+          this.imageLoading = false;
           this.receiveList.push(receivedForm);
-          this.$nextTick(function () {
+          await this.$nextTick(function () {
             this.scrollToBottom();
           });
+          this.imageLoading = true;
         }
         //수정 구독 메시지 수신시,현재 로드된 메시지 중 수정한 메시지가 있다면 수정을 해준다.
         if (receivedForm.type == "modify") {
@@ -472,6 +476,18 @@ export default {
             (element) => element.id !== receivedForm.id
           );
           this.receiveList = array;
+          for (let i = 0; i < this.receiveList.length; i++) {
+            if (this.receiveList[i].parentId) {
+              if (this.receiveList[i].parentId == receivedForm.id) {
+                this.receiveList[i].parentName = "";
+                this.receiveList[i].parentContent = "삭제된 메시지입니다.";
+              }
+            }
+          }
+        }
+        //타이핑 구독 수신. 마지막으로 타이핑친 사람의 이름은 3초뒤에 사라진다.
+        if (receivedForm.type == "typing") {
+          this.messageTyper = receivedForm.name;
         }
       }
     );
@@ -483,7 +499,7 @@ export default {
     text() {
       if (this.recentChatted) {
         //채팅한 기록이 있을 경우
-        if (new Date() - this.recentChatted >= 10000) {
+        if (new Date() - this.recentChatted >= 6000) {
           this.recentChatted = new Date();
           const msg = {
             content: this.nickname,
@@ -512,6 +528,17 @@ export default {
           {}
         );
       }
+    },
+    //채팅 치는 사람을 표시하기 위함
+    messageTyper(newVal, oldVal) {
+      if (oldVal) {
+        if (this.setTimeId) {
+          clearTimeout(this.setTimeId);
+        }
+      }
+      this.setTimeId = setTimeout(() => {
+        this.messageTyper = "";
+      }, 3000);
     },
   },
   methods: {
@@ -815,10 +842,12 @@ export default {
         }
         let newarray = array.concat(this.receiveList);
         this.receiveList = newarray;
+
         if (this.page == 0) {
-          this.$nextTick(function () {
+          await this.$nextTick(function () {
             this.scrollToBottom();
           });
+          this.imageLoading = true;
         }
         if (this.prevScrollHeight != 0) {
           this.$nextTick(function () {
@@ -849,6 +878,15 @@ export default {
 </script>
 
 <style>
+/**스켈레톤이미지 */
+.loading-img {
+  width: 105px;
+  height: 105px;
+  background-color: #e0e0e0;
+}
+.loading-hidden {
+  display: none;
+}
 /**메세지 수정 */
 .channel-message-edit-area {
   position: relative;

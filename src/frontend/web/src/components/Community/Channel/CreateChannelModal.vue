@@ -154,12 +154,14 @@ export default {
               result.data.result
             );
           }
-          this.$router.push(
-            "/channels/" +
-              this.$route.params.serverid +
-              "/" +
-              result.data.result.id
-          );
+          if (result.data.result.type != "VOICE") {
+            this.$router.push(
+              "/channels/" +
+                this.$route.params.serverid +
+                "/" +
+                result.data.result.id
+            );
+          }
           this.setCommunityInfo(this.communityInfo);
           this.setCreateChannel(false);
           return;

@@ -4,14 +4,14 @@
       class="frineds-now-playing-container thin-scrollbar now-playing-scroller"
     >
       <h3 class="header-title">현재 활동 중</h3>
-      <div v-for="(item, index) in 7" :key="index">
+      <div v-for="(item, index) in 1" :key="index">
         <div class="now-playing-card" tabindex="0" role="button">
           <div>
             <header class="now-playing-card-header">
               <div class="profile-margin profile-wrapper">
                 <img
                   class="avatar"
-                  src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=32"
+                  src="../../assets/default_stove.png"
                   alt=" "
                 />
                 <template aria-label="status-invisible">
@@ -54,7 +54,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="voice-section-members-wrapper">
+                  <!-- <div class="voice-section-members-wrapper">
                     <div class="voice-section-members">
                       <div class="known-voice-section-member">
                         <img
@@ -73,7 +73,7 @@
                         />
                       </div>
                     </div>
-                  </div>
+                  </div> -->
                 </div>
               </section>
             </div>

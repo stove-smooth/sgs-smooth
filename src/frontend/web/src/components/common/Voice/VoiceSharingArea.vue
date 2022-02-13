@@ -53,21 +53,20 @@ import { mapGetters, mapActions, mapMutations, mapState } from "vuex";
 import VoiceParticipants from "./VoiceParticipants.vue";
 export default {
   components: { VoiceParticipants },
-  async created() {
+  created() {
     //들어온 채널의 상태를 보냄.
     if (this.$route.params.channelid) {
       //커뮤니티에 있을 경우
+      //음성연결 입장 알림
       const msg = {
         user_id: this.getUserId,
         channel_id: `c-${this.$route.params.channelid}`,
-        type: "state",
+        community_id: this.$route.params.serverid,
+        type: "enter",
       };
-      this.stompSocketClient.send(
-        "/kafka/join-channel",
-        JSON.stringify(msg),
-        {}
-      );
-      //음성연결 입장 알림
+      this.stompSocketClient.send("/kafka/signaling", JSON.stringify(msg), {});
+      console.log("send 보냅니다~~~~~~~~~~~~~~~~~~~~~~~~!!!!!", msg);
+
       let message = {
         id: "joinRoom",
         token: this.getAccessToken,
@@ -111,7 +110,14 @@ export default {
   },
   computed: {
     ...mapGetters("user", ["getAccessToken", "getUserId"]),
-    ...mapState("voice", ["participants", "ws", "mute", "video", "myName"]),
+    ...mapState("voice", [
+      "participants",
+      "ws",
+      "mute",
+      "video",
+      "myName",
+      "deafen",
+    ]),
     ...mapState("community", ["currentChannelType", "communityInfo"]),
     ...mapState("dm", ["directMessageMemberList"]),
     ...mapState("utils", ["stompSocketClient"]),
