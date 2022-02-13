@@ -1,5 +1,6 @@
 package com.example.notificationserver.client;
 
+import com.example.notificationserver.dto.response.DeviceTokenResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,5 +12,5 @@ import java.util.Map;
 public interface UserClient {
 
     @PostMapping("/device-token")
-    Map<Long, String> getUserDeviceToken(@RequestBody List<Long> ids);
+    Map<Long, DeviceTokenResponse> getUserDeviceToken(@RequestBody List<Long> ids);
 }

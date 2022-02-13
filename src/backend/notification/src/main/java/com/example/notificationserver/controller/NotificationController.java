@@ -2,6 +2,7 @@ package com.example.notificationserver.controller;
 
 import com.example.notificationserver.dto.request.ChannelMessageRequest;
 import com.example.notificationserver.dto.request.DirectMessageRequest;
+import com.example.notificationserver.dto.request.TestRequest;
 import com.example.notificationserver.dto.response.CommonResponse;
 import com.example.notificationserver.service.NotificationService;
 import com.example.notificationserver.service.ResponseService;
@@ -23,14 +24,14 @@ public class NotificationController {
     @PostMapping("/direct")
     public CommonResponse sendDirectMessage(@Valid @RequestBody DirectMessageRequest request) {
         log.info("POST /notification-server/direct");
-        notificationService.sendDirectMessage(request);
+        notificationService.send(request);
         return responseService.getSuccessResponse();
     }
 
     @PostMapping("/channel")
     public CommonResponse sendChannelMessage(@Valid @RequestBody ChannelMessageRequest request) {
         log.info("POST /notification-server/channel");
-        notificationService.sendChannelMessage(request);
+        notificationService.send(request);
         return responseService.getSuccessResponse();
     }
 }
