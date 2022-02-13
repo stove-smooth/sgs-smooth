@@ -22,49 +22,27 @@ public class PresenceController {
     private final ResponseService responseService;
     private final PresenceService presenceService;
 
-//    @PostMapping("login-state")
-//    public CommonResponse uploadState(@RequestBody LoginSessionRequest loginSessionRequest) {
-//        presenceService.uploadState(loginSessionRequest);
-//
-//        return responseService.getSuccessResponse();
-//    }
-//
-//    @PostMapping("/logout-state")
-//    public CommonResponse deleteState(@RequestBody LoginSessionRequest loginSessionRequest) throws JsonProcessingException {
-//
-//        presenceService.deleteState(loginSessionRequest);
-//
-//        return responseService.getSuccessResponse();
-//    }
-//
-//    @PostMapping("/change-state")
-//    public CommonResponse changeState(@RequestBody LoginSessionRequest loginSessionRequest) throws JsonProcessingException {
-//        presenceService.changeState(loginSessionRequest);
-//
-//        return responseService.getSuccessResponse();
-//    }
-//
-//    @PutMapping("status/{id}/{status}")
-//    public CommonResponse statusChange(@PathVariable(value = "id") Long id,
-//                                       @PathVariable(value = "status") String status) {
-//        presenceService.statusChange(id,status);
-//
-//        return responseService.getSuccessResponse();
-//    }
-
     // 유저들 on, off 상태 정보 반환
     @GetMapping("/user-state")
     public Map<Long,String> getUsersState() {
         return presenceService.getUsersState();
     }
 
+    // 테스트 용
     @GetMapping("/for-me")
     public Map<String,String> getState () {
         return presenceService.getState();
     }
 
+    // 테스트 용
     @GetMapping("/all-redis-info")
     public Map<String,String> allInfo() {
         return presenceService.allInfo();
+    }
+
+    // 테스트 용
+    @GetMapping("/delete")
+    public void delete() {
+        presenceService.deleteAll();
     }
 }
