@@ -73,7 +73,7 @@
       </div>
     </div>
     <div class="primary-header-toolbar">
-      <div class="invite-toolbar">
+      <!-- <div class="invite-toolbar">
         <div
           class="primary-icon-wrapper clickable"
           role="button"
@@ -89,7 +89,7 @@
         aria-label="받은 편지함"
       >
         <svg class="mail-box"></svg>
-      </div>
+      </div> -->
     </div>
   </section>
 </template>

@@ -7,13 +7,12 @@
           <h3 class="action-title margin-left-8px">
             친구를 {{ communityInviteModal.serverName }} 그룹으로 초대하기
           </h3>
-          <search-bar></search-bar>
         </template>
         <template slot="content">
           <div class="invite-scroller thin-scrollbar">
             <div
               class="invite-row justify-content-space-between align-items-center"
-              v-for="friend in friendsAccept"
+              v-for="friend in invitee"
               :key="friend.id"
             >
               <div class="align-items-center">
@@ -50,12 +49,10 @@
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
 import Modal from "@/components/common/Modal.vue";
-import SearchBar from "@/components/common/SearchBar.vue";
 import { createInvitation } from "@/api/index.js";
 export default {
   components: {
     Modal,
-    SearchBar,
   },
   data() {
     return {
@@ -79,8 +76,24 @@ export default {
     this.invitationUrl = result.data.result.url;
   },
   computed: {
-    ...mapState("community", ["communityInviteModal", "communityList"]),
+    ...mapState("community", [
+      "communityInviteModal",
+      "communityList",
+      "communityOnlineMemberList",
+      "communityOfflineMemberList",
+    ]),
     ...mapState("friends", ["friendsAccept"]),
+    invitee() {
+      console.log(this.friendsAccept);
+      console.log(
+        this.communityOnlineMemberList,
+        this.communityOfflineMemberList
+      );
+      /*       for(let i=0;i<this.friendsAccept.length;i++){
+
+      } */
+      return this.friendsAccept;
+    },
   },
   methods: {
     ...mapActions("friends", ["FETCH_FRIENDSLIST"]),

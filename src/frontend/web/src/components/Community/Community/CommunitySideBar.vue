@@ -358,24 +358,15 @@ export default {
           type: "community",
         };
         await this.wsInit(wsInfo); //ws 전역 등록.
-
-        const msg = {
-          user_id: this.getUserId,
-          channel_id: `c-${this.$route.params.channelid}`,
-          community_id: this.$route.params.serverid,
-          type: "enter",
-        };
-        this.stompSocketClient.send(
-          "/kafka/signaling",
-          JSON.stringify(msg),
-          {}
-        );
+        this.$router.push("/channels/" + this.communityInfo.id + "/" + id);
+        this.selected = id;
+        if (this.video) {
+          this.setVideo();
+        }
+      } else {
+        this.selected = id;
+        this.$router.push("/channels/" + this.communityInfo.id + "/" + id);
       }
-      this.selected = id;
-      if (this.video) {
-        this.setVideo();
-      }
-      this.$router.push("/channels/" + this.communityInfo.id + "/" + id);
     },
   },
 };

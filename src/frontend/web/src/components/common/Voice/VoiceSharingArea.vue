@@ -58,6 +58,14 @@ export default {
     if (this.$route.params.channelid) {
       //커뮤니티에 있을 경우
       //음성연결 입장 알림
+      const msg = {
+        user_id: this.getUserId,
+        channel_id: `c-${this.$route.params.channelid}`,
+        community_id: this.$route.params.serverid,
+        type: "enter",
+      };
+      this.stompSocketClient.send("/kafka/signaling", JSON.stringify(msg), {});
+
       let message = {
         id: "joinRoom",
         token: this.getAccessToken,
