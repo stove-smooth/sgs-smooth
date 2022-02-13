@@ -13,10 +13,22 @@ class VerifyCodeViewController: BaseViewController {
     weak var coordinator: MainCoordinator?
     
     private let verifyCodeView = VerifyCodeView()
-    private let viewModel = VerifyCodeViewModel(userService: UserService())
+    private let viewModel: VerifyCodeViewModel
     
-    static func instance() -> VerifyCodeViewController {
-        return VerifyCodeViewController(nibName: nil, bundle: nil)
+    init(email: String) {
+        self.viewModel = VerifyCodeViewModel(
+            email: email,
+            userService: UserService()
+        )
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    static func instance(email: String) -> VerifyCodeViewController {
+        return VerifyCodeViewController(email: email)
     }
     
     override func loadView() {
@@ -28,6 +40,13 @@ class VerifyCodeViewController: BaseViewController {
     }
     
     override func bindEvent() {
+        self.viewModel.showToastMessage
+            .asDriver(onErrorJustReturn: "")
+            .drive(onNext: { message in
+                self.showToast(message: message, isWarning: false)
+            })
+            .disposed(by: disposeBag)
+        
         self.viewModel.showErrorMessage
             .asDriver(onErrorJustReturn: "")
             .drive(onNext: { message in
@@ -50,14 +69,16 @@ class VerifyCodeViewController: BaseViewController {
         
         // output
         self.viewModel.output.goToSignUpInfo
-            .observe(on: MainScheduler.instance)
-            .bind(onNext: self.goToSignUpInfo)
+            .delay(DispatchTimeInterval.seconds(1), scheduler: MainScheduler.instance)
+            .bind(onNext: { email in
+                self.goToSignUpInfo(email: email)
+            })
             .disposed(by: disposeBag)
         
     }
     
-    private func goToSignUpInfo() {
-        self.coordinator?.goToSignUpInfo()
+    private func goToSignUpInfo(email: String) {
+        self.coordinator?.goToSignUpInfo(email: email)
     }
     
 }

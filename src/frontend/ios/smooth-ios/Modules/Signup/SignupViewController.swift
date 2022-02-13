@@ -13,10 +13,21 @@ class SignupViewController: BaseViewController {
     weak var coordinator: MainCoordinator?
     
     private let signupView = SignupView()
-    private let viewModel = SignupViewModel(userService: UserService())
+    private let viewModel: SignupViewModel
+    
+    init() {
+        self.viewModel = SignupViewModel(
+            userService: UserService()
+        )
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     static func instance() -> SignupViewController {
-        return SignupViewController(nibName: nil, bundle: nil)
+        return SignupViewController()
     }
     
     override func loadView() {
@@ -84,11 +95,13 @@ class SignupViewController: BaseViewController {
         
         self.viewModel.output.goToVerifyCode
             .observe(on: MainScheduler.instance)
-            .bind(onNext: self.goToVerifyCode)
+            .bind(onNext: { email in
+                self.goToVerifyCode(email: email)
+            })
             .disposed(by: disposeBag)
     }
     
-    private func goToVerifyCode() {
-        self.coordinator?.goToVerifyCode()
+    private func goToVerifyCode(email: String) {
+        self.coordinator?.goToVerifyCode(email: email)
     }
 }

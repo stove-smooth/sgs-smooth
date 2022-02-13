@@ -11,7 +11,7 @@ import Moya
 enum UserTarget {
     // MARK: POST
     case signIn(email: String, password: String)
-    case signUp(param: SignUpRequest)
+    case signUp(email: String, password: String, name: String)
     case sendMail(email: String)
 
     // MARK: GET
@@ -54,8 +54,8 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
         switch self {
         case .signIn(let email, let password):
             return .requestParameters(parameters: ["email": email, "password": password], encoding: JSONEncoding.default)
-        case .signUp(let user):
-            return .requestCustomJSONEncodable(user, encoder: JSONEncoder())
+        case .signUp(let email, let password, let name):
+            return .requestParameters(parameters: ["email": email, "password": password, "name": name], encoding: JSONEncoding.default)
         case .sendMail(let email):
             return .requestParameters(parameters: ["email": email], encoding: URLEncoding.queryString)
         case .verifyCode(let key):

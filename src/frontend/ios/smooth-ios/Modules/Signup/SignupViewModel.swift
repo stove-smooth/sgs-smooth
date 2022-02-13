@@ -22,7 +22,7 @@ class SignupViewModel: BaseViewModel {
     
     struct Output {
         let isVaild = PublishRelay<Bool>()
-        let goToVerifyCode = PublishRelay<Void>()
+        let goToVerifyCode = PublishRelay<String>()
     }
     
     init(
@@ -54,7 +54,7 @@ class SignupViewModel: BaseViewModel {
             }
             
             if response.isSuccess {
-                self.output.goToVerifyCode.accept(())
+                self.output.goToVerifyCode.accept(email)
             } else {
                 self.showErrorMessage.accept(response.message)
             }

@@ -63,14 +63,14 @@ class MainCoordinator: NSObject, Coordinator {
         navigationController.pushViewController(vc, animated: true)
     }
     
-    func goToSignUpInfo() {
-        let vc = SignUpInfoViewController.instance()
+    func goToSignUpInfo(email: String) {
+        let vc = SignupInfoViewController.instance(email: email)
         vc.coordinator = self
         navigationController.pushViewController(vc, animated: true)
     }
     
-    func goToVerifyCode() {
-        let vc = VerifyCodeViewController.instance()
+    func goToVerifyCode(email: String) {
+        let vc = VerifyCodeViewController.instance(email: email)
         vc.coordinator = self
         navigationController.removeFromParent()
         navigationController.pushViewController(vc, animated: true)
