@@ -118,7 +118,7 @@ public class UserController {
         return responseService.getDataResponse(accountService.getNameAndPhoto(id));
     }
     @PostMapping("/device-token")
-    public Map<Long,String> getDeviceToken(@RequestBody List<Long> ids) {
+    public Map<Long,DeviceResponse> getDeviceToken(@RequestBody List<Long> ids) {
         return accountService.getDeviceToken(ids);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.presenceserver.configuration;
+package com.example.presenceserver.config;
 
 import com.example.presenceserver.service.TcpService;
 import com.fasterxml.jackson.core.JsonProcessingException;

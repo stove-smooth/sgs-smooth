@@ -22,7 +22,8 @@ public class DirectListenerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    private final String groupName = "direct-server-group";
+    @Value("${spring.kafka.consumer.group-id.direct}")
+    private String groupName;
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, DirectMessage> directFactory() {

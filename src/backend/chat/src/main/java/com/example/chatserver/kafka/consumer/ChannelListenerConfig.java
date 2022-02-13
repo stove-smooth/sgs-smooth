@@ -24,7 +24,8 @@ public class ChannelListenerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    private final String groupName = "channel-server-group";
+    @Value("${spring.kafka.consumer.group-id.channel}")
+    private String groupName;
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, ChannelMessage> communityFactory() {

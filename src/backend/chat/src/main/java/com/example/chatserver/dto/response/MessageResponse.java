@@ -19,6 +19,7 @@ public class MessageResponse {
     private String fileType;
     private String type;
     private LocalDateTime time;
+    private String parentId;
     private String parentName;
     private String parentContent;
 }
