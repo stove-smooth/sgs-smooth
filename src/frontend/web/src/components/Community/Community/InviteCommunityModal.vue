@@ -9,7 +9,7 @@
           </h3>
         </template>
         <template slot="content">
-          <div class="invite-scroller thin-scrollbar">
+          <div class="invite-scroller thin-scrollbar" v-if="invitee.length > 0">
             <div
               class="invite-row justify-content-space-between align-items-center"
               v-for="friend in invitee"
@@ -84,15 +84,21 @@ export default {
     ]),
     ...mapState("friends", ["friendsAccept"]),
     invitee() {
-      console.log(this.friendsAccept);
-      console.log(
-        this.communityOnlineMemberList,
+      let friendsMember = this.friendsAccept;
+      let communityMember = this.communityOnlineMemberList.concat(
         this.communityOfflineMemberList
       );
-      /*       for(let i=0;i<this.friendsAccept.length;i++){
-
-      } */
-      return this.friendsAccept;
+      for (let i = 0; i < friendsMember.length; i++) {
+        for (let j = 0; j < communityMember.length; j++) {
+          if (friendsMember[i] != "해당안됨") {
+            if (friendsMember[i].userId == communityMember[j].id) {
+              friendsMember[i] = "해당안됨";
+            }
+          }
+        }
+      }
+      const newArr = friendsMember.filter((element) => element !== "해당안됨");
+      return newArr;
     },
   },
   methods: {
