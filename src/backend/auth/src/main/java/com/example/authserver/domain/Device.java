@@ -33,7 +33,11 @@ public class Device {
 
     private LocalDateTime last_access;
 
-    public void setLast_access(LocalDateTime last_access) {
-        this.last_access = last_access;
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

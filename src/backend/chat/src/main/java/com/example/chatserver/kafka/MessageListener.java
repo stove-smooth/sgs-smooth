@@ -7,6 +7,7 @@ import com.example.chatserver.client.UserClient;
 import com.example.chatserver.config.TcpClientGateway;
 import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.domain.DirectMessage;
+import com.example.chatserver.dto.request.DirectNotiRequest;
 import com.example.chatserver.dto.request.LoginSessionRequest;
 import com.example.chatserver.dto.response.CommunityFeignResponse;
 import com.example.chatserver.dto.response.FileUploadResponse;
@@ -42,19 +43,17 @@ public class MessageListener {
     private final String topicNameForCommunityEtc = "etc-community-topic";
     private final String topicForFileUpload = "file-topic";
 
-    private final String directGroup = "direct-server-group";
-    private final String directETCGroup = "direct-etc-server-group";
-    private final String channelGroup = "channel-server-group";
-    private final String channelETCGroup = "channel-etc-server-group";
-    private final String fileGroup = "file-server-group";
+    private final String directGroup = "direct-server-group1";
+    private final String directETCGroup = "direct-etc-server-group1";
+    private final String channelGroup = "channel-server-group1";
+    private final String channelETCGroup = "channel-etc-server-group1";
+    private final String fileGroup = "file-server-group1";
 
     private final ObjectMapper objectMapper;
     private final SimpMessagingTemplate template;
     private final DirectMessageRepository directChatRepository;
     private final ChannelMessageRepository channelChatRepository;
-    private final RedisTemplate<String, UserInfoFeignResponse.UserInfoResponse> redisTemplate;
     private final RedisTemplate<String, CommunityFeignResponse.UserIdResponse> redisTemplateForIds;
-    private final PresenceClient presenceClient;
     private final CommunityClient communityClient;
     private final TcpClientGateway tcpClientGateway;
     private final NotificationClient notificationClient;
@@ -65,8 +64,6 @@ public class MessageListener {
     @KafkaListener(topics = topicNameForDirect, groupId = directGroup, containerFactory = "directFactory")
     public void directMessageListener(DirectMessage directChat) throws JsonProcessingException {
         HashMap<String,String> msg = new HashMap<>();
-
-        log.info("clear");
         msg.put("type","message");
         msg.put("userId", String.valueOf(directChat.getUserId()));
         msg.put("name",directChat.getName());

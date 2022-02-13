@@ -24,7 +24,8 @@ public class DirectETCListenerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    private final String groupName = "direct-etc-server-group";
+    @Value("${spring.kafka.consumer.group-id.direct-etc}")
+    private String groupName;
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, DirectMessage> directETCFactory() {

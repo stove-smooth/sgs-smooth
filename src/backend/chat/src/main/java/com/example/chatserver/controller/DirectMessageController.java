@@ -1,5 +1,6 @@
 package com.example.chatserver.controller;
 
+import com.example.chatserver.dto.request.SignalingRequest;
 import com.example.chatserver.kafka.MessageSender;
 import com.example.chatserver.domain.DirectMessage;
 import com.example.chatserver.dto.request.FileUploadRequest;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -37,6 +39,7 @@ public class DirectMessageController {
     private final MessageSender messageSender;
     private final DirectMessageService directChatService;
     private final ResponseService responseService;
+    private final SimpMessagingTemplate template;
 
     @MessageMapping("/send-direct-typing")
     public void sendTyping(@Payload DirectMessage directChat) {
@@ -89,5 +92,10 @@ public class DirectMessageController {
     @PostMapping("/message-count")
     public List<MessageCountResponse> messageCount(@RequestBody MessageCountRequest messageCountRequest) {
         return directChatService.messageCount(messageCountRequest);
+    }
+
+    @PostMapping("/signaling-list-direct")
+    public void getSignalingListForDirect(@RequestBody SignalingRequest signalingRequest) {
+        template.convertAndSend("/topic/direct/" + signalingRequest.getChannelId(), signalingRequest.toString());
     }
 }
