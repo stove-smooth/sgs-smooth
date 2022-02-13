@@ -1,8 +1,7 @@
 package com.example.authserver.service;
 
 import com.example.authserver.dto.request.ProfileRequest;
-import com.example.authserver.dto.response.AccountInfoResponse;
-import com.example.authserver.dto.response.NameAndPhotoResponse;
+import com.example.authserver.dto.response.*;
 import com.example.authserver.exception.CustomException;
 import com.example.authserver.exception.CustomExceptionStatus;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
@@ -11,8 +10,6 @@ import com.example.authserver.domain.*;
 import com.example.authserver.domain.type.RoleType;
 import com.example.authserver.dto.*;
 import com.example.authserver.dto.request.SignInRequest;
-import com.example.authserver.dto.response.MailResponse;
-import com.example.authserver.dto.response.SignInResponse;
 import com.example.authserver.repository.DeviceRepository;
 import com.example.authserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -76,6 +73,9 @@ public class UserService extends BaseTimeEntity {
         String refreshToken = jwtTokenProvider.CreateRefreshToken(account.getEmail());
         redisTemplate.opsForValue().set(account.getEmail(), refreshToken, refreshTime, TimeUnit.MILLISECONDS);
 
+        Device device = deviceRepository.findByUserId(account.getId());
+        device.setToken(request.getDeviceToken());
+        device.setType(request.getType());
 
         SignInResponse res = SignInResponse.builder()
                 .id(account.getId())
@@ -84,6 +84,8 @@ public class UserService extends BaseTimeEntity {
                 .email(account.getEmail())
                 .accessToken(jwtTokenProvider.createToken(account.getEmail(),account.getRoleType(),account.getId()))
                 .refreshToken(refreshToken)
+                .deviceToken(device.getToken())
+                .type(device.getType())
                 .build();
 
         return res;
@@ -206,11 +208,14 @@ public class UserService extends BaseTimeEntity {
     }
 
     @Transactional
-    public Map<Long,String> getDeviceToken(List<Long> id) {
-        Map<Long,String> result = new HashMap<>();
+    public Map<Long,DeviceResponse> getDeviceToken(List<Long> id) {
+        Map<Long,DeviceResponse> result = new HashMap<>();
         List<Device> device = deviceRepository.findByUserId(id);
         for (Device d : device) {
-            result.put(d.getUser().getId(), d.getToken());
+            DeviceResponse deviceResponse = DeviceResponse.builder()
+                    .type(d.getType())
+                    .token(d.getToken()).build();
+            result.put(d.getUser().getId(),deviceResponse);
         }
 
         return result;
