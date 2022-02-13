@@ -26,7 +26,7 @@ const voice = {
       return false;
     },
     setWsOpen(state, wsOpen) {
-      console.log("setWsOpen", wsOpen);
+      //console.log("setWsOpen", wsOpen);
       state.wsOpen = wsOpen;
     },
     setVoiceInfo(state, voiceInfo) {
@@ -34,7 +34,7 @@ const voice = {
       state.roomName = voiceInfo.roomName;
     },
     addParticipant(state, { name, participant }) {
-      console.log("나는 누구든 참여자가 늘어납니다.", name, participant);
+      //console.log("나는 누구든 참여자가 늘어납니다.", name, participant);
       if (state.participants === null) {
         state.participants = {};
       }
@@ -72,7 +72,7 @@ const voice = {
       };
       context.state.ws.onmessage = function (message) {
         let parsedMessage = JSON.parse(message.data);
-        console.log("Received message", message.data);
+        //console.log("Received message", message.data);
         context.dispatch("onServerMessage", parsedMessage);
       };
     },
@@ -198,7 +198,7 @@ const voice = {
           this.generateOffer(participant.offerToReceiveVideo.bind(participant));
         }
       );
-      console.log("다른 참가자 video를 받습니다.", participant);
+      //console.log("다른 참가자 video를 받습니다.", participant);
       //처음 입장시 내 헤드셋이 꺼져있다면 다른 참가자들의 마이크가 음소거된다.
       if (context.state.deafen) {
         video.muted = true;
@@ -206,7 +206,7 @@ const voice = {
       context.commit("addParticipant", { name: sender, participant });
     },
     setVoiceInfo(context, voiceInfo) {
-      console.log("voice방 정보 저장");
+      //console.log("voice방 정보 저장");
       context.commit("setVoiceInfo", voiceInfo);
     },
     sendMessage(context, message) {

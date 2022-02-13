@@ -65,6 +65,7 @@ export default {
         type: "enter",
       };
       this.stompSocketClient.send("/kafka/signaling", JSON.stringify(msg), {});
+      console.log("send 보냅니다~~~~~~~~~~~~~~~~~~~~~~~~!!!!!", msg);
 
       let message = {
         id: "joinRoom",

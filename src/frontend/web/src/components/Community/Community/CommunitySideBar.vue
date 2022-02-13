@@ -206,8 +206,6 @@ export default {
       (res) => {
         console.log("시그널링 서버 상태 구독입니다", JSON.parse(res.body));
         this.voiceChannelMember = JSON.parse(res.body);
-        console.log(this.communityInfo);
-        console.log(this.voiceChannelMember[141]);
       }
     );
     const msg = {
