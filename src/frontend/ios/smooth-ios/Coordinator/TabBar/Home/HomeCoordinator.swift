@@ -89,4 +89,10 @@ class HomeCoordinator: NSObject, Coordinator {
         
         navigationController.presentPanModal(friendInfoVC)
     }
+    
+    func goToProfile() {
+        let coordinator = ProfileCoordinator(navigationController: navigationController)
+        childCoordinators.append(coordinator)
+        coordinator.start()
+    }
 }
