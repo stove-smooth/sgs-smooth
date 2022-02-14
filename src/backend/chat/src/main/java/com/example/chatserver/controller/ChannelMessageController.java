@@ -77,20 +77,17 @@ public class ChannelMessageController {
         channelChatService.setRoomTime(loginSessionRequest,lastRoom);
     }
 
-    // 커뮤니티 입장 시 음성,영상 인원 보여주기
+    // 커뮤니티 입장 시 현재 음성,영상 인원 보여주기
     @MessageMapping("/community-signaling")
     public void communitySignaling(@Payload LoginSessionRequest loginSessionRequest) {
         String send = tcpClientGateway.send(loginSessionRequest.toString());
-        log.info("시그널링:" + send);
-        log.info("컴아디:" + loginSessionRequest.getCommunity_id());
         template.convertAndSend("/topic/community/" + loginSessionRequest.getCommunity_id(), send);
     }
 
-    // 시그널링 상태관리
+    // 음성,영상 채팅방 입장 시 현재 인원 갱신
     @MessageMapping("/signaling")
     public void sendSignalingState(@Payload LoginSessionRequest loginSessionRequest) {
         String send = tcpClientGateway.send(loginSessionRequest.toString());
-        log.info("시그널링:" + send);
         template.convertAndSend("/topic/community/" + loginSessionRequest.getCommunity_id(), send);
     }
 
