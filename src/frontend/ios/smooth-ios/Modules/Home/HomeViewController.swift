@@ -96,6 +96,12 @@ class HomeViewController: BaseViewController, CoordinatorContext {
             })
             .disposed(by: disposeBag)
         
+        self.tabBarView.profileButton.rx.tap
+            .asDriver()
+            .drive(onNext: {
+                self.coordinator?.goToProfile()
+            })
+            .disposed(by: disposeBag)
     }
 }
 

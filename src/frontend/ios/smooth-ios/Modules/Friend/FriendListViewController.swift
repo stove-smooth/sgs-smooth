@@ -105,6 +105,20 @@ class FriendListViewController: BaseViewController, CoordinatorContext {
                 self.coordinator?.goToMain()
             })
             .disposed(by: disposeBag)
+        
+        self.friendListView.tabBarView.friendButton.rx.tap
+            .asDriver()
+            .drive(onNext: {
+                self.coordinator?.start()
+            })
+            .disposed(by: disposeBag)
+        
+        self.friendListView.tabBarView.profileButton.rx.tap
+            .asDriver()
+            .drive(onNext: {
+                self.coordinator?.goToProfile()
+            })
+            .disposed(by: disposeBag)
     }
     
     override func bindViewModel() {
