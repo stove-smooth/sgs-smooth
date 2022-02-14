@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 import java.util.Map;
 
-@FeignClient(name = "PresenceFeign", url = "http://52.79.229.100:8000/presence-server")
+@FeignClient(name = "PresenceFeign", url = "https://api.yoloyolo.org/presence-server")
 public interface PresenceClient {
     @PostMapping("/login-state")
     PresenceInfoFeignResponse uploadState(@RequestBody LoginSessionRequest loginSessionRequest);
