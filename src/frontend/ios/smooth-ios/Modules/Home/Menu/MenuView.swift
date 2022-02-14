@@ -48,9 +48,9 @@ class MenuView: BaseView {
 
 
 extension Reactive where Base: MenuView {
-    var server: Binder<[Server]> {
-        return Binder(self.base) { view, serverList in
-            view.serverView.bind(serverList: serverList)
+    var community: Binder<Community> {
+        return Binder(self.base) { view, communityList in
+            view.serverView.bind(communityList: communityList)
         }
     }
     
@@ -78,7 +78,7 @@ extension Reactive where Base: MenuView {
         }
     }
     
-    var direct: Binder<[String]> {
+    var rooms: Binder<[Room]> {
         return Binder(self.base) { view, directList in
             view.channelView.isHidden = true
             view.directView.isHidden = false

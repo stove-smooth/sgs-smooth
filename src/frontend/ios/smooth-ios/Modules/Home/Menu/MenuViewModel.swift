@@ -14,30 +14,28 @@ class MenuViewModel: BaseViewModel {
     let output = Output()
     var model = Model()
     
-    let serverService: ServerService
+    let serverService: ServerServiceProtocol
     let userDefaults: UserDefaultsUtil
     
     struct Input {
         let fetch = PublishSubject<Void>()
-        let tapServer = PublishSubject<IndexPath>()
-        
-        let menuPipline = PublishSubject<Void>()
+        let tapServer = PublishSubject<ServerCellType>()
     }
     
     struct Output {
         let showLoading = PublishRelay<Bool>()
         
         // MARK: Binder
-        let servers = PublishRelay<[Server]>()
-        let selectedServer = PublishRelay<Int?>()
-        let communityInfo = PublishRelay<CommunityInfo>()
-        let selectedChannel = PublishRelay<IndexPath?>()
-        let directs = PublishRelay<[String]>()
-        
+        //        var servers = PublishRelay<[Server]>()
+        var community = PublishRelay<Community>()
         let members = PublishRelay<[Member]>()
         
-        let defaultChannelIndex = PublishRelay<IndexPath>()
+        let communityInfo = PublishRelay<CommunityInfo>()
+        let rooms = PublishRelay<[Room]>()
         
+        let selectedServer = PublishRelay<Int?>()
+        let selectedChannel = PublishRelay<IndexPath?>()
+        let defaultChannelIndex = PublishRelay<IndexPath>()
         let goToAddServer = PublishRelay<Void>()
     }
     
@@ -47,13 +45,14 @@ class MenuViewModel: BaseViewModel {
         
         var selectedServerIndex: Int?
         var communityInfo: CommunityInfo?
+        var rooms: [Room] = []
         
         var members: [Member]?
-        var me: Member?
+        var user: Member?
     }
     
     init(
-        serverService: ServerService,
+        serverService: ServerServiceProtocol,
         userDefaults: UserDefaultsUtil
     ) {
         self.serverService = serverService
@@ -68,58 +67,62 @@ class MenuViewModel: BaseViewModel {
             .disposed(by: disposeBag)
         
         self.input.tapServer
-            .bind(onNext: { indexPath in
+            .bind(onNext: { cellType in
                 self.output.selectedChannel.accept(nil)
                 
-                switch indexPath.section {
-                case 0: // 다이렉트 메시지 홈 + 다이렉트 메시지 함
-                    print("홈")
-                    self.model.selectedServerIndex = nil
-                    self.output.selectedServer.accept(nil)
+                switch cellType {
+                case .home: // MARK: 다이렉트 메시지 홈 + 다이렉트 메시지 함
                     self.fetchDirect()
-                case 1: // 서버 리스트
-                    let server = self.model.servers[indexPath.row]
-                    self.model.selectedServerIndex = self.model.servers.firstIndex(of: server)
-                    
-                    self.output.selectedServer.accept(self.model.selectedServerIndex)
-                    self.fetchChannel(server: server)
-                    
-                    self.fetchMemebr(server: server)
-                case 2: // 서버 추가 버튼
                     self.model.selectedServerIndex = nil
                     self.output.selectedServer.accept(nil)
                     
+                case .direct(let server): // MARK: 서버 리스트 (미수신 다렉 메시지)
+                    self.model.selectedServerIndex = self.model.servers.firstIndex(of: server)
+                    self.output.selectedServer.accept(self.model.selectedServerIndex)
+                    print("다렉으로 이동")
+                    
+                case .normal(let server): // MARK: 서버 리스트 (서버)
+                    self.model.selectedServerIndex = self.model.servers.firstIndex(of: server)
+                    self.output.selectedServer.accept(self.model.selectedServerIndex)
+                    
+                    self.fetchChannel(server: server)
+                    self.fetchMemebr(server: server)
+                    
+                case .add: // MARK: 서버 추가 버튼
+                    self.model.selectedServerIndex = nil
+                    self.output.selectedServer.accept(nil)
                     self.output.goToAddServer.accept(())
-                default: break
                 }
-            })
-            .disposed(by: disposeBag)
+            }).disposed(by: disposeBag)
     }
     
+    
     private func fetchCommunity() {
+        // 사용자가 속한 커뮤니티(다이렉트, 서버) 정보 가져오기
         self.showLoading.accept(true)
         self.serverService.fetchCommunity { community, _ in
             
             guard let community = community else {
                 return
             }
+            self.model.servers = community.rooms + community.communities
             
-            self.model.directs = community.rooms
-            self.model.servers = community.communities
             
-
             if (self.model.selectedServerIndex != nil) {
                 self.fetchChannel(server: self.model.servers[0])
                 self.fetchMemebr(server: self.model.servers[0])
             }
             
-            self.output.servers.accept(self.model.servers)
-            self.output.selectedServer.accept(self.model.selectedServerIndex)
+            self.output.community.accept(community)
+            self.input.tapServer.onNext(.home) // 서버 홈으로 초기화
+            
             self.output.showLoading.accept(false)
         }
     }
     
-    private func fetchChannel(server: Server){
+    
+    
+    private func fetchChannel(server: Server) {
         self.serverService.getServerById(server.id) { response, error in
             
             guard let response = response else {
@@ -128,6 +131,7 @@ class MenuViewModel: BaseViewModel {
             
             self.model.communityInfo = response
             self.output.communityInfo.accept(response)
+            
         }
     }
     
@@ -142,14 +146,21 @@ class MenuViewModel: BaseViewModel {
             let me = response.filter {$0.code == user?.code}[0]
             
             self.model.members = response
-            self.model.me = me
+            self.model.user = me
             
             self.output.members.accept(response)
         }
     }
     
     private func fetchDirect() {
-        // TODO: 1:1 챗방 리스트 불러오기
-        self.output.directs.accept([])
+        self.serverService.getDirectRoom() { response, error in
+            
+            guard let response = response else {
+                return
+            }
+            
+            self.model.rooms = response
+            self.output.rooms.accept(self.model.rooms)
+        }
     }
 }
