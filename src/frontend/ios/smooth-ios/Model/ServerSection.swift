@@ -10,6 +10,7 @@ import RxDataSources
 
 enum ServerCellType {
     case home
+    case direct(Server)
     case normal(Server)
     case add
 }

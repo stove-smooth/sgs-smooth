@@ -12,9 +12,14 @@ enum MemberRole: String, Codable {
     case none = "NONE"
 }
 
-enum MemberStatus: String, Codable {
+enum PresenceStatus: String, Codable {
     case online = "online"
     case offline = "offline"
+    case unknown
+    
+    init(frome decoder: Decoder) throws {
+        self = try PresenceStatus(rawValue: decoder.singleValueContainer().decode(RawValue.self)) ?? .unknown
+    }
 }
 
 struct Member: Codable {
@@ -24,7 +29,11 @@ struct Member: Codable {
     let nickname: String
     let code: String
     let role: MemberRole
-    let status: MemberStatus
+    let status: PresenceStatus
+}
+
+struct Members: Codable {
+    let members: [String]
 }
 
 
