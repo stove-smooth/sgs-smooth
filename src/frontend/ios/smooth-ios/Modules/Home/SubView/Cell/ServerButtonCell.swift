@@ -77,7 +77,7 @@ class ServerButtonCell: BaseTableViewCell {
             case .add:
                 iconView.backgroundColor = .online
                 iconImge.image = UIImage(systemName: "plus")?.withTintColor(.white!, renderingMode: .alwaysOriginal)
-            case .none, .normal: break
+            case .none, .normal, .direct: break
             }
             
             UIView.animate(withDuration: 0.2, animations: {
@@ -100,7 +100,7 @@ class ServerButtonCell: BaseTableViewCell {
             switch self.type {
             case .add:
                 iconImge.image = UIImage(systemName: "plus")?.withTintColor(.online!, renderingMode: .alwaysOriginal)
-            case .none, .normal, .home: break
+            case .none, .normal, .home, .direct: break
             }
             
             UIView.animate(withDuration: 0.2, animations: {
@@ -123,7 +123,7 @@ class ServerButtonCell: BaseTableViewCell {
         self.type = type
         
         switch type {
-        case .normal(_): break
+        case .normal, .direct: break
         case .home:
             iconImge.image = UIImage(named: "Logo")
         case .add:

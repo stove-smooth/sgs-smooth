@@ -166,6 +166,7 @@
 		C1FAF64027B15B3800269EEF /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FAF63F27B15B3800269EEF /* String+Extension.swift */; };
 		C1FF757A27B92984005AAAB9 /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FF757927B92984005AAAB9 /* Room.swift */; };
 		C1FF758227B9730E005AAAB9 /* TabBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FF758127B9730E005AAAB9 /* TabBarView.swift */; };
+		C1FF758427B9F886005AAAB9 /* DirectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FF758327B9F886005AAAB9 /* DirectCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -331,6 +332,7 @@
 		C1FAF63F27B15B3800269EEF /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		C1FF757927B92984005AAAB9 /* Room.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
 		C1FF758127B9730E005AAAB9 /* TabBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarView.swift; sourceTree = "<group>"; };
+		C1FF758327B9F886005AAAB9 /* DirectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectCell.swift; sourceTree = "<group>"; };
 		C621E57B9EB3150F8810E412 /* Pods-smooth-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-smooth-ios.debug.xcconfig"; path = "Target Support Files/Pods-smooth-ios/Pods-smooth-ios.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -656,6 +658,7 @@
 				C1024161279F26B000B702DB /* ServerButtonCell.swift */,
 				C1D47F51278B0F4900DBA3CA /* ChannalCell.swift */,
 				C118D2F027A7B61A009CB96C /* ChannelCategoryCell.swift */,
+				C1FF758327B9F886005AAAB9 /* DirectCell.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -1161,6 +1164,7 @@
 				C102416F279FBF8D00B702DB /* AddServerCoordinator.swift in Sources */,
 				C1FAF64027B15B3800269EEF /* String+Extension.swift in Sources */,
 				C1D47F0E2779D66300DBA3CA /* MenuViewController.swift in Sources */,
+				C1FF758427B9F886005AAAB9 /* DirectCell.swift in Sources */,
 				C1DF653627AC32B2007FC317 /* ChannelReorderCell.swift in Sources */,
 				C1024167279F919400B702DB /* AddServerView.swift in Sources */,
 				C118D2C427A6BA5D009CB96C /* ServerSettingHeaderCell.swift in Sources */,
@@ -1359,7 +1363,7 @@
 				C1D47ED22779570200DBA3CA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		C1D47ED32779570200DBA3CA /* Build configuration list for PBXNativeTarget "smooth-ios" */ = {
 			isa = XCConfigurationList;
@@ -1368,7 +1372,7 @@
 				C1D47ED52779570200DBA3CA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
