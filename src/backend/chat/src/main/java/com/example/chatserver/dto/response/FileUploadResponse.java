@@ -1,5 +1,6 @@
 package com.example.chatserver.dto.response;
 
+import com.example.chatserver.domain.ChannelMessage;
 import lombok.*;
 
 import java.time.LocalDateTime;

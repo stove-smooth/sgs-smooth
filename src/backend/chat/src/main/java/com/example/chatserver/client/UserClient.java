@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "UserFeign", url = "http://52.79.229.100:8000/auth-server")
+@FeignClient(name = "UserFeign", url = "https://api.yoloyolo.org/auth-server")
 public interface UserClient {
 
     @GetMapping("/name")
