@@ -39,12 +39,9 @@
 </template>
 
 <script>
-import firebase from "firebase/compat/app";
-import "firebase/compat/messaging";
 import Stomp from "webstomp-client";
 import SockJS from "sockjs-client";
 
-import { firebaseConfig } from "@/utils/firebaseConfig";
 import { mapGetters, mapMutations, mapState } from "vuex";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import NavigationBar from "../components/NavigationBar.vue";
@@ -114,13 +111,6 @@ export default {
     } else {
       this.navbar = true;
     }
-
-    firebase.initializeApp(firebaseConfig);
-    const messaging = firebase.messaging();
-    // 토큰
-    messaging.getToken().then((token) => {
-      this.setWebPushToken(token);
-    });
   },
   watch: {
     // 라우터의 변경을 감시
@@ -143,10 +133,9 @@ export default {
     ...mapMutations("utils", [
       "setStompSocketClient",
       "setStompSocketConnected",
-      "setWebPushToken",
     ]),
     connect() {
-      const serverURL = "http://3.36.238.237:8080/my-chat";
+      const serverURL = process.env.VUE_APP_CHAT_URL;
       let socket = new SockJS(serverURL);
       this.setStompSocketClient(Stomp.over(socket));
       this.stompSocketClient.connect(

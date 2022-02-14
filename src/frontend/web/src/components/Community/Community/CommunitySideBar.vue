@@ -204,8 +204,14 @@ export default {
     this.stompSocketClient.subscribe(
       `/topic/community/${this.$route.params.serverid}`,
       (res) => {
-        console.log("시그널링 서버 상태 구독입니다", JSON.parse(res.body));
-        this.voiceChannelMember = JSON.parse(res.body);
+        console.log(
+          "@@@@@@@@@@@시그널링 서버 상태 구독입니다",
+          JSON.parse(res.body)
+        );
+        //console.log("communityInfo", this.communityInfo);
+        //this.voiceChannelMember = JSON.parse(res.body);
+
+        console.log(this.getVoiceRoom);
       }
     );
     const msg = {
@@ -229,6 +235,22 @@ export default {
     ...mapState("voice", ["wsOpen", "video"]),
     ...mapState("utils", ["stompSocketClient"]),
     ...mapGetters("user", ["getUserId"]),
+    getVoiceRoom() {
+      let voiceRoomList = [];
+      if (this.communityInfo) {
+        let categories = this.communityInfo.categories;
+        for (let category in categories) {
+          if (categories[category].channels != null) {
+            for (let i = 0; i < categories[category].channels.length; i++) {
+              if (categories[category].channels[i].type == "VOICE") {
+                voiceRoomList.push(categories[category].channels[i].id);
+              }
+            }
+          }
+        }
+      }
+      return voiceRoomList;
+    },
   },
   mounted() {
     window.addEventListener("click", this.onClick);
@@ -242,6 +264,22 @@ export default {
       "setChannelSettingModal",
     ]),
     ...mapMutations("voice", ["setVideo", "setCurrentVoiceRoom"]),
+    /* getVoiceRoom() {
+      let voiceRoomList = [];
+      if (this.communityInfo) {
+        let categories = this.communityInfo.categories;
+        for (let category in categories) {
+          if (categories[category].channels != null) {
+            for (let i = 0; i < categories[category].channels.length; i++) {
+              if (categories[category].channels[i].type == "VOICE") {
+                voiceRoomList.push(categories[category].channels[i].id);
+              }
+            }
+          }
+        }
+      }
+      return voiceRoomList;
+    }, */
     /***drag and drop을 통해 바뀐 채널/카테고리 정보를 서버에 보내기 위한 로직 */
     log: async function (evt) {
       if (evt.moved) {
@@ -351,6 +389,7 @@ export default {
       this.categoryhovered = "";
     },
     createChannel(categoryName, categoryId) {
+      console.log(categoryName, categoryId);
       const categoryData = {
         categoryName: categoryName,
         categoryId: categoryId,
@@ -395,7 +434,7 @@ export default {
           this.setCurrentVoiceRoom(null);
         }
         const wsInfo = {
-          url: "https://sig.yoloyolo.org/rtc",
+          url: process.env.VUE_APP_WEBRTC_URL,
           type: "community",
         };
         await this.wsInit(wsInfo); //ws 전역 등록.

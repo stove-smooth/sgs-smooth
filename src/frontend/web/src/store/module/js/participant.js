@@ -26,7 +26,7 @@ export default function Participant(name) {
 
   this.onIceCandidate = function (candidate, wp) {
     console.log("무의미", wp);
-    //console.log("Local candidate" + JSON.stringify(candidate));
+    alert("Local candidate" + JSON.stringify(candidate));
     var message = {
       id: "onIceCandidate",
       userId: name,

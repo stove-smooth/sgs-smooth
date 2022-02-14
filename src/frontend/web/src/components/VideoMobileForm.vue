@@ -53,10 +53,11 @@ export default {
   data() {
     return {
       userId: this.$route.query.userId,
-      accessToken: this.$route.query.accessToken,
+      accessToken: this.$route.query.token,
     };
   },
   created() {
+    console.log("videoMobileForm created");
     //들어온 채널의 상태를 보냄.
     if (this.$route.params.serverid != 0) {
       //커뮤니티에 있을 경우
@@ -116,10 +117,12 @@ export default {
     ...mapActions("voice", ["setVoiceInfo", "sendMessage", "leaveRoom"]),
     ...mapMutations("voice", ["setMute", "setVideo"]),
     toggleMic() {
+      alert(JSON.stringify(this.participants[this.userId]));
       this.setMute();
       this.myParticipantObject.rtcPeer.audioEnabled = !this.mute;
     },
     toggleVideo() {
+      alert(JSON.stringify(this.participants[this.userId]));
       this.myParticipantObject.rtcPeer.videoEnabled = !this.video;
       this.setVideo();
     },

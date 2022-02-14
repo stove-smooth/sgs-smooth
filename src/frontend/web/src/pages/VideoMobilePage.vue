@@ -13,9 +13,10 @@ export default {
   components: { VideoMobileForm },
   async created() {
     const wsInfo = {
-      url: "https://sig.yoloyolo.org/rtc",
+      url: process.env.VUE_APP_WEBRTC_URL,
       type: "mobile",
     };
+    console.log("웹소켓 연결을 위한 wsInfo");
     await this.wsInit(wsInfo); //ws 전역 등록.
   },
   computed: {

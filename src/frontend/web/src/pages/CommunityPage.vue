@@ -55,17 +55,20 @@ export default {
       await this.FETCH_COMMUNITYINFO(this.$route.params.serverid);
     },
     isChattingChannel(channelId) {
-      const categories = this.communityInfo.categories;
-      for (var category in categories) {
-        if (categories[category].channels != null) {
-          for (let i = 0; i < categories[category].channels.length; i++) {
-            if (categories[category].channels[i].id == channelId) {
-              if (categories[category].channels[i].type == "TEXT") {
-                this.setCurrentChannelType("TEXT");
-                return true;
-              } else {
-                this.setCurrentChannelType("VOICE");
-                return false;
+      console.log("communityInfo", this.communityInfo);
+      if (this.communityInfo) {
+        let categories = this.communityInfo.categories;
+        for (var category in categories) {
+          if (categories[category].channels != null) {
+            for (let i = 0; i < categories[category].channels.length; i++) {
+              if (categories[category].channels[i].id == channelId) {
+                if (categories[category].channels[i].type == "TEXT") {
+                  this.setCurrentChannelType("TEXT");
+                  return true;
+                } else {
+                  this.setCurrentChannelType("VOICE");
+                  return false;
+                }
               }
             }
           }
