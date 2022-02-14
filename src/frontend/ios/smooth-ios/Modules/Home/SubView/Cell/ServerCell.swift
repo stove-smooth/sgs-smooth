@@ -37,6 +37,7 @@ class ServerCell: BaseTableViewCell {
         $0.layer.borderColor = UIColor.serverListDarkGray?.cgColor
         $0.layer.borderWidth = 3
         $0.layer.cornerRadius = 25/2
+        $0.layer.zPosition = 1
     }
     
     let count = UILabel().then {
@@ -58,11 +59,10 @@ class ServerCell: BaseTableViewCell {
         self.selectionStyle = .none
         
         [
-            serverImg, selectedView
+            serverImg, selectedView, alertBadge
         ].forEach {self.contentView.addSubview($0)}
         
         serverImg.addSubview(textView)
-        serverImg.addSubview(alertBadge)
         
         alertBadge.addSubview(count)
     }
@@ -85,7 +85,8 @@ class ServerCell: BaseTableViewCell {
         }
         
         alertBadge.snp.makeConstraints {
-            $0.centerX.centerY.equalToSuperview().offset(15)
+            $0.bottom.equalToSuperview().offset(-10)
+            $0.right.equalToSuperview().offset(-10)
             $0.width.height.equalTo(25)
         }
         
