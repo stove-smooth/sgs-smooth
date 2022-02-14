@@ -91,6 +91,5 @@ class InviteServerViewController: BaseViewController {
     
     private func dismiss() {
         self.dismiss(animated: true, completion: nil)
-        self.coordinator?.goToMain()
     }
 }
