@@ -11,7 +11,7 @@ import MainPage from "../pages/MainPage.vue";
 import InvitePage from "../pages/InvitePage.vue";
 import CommunityWelcomePage from "../pages/CommunityWelcomePage.vue";
 import CommunityPage from "../pages/CommunityPage.vue";
-
+import VideoMobilePage from "../pages/VideoMobilePage.vue";
 Vue.use(VueRouter);
 
 export const router = new VueRouter({
@@ -71,6 +71,11 @@ export const router = new VueRouter({
           component: UserSettingPage,
         },
       ],
+    },
+    {
+      path: "/m/channels/:serverid/:channelid/",
+      name: "VideoMobilePage",
+      component: VideoMobilePage,
     },
     {
       path: "*",

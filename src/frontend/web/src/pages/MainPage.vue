@@ -43,10 +43,7 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/messaging";
 import Stomp from "webstomp-client";
 import SockJS from "sockjs-client";
-/* import {
-  EventListener,
-  ClickEventListener,
-} from "../../public/firebase-messaging-sw.js"; */
+
 import { firebaseConfig } from "@/utils/firebaseConfig";
 import { mapGetters, mapMutations, mapState } from "vuex";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";

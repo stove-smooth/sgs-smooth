@@ -92,22 +92,6 @@ export default {
   },
   async created() {
     await this.fetchCommunityInfo();
-    /* this.stompSocketClient.subscribe(
-      `/topic/community/${this.$route.params.serverid}`,
-      async (res) => {
-        console.log("시그널링 서버 상태 구독입니다", res.body);
-      }
-    );
-    const msg = {
-      user_id: this.getUserId,
-      community_id: this.$route.params.serverid,
-      type: "before-enter",
-    };
-    this.stompSocketClient.send(
-      "/kafka/community-signaling",
-      JSON.stringify(msg),
-      {}
-    ); */
     this.computeFirstChannel();
   },
 };

@@ -15,10 +15,7 @@
         v-for="voiceMember in voiceMembers"
         :key="voiceMember.name"
       >
-        <voice-participants
-          :key="voiceMember.rtcPeer.videoEnabled"
-          :participant="voiceMember"
-        ></voice-participants>
+        <voice-participants :participant="voiceMember"></voice-participants>
       </div>
     </div>
     <div class="voice-bottom-control-section">
@@ -137,12 +134,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions("voice", [
-      "setVoiceInfo",
-      "sendMessage",
-      "leaveRoom",
-      "onServerMessage",
-    ]),
+    ...mapActions("voice", ["setVoiceInfo", "sendMessage", "leaveRoom"]),
     ...mapMutations("voice", ["setMute", "setVideo", "setCurrentVoiceRoom"]),
     toggleMic() {
       this.setMute();

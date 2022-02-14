@@ -43,7 +43,6 @@ export default {
       }
     },
     getAudioLevel() {
-      console.log(this.participant);
       if (this.participant.name !== this.getUserId) {
         this.participant.rtcPeer.peerConnection.getStats(null).then((stats) => {
           stats.forEach((report) => {
@@ -73,6 +72,7 @@ export default {
   },
   async mounted() {
     await document.getElementById(this.videoWrapperId).appendChild(this.video);
+    this.participantNickName();
     this.auto_reload_func = setInterval(this.getAudioLevel, 500);
   },
   destroyed() {
