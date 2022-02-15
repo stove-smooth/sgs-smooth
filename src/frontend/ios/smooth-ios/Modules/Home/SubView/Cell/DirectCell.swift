@@ -16,20 +16,34 @@ class DirectCell: BaseTableViewCell {
         $0.clipsToBounds = true
     }
     
+    let presenceView = UIView().then {
+        $0.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+        $0.layer.cornerRadius = 8
+        $0.contentMode = .scaleAspectFill
+        $0.layer.masksToBounds = true
+        $0.clipsToBounds = true
+        $0.layer.zPosition = 1
+        $0.layer.borderColor = UIColor.channelListDarkGray?.cgColor
+        $0.layer.borderWidth = 3
+    }
+    
     let roomTextLabel = UILabel().then {
-        $0.textColor = .white
+        $0.textColor = .iconDefault
         $0.font = UIFont.systemFont(ofSize: 15)
     }
     
     let roomInfoLabel = UILabel().then {
-        $0.textColor = .white
+        $0.textColor = .iconDefault
         $0.font = UIFont.systemFont(ofSize: 11)
     }
     
-    let stackView = UIStackView().then {
-        $0.axis = .vertical
-        $0.alignment = .center
-        $0.translatesAutoresizingMaskIntoConstraints = false
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        roomTextLabel.isHidden = false
+        presenceView.isHidden = false
+        
+        presenceView.subviews.forEach { $0.removeFromSuperview() }
+        roomInfoLabel.removeFromSuperview()
     }
     
     override func setup() {
@@ -39,15 +53,10 @@ class DirectCell: BaseTableViewCell {
         self.clipsToBounds = true
         self.selectionStyle = .none
         
-        [iconView, stackView].forEach { self.addSubview($0) }
+        [iconView, presenceView, roomTextLabel]
+            .forEach { self.addSubview($0) }
         
-        [roomTextLabel, roomInfoLabel ].forEach {  stackView.addArrangedSubview($0) }
-        
-        roomInfoLabel.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
-        roomInfoLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-        
-        roomInfoLabel.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
-        roomInfoLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        self.iconView.bringSubviewToFront(presenceView)
     }
     
     override func bindConstraints() {
@@ -56,19 +65,15 @@ class DirectCell: BaseTableViewCell {
             $0.width.height.equalTo(30)
         }
         
-        stackView.snp.makeConstraints {
-            $0.left.equalTo(iconView.snp.right).offset(10)
-            $0.height.equalToSuperview()
-            $0.top.bottom.equalToSuperview().inset(5)
+        presenceView.snp.makeConstraints {
+            $0.bottom.equalTo(iconView.snp.bottom).offset(2)
+            $0.right.equalTo(iconView.snp.right).offset(2)
+            $0.width.height.equalTo(15)
         }
         
         roomTextLabel.snp.makeConstraints {
-            $0.top.left.right.equalToSuperview()
-        }
-        
-        roomInfoLabel.snp.makeConstraints {
-            $0.bottom.equalToSuperview()
-            $0.left.right.equalToSuperview()
+            $0.left.equalTo(iconView.snp.right).offset(10)
+            $0.right.equalToSuperview()
         }
     }
     
@@ -83,11 +88,51 @@ class DirectCell: BaseTableViewCell {
         }
         
         if (room.name.split(separator: ",").count>2) {
+            self.addSubview(roomInfoLabel)
+            
             roomInfoLabel.text = "멤버 \(room.name.split(separator: ",").count)명"
+            
+            roomInfoLabel.snp.makeConstraints {
+                $0.left.right.equalTo(roomTextLabel)
+                $0.top.equalTo(roomTextLabel.snp.bottom)
+            }
+            roomTextLabel.snp.makeConstraints {
+                $0.bottom.equalTo(contentView.snp.centerY)
+            }
         } else {
-            roomInfoLabel.isHidden = true
+            roomInfoLabel.removeFromSuperview()
+            roomTextLabel.snp.makeConstraints {
+                $0.centerY.equalToSuperview()
+                $0.bottom.equalToSuperview()
+            }
         }
         
-        self.setNeedsUpdateConstraints()
+        if (room.state != nil) {
+            switch (room.state!) {
+            case .online:
+                presenceView.backgroundColor = .online
+            case .offline:
+                presenceView.backgroundColor = .offline
+                
+                let offlineView = UIView().then {
+                    $0.backgroundColor = .channelListDarkGray
+                    $0.layer.cornerRadius = 2.5
+                    $0.layer.masksToBounds = true
+                    $0.clipsToBounds = true
+                }
+                presenceView.addSubview(offlineView)
+                
+                offlineView.snp.makeConstraints {
+                    $0.centerX.centerY.equalToSuperview()
+                    $0.width.height.equalTo(5)
+                }
+            case .unknown:
+                presenceView.isHidden = true
+            }
+        } else {
+            presenceView.isHidden = true
+        }
+        
+        self.layoutIfNeeded()
     }
 }
