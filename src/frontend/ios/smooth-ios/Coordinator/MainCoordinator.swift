@@ -33,9 +33,7 @@ class MainCoordinator: NSObject, Coordinator {
         
         if token == nil {
             // 로그인이 안되어 있는 경우
-            let vc = SplashViewConroller.instance()
-            vc.coordinator = self
-            navigationController.pushViewController(vc, animated: true)
+            self.goToSplast()
         } else {
             self.goToMain()
         }
@@ -43,45 +41,16 @@ class MainCoordinator: NSObject, Coordinator {
         window.makeKeyAndVisible()
     }
     
-    func goToSigIn() {
-        let vc = SigninViewController.instance()
-        vc.coordinator = self
-        navigationController.removeFromParent()
-        navigationController.pushViewController(vc, animated: true)
+    func goToSplast() {
+        let coordinator = SplashCoordinator(navigationController: navigationController)
+        childCoordinators.append(coordinator)
+        coordinator.start()
     }
     
     func goToMain() {
         let coordinator = HomeCoordinator(navigationController: navigationController)
         childCoordinators.append(coordinator)
         coordinator.start()
-    }
-    
-    func goToSignUp() {
-        let vc = SignupViewController.instance()
-        vc.coordinator = self
-        navigationController.pushViewController(vc, animated: true)
-    }
-    
-    func goToSignUpInfo(email: String) {
-        let vc = SignupInfoViewController.instance(email: email)
-        vc.coordinator = self
-        navigationController.pushViewController(vc, animated: true)
-    }
-    
-    func goToVerifyCode(email: String) {
-        let vc = VerifyCodeViewController.instance(email: email)
-        vc.coordinator = self
-        navigationController.removeFromParent()
-        navigationController.pushViewController(vc, animated: true)
-    }
-    
-    func childDidFinish(_ child: Coordinator?) {
-        for (index, coordinator) in childCoordinators.enumerated() {
-            if coordinator === child {
-                childCoordinators.remove(at: index)
-                break
-            }
-        }
     }
     
 }

@@ -37,6 +37,7 @@ class ProfileViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.viewModel.input.fetch.onNext(())
+        navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
     override func viewDidLoad() {
@@ -112,20 +113,12 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         case 1:
             cell.bind(image: UIImage(), title: "사용자 프로필")
         default: break
-            
         }
         
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 15.0
-    }
-    
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let headerCell = tableView.dequeueReusableHeaderFooterView(withIdentifier: ServerSettingHeaderCell.identifier) as? ServerSettingHeaderCell else { return UITableViewHeaderFooterView() }
+        cell.layer.borderColor = UIColor.serverListDarkGray?.cgColor
+        cell.layer.borderWidth = 0.5
         
-        return headerCell
+        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

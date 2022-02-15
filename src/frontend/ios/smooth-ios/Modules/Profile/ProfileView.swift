@@ -91,9 +91,8 @@ class ProfileView: BaseView {
     let tableView = UITableView(frame: .zero).then {
         $0.backgroundColor = .clear
         $0.contentInset = UIEdgeInsets(top: 12.5, left: 0, bottom: 0, right: 0)
-        
+        $0.separatorStyle = .none
         $0.register(ServerSettingCell.self, forCellReuseIdentifier: ServerSettingCell.identifier)
-        $0.register(ServerSettingHeaderCell.self, forHeaderFooterViewReuseIdentifier: ServerSettingHeaderCell.identifier)
     }
     
     let tabBarView = TabBarView()

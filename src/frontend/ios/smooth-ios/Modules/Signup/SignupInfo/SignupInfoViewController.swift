@@ -10,7 +10,7 @@ import RxSwift
 
 
 class SignupInfoViewController: BaseViewController {
-    weak var coordinator: MainCoordinator?
+    weak var coordinator: SplashCoordinator?
     
     private let signupInfoView = SignupInfoView()
     private let viewModel: SignupInfoViewModel
