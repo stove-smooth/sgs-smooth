@@ -77,6 +77,8 @@ public class UserService extends BaseTimeEntity {
         device.setToken(request.getDeviceToken());
         device.setType(request.getType());
 
+        String url = setURL();
+
         SignInResponse res = SignInResponse.builder()
                 .id(account.getId())
                 .name(account.getName())
@@ -86,6 +88,7 @@ public class UserService extends BaseTimeEntity {
                 .refreshToken(refreshToken)
                 .deviceToken(device.getToken())
                 .type(device.getType())
+                .url(url)
                 .build();
 
         return res;
@@ -219,5 +222,37 @@ public class UserService extends BaseTimeEntity {
         }
 
         return result;
+    }
+
+    public String setURL() {
+        String chat1 = String.valueOf(redisTemplate.opsForValue().get("https://c1.yoloyolo.org"));
+        String chat2 = String.valueOf(redisTemplate.opsForValue().get("https://c2.yoloyolo.org"));
+        String chat3 = String.valueOf(redisTemplate.opsForValue().get("https://c3.yoloyolo.org"));
+
+        if (chat1.equals("null")) {
+            redisTemplate.opsForValue().set("https://c1.yoloyolo.org",0,14,TimeUnit.DAYS);
+        }
+        if (chat2.equals("null")) {
+            redisTemplate.opsForValue().set("https://c2.yoloyolo.org",0,14,TimeUnit.DAYS);
+        }
+        if (chat3.equals("null")) {
+            redisTemplate.opsForValue().set("https://c3.yoloyolo.org",0,14,TimeUnit.DAYS);
+        }
+
+        int c1 = chat1.equals("null") ? 0 : Integer.parseInt(chat1);
+        int c2 = chat1.equals("null") ? 0 : Integer.parseInt(chat2);
+        int c3 = chat1.equals("null") ? 0 : Integer.parseInt(chat3);
+
+        int value = (c2 >= c1) && (c3 >= c1) ? c1 : (c2 >= c3 ? c3 : c2);
+        if (c1 == value) {
+            redisTemplate.opsForValue().set("https://c1.yoloyolo.org",value+1,14,TimeUnit.DAYS);
+            return "https://c1.yoloyolo.org";
+        } else if (c2 == value) {
+            redisTemplate.opsForValue().set("https://c2.yoloyolo.org",value+1,14,TimeUnit.DAYS);
+            return "https://c2.yoloyolo.org";
+        } else {
+            redisTemplate.opsForValue().set("https://c3.yoloyolo.org",value+1,14,TimeUnit.DAYS);
+            return "https://c3.yoloyolo.org";
+        }
     }
 }

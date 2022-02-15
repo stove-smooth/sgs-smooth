@@ -63,9 +63,11 @@ public class MessageListener {
         msg.put("message",directChat.getContent());
         msg.put("time", String.valueOf(directChat.getLocalDateTime()));
         msg.put("id",directChat.getId());
+
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(msg);
         template.convertAndSend("/topic/direct/" + directChat.getChannelId(), json);
+        template.convertAndSend("/topic/user/" + directChat.getUserId(),json);
     }
 
     @KafkaListener(topics = topicNameForDirectEtc,groupId = directETCGroup, containerFactory = "directETCFactory")
@@ -87,6 +89,9 @@ public class MessageListener {
                 msg.put("time", String.valueOf(result.getLocalDateTime()));
                 msg.put("parentName", result.getParentName());
                 msg.put("parentContent", result.getParentContent());
+                ObjectMapper mapper = new ObjectMapper();
+                String json = mapper.writeValueAsString(msg);
+                template.convertAndSend("/topic/user/" + result.getUserId(),json);
 
                 break;
             }
@@ -178,6 +183,7 @@ public class MessageListener {
     public void fileUpload(FileUploadResponse fileUploadResponse) throws IOException {
         if (fileUploadResponse.getType().equals("direct")) {
             String json = objectMapper.writeValueAsString(fileUploadResponse);
+            template.convertAndSend("/topic/user/" + fileUploadResponse.getUserId(),json);
             template.convertAndSend("/topic/direct/" + fileUploadResponse.getChannelId(), json);
         } else {
             String json = objectMapper.writeValueAsString(fileUploadResponse);

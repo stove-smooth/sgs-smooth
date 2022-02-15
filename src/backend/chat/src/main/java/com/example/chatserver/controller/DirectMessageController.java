@@ -43,7 +43,7 @@ public class DirectMessageController {
 
     @MessageMapping("/send-direct-typing")
     public void sendTyping(@Payload DirectMessage directChat) {
-        messageSender.sendToDirectChat(etcDirectTopic,directChat);
+        messageSender.sendToEtcDirectChat(etcDirectTopic,directChat);
     }
 
     @MessageMapping("/send-direct-message")
