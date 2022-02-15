@@ -26,6 +26,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static com.example.signalingserver.util.type.EventType.*;
@@ -126,6 +127,7 @@ public class MessageHandler extends TextWebSocketHandler {
 
         // 상태관리 서버로 접속 정보 전송
         StateRequest logoutRequest = new StateRequest(State.DISCONNECT, user.getUserId(), user.getCommunityId(), user.getRoomId());
+        log.info("PRESENCE SERVER SEND : {}", logoutRequest.toString());
         tcpClientGateway.send(logoutRequest.toString());
     }
 
@@ -147,6 +149,11 @@ public class MessageHandler extends TextWebSocketHandler {
         final String communityId = request.getCommunityId();
 
         Room room = roomManager.getRoom(roomId, communityId);
+        final UserSession user = room.join(userId, session, communityId);
+        // 최대 접속 인원 초과 시 입장 제한
+        if (Objects.isNull(user)) return;
+        registry.register(user);
+
         try {
             log.info("[redis] save key : {}, value : {}", roomId+PIPELINE, room.getPipeLineId());
             ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
@@ -155,8 +162,6 @@ public class MessageHandler extends TextWebSocketHandler {
             e.printStackTrace();
         }
 
-        final UserSession user = room.join(userId, session, communityId);
-        registry.register(user);
         try {
             log.info("[redis] save key : {}, value : {}", roomId, userId);
             log.info("[redis] save key : {}, value : {}", SERVER + IP, roomId);

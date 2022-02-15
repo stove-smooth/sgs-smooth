@@ -19,6 +19,7 @@ function Participant(userId) {
 
     video.id = 'video-' + userId;
     video.autoplay = true;
+    video.playsInline = true;
     video.controls = false;
 
     this.getElement = function() {

@@ -30,6 +30,8 @@ public class Room implements Closeable {
     private final MediaPipeline pipeline;
     private final ConcurrentMap<String, UserSession> participants = new ConcurrentHashMap<>();
 
+    private static final int ROOM_LIMIT = 25;
+
     public Room(String roomId, MediaPipeline pipeline, String communityId) {
         this.roomId = roomId;
         this.pipeline = pipeline;
@@ -51,6 +53,12 @@ public class Room implements Closeable {
 
     public UserSession join(String userId, WebSocketSession session, String communityId) throws IOException {
         final UserSession participant = new UserSession(userId, this.roomId, session, this.pipeline, communityId);
+        // 최대 접속 인원 초과 시 입장 제한
+        if (this.participants.size() > ROOM_LIMIT) {
+            final JsonObject limitJoinAnswerMsg = limitJoinAnswer(this.roomId);
+            participant.sendMessage(limitJoinAnswerMsg);
+            return null;
+        }
         joinRoom(participant);
         participants.put(participant.getUserId(), participant);
         sendParticipantNames(participant);
