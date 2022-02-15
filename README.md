@@ -36,7 +36,7 @@
 ---
 
 ## 3. 프로젝트 구조
-![image](https://user-images.githubusercontent.com/66015002/153804981-2750a32b-4b39-4144-84dc-edbd81317722.png)
+![image](https://user-images.githubusercontent.com/66015002/154006339-06a3c1a7-c840-445c-a616-eb1345468f2e.png)
 
 
 ---
