@@ -45,7 +45,7 @@ class EditCategoryView: BaseView {
     
     let deleteButton = UIButton().then {
         $0.setTitle("카테고리 삭제", for: .normal)
-        $0.titleLabel?.textColor = .red!
+        $0.setTitleColor(.red, for: .normal)
         $0.backgroundColor = .backgroundDarkGray
         $0.layer.borderWidth = 0.5
         $0.layer.borderColor = UIColor.serverListDarkGray?.cgColor

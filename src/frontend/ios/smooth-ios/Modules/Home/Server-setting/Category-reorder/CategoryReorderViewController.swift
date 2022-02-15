@@ -66,6 +66,13 @@ class CategoryReorderViewController: UITableViewController {
     }
     
     func bindViewModel() {
+        self.viewModel.showToastMessage
+            .asDriver(onErrorJustReturn: "")
+            .drive(onNext: { message in
+                self.showToast(message: message, isWarning: false)
+            })
+            .disposed(by: disposeBag)
+        
         self.viewModel.showErrorMessage
             .asDriver(onErrorJustReturn: "")
             .drive(onNext: { message in

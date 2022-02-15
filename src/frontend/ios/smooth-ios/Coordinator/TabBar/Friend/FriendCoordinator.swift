@@ -23,11 +23,17 @@ class FriendCoordinator: NSObject, Coordinator {
         let friendVC = FriendListViewController.instance()
         friendVC.coordinator = self
         navigationController.isNavigationBarHidden = true
-        navigationController.pushViewController(friendVC, animated: true)
+        navigationController.pushViewController(friendVC, animated: false)
     }
     
     func goToMain() {
         let coordinator = HomeCoordinator(navigationController: navigationController)
+        childCoordinators.append(coordinator)
+        coordinator.start()
+    }
+    
+    func goToProfile() {
+        let coordinator = ProfileCoordinator(navigationController: navigationController)
         childCoordinators.append(coordinator)
         coordinator.start()
     }

@@ -93,6 +93,13 @@
 		C1786DFD27A27CDB00170D4F /* InviteFriendListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1786DFC27A27CDB00170D4F /* InviteFriendListCell.swift */; };
 		C1786DFF27A27FAA00170D4F /* BaseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1786DFE27A27FAA00170D4F /* BaseTableViewCell.swift */; };
 		C1786E0127A2D3ED00170D4F /* JoinServerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1786E0027A2D3ED00170D4F /* JoinServerViewModel.swift */; };
+		C17A95D527BAC42600BA4F6C /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17A95D327BAC42600BA4F6C /* ProfileView.swift */; };
+		C17A95D627BAC42600BA4F6C /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17A95D427BAC42600BA4F6C /* ProfileViewController.swift */; };
+		C17A95D827BAC47A00BA4F6C /* ProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17A95D727BAC47A00BA4F6C /* ProfileCoordinator.swift */; };
+		C17A95DB27BAC53800BA4F6C /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17A95DA27BAC53800BA4F6C /* ProfileViewModel.swift */; };
+		C17A95DE27BB3F3D00BA4F6C /* EditProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17A95DD27BB3F3D00BA4F6C /* EditProfileViewController.swift */; };
+		C17A95E027BB3F4700BA4F6C /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17A95DF27BB3F4700BA4F6C /* EditProfileView.swift */; };
+		C17A95E227BB40E000BA4F6C /* EditProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17A95E127BB40E000BA4F6C /* EditProfileViewModel.swift */; };
 		C1AA6AF927A40312003A32A4 /* ServerInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AA6AF827A40312003A32A4 /* ServerInfoView.swift */; };
 		C1AA6AFB27A4031F003A32A4 /* ServerInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AA6AFA27A4031F003A32A4 /* ServerInfoViewController.swift */; };
 		C1AA6AFD27A4032B003A32A4 /* ServerInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AA6AFC27A4032B003A32A4 /* ServerInfoViewModel.swift */; };
@@ -257,6 +264,13 @@
 		C1786DFC27A27CDB00170D4F /* InviteFriendListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InviteFriendListCell.swift; sourceTree = "<group>"; };
 		C1786DFE27A27FAA00170D4F /* BaseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTableViewCell.swift; sourceTree = "<group>"; };
 		C1786E0027A2D3ED00170D4F /* JoinServerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinServerViewModel.swift; sourceTree = "<group>"; };
+		C17A95D327BAC42600BA4F6C /* ProfileView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		C17A95D427BAC42600BA4F6C /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		C17A95D727BAC47A00BA4F6C /* ProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCoordinator.swift; sourceTree = "<group>"; };
+		C17A95DA27BAC53800BA4F6C /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		C17A95DD27BB3F3D00BA4F6C /* EditProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewController.swift; sourceTree = "<group>"; };
+		C17A95DF27BB3F4700BA4F6C /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
+		C17A95E127BB40E000BA4F6C /* EditProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewModel.swift; sourceTree = "<group>"; };
 		C1AA6AF827A40312003A32A4 /* ServerInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerInfoView.swift; sourceTree = "<group>"; };
 		C1AA6AFA27A4031F003A32A4 /* ServerInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerInfoViewController.swift; sourceTree = "<group>"; };
 		C1AA6AFC27A4032B003A32A4 /* ServerInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerInfoViewModel.swift; sourceTree = "<group>"; };
@@ -361,6 +375,7 @@
 			children = (
 				C1FF757B27B95B3D005AAAB9 /* Home */,
 				C1FF757C27B95B45005AAAB9 /* Friend */,
+				C17A95D927BAC48500BA4F6C /* Profile */,
 			);
 			path = TabBar;
 			sourceTree = "<group>";
@@ -594,6 +609,35 @@
 			path = Invite;
 			sourceTree = "<group>";
 		};
+		C17A95D227BAC42600BA4F6C /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				C17A95DC27BB3F2800BA4F6C /* EditProfile */,
+				C17A95D327BAC42600BA4F6C /* ProfileView.swift */,
+				C17A95D427BAC42600BA4F6C /* ProfileViewController.swift */,
+				C17A95DA27BAC53800BA4F6C /* ProfileViewModel.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		C17A95D927BAC48500BA4F6C /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				C17A95D727BAC47A00BA4F6C /* ProfileCoordinator.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		C17A95DC27BB3F2800BA4F6C /* EditProfile */ = {
+			isa = PBXGroup;
+			children = (
+				C17A95DD27BB3F3D00BA4F6C /* EditProfileViewController.swift */,
+				C17A95DF27BB3F4700BA4F6C /* EditProfileView.swift */,
+				C17A95E127BB40E000BA4F6C /* EditProfileViewModel.swift */,
+			);
+			path = EditProfile;
+			sourceTree = "<group>";
+		};
 		C1AA6AFE27A40332003A32A4 /* Server-Info */ = {
 			isa = PBXGroup;
 			children = (
@@ -737,6 +781,7 @@
 				C1D47F0727795F1600DBA3CA /* Home */,
 				C129ADE2278BED1A00AC1092 /* AddServer */,
 				2709161A27912CA800A0772D /* Friend */,
+				C17A95D227BAC42600BA4F6C /* Profile */,
 			);
 			path = Modules;
 			sourceTree = "<group>";
@@ -1026,6 +1071,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C1C44F1F27A6A05900A408A4 /* ServerSettingViewController.swift in Sources */,
+				C17A95D527BAC42600BA4F6C /* ProfileView.swift in Sources */,
 				C1244F8227A64AD200BEC173 /* EditServerInfoView.swift in Sources */,
 				C1024148279DA8C300B702DB /* ServerService.swift in Sources */,
 				C1D47EE527795C9600DBA3CA /* SigninViewController.swift in Sources */,
@@ -1048,6 +1094,7 @@
 				C118D2DF27A789A0009CB96C /* CategoryAPI.swift in Sources */,
 				C102415E279F17E700B702DB /* ServerSection.swift in Sources */,
 				C1C8B22727A8709E00E8758E /* CategoryReorderViewController.swift in Sources */,
+				C17A95E227BB40E000BA4F6C /* EditProfileViewModel.swift in Sources */,
 				27F2BE72278FBBEA00A0F0A8 /* HomeCoordinator.swift in Sources */,
 				C150A0A627B659ED00704B50 /* VerifyCodeViewController.swift in Sources */,
 				C1C8B22027A82FD200E8758E /* EditCategoryViewController.swift in Sources */,
@@ -1056,6 +1103,7 @@
 				C1C8B21727A81BA300E8758E /* ChannelEmptyView.swift in Sources */,
 				2709161C27912CB000A0772D /* FriendEmptyView.swift in Sources */,
 				C118D2C827A6D6E3009CB96C /* ServerInviteListView.swift in Sources */,
+				C17A95D827BAC47A00BA4F6C /* ProfileCoordinator.swift in Sources */,
 				C1244F8027A63D4000BEC173 /* Member.swift in Sources */,
 				C1D47ED8277959AA00DBA3CA /* Coordinator.swift in Sources */,
 				C102414A279DAA5700B702DB /* Channel.swift in Sources */,
@@ -1071,6 +1119,7 @@
 				C1D47F412784860D00DBA3CA /* SignupInfoViewController.swift in Sources */,
 				C1D47EDF27795A9200DBA3CA /* SplashView.swift in Sources */,
 				C1766051279A754C0062D0CB /* FriendInfoViewController.swift in Sources */,
+				C17A95DE27BB3F3D00BA4F6C /* EditProfileViewController.swift in Sources */,
 				C1024175279FEA4200B702DB /* MakeServerViewModel.swift in Sources */,
 				C1D47EFD27795E2400DBA3CA /* User.swift in Sources */,
 				C150A0A427B659ED00704B50 /* VerifyCodeViewModel.swift in Sources */,
@@ -1089,6 +1138,7 @@
 				C1D47EF027795D1E00DBA3CA /* BaseViewModel.swift in Sources */,
 				C15A22C4279A37230009095E /* Image+Extension.swift in Sources */,
 				C102416D279FBBA100B702DB /* JoinServerView.swift in Sources */,
+				C17A95DB27BAC53800BA4F6C /* ProfileViewModel.swift in Sources */,
 				C118D2E827A78D61009CB96C /* MakeCategoryViewController.swift in Sources */,
 				C118D2D527A771FE009CB96C /* MakeChannelView.swift in Sources */,
 				C118D2DB27A77291009CB96C /* ChannelAPI.swift in Sources */,
@@ -1154,10 +1204,12 @@
 				C1FAF63C27AD812F00269EEF /* MessageAppearance.swift in Sources */,
 				C102415C279EA2EB00B702DB /* Community.swift in Sources */,
 				C118D2D927A77222009CB96C /* MakeChannelViewModel.swift in Sources */,
+				C17A95E027BB3F4700BA4F6C /* EditProfileView.swift in Sources */,
 				C118D2CA27A6D70B009CB96C /* ServerInviteListViewModel.swift in Sources */,
 				C1C83AF427B618CD008FC4AC /* NavigationController+Extension.swift in Sources */,
 				C1024158279E4B3B00B702DB /* ChannelView.swift in Sources */,
 				C1C8B24427AA3DA600E8758E /* CameraInputBarAccessoryView.swift in Sources */,
+				C17A95D627BAC42600BA4F6C /* ProfileViewController.swift in Sources */,
 				C15A22C2279A33E00009095E /* FriendRequestViewController.swift in Sources */,
 				C118D2BE27A6AE39009CB96C /* ServerSettingCoordinator.swift in Sources */,
 				C1D47F0427795ED100DBA3CA /* HomeViewController.swift in Sources */,
