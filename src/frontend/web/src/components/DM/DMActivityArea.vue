@@ -129,7 +129,7 @@
                         {{ modifyLogMessage }}
                       </p>
                     </div>
-                    <div v-else class="message-content">
+                    <div v-else class="message-content display-flex">
                       <template
                         v-if="item.fileType && item.fileType == 'image'"
                       >
@@ -139,6 +139,9 @@
                       <template v-else
                         ><div>{{ item.message }}</div></template
                       >
+                      <span v-if="item.calling" class="chat-time-stamp">{{
+                        item.time
+                      }}</span>
                     </div>
                     <!--정말 삭제하시겠어요?-->
                     <div

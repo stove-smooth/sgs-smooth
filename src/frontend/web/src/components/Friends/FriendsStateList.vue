@@ -181,7 +181,8 @@ export default {
     },
     //1:1 메시지를 걸었을 경우 dm방을 찾아 있을 경우 이동하고, 없을 경우 생성 후 이동한다.
     async sendDirectMessage(userId) {
-      await sendDirectMessage(this.directMessageList, userId);
+      const channelid = await sendDirectMessage(this.directMessageList, userId);
+      this.$router.push(`/channels/@me/${channelid}`);
     },
   },
 };

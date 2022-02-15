@@ -43,12 +43,7 @@ export default {
   },
   methods: {
     ...mapMutations("voice", ["setVideo", "setCurrentVoiceRoom"]),
-    ...mapActions("voice", [
-      "wsInit",
-      "sendMessage",
-      "leaveRoom",
-      "setVoiceInfo",
-    ]),
+    ...mapActions("voice", ["wsInit", "sendMessage", "leaveRoom"]),
     //dm 참가자들과 통화 시작.
     async startCalling() {
       console.log(this.$route.params.id);
