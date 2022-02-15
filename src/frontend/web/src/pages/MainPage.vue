@@ -126,7 +126,12 @@ export default {
   },
   computed: {
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
-    ...mapGetters("user", ["getEmail", "getUserId", "getAccessToken"]),
+    ...mapGetters("user", [
+      "getEmail",
+      "getUserId",
+      "getAccessToken",
+      "getSocketUrl",
+    ]),
     ...mapState("community", ["communityInviteModal"]),
   },
   methods: {
@@ -135,7 +140,7 @@ export default {
       "setStompSocketConnected",
     ]),
     connect() {
-      const serverURL = process.env.VUE_APP_CHAT_URL;
+      const serverURL = this.getSocketUrl + "/my-chat";
       let socket = new SockJS(serverURL);
       this.setStompSocketClient(Stomp.over(socket));
       this.stompSocketClient.connect(

@@ -33,7 +33,6 @@ const dm = {
     async fetchDirectMessageList({ commit }) {
       try {
         let result = await fetchDirectMessageList();
-
         commit("setDirectMessageList", result.data.result.rooms);
       } catch (err) {
         console.log(err.response);
