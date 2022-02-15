@@ -26,4 +26,6 @@ public class SignInResponse {
     private String deviceToken;
 
     private String type;
+
+    private String url;
 }
