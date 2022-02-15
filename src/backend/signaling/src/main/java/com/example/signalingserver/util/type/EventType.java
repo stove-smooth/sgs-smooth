@@ -16,6 +16,7 @@ public class EventType {
     public static final String AUDIO_STATE_FROM = "audioStateFrom";
     public static final String VIDEO_STATE_ANSWER = "videoStateAnswer";
     public static final String AUDIO_STATE_ANSWER = "audioStateAnswer";
+    public static final String LIMIT_JOIN_ANSWER = "limitJoinAnswer";
 
     // properties in event
     public static final String USER_ID = "userId";

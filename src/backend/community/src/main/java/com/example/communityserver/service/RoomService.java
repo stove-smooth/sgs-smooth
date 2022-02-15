@@ -111,11 +111,17 @@ public class RoomService {
             UserResponse otherUser = userMap.get(
                     roomResponse.getMembers().stream()
                             .filter(rm -> !rm.equals(userId))
-                            .findFirst().get());
+                            .findFirst().orElse(null));
             if (!Objects.isNull(otherUser)) {
                 roomResponse.setName(otherUser.getName());
                 roomResponse.setIcon(otherUser.getImage());
-                roomResponse.setState(UserStateUtil.status.get(otherUser.getId()));
+                String state = UserStateUtil.status.get(otherUser.getId());
+                if (Objects.isNull(state))
+                    state = "offline";
+                roomResponse.setState(state);
+            } else {
+                roomResponse.setName("대화상대 없음");
+                roomResponse.setState("offline");
             }
         }
     }
