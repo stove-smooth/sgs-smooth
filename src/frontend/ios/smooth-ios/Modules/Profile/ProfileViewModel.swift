@@ -18,10 +18,12 @@ class ProfileViewModel: BaseViewModel {
     
     struct Input {
         let fetch = PublishSubject<Void>()
+        let tapLogoutButton = PublishSubject<Void>()
     }
     
     struct Output {
         let user = PublishRelay<User>()
+        let goToLoginHome = PublishRelay<Void>()
     }
     
     struct Model {
@@ -44,6 +46,12 @@ class ProfileViewModel: BaseViewModel {
                 let user = self.userDefaults.getUserInfo()
                 self.output.user.accept(user!)
                 self.model.user = user
+            }).disposed(by: disposeBag)
+        
+        self.input.tapLogoutButton
+            .bind(onNext: {
+                self.userDefaults.clear()
+                self.output.goToLoginHome.accept(())
             }).disposed(by: disposeBag)
     }
 }

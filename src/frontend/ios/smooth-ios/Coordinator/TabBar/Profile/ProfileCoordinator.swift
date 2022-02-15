@@ -43,4 +43,9 @@ class ProfileCoordinator: NSObject, Coordinator {
         
         navigationController.pushViewController(editVC, animated: true)
     }
+    
+    func goToLoginHome() {
+        coordinatorDidFinish()
+        navigationController.popToRootViewController(animated: true)
+    }
 }

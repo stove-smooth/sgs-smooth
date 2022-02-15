@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RxSwift
 
 class ProfileViewController: BaseViewController {
     weak var coordinator: ProfileCoordinator?
@@ -70,10 +71,22 @@ class ProfileViewController: BaseViewController {
     }
     
     override func bindViewModel() {
+        self.profileView.logoutButton.rx.tap
+            .bind(to: self.viewModel.input.tapLogoutButton)
+            .disposed(by: disposeBag)
+        
+        
         self.viewModel.output.user
             .bind(onNext: { user in
                 self.profileView.bind(user: user)
             }).disposed(by: disposeBag)
+        
+        self.viewModel.output.goToLoginHome
+            .asDriver(onErrorJustReturn: ())
+            .drive(onNext: {
+                self.coordinator?.goToLoginHome()
+            })
+            .disposed(by: disposeBag)
     }
 }
 
