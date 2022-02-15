@@ -158,7 +158,6 @@ extension HomeViewController: ChattingViewControllerDelegate {
             }
             
         }
-        
     }
 }
 

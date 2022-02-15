@@ -24,12 +24,6 @@ struct Message: Codable {
     let parentContent: String?
 }
 
-struct SocketMessage: Codable {
-    let content: String
-    let channelId: String
-    let accountId: String
-}
-
 struct MessagePayload: Codable {
     let id: String
     let name: String

@@ -49,7 +49,7 @@ extension ChattingTarget: BaseAPI, AccessTokenAuthorizable {
                 MultipartFormData(
                     provider: .data(request.image!),
                     name: "image",
-                    fileName: "messgae-image-\(String(describing: request.communityId))-\(request.userId)-\(Date()).png",
+                    fileName: "messgae-image-\(String(describing: request.communityId))-\(UUID())-\(Date()).png",
                     mimeType: request.image!.mimeType
                 )
             )
@@ -58,7 +58,7 @@ extension ChattingTarget: BaseAPI, AccessTokenAuthorizable {
                 MultipartFormData(
                     provider: .data(request.thumbnail!),
                     name: "thumbnail",
-                    fileName: "messgae-thumbnail-\(String(describing: request.communityId))-\(request.userId)-\(Date()).png",
+                    fileName: "messgae-thumbnail-\(String(describing: request.communityId))-\(UUID())-\(Date()).png",
                     mimeType: request.image!.mimeType
                 )
             )

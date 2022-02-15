@@ -17,7 +17,6 @@ class HomeCoordinator: NSObject, Coordinator {
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
         self.childCoordinators = []
-        self.navigationController.tabBarController?.tabBar.setUpUITabBar()
     }
     
     func start() {
@@ -34,14 +33,6 @@ class HomeCoordinator: NSObject, Coordinator {
         
         vc.coordinator = self
         
-        vc.didMove(toParent: homeVC)
-    }
-    
-    func goToMenu() {
-        let vc = MenuViewController.instance()
-        let homeVC = HomeViewController.instance()
-        
-        vc.coordinator = self
         vc.didMove(toParent: homeVC)
     }
     
@@ -93,6 +84,8 @@ class HomeCoordinator: NSObject, Coordinator {
     func goToProfile() {
         let coordinator = ProfileCoordinator(navigationController: navigationController)
         childCoordinators.append(coordinator)
+        coordinator.delegate = self
+        
         coordinator.start()
     }
 }
