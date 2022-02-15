@@ -61,15 +61,16 @@ export default {
   methods: {
     closeModal() {
       this.setCreateDirectMessageGroupModal(false);
+      this.checkedFriends = [];
     },
     ...mapMutations("dm", ["setCreateDirectMessageGroupModal"]),
     async createDirectMessageGroup() {
-      console.log("friends", this.checkedFriends);
       const dmMembers = {
         members: this.checkedFriends,
       };
       const result = await createDirectMessage(dmMembers);
       this.setCreateDirectMessageGroupModal(false);
+      this.checkedFriends = [];
       this.$router.push(`/channels/@me/${result.data.result.id}`);
     },
   },

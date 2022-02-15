@@ -142,19 +142,26 @@ export default {
         type: this.isChatType,
         public: true,
       };
+      console.log("createNewChannel", newChannelData);
       const result = await createNewChannel(newChannelData);
+      console.log("channelresult", result);
       for (let i = 0; i < this.communityInfo.categories.length; i++) {
         if (
           this.communityInfo.categories[i].id == result.data.result.categoryId
         ) {
           if (this.communityInfo.categories[i].channels == null) {
-            this.communityInfo.categories[i].channels = result.data.result;
+            let array = [];
+            array.push(result.data.result);
+            this.communityInfo.categories[i].channels = array;
           } else {
             this.communityInfo.categories[i].channels.unshift(
               result.data.result
             );
           }
+          await this.setCommunityInfo(this.communityInfo);
+          this.setCreateChannel(false);
           if (result.data.result.type != "VOICE") {
+            console.log(this.$route.params.serverid, result.data.result.id);
             this.$router.push(
               "/channels/" +
                 this.$route.params.serverid +
@@ -162,8 +169,6 @@ export default {
                 result.data.result.id
             );
           }
-          this.setCommunityInfo(this.communityInfo);
-          this.setCreateChannel(false);
           return;
         }
       }

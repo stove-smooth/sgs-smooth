@@ -56,10 +56,9 @@ export default {
         this.setCurrentVoiceRoom(null);
       }
       const wsInfo = {
-        url: "https://sig.yoloyolo.org/rtc",
+        url: process.env.VUE_APP_WEBRTC_URL,
         type: "room",
       };
-      //const url = "https://sig.yoloyolo.org/rtc";
       await this.wsInit(wsInfo); //ws 전역 등록.
       if (this.video) {
         this.setVideo();

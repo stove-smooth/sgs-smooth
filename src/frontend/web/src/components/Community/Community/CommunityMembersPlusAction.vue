@@ -13,7 +13,10 @@
           <div class="plus-action-label-container">
             <div class="plus-action-label">프로필</div>
           </div>
-          <div class="plus-action-label-container">
+          <div
+            class="plus-action-label-container"
+            @click="sendDirectMessage(communityMemberPlusMenu.id)"
+          >
             <div class="plus-action-label">메시지</div>
           </div>
           <div class="plus-action-label-container">
@@ -33,11 +36,13 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters } from "vuex";
+import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
+import { sendDirectMessage } from "@/utils/common";
 export default {
   computed: {
     ...mapState("utils", ["clientX", "clientY"]),
     ...mapState("community", ["communityMemberPlusMenu", "communityOwner"]),
+    ...mapState("dm", ["directMessageList"]),
     ...mapGetters("user", ["getUserId"]),
     cssProps() {
       return {
@@ -52,6 +57,12 @@ export default {
       "setCommunityList",
       "setCommunityReadyToBanish",
     ]),
+    ...mapActions("dm", ["fetchDirectMessageList"]),
+    //1:1 메시지를 걸었을 경우 dm방을 찾아 있을 경우 이동하고, 없을 경우 생성 후 이동한다.
+    async sendDirectMessage(userId) {
+      await this.fetchDirectMessageList();
+      await sendDirectMessage(this.directMessageList, userId);
+    },
   },
 };
 </script>

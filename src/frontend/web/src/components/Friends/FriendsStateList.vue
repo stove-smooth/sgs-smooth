@@ -23,7 +23,7 @@
               class="action-button"
               aria-label="메시지 보내기"
               role="button"
-              @click="sendDirectMessage(slotProps)"
+              @click="sendDirectMessage(slotProps.userId)"
             >
               <svg class="send-message"></svg>
             </div>
@@ -44,7 +44,7 @@
               class="action-button"
               aria-label="메시지 보내기"
               role="button"
-              @click="sendDirectMessage(slotProps)"
+              @click="sendDirectMessage(slotProps.userId)"
             >
               <svg class="send-message"></svg>
             </div>
@@ -123,11 +123,9 @@
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
 import FriendsForm from "./FriendsForm.vue";
-import {
-  acceptFriend,
-  deleteFriend,
-  createDirectMessage,
-} from "../../api/index.js";
+import { acceptFriend, deleteFriend } from "../../api/index.js";
+import { sendDirectMessage } from "@/utils/common";
+
 export default {
   components: { FriendsForm },
   async created() {
@@ -182,20 +180,8 @@ export default {
       window.location.reload();
     },
     //1:1 메시지를 걸었을 경우 dm방을 찾아 있을 경우 이동하고, 없을 경우 생성 후 이동한다.
-    async sendDirectMessage(userInfo) {
-      for (let i = 0; i < this.directMessageList.length; i++) {
-        if (this.directMessageList[i].group == false) {
-          if (this.directMessageList[i].members.includes(userInfo.userId)) {
-            this.$router.push(`/channels/@me/${this.directMessageList[i].id}`);
-            return;
-          }
-        }
-      }
-      const dmMembers = {
-        members: [userInfo.userId],
-      };
-      const result = await createDirectMessage(dmMembers);
-      this.$router.push(`/channels/@me/${result.data.result.id}`);
+    async sendDirectMessage(userId) {
+      await sendDirectMessage(this.directMessageList, userId);
     },
   },
 };

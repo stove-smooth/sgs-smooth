@@ -61,7 +61,7 @@
                 >
                   <div class="contents">로그인</div>
                 </button>
-                <p>{{ logMessage }}</p>
+                <p class="red-color">{{ logMessage }}</p>
                 <div class="need-account-button">
                   <span class="need-account"> 계정이 필요한가요? </span>
                   <button class="small-register-link">
@@ -80,7 +80,11 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import firebase from "firebase/compat/app";
+import "firebase/compat/messaging";
+import { firebaseConfig } from "@/utils/firebaseConfig";
+
+import { mapActions, mapMutations } from "vuex";
 import { validateEmail } from "../utils/validation.js";
 import { joinCommunity } from "../api/index.js";
 export default {
@@ -115,12 +119,21 @@ export default {
   },
   methods: {
     ...mapActions("user", ["LOGIN"]),
+    ...mapMutations("utils", ["setWebPushToken"]),
     async submitForm() {
       try {
+        await firebase.initializeApp(firebaseConfig);
+        const messaging = await firebase.messaging();
+        // 토큰
+        const token = await messaging.getToken();
+        this.setWebPushToken(token);
         const userData = {
           email: this.id,
           password: this.pwd,
+          type: "web",
+          deviceToken: token,
         };
+
         await this.LOGIN(userData);
         //만약 초대링크로 들어온 경우면, community로 이동시켜줌.
         if (this.path != "" && this.communityId != "") {

@@ -29,7 +29,7 @@ async function changeUserImage(userData) {
   try {
     const accesstoken = await store.getters["user/getAccessToken"];
     const response = await axios.post(
-      "http://52.79.229.100:8000/auth-server/auth/profile",
+      process.env.VUE_APP_BASE_URL + "auth-server/auth/profile",
       userData,
       {
         headers: {

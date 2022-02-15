@@ -27,15 +27,15 @@
                 </div>
               </div>
               <button
-                class="invite-button positive-border-color"
+                class="invite-button"
                 @click="inviteFriendToCommunity(friend, index)"
-                :disabled="isInvited[index] == 1 ? true : false"
+                v-if="friend.isInvited == false"
               >
-                <div v-if="isInvited[index] == 0" class="primary-text-content">
+                <div class="positive-border-color primary-text-content">
                   초대하기
                 </div>
-                <div v-else class="primary-text-content">전송됨</div>
               </button>
+              <template v-else><div class="white-color">전송됨</div></template>
             </div>
           </div>
           <div v-else class="primary-text-content white-color">
@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import Vue from "vue";
 import { mapState, mapMutations, mapActions } from "vuex";
 import Modal from "@/components/common/Modal.vue";
 import { createInvitation, createDirectMessage } from "@/api/index.js";
@@ -72,7 +73,6 @@ export default {
     return {
       invitationUrl: "",
       blackColor: "#36393f",
-      isInvited: [],
       inviteeFriends: [],
     };
   },
@@ -108,8 +108,9 @@ export default {
     this.inviteeFriends = friendsMember.filter(
       (element) => element !== "해당안됨"
     );
-    console.log(this.inviteeFriends);
-    this.isInvited = [...Array(this.inviteeFriends.length)].map(() => 0);
+    for (let i = 0; i < this.inviteeFriends.length; i++) {
+      Vue.set(this.inviteeFriends[i], "isInvited", false);
+    }
   },
   computed: {
     ...mapState("community", [
@@ -134,7 +135,6 @@ export default {
       alert(copyText.value + "을 복사했습니다.");
     },
     async inviteFriendToCommunity(friend, index) {
-      console.log("community 로 초대", friend.userId);
       const dmMembers = {
         members: [friend.userId],
       };
@@ -151,18 +151,8 @@ export default {
         JSON.stringify(msg),
         {}
       );
-      console.log(this.isInvited, index);
-      this.isInvited[index] = 1;
-      console.log(this.isInvited);
+      this.inviteeFriends[index].isInvited = true;
     },
-    /* friendsInvited(index) {
-      console.log(this.isInvited[index]);
-      if (this.isInvited[index] == 0) {
-        return 0;
-      } else {
-        return 1;
-      }
-    }, */
   },
 };
 </script>

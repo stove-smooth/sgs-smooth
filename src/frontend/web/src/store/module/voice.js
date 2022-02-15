@@ -72,7 +72,7 @@ const voice = {
       };
       context.state.ws.onmessage = function (message) {
         let parsedMessage = JSON.parse(message.data);
-        //console.log("Received message", message.data);
+        //alert("Received message" + message.data);
         context.dispatch("onServerMessage", parsedMessage);
       };
     },
@@ -141,7 +141,7 @@ const voice = {
           this.generateOffer(participant.offerToReceiveVideo.bind(participant));
         }
       );
-      console.log("내가 참가", participant);
+      console.log("내가 참가" + JSON.stringify(participant));
       const myName = context.state.myName;
       context.commit("addParticipant", { name: myName, participant });
       msg.members.forEach(function (sender) {
@@ -214,6 +214,7 @@ const voice = {
       context.state.ws.send(jsonMessage);
     },
     async leaveRoom(context) {
+      console.log("leaveRoom");
       for (var key in context.state.participants) {
         context.state.participants[key].dispose();
       }

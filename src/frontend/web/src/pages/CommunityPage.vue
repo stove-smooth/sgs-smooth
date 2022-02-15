@@ -47,22 +47,6 @@ export default {
   },
   async created() {
     await this.fetchCommunityInfo();
-    /* this.stompSocketClient.subscribe(
-      `/topic/community/${this.$route.params.serverid}`,
-      (res) => {
-        console.log("시그널링 서버 상태 구독입니다", res.body);
-      }
-    );
-    const msg = {
-      user_id: this.getUserId,
-      community_id: this.$route.params.serverid,
-      type: "before-enter",
-    };
-    this.stompSocketClient.send(
-      "/kafka/community-signaling",
-      JSON.stringify(msg),
-      {}
-    ); */
   },
   methods: {
     ...mapActions("community", ["FETCH_COMMUNITYINFO"]),
@@ -71,17 +55,19 @@ export default {
       await this.FETCH_COMMUNITYINFO(this.$route.params.serverid);
     },
     isChattingChannel(channelId) {
-      const categories = this.communityInfo.categories;
-      for (var category in categories) {
-        if (categories[category].channels != null) {
-          for (let i = 0; i < categories[category].channels.length; i++) {
-            if (categories[category].channels[i].id == channelId) {
-              if (categories[category].channels[i].type == "TEXT") {
-                this.setCurrentChannelType("TEXT");
-                return true;
-              } else {
-                this.setCurrentChannelType("VOICE");
-                return false;
+      if (this.communityInfo) {
+        let categories = this.communityInfo.categories;
+        for (var category in categories) {
+          if (categories[category].channels != null) {
+            for (let i = 0; i < categories[category].channels.length; i++) {
+              if (categories[category].channels[i].id == channelId) {
+                if (categories[category].channels[i].type == "TEXT") {
+                  this.setCurrentChannelType("TEXT");
+                  return true;
+                } else {
+                  this.setCurrentChannelType("VOICE");
+                  return false;
+                }
               }
             }
           }

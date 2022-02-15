@@ -5,7 +5,7 @@ async function logoutUser() {
   await store.dispatch("user/LOGOUT");
   const stompSocketClient = await store.getters("utils/stompSocketClient");
   stompSocketClient.disconnect();
-  window.location = "http://localhost:3000/";
+  window.location = process.env.VUE_APP_MAIN_URL;
 }
 
 export function setInterceptors(instance) {
@@ -43,7 +43,7 @@ export function setInterceptors(instance) {
         const accesstoken = store.getters["user/getAccessToken"];
         const refreshtoken = store.getters["user/getRefreshToken"];
         axios
-          .post("http://52.79.229.100:8000/auth-server/refresh", {
+          .post(process.env.VUE_APP_BASE_URL + "auth-server/refresh", {
             headers: {
               AUTHORIZATION: accesstoken,
               "REFRESH-TOKEN": refreshtoken,

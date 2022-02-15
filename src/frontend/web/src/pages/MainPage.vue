@@ -39,12 +39,9 @@
 </template>
 
 <script>
-import firebase from "firebase/compat/app";
-import "firebase/compat/messaging";
 import Stomp from "webstomp-client";
 import SockJS from "sockjs-client";
 
-import { firebaseConfig } from "@/utils/firebaseConfig";
 import { mapGetters, mapMutations, mapState } from "vuex";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import NavigationBar from "../components/NavigationBar.vue";
@@ -114,13 +111,6 @@ export default {
     } else {
       this.navbar = true;
     }
-
-    firebase.initializeApp(firebaseConfig);
-    const messaging = firebase.messaging();
-    // 토큰
-    messaging.getToken().then((token) => {
-      this.setWebPushToken(token);
-    });
   },
   watch: {
     // 라우터의 변경을 감시
@@ -143,10 +133,9 @@ export default {
     ...mapMutations("utils", [
       "setStompSocketClient",
       "setStompSocketConnected",
-      "setWebPushToken",
     ]),
     connect() {
-      const serverURL = "http://3.36.238.237:8080/my-chat";
+      const serverURL = process.env.VUE_APP_CHAT_URL;
       let socket = new SockJS(serverURL);
       this.setStompSocketClient(Stomp.over(socket));
       this.stompSocketClient.connect(
@@ -174,31 +163,4 @@ export default {
 
 <style>
 @import "../css/common.css";
-.wrapper2 {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-color: var(--dark-grey-color);
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  flex-direction: column;
-}
-.container {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  height: 100%;
-  display: flex;
-}
-button {
-  font-weight: 500;
-  border: 0;
-  cursor: pointer;
-}
-a img {
-  border: none;
-}
 </style>
