@@ -25,6 +25,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import javax.websocket.OnError;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -123,12 +124,18 @@ public class MessageHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         UserSession user = registry.removeBySession(session);
+        if (Objects.isNull(user)) return;
         roomManager.getRoom(user.getRoomId(), user.getCommunityId()).leave(user);
-
+        log.info("[Connection Closed] user {}, status : ", user.getUserId(), status);
         // 상태관리 서버로 접속 정보 전송
-        StateRequest logoutRequest = new StateRequest(State.DISCONNECT, user.getUserId(), user.getCommunityId(), user.getRoomId());
-        log.info("PRESENCE SERVER SEND : {}", logoutRequest.toString());
-        tcpClientGateway.send(logoutRequest.toString());
+        try {
+            StateRequest logoutRequest = new StateRequest(State.DISCONNECT, user.getUserId(), user.getCommunityId(), user.getRoomId());
+            log.info("PRESENCE SERVER SEND : {}", logoutRequest.toString());
+            tcpClientGateway.send(logoutRequest.toString());
+        } catch (Exception e) {
+            log.error("PRESENCE ERROR : {}", e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
