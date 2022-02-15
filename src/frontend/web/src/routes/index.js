@@ -45,30 +45,35 @@ export const router = new VueRouter({
           path: "channels/@me/:id",
           name: "privateDmPage",
           component: PrivateDMPage,
+          meta: { auth: true },
         },
         //처음 MainPage 진입시 channels/@me로 이동시킨다.
         {
           path: "channels/@me",
           name: "MyPage",
           component: MyPage,
+          meta: { auth: true },
         },
         //커뮤니티 내 채널 page
         {
           path: "channels/:serverid/:channelid",
           name: "CommunityPage",
           component: CommunityPage,
+          meta: { auth: true },
         },
         //커뮤니티 page, 커뮤니티에 채팅 채널이 존재하지 않을 경우 이 페이지로 이동한다.
         {
           path: "channels/:serverid",
           name: "CommunityWelcomePage",
           component: CommunityWelcomePage,
+          meta: { auth: true },
         },
         //개인 정보 설정 page
         {
           path: "settings",
           name: "UserSettingPage",
           component: UserSettingPage,
+          meta: { auth: true },
         },
       ],
     },

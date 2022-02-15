@@ -197,6 +197,15 @@ export default {
       return list;
     },
   },
+  watch: {
+    emailsend(newVal, oldVal) {
+      if (newVal != oldVal) {
+        if (newVal == true) {
+          alert("인증번호가 발송되었습니다.");
+        }
+      }
+    },
+  },
   methods: {
     ...mapActions("user", ["LOGIN"]),
     async submitForm() {

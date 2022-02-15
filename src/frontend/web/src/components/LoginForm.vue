@@ -61,7 +61,7 @@
                 >
                   <div class="contents">로그인</div>
                 </button>
-                <p>{{ logMessage }}</p>
+                <p class="red-color">{{ logMessage }}</p>
                 <div class="need-account-button">
                   <span class="need-account"> 계정이 필요한가요? </span>
                   <button class="small-register-link">
