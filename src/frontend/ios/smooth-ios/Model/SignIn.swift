@@ -7,26 +7,6 @@
 
 import Foundation
 
-struct SignInRequest: Encodable {
-    let email: String
-    let password: String
-    
-    var paramters: [String: Any] {
-        return [
-            "email": email,
-            "password": password
-        ]
-    }
-    
-}
-
-struct SignInResponse: Codable {
-    let isSuccess: Bool
-    let code: Int
-    let message: String
-    let result: SignIn
-}
-
 struct SignIn: Codable {
     let id: Int
     let name: String
@@ -36,7 +16,7 @@ struct SignIn: Codable {
     let accessToken: String
     let refreshToken: String
     
-    enum CodingKeys: String, CodingKey {
-            case id, name, code, email, accessToken, refreshToken
-        }
+    let deviceToken: String?
+    let type: String?
+    let url: String
 }

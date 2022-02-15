@@ -7,12 +7,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var coordinator: MainCoordinator?
     var window: UIWindow?
-    var chatWebSocketService: ChatWebSocketServiceProtocol?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
-        chatWebSocketService = ChatWebSocketService()
-        chatWebSocketService?.register()
         
         RxImagePickerDelegateProxy.register { RxImagePickerDelegateProxy(imagePicker: $0) }
         

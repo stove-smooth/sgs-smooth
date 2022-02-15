@@ -13,11 +13,13 @@ class MainCoordinator: NSObject, Coordinator {
     
     var childCoordinators = [Coordinator]()
     var navigationController: UINavigationController
+    let chatWebSocketService: ChatWebSocketServiceProtocol?
     
-    let window: UIWindow
+    private let window: UIWindow
     
     init(window: UIWindow) {
         self.window = window
+        self.chatWebSocketService = ChatWebSocketService()
         
         let navigationController = UINavigationController().setup
         navigationController.setNavigationBarHidden(true, animated: true)
@@ -48,8 +50,12 @@ class MainCoordinator: NSObject, Coordinator {
     }
     
     func goToMain() {
+        self.chatWebSocketService?.setup()
+        self.chatWebSocketService?.register()
+
         let coordinator = HomeCoordinator(navigationController: navigationController)
         childCoordinators.append(coordinator)
+        
         coordinator.start()
     }
     
