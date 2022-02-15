@@ -38,6 +38,8 @@ export default {
     ...mapState("dm", ["directMessageMemberList"]),
     ...mapState("voice", ["wsOpen", "video"]),
     ...mapGetters("user", ["getUserId", "getAccessToken"]),
+    ...mapState("user", ["nickname", "userimage"]),
+    ...mapState("utils", ["stompSocketClient"]),
   },
   methods: {
     ...mapMutations("voice", ["setVideo", "setCurrentVoiceRoom"]),
@@ -63,6 +65,18 @@ export default {
       if (this.video) {
         this.setVideo();
       }
+      const msg = {
+        content: `<~dmcalling~>${this.nickname}님이 통화를 시작했어요. `,
+        channelId: this.$route.params.id,
+        userId: this.getUserId,
+        name: this.nickname,
+        profileImage: this.userimage,
+      };
+      this.stompSocketClient.send(
+        "/kafka/send-direct-message",
+        JSON.stringify(msg),
+        {}
+      );
     },
   },
 };
