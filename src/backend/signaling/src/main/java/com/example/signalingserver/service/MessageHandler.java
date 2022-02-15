@@ -126,6 +126,7 @@ public class MessageHandler extends TextWebSocketHandler {
 
         // 상태관리 서버로 접속 정보 전송
         StateRequest logoutRequest = new StateRequest(State.DISCONNECT, user.getUserId(), user.getCommunityId(), user.getRoomId());
+        log.info("PRESENCE SERVER SEND : {}", logoutRequest.toString());
         tcpClientGateway.send(logoutRequest.toString());
     }
 

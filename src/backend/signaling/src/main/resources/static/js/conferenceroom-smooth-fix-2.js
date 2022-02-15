@@ -39,6 +39,7 @@ ws.onmessage = function(message) {
             participants[parsedMessage.userId].rtcPeer.addIceCandidate(parsedMessage.candidate, function (error) {
                 if (error) {
                     console.error("Error adding candidate: " + error);
+                    alert(error);
                     return;
                 }
             });
@@ -72,7 +73,10 @@ function onNewParticipant(request) {
 
 function receiveVideoResponse(result) {
     participants[result.userId].rtcPeer.processAnswer (result.sdpAnswer, function (error) {
-        if (error) return console.error (error);
+        if (error) {
+            alert(error);
+            return console.error (error);
+        }
     });
 }
 
@@ -82,7 +86,10 @@ function callResponse(message) {
         stop();
     } else {
         webRtcPeer.processAnswer(message.sdpAnswer, function (error) {
-            if (error) return console.error (error);
+            if (error) {
+                alert(error);
+                return console.error (error);
+            }
         });
     }
 }
@@ -110,8 +117,9 @@ function onExistingParticipants(msg) {
     }
     participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options,
         function (error) {
-            if(error) {
-                return console.error(error);
+            if (error) {
+                alert(error);
+                return console.error (error);
             }
             this.generateOffer (participant.offerToReceiveVideo.bind(participant));
         });
@@ -140,14 +148,19 @@ function receiveVideo(sender) {
     var video = participant.getVideoElement();
 
     var options = {
+        connectionConstraints: {
+            offerToReceiveAudio: true,
+            offerToReceiveVideo: true,
+        },
         remoteVideo: video,
         onicecandidate: participant.onIceCandidate.bind(participant)
     }
 
     participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(options,
         function (error) {
-            if(error) {
-                return console.error(error);
+            if (error) {
+                alert(error);
+                return console.error (error);
             }
             this.generateOffer (participant.offerToReceiveVideo.bind(participant));
         });;
