@@ -28,6 +28,7 @@ class DirectView: BaseView, UIScrollViewDelegate {
         $0.register(DirectCell.self, forCellReuseIdentifier: DirectCell.identifier)
     }
     
+    let loadingView = UIActivityIndicatorView()
     let emptyView = FriendEmptyView()
     
     override func setup() {
@@ -76,6 +77,17 @@ class DirectView: BaseView, UIScrollViewDelegate {
             }
         } else {
             emptyView.removeFromSuperview()
+        }
+    }
+    
+    override func showLoading(isShow: Bool) {
+        if isShow {
+            addSubview(loadingView)
+            loadingView.snp.makeConstraints {
+                $0.centerX.centerY.equalToSuperview()
+            }
+        } else {
+            loadingView.removeFromSuperview()
         }
     }
 }

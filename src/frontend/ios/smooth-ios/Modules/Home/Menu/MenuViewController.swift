@@ -55,8 +55,7 @@ class MenuViewController: BaseViewController, CoordinatorContext {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        self.tabBarController?.tabBar.isHidden = false
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
         
         self.viewModel.input.fetch.onNext(())
         
@@ -149,7 +148,7 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             .disposed(by: disposeBag)
         
         self.viewModel.output.rooms
-            .asDriver(onErrorJustReturn: [])
+            .asDriver(onErrorJustReturn: nil)
             .drive(self.menuView.rx.rooms)
             .disposed(by: disposeBag)
         
