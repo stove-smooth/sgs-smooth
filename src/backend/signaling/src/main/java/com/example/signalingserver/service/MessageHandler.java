@@ -130,7 +130,6 @@ public class MessageHandler extends TextWebSocketHandler {
 
         // redis에서 유저 삭제
         SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         try {
             log.info("[redis] remove key : {}, value : {}", room.getRoomId(), user.getUserId());
             setOperations.remove(room.getRoomId(), user.getUserId());
@@ -143,7 +142,7 @@ public class MessageHandler extends TextWebSocketHandler {
             // redis에서 방 삭제
             try {
                 log.info("[redis] remove key : {}", room.getRoomId());
-                setOperations.remove(room.getRoomId());
+                redisTemplate.delete(room.getRoomId());
                 redisTemplate.delete(room.getRoomId()+PIPELINE);
             } catch (Exception e) {
                 e.printStackTrace();
