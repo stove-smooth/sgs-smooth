@@ -25,6 +25,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import javax.websocket.OnError;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -123,12 +124,52 @@ public class MessageHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         UserSession user = registry.removeBySession(session);
-        roomManager.getRoom(user.getRoomId(), user.getCommunityId()).leave(user);
+        if (Objects.isNull(user)) return;
+        Room room = roomManager.getRoom(user.getRoomId(), user.getCommunityId());
+        room.leave(user);
 
+        // redis에서 유저 삭제
+        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
+        try {
+            log.info("[redis] remove key : {}, value : {}", room.getRoomId(), user.getUserId());
+            setOperations.remove(room.getRoomId(), user.getUserId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (room.getParticipants().isEmpty()) {
+            roomManager.removeRoom(room);
+            // redis에서 방 삭제
+            try {
+                log.info("[redis] remove key : {}", room.getRoomId());
+                redisTemplate.delete(room.getRoomId());
+                redisTemplate.delete(room.getRoomId()+PIPELINE);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // kurento media pipeline 삭제
+            kurento.getServerManager().getPipelines().stream()
+                    .filter(pipeline -> pipeline.getId().equals(room.getPipeLineId()))
+                    .findAny().ifPresent(pipeline -> pipeline.release());
+
+            try {
+                log.info("[redis] remove key : {}, value : {}", SERVER + IP, room.getRoomId());
+                setOperations.remove(SERVER + IP, room.getRoomId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        log.info("[Connection Closed] user {}, CloseStatus : {}", user.getUserId(), status);
         // 상태관리 서버로 접속 정보 전송
-        StateRequest logoutRequest = new StateRequest(State.DISCONNECT, user.getUserId(), user.getCommunityId(), user.getRoomId());
-        log.info("PRESENCE SERVER SEND : {}", logoutRequest.toString());
-        tcpClientGateway.send(logoutRequest.toString());
+//        try {
+//            StateRequest logoutRequest = new StateRequest(State.DISCONNECT, user.getUserId(), user.getCommunityId(), user.getRoomId());
+//            log.info("PRESENCE SERVER SEND : {}", logoutRequest.toString());
+//            tcpClientGateway.send(logoutRequest.toString());
+//        } catch (Exception e) {
+//            log.error("PRESENCE ERROR : {}", e.getMessage());
+//            e.printStackTrace();
+//        }
     }
 
     /**
@@ -176,37 +217,6 @@ public class MessageHandler extends TextWebSocketHandler {
     private void leave(UserSession user) throws IOException {
         final Room room = roomManager.getRoom(user.getRoomId(), user.getCommunityId());
         room.leave(user);
-        // redis에서 유저 삭제
-        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        try {
-            log.info("[redis] remove key : {}, value : {}", room.getRoomId(), user.getUserId());
-            setOperations.remove(room.getRoomId(), user.getUserId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (room.getParticipants().isEmpty()) {
-            roomManager.removeRoom(room);
-            // redis에서 방 삭제
-            try {
-                log.info("[redis] remove key : {}", room.getRoomId());
-                setOperations.remove(room.getRoomId());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            // kurento media pipeline 삭제
-            kurento.getServerManager().getPipelines().stream()
-                    .filter(pipeline -> pipeline.getId().equals(room.getPipeLineId()))
-                    .findAny().ifPresent(pipeline -> pipeline.release());
-        }
-
-        try {
-            log.info("[redis] remove key : {}, value : {}", SERVER + IP, room.getRoomId());
-            setOperations.remove(SERVER + IP, room.getRoomId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void updateVideo(VideoStateRequest request, UserSession user) throws IOException {
