@@ -23,7 +23,9 @@ class ChattingViewController: MessagesViewController {
     weak var delegate: ChattingViewControllerDelegate?
     
     private let emptyView = ChannelEmptyView()
-    private let viewModel: ChattingViewModel
+    private let editInputAccessoryView = EditInputBarAccessoryView()
+    
+    internal let viewModel: ChattingViewModel
     
     var messageList: [MockMessage] = []
     
@@ -64,6 +66,8 @@ class ChattingViewController: MessagesViewController {
         configureMessageCollectionView()
         configureMessageInputBar()
         
+        // VC <-> VM
+        bindEvent()
         bindViewModel()
     }
     
@@ -84,8 +88,54 @@ class ChattingViewController: MessagesViewController {
         super.viewWillDisappear(animated)
     }
     
+    func bindEvent() {
+        self.viewModel.showToastMessage
+            .asDriver(onErrorJustReturn: "")
+            .drive(onNext: { message in
+                self.showToast(message: message, isWarning: false)
+            })
+            .disposed(by: disposeBag)
+        
+        self.viewModel.showErrorMessage
+            .asDriver(onErrorJustReturn: "")
+            .drive(onNext: { message in
+                self.showToast(message: message, isWarning: true)
+            })
+            .disposed(by: disposeBag)
+    }
+    
     private func bindViewModel() {
         // MARK: - Model Binding
+        
+        // input
+        self.viewModel.input.isEdit
+            .asDriver(onErrorJustReturn: (false, MockMessage()))
+            .drive { (isEdit, message) in
+                if (isEdit) {
+                    self.view.makeToast("입력된 메시지가 없으면 답장하기가 자동 취소 됩니다.", duration: 5, point: self.view.center, title: "메시지 수정", image: nil, style: .init(), completion: nil)
+                    
+                } else {
+                    if(message != MockMessage()) {
+                        self.view.makeToast("메시지 수정",
+                                            point: self.view.center,
+                                            title: "취소", image: nil, completion: nil)
+                    }
+                    
+                }
+            }
+            .disposed(by: disposeBag)
+        
+        
+        Observable.zip(self.messageInputBar.sendButton.rx.tap,
+                       self.messageInputBar.inputTextView.rx.text)
+            .bind(onNext: { (tap, text) in
+                if (text?.count == 0){
+                    self.viewModel.input.isEdit.accept((false, self.viewModel.input.isEdit.value.1))
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        // output
         self.viewModel.output.channel
             .bind(onNext: { channel in
                 self.viewModel.input.fetch.onNext((channel, nil))
@@ -104,13 +154,15 @@ class ChattingViewController: MessagesViewController {
             }).disposed(by: disposeBag)
         
         self.viewModel.output.messages
-            .bind(onNext: { messages in
-                self.messageList = messages
-                self.messagesCollectionView.reloadData()
-                self.messagesCollectionView.scrollToLastItem()
+            .asDriver(onErrorJustReturn: [])
+            .drive(onNext: { messages in
+                self.messageList.insert(contentsOf: messages, at: 0)
+                self.messagesCollectionView.reloadDataAndKeepOffset()
+                self.refreshControl.endRefreshing()
+                if(self.viewModel.model.page == 0) {
+                    self.messagesCollectionView.scrollToLastItem()
+                }
             }).disposed(by: disposeBag)
-        
-        
         
         // MARK: - Toast Popup
         self.viewModel.showErrorMessage
@@ -153,6 +205,7 @@ class ChattingViewController: MessagesViewController {
 // MARK: - HomeVC Delegate
 extension ChattingViewController: HomeViewControllerDelegate {
     func loadChatting(channel: Channel, communityId: Int?) {
+        self.messageList = []
         self.viewModel.output.channel.accept(channel)
         self.viewModel.output.commniutyId.accept(communityId)
     }
@@ -163,17 +216,7 @@ extension ChattingViewController {
     
     // MARK: 메시지 불러오기
     @objc func loadMoreMessages() {
-        self.viewModel.input.fetch.onNext((self.viewModel.model.channel, self.viewModel.model.page+1))
-        
-        /*
-        self.viewModel.output.messages
-            .asDriver(onErrorJustReturn: [])
-            .drive(onNext: { messsages in
-                self.messageList = messsages
-                self.messagesCollectionView.reloadDataAndKeepOffset()
-                self.refreshControl.endRefreshing()
-            }).disposed(by: self.disposeBag)
-         */
+        self.viewModel.input.fetch.onNext((self.viewModel.model.channel, self.viewModel.model.page))
     }
     
     // MARK: 메시지 보내기
@@ -299,15 +342,21 @@ extension ChattingViewController: InputBarAccessoryViewDelegate, CameraInputBarA
         for component in data {
             // MARK: 텍스트
             if let str = component as? String {
-                
-                let message = MockMessage(
-                    kind: .text(str),
-                    user: self.viewModel.model.messageUser,
-                    messageId: UUID().uuidString,
-                    date: Date()
-                )
-                self.viewModel.input.socketMessage.onNext((message, .message))
-                insertMessage(message)
+                if (self.viewModel.input.isEdit.value.1.messageId != "-1") { // 수정중인 경우
+                    var message = self.viewModel.input.isEdit.value.1
+                    message.kind = MessageKind.text(str)
+                    self.viewModel.input.socketMessage.onNext((message, .modify))
+                } else {
+                    let message = MockMessage(
+                        kind: .text(str),
+                        user: self.viewModel.model.messageUser,
+                        messageId: UUID().uuidString,
+                        date: Date()
+                    )
+                    
+                    self.viewModel.input.socketMessage.onNext((message, .message))
+                    insertMessage(message)
+                }
             }
             // MARK: 이미지
             else if let img = component as? UIImage {

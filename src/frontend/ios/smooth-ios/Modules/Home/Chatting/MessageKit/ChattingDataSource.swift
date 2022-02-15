@@ -66,6 +66,7 @@ extension ChattingViewController: MessageCellDelegate {
 }
 
 extension ChattingViewController {
+    // MARK: 메시지 옵션 알럿창
     func showMessageOption(indexPath: IndexPath) {
         UIAlertController.present(
             in: self, title: nil, message: nil,
@@ -76,11 +77,16 @@ extension ChattingViewController {
                 .action(title: "취소", style: .cancel)
             ]).subscribe(onNext: { index in
                 switch index {
-                case 0:
-                    #warning("메시지 수정하기")
-//                    self.modifyInputBar(indexPath)
-                    break
-                case 1:
+                case 0: // MARK: 메시지 수정
+                    switch self.messageList[indexPath.section].kind {
+                    case .text(let text):
+                        self.viewModel.input.isEdit.accept((true, self.messageList[indexPath.section]))
+                        self.messageInputBar.inputTextView.text = text
+                    default:
+                        self.showToast(message: "텍스트 메시지만 수정 가능합니다.", isWarning: true)
+                    }
+                   
+                case 1: // MARK: 메시지 삭제
                     self.showDeleteMessage(indexPath: indexPath)
                 default:
                     break

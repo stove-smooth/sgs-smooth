@@ -21,9 +21,11 @@ class ChattingViewModel: BaseViewModel {
     
     struct Input {
         let fetch = PublishSubject<(Channel, Int?)>()
+        let isEdit = BehaviorRelay<(Bool, MockMessage)>(value: (false, MockMessage()))
         
         let socketMessage = PublishSubject<(MockMessage, ReceivedMessageType)>()
         
+        let inputMessage = PublishSubject<String?>()
         let disappear = PublishSubject<Void>()
     }
     
@@ -44,7 +46,7 @@ class ChattingViewModel: BaseViewModel {
         var channel = Channel()
         
         var isConnected = false
-        
+        var edittingMsg: MockMessage?
         // 페이징 처리 기본 값
         var page: Int = 0
         let size: Int = 20 // (고정)
@@ -77,10 +79,6 @@ class ChattingViewModel: BaseViewModel {
         self.input.fetch
             .subscribe(onNext: { channel, page in
                 self.connect(channelId: channel.id)
-                
-                if (page == nil) {
-                    self.model.page = 0
-                }
                 self.fetchMessgae(chattingId: channel.id)
             })
             .disposed(by: disposeBag)
@@ -94,21 +92,11 @@ class ChattingViewModel: BaseViewModel {
                     self.output.messages.accept(self.model.messages)
                     
                 case .delete: // 메시지 삭제
-                    let index = self.searchIndex(message: message)
-                    
-                    self.model.messages.remove(at: index)
-                    self.output.messages.accept(self.model.messages)
+                    break
                     
                 case .modify: // 메시지 수정
                     let index = self.searchIndex(message: message)
-                    
-                    switch message.kind {
-                    case .text(let text):
-                        let newMessageContent = MessageKind.text(text)
-                        self.model.messages[index].kind = newMessageContent
-                        self.output.messages.accept(self.model.messages)
-                    default: break
-                    }
+                    self.model.messages[index].sentDate = message.sentDate
                 case .reply: // 메시지 답장
                     break
                 case .typing: // 메시지 입력중
@@ -147,13 +135,25 @@ class ChattingViewModel: BaseViewModel {
                     }
                 case .delete:
                     self.deleteMessage(message: message)
-                case .modify: break
+                case .modify:
+                    self.modifyMessage(message: message)
                 case .reply: break
                 case .typing: break
                 }
                 
             }.disposed(by: disposeBag)
         
+        self.input.inputMessage
+            .subscribe(onNext: { value in
+                guard let value = value else { return }
+                if (self.model.edittingMsg != MockMessage()) {
+                    if(value.count == 0) {
+                       let isEdit = self.input.isEdit.value
+                        self.input.isEdit.accept((false, isEdit.1))
+                    }
+                }
+            })
+            .disposed(by: disposeBag)
         
         self.input.disappear
             .bind(onNext: {
@@ -221,10 +221,11 @@ class ChattingViewModel: BaseViewModel {
                 if (self.model.messages.isEmpty) {
                     self.model.messages = fetchMessages
                 } else {
-                    self.model.messages.append(contentsOf: fetchMessages)
+                    self.model.messages.insert(contentsOf: fetchMessages, at: 0)
                 }
                 
                 self.output.messages.accept(fetchMessages)
+                self.model.page = page + 1
             }
         }
     }
@@ -258,7 +259,7 @@ class ChattingViewModel: BaseViewModel {
             }
             
             if (!response.isSuccess) {
-                self.showErrorMessage.accept("메시지 보내는데 실패하였습니다.")
+                self.showErrorMessage.accept("메시지 전송 실패")
             }
             
             self.output.isLoading.accept(false)
@@ -271,5 +272,22 @@ class ChattingViewModel: BaseViewModel {
         let index = self.model.messages.firstIndex(of: message)
         self.model.messages.remove(at: index!)
         self.output.messages.accept(self.model.messages)
+        self.showToastMessage.accept("메시지 삭제 완료")
+    }
+    
+    private func modifyMessage(message: MockMessage) {
+        self.chatWebSocketService.modifyMessage(message: message)
+        
+        var index: Int?
+        
+        for i in 0...self.model.messages.count-1 {
+            if(self.model.messages[i].messageId == message.messageId) {
+                index = i
+
+            }
+        }
+        self.model.messages[index!] = message
+        self.output.messages.accept(self.model.messages)
+        self.showToastMessage.accept("메시지 수정 완료")
     }
 }
