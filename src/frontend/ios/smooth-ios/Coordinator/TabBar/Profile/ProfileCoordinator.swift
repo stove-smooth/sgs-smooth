@@ -37,4 +37,10 @@ class ProfileCoordinator: NSObject, Coordinator {
         coordinator.start()
     }
     
+    func goToEdit(user: User) {
+        let editVC = EditProfileViewController.instance(user: user)
+        editVC.coordinator = self
+        
+        navigationController.pushViewController(editVC, animated: true)
+    }
 }
