@@ -67,7 +67,7 @@ const voice = {
       context.commit("setWsInit", info.url);
       context.commit("setCurrentVoiceRoomType", info.type);
       context.state.ws.onopen = function () {
-        alert("connected");
+        console.log("connected");
         context.commit("setWsOpen", true);
       };
       context.state.ws.onmessage = function (message) {
@@ -118,7 +118,7 @@ const voice = {
     /**case */
     //case -1 내가 참가했을때
     onExistingParticipants(context, msg) {
-      alert(
+      console.log(
         context.state.myName + " registered in room " + context.state.roomName
       );
       let participant = new Participant(context.state.myName);
@@ -141,7 +141,7 @@ const voice = {
           this.generateOffer(participant.offerToReceiveVideo.bind(participant));
         }
       );
-      alert("내가 참가" + JSON.stringify(participant));
+      console.log("내가 참가" + JSON.stringify(participant));
       const myName = context.state.myName;
       context.commit("addParticipant", { name: myName, participant });
       msg.members.forEach(function (sender) {
@@ -214,7 +214,7 @@ const voice = {
       context.state.ws.send(jsonMessage);
     },
     async leaveRoom(context) {
-      alert("leaveRoom");
+      console.log("leaveRoom");
       for (var key in context.state.participants) {
         context.state.participants[key].dispose();
       }

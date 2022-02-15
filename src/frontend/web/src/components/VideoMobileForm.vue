@@ -117,19 +117,16 @@ export default {
     ...mapActions("voice", ["setVoiceInfo", "sendMessage", "leaveRoom"]),
     ...mapMutations("voice", ["setMute", "setVideo"]),
     toggleMic() {
-      alert(JSON.stringify(this.participants[this.userId]));
       this.setMute();
       this.myParticipantObject.rtcPeer.audioEnabled = !this.mute;
     },
     toggleVideo() {
-      alert(JSON.stringify(this.participants[this.userId]));
       this.myParticipantObject.rtcPeer.videoEnabled = !this.video;
       this.setVideo();
     },
     //webRTC 연결을 끊을 시 서버내 다른 채팅 채널로 이동해야함
     leaveVoiceConnection() {
       this.sendMessage({ id: "leaveRoom" });
-      console.log("leaveRoom");
       this.leaveRoom();
     },
   },

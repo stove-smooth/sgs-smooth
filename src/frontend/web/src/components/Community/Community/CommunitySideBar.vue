@@ -197,7 +197,7 @@ export default {
       hovered: "",
       categoryhovered: "",
       new: 0,
-      voiceChannelMember: [],
+      voiceChannelMember: {},
     };
   },
   created() {
@@ -208,12 +208,11 @@ export default {
           "@@@@@@@@@@@시그널링 서버 상태 구독입니다",
           JSON.parse(res.body)
         );
-        //console.log("communityInfo", this.communityInfo);
-        //this.voiceChannelMember = JSON.parse(res.body);
-
-        console.log(this.getVoiceRoom);
+        this.voiceChannelMember = JSON.parse(res.body);
+        //this.compareVoiceMemberState(JSON.parse(res.body));
       }
     );
+
     const msg = {
       user_id: this.getUserId,
       community_id: this.$route.params.serverid,
@@ -264,22 +263,60 @@ export default {
       "setChannelSettingModal",
     ]),
     ...mapMutations("voice", ["setVideo", "setCurrentVoiceRoom"]),
-    /* getVoiceRoom() {
-      let voiceRoomList = [];
-      if (this.communityInfo) {
-        let categories = this.communityInfo.categories;
-        for (let category in categories) {
-          if (categories[category].channels != null) {
-            for (let i = 0; i < categories[category].channels.length; i++) {
-              if (categories[category].channels[i].type == "VOICE") {
-                voiceRoomList.push(categories[category].channels[i].id);
+    compareVoiceMemberState(receivedVoiceMember) {
+      for (let i = 0; i < this.getVoiceRoom.length; i++) {
+        let latestMemberList = receivedVoiceMember[this.getVoiceRoom[i]];
+        let oldMemberList = this.voiceChannelMember[this.getVoiceRoom[i]];
+
+        if (latestMemberList != undefined) {
+          if (oldMemberList == undefined) {
+            this.voiceChannelMember[this.getVoiceRoom[i]] = latestMemberList;
+            //console.log("정렬", latestMemberList.sort());
+          } else {
+            //console.log("정렬", latestMemberList.sort());
+            //들어온 멤버목록과 기존의 멤버목록이 다를때만 수정작업을 거친다.
+            let sortedLatestMemberList = latestMemberList.sort();
+            let sortedOldMemberList = oldMemberList.sort();
+            if (
+              JSON.stringify(sortedLatestMemberList) !=
+              JSON.stringify(sortedOldMemberList)
+            ) {
+              //old [1,3]
+              //new [2,3,4]
+              let removeMember = [];
+              let addMember = [];
+              for (let j = 0; j < oldMemberList.length; j++) {
+                //전 멤버중에 최신 멤버에서 포함하지 않는 자가 있다면 삭제한다.
+                if (!latestMemberList.includes(oldMemberList[j])) {
+                  //oldMemberList.splice(j, 1);
+                  //return;
+                  removeMember.push(oldMemberList[j]);
+                }
               }
+              for (let k = 0; k < latestMemberList.length; k++) {
+                if (!oldMemberList.includes(latestMemberList[k])) {
+                  //oldMemberList.push(...latestMemberList[k]);
+                  //return;
+                  addMember.push(latestMemberList[k]);
+                }
+              }
+              /* console.log(
+                "삭제할멤버",
+                removeMember,
+                "추가할멤버",
+                addMember,
+                "최신 멤버리스트",
+                latestMemberList,
+                "예전 멤버리스트",
+                oldMemberList
+              ); */
+              oldMemberList.push(...addMember);
             }
           }
         }
       }
-      return voiceRoomList;
-    }, */
+      //this.voiceChannelMember = JSON.parse(res.body);
+    },
     /***drag and drop을 통해 바뀐 채널/카테고리 정보를 서버에 보내기 위한 로직 */
     log: async function (evt) {
       if (evt.moved) {
@@ -461,6 +498,7 @@ export default {
           return memberInfo;
         }
       }
+      console.log("memberid", id);
     },
   },
 };

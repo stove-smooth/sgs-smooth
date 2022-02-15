@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 import { fetchMemberInfo } from "@/api";
 export default {
   props: {
@@ -25,6 +25,11 @@ export default {
   },
   computed: {
     ...mapGetters("user", ["getUserId"]),
+    ...mapState("voice", ["currentVoiceRoomType"]),
+    ...mapState("community", [
+      "communityOnlineMemberList",
+      "communityOfflineMemberList",
+    ]),
     video() {
       return this.participant.getVideoElement();
     },
@@ -37,9 +42,20 @@ export default {
   },
   methods: {
     async participantNickName() {
-      const result = await fetchMemberInfo(this.participant.name);
-      if (result.data.code == 1000) {
-        this.nickname = result.data.result.name;
+      if (this.currentVoiceRoomType == "mobile") {
+        const result = await fetchMemberInfo(this.participant.name);
+        if (result.data.code == 1000) {
+          this.nickname = result.data.result.name;
+        }
+      } else {
+        let communityMembers = this.communityOnlineMemberList.concat(
+          this.communityOfflineMemberList
+        );
+        for (let i = 0; i < communityMembers.length; i++) {
+          if (communityMembers[i].id == this.participant.name) {
+            this.nickname = communityMembers[i].communityName;
+          }
+        }
       }
     },
     getAudioLevel() {

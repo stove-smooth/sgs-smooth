@@ -11,6 +11,7 @@ export default function Participant(name) {
   video.classList.add("height-100");
   video.autoplay = true;
   video.controls = false;
+  video.playsInline = true;
   var sdp;
   console.log("무의미", rtcPeer, sdp);
   this.getVideoElement = function () {
@@ -26,7 +27,7 @@ export default function Participant(name) {
 
   this.onIceCandidate = function (candidate, wp) {
     console.log("무의미", wp);
-    alert("Local candidate" + JSON.stringify(candidate));
+    console.log("Local candidate" + JSON.stringify(candidate));
     var message = {
       id: "onIceCandidate",
       userId: name,
