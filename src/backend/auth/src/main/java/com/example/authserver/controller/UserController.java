@@ -121,4 +121,6 @@ public class UserController {
     public Map<Long,DeviceResponse> getDeviceToken(@RequestBody List<Long> ids) {
         return accountService.getDeviceToken(ids);
     }
+
+
 }
