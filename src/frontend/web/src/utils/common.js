@@ -1,3 +1,5 @@
+import { createDirectMessage } from "@/api/index.js";
+import { router } from "../routes";
 //유저코드에 따라 기본 프로필을 설정한다.
 function selectProfile(code) {
   if (code == 0) {
@@ -88,10 +90,30 @@ function convertFromStringToDate(responseDate) {
   time.minutes = parseInt(timePieces[1]);
   return [transDate, time.hour + ":" + time.minutes];
 }
+
+async function sendDirectMessage(directMessageList, userId) {
+  for (let i = 0; i < directMessageList.length; i++) {
+    if (directMessageList[i].group == false) {
+      if (directMessageList[i].members.includes(userId)) {
+        //location.assign(`/channels/@me/${directMessageList[i].id}`);
+        router.push(`/channels/@me/${directMessageList[i].id}`);
+        return;
+      }
+    }
+  }
+  const dmMembers = {
+    members: [userId],
+  };
+  const result = await createDirectMessage(dmMembers);
+  //location.assign(`/channels/@me/${result.data.result.id}`);
+  router.push(`/channels/@me/${result.data.result.id}`);
+}
+
 export {
   selectProfile,
   converToThumbnail,
   dataUrlToFile,
   computeChannelName,
   convertFromStringToDate,
+  sendDirectMessage,
 };

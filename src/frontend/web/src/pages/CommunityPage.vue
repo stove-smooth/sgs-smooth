@@ -55,7 +55,6 @@ export default {
       await this.FETCH_COMMUNITYINFO(this.$route.params.serverid);
     },
     isChattingChannel(channelId) {
-      console.log("communityInfo", this.communityInfo);
       if (this.communityInfo) {
         let categories = this.communityInfo.categories;
         for (var category in categories) {
