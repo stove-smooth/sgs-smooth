@@ -20,8 +20,7 @@ class ChattingViewModel: BaseViewModel {
     let chatWebSocketService: ChatWebSocketServiceProtocol
     
     struct Input {
-        let fetch = PublishSubject<(Channel, Int?)>()
-        let isEdit = BehaviorRelay<(Bool, MockMessage)>(value: (false, MockMessage()))
+        let fetch = PublishSubject<(Int?, Int?)>()
         
         let socketMessage = PublishSubject<(MockMessage, ReceivedMessageType)>()
         
@@ -30,9 +29,10 @@ class ChattingViewModel: BaseViewModel {
     }
     
     struct Output {
-        let channel = PublishRelay<Channel>()
-        let commniutyId = PublishRelay<Int?>()
-        let messages = PublishRelay<[MockMessage]>()
+        let channelId = PublishRelay<Int>()
+        
+        let messages = PublishRelay<([MockMessage],ReceivedMessageType?)>()
+        let socketMessage = PublishSubject<MockMessage>()
         
         let showEmpty = PublishRelay<Bool>()
         let isLoading = PublishRelay<Bool>()
@@ -43,7 +43,7 @@ class ChattingViewModel: BaseViewModel {
         let messageUser: MockUser
         var messages = [MockMessage]()
         var communityId: Int?
-        var channel = Channel()
+        var channelId: Int = 0
         
         var isConnected = false
         var edittingMsg: MockMessage?
@@ -77,9 +77,14 @@ class ChattingViewModel: BaseViewModel {
     
     override func bind() {
         self.input.fetch
-            .subscribe(onNext: { channel, page in
-                self.connect(channelId: channel.id)
-                self.fetchMessgae(chattingId: channel.id)
+            .subscribe(onNext: { channelId, page in
+                guard let channelId = channelId else { return }
+                self.connect(channelId: channelId)
+                if (self.model.communityId == nil) {
+                    self.fetchMessgaeByDirect(chattingId: channelId)
+                } else {
+                    self.fetchMessgaeByCommunity(chattingId: channelId)
+                }
             })
             .disposed(by: disposeBag)
         
@@ -89,14 +94,18 @@ class ChattingViewModel: BaseViewModel {
                 switch type {
                 case .message: // 메시지 보내기
                     self.model.messages.append(message)
-                    self.output.messages.accept(self.model.messages)
-                    
+                    self.output.messages.accept(( self.model.messages, .message))
                 case .delete: // 메시지 삭제
-                    break
+                    let index = self.searchIndex(message: message)
                     
+                    self.model.messages.remove(at: index)
+                    self.output.messages.accept((self.model.messages, .delete))
                 case .modify: // 메시지 수정
                     let index = self.searchIndex(message: message)
                     self.model.messages[index].sentDate = message.sentDate
+                    self.model.messages[index].kind = message.kind
+                    self.output.messages.accept(( self.model.messages, .modify))
+                    self.showToastMessage.accept("메시지 수정 완료")
                 case .reply: // 메시지 답장
                     break
                 case .typing: // 메시지 입력중
@@ -123,7 +132,7 @@ class ChattingViewModel: BaseViewModel {
                             image: img.image!.jpegData(compressionQuality: 0.5),
                             thumbnail: thumb.data,
                             userId: Int(self.model.messageUser.senderId)!,
-                            channelId: self.model.channel.id,
+                            channelId: self.model.channelId,
                             communityId: self.model.communityId,
                             type: self.model.communityId != nil ? "community" : "direct",
                             fileType: FileType.image,
@@ -145,13 +154,7 @@ class ChattingViewModel: BaseViewModel {
         
         self.input.inputMessage
             .subscribe(onNext: { value in
-                guard let value = value else { return }
-                if (self.model.edittingMsg != MockMessage()) {
-                    if(value.count == 0) {
-                       let isEdit = self.input.isEdit.value
-                        self.input.isEdit.accept((false, isEdit.1))
-                    }
-                }
+                self.chatWebSocketService.typing()
             })
             .disposed(by: disposeBag)
         
@@ -163,11 +166,11 @@ class ChattingViewModel: BaseViewModel {
     }
     
     // MARK: 메시지 불러오기
-    private func fetchMessgae(chattingId: Int) {
+    private func fetchMessgaeByCommunity(chattingId: Int) {
         let page = self.model.page
         let size = self.model.size
         
-        chattingService.fetchMessgae(chattingId, page: page, size: size) { response, error in
+        chattingService.fetchMessgaeByCommunity(chattingId, page: page, size: size) { response, error in
             if (error?.response != nil) {
                 // MARK: messageKit DTO
                 let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
@@ -177,65 +180,90 @@ class ChattingViewModel: BaseViewModel {
                     return
                 }
                 
-                var fetchMessages: [MockMessage] = []
-                
-                for msg in response {
-                    var newMessage: MockMessage?
-                    
-                    switch msg.fileType {
-                    case .image:
-                        newMessage = MockMessage(image: msg.message.toUIImage()!,
-                                                 user: MockUser(senderId: "\(msg.userId)", displayName: msg.name,
-                                                                profileImage: msg.profileImage),
-                                                 messageId: msg.id,
-                                                 date: msg.time.ISOtoDate
-                        )
-                    case .file: break
-                    case .video: break
-                    case .reply: // TODO: 이미지 답글인 경우 확인 필요
-                        newMessage = MockMessage(
-                            kind: MessageKind.text(msg.message),
-                            user: MockUser(senderId: "\(msg.userId)",
-                                           displayName: msg.name,
-                                           profileImage: msg.profileImage),
-                            messageId: msg.id,
-                            date: msg.time.ISOtoDate
-                        )
-                    case .none:
-                        // TODO: 답글인 경우 acessory 표시
-                        newMessage = MockMessage(
-                            kind: MessageKind.text(msg.message),
-                            user: MockUser(senderId: "\(msg.userId)",
-                                           displayName: msg.name,
-                                           profileImage: msg.profileImage),
-                            messageId: msg.id,
-                            date: msg.time.ISOtoDate
-                        )
-                    }
-                    
-                    fetchMessages.append(newMessage!)
-                }
-                
-                self.output.showEmpty.accept(response.count == 0)
-                
-                if (self.model.messages.isEmpty) {
-                    self.model.messages = fetchMessages
-                } else {
-                    self.model.messages.insert(contentsOf: fetchMessages, at: 0)
-                }
-                
-                self.output.messages.accept(fetchMessages)
+                self.fetchMessageToModel(response: response)
                 self.model.page = page + 1
             }
         }
     }
     
+    private func fetchMessgaeByDirect(chattingId: Int) {
+        let page = self.model.page
+        let size = self.model.size
+        
+        chattingService.fetchMessgaeByDirect(chattingId, page: page, size: size) { response, error in
+            if (error?.response != nil) {
+                // MARK: messageKit DTO
+                let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
+                self.showErrorMessage.accept(body.message)
+            } else {
+                guard let response = response else {
+                    return
+                }
+                
+                self.fetchMessageToModel(response: response)
+                self.model.page = page + 1
+            }
+        }
+    }
+    
+    private func fetchMessageToModel(response: [Message]) {
+        var fetchMessages: [MockMessage] = []
+        
+        for msg in response {
+            var newMessage: MockMessage?
+            
+            switch msg.fileType {
+            case .image:
+                newMessage = MockMessage(image: msg.message.toUIImage()!,
+                                         user: MockUser(senderId: "\(msg.userId)", displayName: msg.name,
+                                                        profileImage: msg.profileImage),
+                                         messageId: msg.id,
+                                         date: msg.time.ISOtoDate
+                )
+            case .file: break
+            case .video: break
+            case .reply: // TODO: 이미지 답글인 경우 확인 필요
+                newMessage = MockMessage(
+                    kind: MessageKind.text(msg.message),
+                    user: MockUser(senderId: "\(msg.userId)",
+                                   displayName: msg.name,
+                                   profileImage: msg.profileImage),
+                    messageId: msg.id,
+                    date: msg.time.ISOtoDate
+                )
+            case .none:
+                // TODO: 답글인 경우 acessory 표시
+                newMessage = MockMessage(
+                    kind: MessageKind.text(msg.message),
+                    user: MockUser(senderId: "\(msg.userId)",
+                                   displayName: msg.name,
+                                   profileImage: msg.profileImage),
+                    messageId: msg.id,
+                    date: msg.time.ISOtoDate
+                )
+            }
+            
+            fetchMessages.append(newMessage!)
+        }
+        
+        self.output.showEmpty.accept(response.count == 0)
+        
+        if (self.model.messages.isEmpty) {
+            self.model.messages = fetchMessages
+        } else {
+            self.model.messages.insert(contentsOf: fetchMessages, at: 0)
+        }
+        
+        self.output.messages.accept((fetchMessages, .none))
+    }
+    
     // MARK: - chatWebsocket
     private func connect(channelId: Int) {
+        
         if (!self.chatWebSocketService.isConnected) {
-            self.chatWebSocketService.connect(channelId: channelId)
+            self.chatWebSocketService.connect(channelId: channelId, isGroup: self.model.communityId != nil)
         }
-       
+        
         self.model.isConnected = true
     }
     
@@ -268,26 +296,29 @@ class ChattingViewModel: BaseViewModel {
     
     private func deleteMessage(message: MockMessage) {
         self.chatWebSocketService.deleteMessage(message: message)
-
+        
         let index = self.model.messages.firstIndex(of: message)
-        self.model.messages.remove(at: index!)
-        self.output.messages.accept(self.model.messages)
+        //        self.model.messages.remove(at: index!)
+        //        self.output.messages.accept(self.model.messages)
         self.showToastMessage.accept("메시지 삭제 완료")
     }
     
     private func modifyMessage(message: MockMessage) {
         self.chatWebSocketService.modifyMessage(message: message)
         
-        var index: Int?
-        
-        for i in 0...self.model.messages.count-1 {
-            if(self.model.messages[i].messageId == message.messageId) {
-                index = i
-
-            }
-        }
-        self.model.messages[index!] = message
-        self.output.messages.accept(self.model.messages)
-        self.showToastMessage.accept("메시지 수정 완료")
+        //        var index: Int?
+        //
+        //        for i in 0...self.model.messages.count-1 {
+        //            if(self.model.messages[i].messageId == message.messageId) {
+        //                index = i
+        //
+        //            }
+        //        }
+        ////        self.model.messages[index!] = message
+        ////        self.output.messages.accept(self.model.messages)
+    }
+    
+    private func typing() {
+        self.chatWebSocketService.typing()
     }
 }

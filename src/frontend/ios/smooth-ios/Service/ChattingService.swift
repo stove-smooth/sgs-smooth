@@ -9,7 +9,8 @@ import Foundation
 import Moya
 
 protocol ChattingServiceProtocol {
-    func fetchMessgae(_ channelId: Int, page: Int, size: Int, _ completion: @escaping ([Message]?, MoyaError?) -> Void)
+    func fetchMessgaeByCommunity(_ channelId: Int, page: Int, size: Int, _ completion: @escaping ([Message]?, MoyaError?) -> Void)
+    func fetchMessgaeByDirect(_ channelId: Int, page: Int, size: Int, _ completion: @escaping ([Message]?, MoyaError?) -> Void)
     func sendFileMessage(_ request: FileMessageRequest, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
 }
 
@@ -17,8 +18,25 @@ protocol ChattingServiceProtocol {
 struct ChattingService: Networkable, ChattingServiceProtocol {
     typealias Target = ChattingTarget
     
-    func fetchMessgae(_ channelId: Int, page: Int, size: Int, _ completion: @escaping ([Message]?, MoyaError?) -> Void) {
-        makeProvider().request(.fetchMessgae(channelId: channelId, page: page, size: size)) {
+    func fetchMessgaeByCommunity(_ channelId: Int, page: Int, size: Int, _ completion: @escaping ([Message]?, MoyaError?) -> Void) {
+        makeProvider().request(.fetchMessgaeByCommunity(channelId: channelId, page: page, size: size)) {
+            result in
+            switch BaseResponse<[Message]>.processResponse(result) {
+            case .success(let response):
+                guard let response = response else {
+                    return
+                }
+                
+                return completion(response, nil)
+            
+            case .failure(let error):
+                return completion(nil, error)
+            }
+        }
+    }
+    
+    func fetchMessgaeByDirect(_ channelId: Int, page: Int, size: Int, _ completion: @escaping ([Message]?, MoyaError?) -> Void) {
+        makeProvider().request(.fetchMessgaeByDirect(channelId: channelId, page: page, size: size)) {
             result in
             switch BaseResponse<[Message]>.processResponse(result) {
             case .success(let response):

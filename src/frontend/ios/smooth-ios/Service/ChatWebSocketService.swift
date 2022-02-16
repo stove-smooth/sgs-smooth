@@ -25,12 +25,13 @@ protocol ChatWebSocketServiceProtocol {
     
     func setup()
     func register()
-    func connect(channelId: Int)
+    func connect(channelId: Int, isGroup: Bool)
     func disconnect()
     
     func sendMessage(message: String, communityId: Int?)
     func deleteMessage(message: MockMessage)
     func modifyMessage(message: MockMessage)
+    func typing()
 }
 
 class ChatWebSocketService: NSObject, ChatWebSocketServiceProtocol {
@@ -42,6 +43,8 @@ class ChatWebSocketService: NSObject, ChatWebSocketServiceProtocol {
     var isConnected = false
     var channelId: Int?
     var user: User?
+    var roomType = ""
+    var roomDestination = ""
     var header: [String:String]?
     
     // output
@@ -69,9 +72,12 @@ class ChatWebSocketService: NSObject, ChatWebSocketServiceProtocol {
         socketClient.openSocketWithURLRequest(request: NSURLRequest(url: url as URL), delegate: self, connectionHeaders: header)
     }
     
-    func connect(channelId: Int) {
+    func connect(channelId: Int, isGroup: Bool) {
         self.channelId = channelId
-        let destination = "/topic/group/\(channelId)"
+        roomType = isGroup ? "grop" : "direct"
+        roomDestination = isGroup ? "channel" : "direct"
+        
+        let destination = "/topic/\(roomDestination)/\(channelId)"
         socketClient.subscribe(destination: destination)
         
         print("socket subscribe - \(destination)")
@@ -82,7 +88,8 @@ class ChatWebSocketService: NSObject, ChatWebSocketServiceProtocol {
         guard let channelId = self.channelId else {
             return
         }
-        socketClient.unsubscribe(destination: "/topic/group/\(channelId)")
+        
+        socketClient.unsubscribe(destination: "/topic/\(roomDestination)/\(channelId)")
         self.isConnected = false
     }
     
@@ -104,8 +111,8 @@ class ChatWebSocketService: NSObject, ChatWebSocketServiceProtocol {
         if communityId != nil {
             payloadObject["communityId"] = communityId
         }
-        
-        socketClient.sendJSONForDict(dict: payloadObject as AnyObject, toDestination: "/kafka/send-channel-message")
+
+        socketClient.sendJSONForDict(dict: payloadObject as AnyObject, toDestination: "/kafka/send-\(roomType)-message")
     }
     
     // MARK: 채팅 메시지 삭제
@@ -117,7 +124,7 @@ class ChatWebSocketService: NSObject, ChatWebSocketServiceProtocol {
             "channelId": "\(self.channelId!)"
         ] as [String : Any]
 
-        socketClient.sendJSONForDict(dict: payloadObject as AnyObject, toDestination: "/kafka/send-channel-delete")
+        socketClient.sendJSONForDict(dict: payloadObject as AnyObject, toDestination: "/kafka/send-\(roomType)-delete")
     }
     
     // MARK: 채팅 메시지 수정
@@ -138,7 +145,17 @@ class ChatWebSocketService: NSObject, ChatWebSocketServiceProtocol {
             "channelId": "\(String(describing: channelId))"
         ] as [String : Any]
         
-        socketClient.sendJSONForDict(dict: payloadObject as AnyObject, toDestination: "/kafka/send-channel-modify")
+        socketClient.sendJSONForDict(dict: payloadObject as AnyObject, toDestination: "/kafka/send-\(roomType)-modify")
+    }
+    
+    func typing() {
+        let payloadObject = [
+            "content": "\(user!.name)",
+            "type": "typing",
+            "channelId": "\(String(describing: channelId))"
+        ] as [String : Any]
+        
+        socketClient.sendJSONForDict(dict: payloadObject as AnyObject, toDestination: "/kafka/send-\(roomType)-typing")
     }
     
     func receiveMessageDecoder(stringBody: String?) -> MockMessage {

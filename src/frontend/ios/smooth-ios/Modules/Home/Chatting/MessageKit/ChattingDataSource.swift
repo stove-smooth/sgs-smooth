@@ -80,8 +80,11 @@ extension ChattingViewController {
                 case 0: // MARK: 메시지 수정
                     switch self.messageList[indexPath.section].kind {
                     case .text(let text):
+                        break 
+                        /*
                         self.viewModel.input.isEdit.accept((true, self.messageList[indexPath.section]))
                         self.messageInputBar.inputTextView.text = text
+                         */
                     default:
                         self.showToast(message: "텍스트 메시지만 수정 가능합니다.", isWarning: true)
                     }

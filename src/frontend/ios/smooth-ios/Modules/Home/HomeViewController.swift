@@ -16,11 +16,7 @@ enum MenuState {
 }
 
 protocol HomeViewControllerDelegate: AnyObject {
-    func loadChatting(channel: Channel, communityId: Int?)
-}
-
-protocol DeliveryDelegate: AnyObject {
-    func appear(channel: Channel?, communityId: Int?)
+    func loadChatting(channelId: Int, communityId: Int?)
 }
 
 class HomeViewController: BaseViewController, CoordinatorContext {
@@ -30,7 +26,6 @@ class HomeViewController: BaseViewController, CoordinatorContext {
     private let tabBarView = TabBarView()
     
     weak var delegate: HomeViewControllerDelegate?
-    weak var delivery: DeliveryDelegate?
     
     var navigationViewController: UINavigationController?
     
@@ -65,7 +60,6 @@ class HomeViewController: BaseViewController, CoordinatorContext {
         view.addSubview(menuViewController.view)
         menuViewController.didMove(toParent: self)
         menuViewController.delegate = self
-        self.delivery = menuViewController.self
         
         // chatting VC
         chattingViewController.delegate = self
@@ -107,24 +101,23 @@ class HomeViewController: BaseViewController, CoordinatorContext {
 
 // MARK: - Data 동기화 (menu < - home - > chatting)
 extension HomeViewController: MenuViewControllerDelegate {
-    func swipe(channel: Channel?, communityId: Int) {
-        self.didTapMenuButton(channel: channel, communityId: communityId) // 화면전환 애니메이션
+    func swipe(channelId: Int?, communityId: Int?) {
+        self.didTapMenuButton(channelId: channelId, communityId: communityId) // 화면전환 애니메이션
         // delegate로 전달
-        self.delegate?.loadChatting(channel: channel!, communityId: communityId)
+        self.delegate?.loadChatting(channelId: channelId!, communityId: communityId)
     }
 }
 
 // MARK: - Menu Animation
 extension HomeViewController: ChattingViewControllerDelegate {
-    func dismiss(channel: Channel?, communityId: Int?) {
+    func dismiss(channelId: Int?, communityId: Int?) {
         self.menuState = .closed
         toggleMenu(completion: nil)
-        self.delivery?.appear(channel: channel, communityId: communityId)
+
     }
     
-    func didTapMenuButton(channel: Channel?, communityId: Int?) {
+    func didTapMenuButton(channelId: Int?, communityId: Int?) {
         toggleMenu(completion: nil)
-        self.delivery?.appear(channel: channel, communityId: communityId)
     }
     
     func toggleMenu(completion: (() -> Void)?) {
