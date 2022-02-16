@@ -85,14 +85,14 @@ const friends = {
       commit("setBanFriends", friendsBan);
     },
     async fetchFriendsStates(context) {
+      //친구 아이디 뽑아서 친구들 현재 상태 쭉 가져옴.
       let friendsIds = [];
       for (let i = 0; i < context.state.friendsAccept.length; i++) {
         friendsIds.push(context.state.friendsAccept[i].userId);
       }
       const result = await fetchFriendsState(friendsIds);
-      console.log(result.data.result);
-
       context.commit("setFriendsState", result.data.result);
+      //친구들 상태 offline이면 offline, r/c이면 그에맞게 업데이트해줌.
       let friendsOnline = [];
       for (let j = 0; j < context.state.friendsAccept.length; j++) {
         if (
@@ -103,8 +103,8 @@ const friends = {
           friendsOnline.push(context.state.friendsAccept[j]);
         }
       }
+      //온라인인 친구 따로 뽑아줌.
       context.commit("setAllFriends", context.state.friendsAccept);
-      console.log("friendsOnline", friendsOnline);
       context.commit("setOnlineFriends", friendsOnline);
     },
   },

@@ -414,7 +414,12 @@ export default {
         /**메세지의 종류: 일반 채팅, 이미지 채팅, 수정, 삭제, 답장, 타이핑 상태  */
         //한국시간에 맞게 시간 커스텀
         const receivedForm = JSON.parse(res.body);
-        if (receivedForm.type != "typing" && receivedForm.type != "delete") {
+        if (
+          receivedForm.type != "typing" &&
+          receivedForm.type != "delete" &&
+          receivedForm.type != "connect" &&
+          receivedForm.type != "disconnect"
+        ) {
           console.log("날짜가 있는 메시지인 경우");
           const translatedTime = convertFromStringToDate(receivedForm.time);
           receivedForm.date = translatedTime[0];
@@ -438,7 +443,11 @@ export default {
           console.log("타이핑에 관한 구독이 등장.", receivedForm);
         }
         //초대장 관련
-        if (receivedForm.message.startsWith("<~inviting~>")) {
+        console.log("receivedForm", receivedForm);
+        if (
+          receivedForm.message &&
+          receivedForm.message.startsWith("<~inviting~>")
+        ) {
           let callingMessage = receivedForm.message.replace("<~inviting~>", "");
           receivedForm.isInviteUrl = true;
           receivedForm.message = this.transUrl(callingMessage);
@@ -449,7 +458,10 @@ export default {
         }
 
         //dm calling 메시지 받기
-        if (receivedForm.message.startsWith("<~dmcalling~>")) {
+        if (
+          receivedForm.message &&
+          receivedForm.message.startsWith("<~dmcalling~>")
+        ) {
           let callingMessage = receivedForm.message.replace(
             "<~dmcalling~>",
             ""
@@ -462,7 +474,9 @@ export default {
         if (
           receivedForm.type != "typing" &&
           receivedForm.type != "modify" &&
-          receivedForm.type != "delete"
+          receivedForm.type != "delete" &&
+          receivedForm.type != "connect" &&
+          receivedForm.type != "disconnect"
         ) {
           this.imageLoading = false;
           this.receiveList.push(receivedForm);
@@ -811,7 +825,9 @@ export default {
           //시간을 한국 시간+디스코드에 맞게 변환
           if (
             receivedAllMessage[i].type != "typing" &&
-            receivedAllMessage[i].type != "delete"
+            receivedAllMessage[i].type != "delete" &&
+            receivedAllMessage[i].type != "connect" &&
+            receivedAllMessage[i].type != "disconnect"
           ) {
             const translatedTime = convertFromStringToDate(
               receivedAllMessage[i].time
@@ -834,7 +850,10 @@ export default {
             }
             receivedAllMessage[i].isOther = isOther;
             //초대장 관련
-            if (receivedAllMessage[i].message.startsWith("<~inviting~>")) {
+            if (
+              receivedAllMessage[i].message &&
+              receivedAllMessage[i].message.startsWith("<~inviting~>")
+            ) {
               let callingMessage = receivedAllMessage[i].message.replace(
                 "<~inviting~>",
                 ""
@@ -853,7 +872,10 @@ export default {
             );
           }
           //dm calling 메시지 받기
-          if (receivedAllMessage[i].message.startsWith("<~dmcalling~>")) {
+          if (
+            receivedAllMessage[i].message &&
+            receivedAllMessage[i].message.startsWith("<~dmcalling~>")
+          ) {
             let callingMessage = receivedAllMessage[i].message.replace(
               "<~dmcalling~>",
               ""
