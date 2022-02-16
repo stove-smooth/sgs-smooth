@@ -54,7 +54,7 @@ class ChattingViewController: MessagesViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         self.messageInputBar.isHidden = false
-        delegate?.dismiss(channelId: self.viewModel.model.channelId, communityId: self.viewModel.model.communityId)
+        delegate?.dismiss(channelId: self.viewModel.model.channel.0, communityId: self.viewModel.model.communityId)
         
         super.viewWillAppear(animated)
     }
@@ -62,7 +62,7 @@ class ChattingViewController: MessagesViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        configureNavigationController(channelId: nil)
+        configureNavigationController(channelId: nil, channelName: "채팅 없음")
         configureMessageCollectionView()
         configureMessageInputBar()
         
@@ -79,11 +79,11 @@ class ChattingViewController: MessagesViewController {
     }()
     
     @objc func didTapMenuButton() {
-        delegate?.didTapMenuButton(channelId: self.viewModel.model.channelId, communityId: self.viewModel.model.communityId)
+        delegate?.didTapMenuButton(channelId: self.viewModel.model.channel.0, communityId: self.viewModel.model.communityId)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        delegate?.dismiss(channelId: self.viewModel.model.channelId, communityId: self.viewModel.model.communityId)
+        delegate?.dismiss(channelId: self.viewModel.model.channel.0, communityId: self.viewModel.model.communityId)
         
         super.viewWillDisappear(animated)
     }
@@ -116,19 +116,17 @@ class ChattingViewController: MessagesViewController {
             .disposed(by: disposeBag)
             
         // output
-        self.viewModel.output.channelId
-            .bind(onNext: { channelId in
+        self.viewModel.output.channel
+            .bind(onNext: { (channelId, channelName) in
                 self.viewModel.input.fetch.onNext((channelId, nil))
-                self.viewModel.model.channelId = channelId
+                self.viewModel.model.channel = (channelId, channelName)
                 self.viewModel.model.page = 0
-                self.configureNavigationController(channelId: channelId)
+                self.configureNavigationController(channelId: channelId, channelName: channelName)
                 self.messagesCollectionView.reloadData()
                 self.messagesCollectionView.scrollToLastItem()
-                
-//                self.messageInputBar.inputTextView.placeholder = "#\(channel.name)에 메시지 보내기"
-            })
-            .disposed(by: disposeBag)
-        
+                //                self.messageInputBar.inputTextView.placeholder = "#\(channel.name)에 메시지 보내기"
+            }).disposed(by: disposeBag)
+            
         self.viewModel.output.messages
             .asDriver(onErrorJustReturn: ([], nil))
             .drive { (messages, type) in
@@ -193,11 +191,12 @@ class ChattingViewController: MessagesViewController {
 
 // MARK: - HomeVC Delegate
 extension ChattingViewController: HomeViewControllerDelegate {
-    func loadChatting(channelId: Int, communityId: Int?) {
+    func loadChatting(_ chatName: String, channelId: Int, communityId: Int?) {
         self.messageList = []
         self.viewModel.model.page = 0
+        self.viewModel.input.disappear.onNext(())
         self.viewModel.model.communityId = communityId
-        self.viewModel.output.channelId.accept(channelId)
+        self.viewModel.output.channel.accept((channelId, chatName))
     }
 }
 
@@ -206,7 +205,7 @@ extension ChattingViewController {
     
     // MARK: 메시지 불러오기
     @objc func loadMoreMessages() {
-        self.viewModel.input.fetch.onNext((self.viewModel.model.channelId, self.viewModel.model.page))
+        self.viewModel.input.fetch.onNext((self.viewModel.model.channel.0, self.viewModel.model.page))
     }
     
     // MARK: 메시지 보내기

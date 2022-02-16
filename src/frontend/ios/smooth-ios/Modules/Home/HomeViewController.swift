@@ -16,7 +16,7 @@ enum MenuState {
 }
 
 protocol HomeViewControllerDelegate: AnyObject {
-    func loadChatting(channelId: Int, communityId: Int?)
+    func loadChatting(_ chatName: String, channelId: Int, communityId: Int?)
 }
 
 class HomeViewController: BaseViewController, CoordinatorContext {
@@ -101,10 +101,10 @@ class HomeViewController: BaseViewController, CoordinatorContext {
 
 // MARK: - Data 동기화 (menu < - home - > chatting)
 extension HomeViewController: MenuViewControllerDelegate {
-    func swipe(channelId: Int?, communityId: Int?) {
+    func swipe(_ chatName: String, channelId: Int?, communityId: Int?) {
         self.didTapMenuButton(channelId: channelId, communityId: communityId) // 화면전환 애니메이션
         // delegate로 전달
-        self.delegate?.loadChatting(channelId: channelId!, communityId: communityId)
+        self.delegate?.loadChatting(chatName, channelId: channelId!, communityId: communityId)
     }
 }
 
@@ -113,7 +113,7 @@ extension HomeViewController: ChattingViewControllerDelegate {
     func dismiss(channelId: Int?, communityId: Int?) {
         self.menuState = .closed
         toggleMenu(completion: nil)
-
+        
     }
     
     func didTapMenuButton(channelId: Int?, communityId: Int?) {
