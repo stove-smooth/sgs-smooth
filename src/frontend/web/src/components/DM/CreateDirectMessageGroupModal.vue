@@ -18,7 +18,10 @@
                 <div class="invite-avatar margin-right-8px position-relative">
                   <img class="avatar" :src="friend.profileImage" alt=" " />
                   <div class="status-ring">
-                    <div class="status-offline"></div>
+                    <template v-if="friend.onlineState == 'offline'"
+                      ><div class="status-offline"
+                    /></template>
+                    <template v-else><div class="status-online" /></template>
                   </div>
                 </div>
                 <div class="primary-text-content">{{ friend.name }}</div>

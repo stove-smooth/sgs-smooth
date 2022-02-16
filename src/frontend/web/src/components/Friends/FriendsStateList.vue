@@ -38,7 +38,6 @@
           <template slot="title"
             >모든친구-{{ friendsAccept.length }}명</template
           >
-          <!-- <template slot="status"><span>오프라인</span></template> -->
           <template v-slot:action="slotProps">
             <div
               class="action-button"

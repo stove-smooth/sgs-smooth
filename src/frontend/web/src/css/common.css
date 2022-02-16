@@ -110,6 +110,19 @@
   background: #2f3136;
   transform: rotate(90deg);
 }
+.alarm-ring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  /* Ring */
+  position: absolute;
+  bottom: -5%;
+  right: -5%;
+  border-radius: 50%;
+  background: #2f3136;
+}
 .status-offline {
   background-image: url("../assets/status-offline.svg");
   width: 10px;

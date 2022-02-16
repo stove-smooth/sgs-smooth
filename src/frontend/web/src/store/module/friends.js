@@ -73,7 +73,7 @@ const friends = {
         } else if (result.data.result[i].state == "WAIT") {
           friendsWait.push(result.data.result[i]);
         } else if (result.data.result[i].state == "ACCEPT") {
-          result.data.result[i].onlineState = false;
+          result.data.result[i].onlineState = "offline";
           friendsAccept.push(result.data.result[i]);
         } else if (result.data.result[i].state == "BAN") {
           friendsBan.push(result.data.result[i]);
@@ -87,7 +87,7 @@ const friends = {
     async fetchFriendsStates(context) {
       let friendsIds = [];
       for (let i = 0; i < context.state.friendsAccept.length; i++) {
-        friendsIds.push(context.state.friendsAccept[i].id);
+        friendsIds.push(context.state.friendsAccept[i].userId);
       }
       const result = await fetchFriendsState(friendsIds);
       console.log(result.data.result);
@@ -96,9 +96,10 @@ const friends = {
       let friendsOnline = [];
       for (let j = 0; j < context.state.friendsAccept.length; j++) {
         if (
-          result.data.result[context.state.friendsAccept[j].id] != "offline"
+          result.data.result[context.state.friendsAccept[j].userId] != "offline"
         ) {
-          context.state.friendsAccept[j].onlineState = true;
+          context.state.friendsAccept[j].onlineState =
+            result.data.result[context.state.friendsAccept[j].userId];
           friendsOnline.push(context.state.friendsAccept[j]);
         }
       }

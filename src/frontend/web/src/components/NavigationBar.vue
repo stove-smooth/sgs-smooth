@@ -31,6 +31,50 @@
             </div>
           </div>
         </div>
+
+        <div aria-label="room">
+          <div v-for="unreadDm in unreadDMList" :key="unreadDm.id">
+            <div
+              class="listItem"
+              @mouseover="hover(unreadDm.id)"
+              @mouseleave="hover('')"
+              @click="enterRoom(unreadDm.id)"
+            >
+              <div class="selected-wrapper" v-show="hovered == unreadDm.id">
+                <span class="selected-item"></span>
+              </div>
+              <div draggable="true">
+                <div class="listItem-wrapper">
+                  <div class="server-wrapper" v-if="unreadDm.icon">
+                    <img
+                      :src="unreadDm.icon"
+                      alt="image"
+                      class="server-nav-image"
+                      v-bind:class="{
+                        'selected-border-radius': hovered == unreadDm.id,
+                      }"
+                    />
+                  </div>
+                  <div class="server-wrapper" v-else>
+                    <div
+                      class="server"
+                      v-bind:class="{
+                        'selected-border-radius': hovered == unreadDm.id,
+                      }"
+                    >
+                      {{ unreadDm.name }}
+                    </div>
+                  </div>
+                  <div class="alarm-ring">
+                    <div class="room-lower-badge">
+                      <number-badge :alarms="unreadDm.count"></number-badge>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="listItem">
           <div class="guild-seperator"></div>
         </div>
@@ -118,7 +162,7 @@ export default {
   },
   methods: {
     ...mapActions("community", ["FETCH_COMMUNITYLIST"]),
-    ...mapMutations("community", ["setCreateCommunity"]),
+    ...mapMutations("community", ["setCreateCommunity", "setUnreadDMList"]),
     ...mapMutations("utils", ["setNavigationSelected"]),
     hover(index) {
       this.hovered = index;
@@ -134,6 +178,15 @@ export default {
         this.$router.push("/channels/" + index);
       }
       this.setNavigationSelected(index);
+    },
+    enterRoom(index) {
+      this.$router.push("/channels/@me/" + index);
+      //읽음 처리..
+
+      console.log("index", index, this.unreadDMList);
+      let array = this.unreadDMList.filter((element) => element.id !== index);
+
+      this.setUnreadDMList(array);
     },
     log: async function (evt) {
       if (evt.moved.newIndex == 0) {
@@ -154,7 +207,7 @@ export default {
   },
   computed: {
     ...mapState("friends", ["friendsWaitNumber"]),
-    ...mapState("community", ["communityList"]),
+    ...mapState("community", ["communityList", "unreadDMList"]),
     ...mapState("utils", ["navigationSelected"]),
   },
   async created() {
@@ -320,6 +373,15 @@ export default {
   position: absolute;
   right: 0;
   bottom: 0;
+}
+
+.room-lower-badge {
+  opacity: 1;
+  transform: translate(0px, 0px);
+  pointer-events: none;
+  position: absolute;
+  right: 15%;
+  bottom: 15%;
 }
 
 .selected-border-radius {
