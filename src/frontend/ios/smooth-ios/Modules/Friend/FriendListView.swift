@@ -91,7 +91,9 @@ class FriendListView: BaseView {
             print("emptyView showing")
             addSubview(emptyView)
             emptyView.snp.makeConstraints {
-                $0.top.right.left.bottom.edges.equalTo(0)
+                $0.left.right.equalToSuperview()
+                $0.top.equalTo(navigationView.snp.bottom)
+                $0.bottom.equalTo(tabBarView.snp.top)
             }
         } else {
             emptyView.removeFromSuperview()

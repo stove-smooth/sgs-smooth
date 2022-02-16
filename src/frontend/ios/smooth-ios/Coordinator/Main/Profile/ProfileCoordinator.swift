@@ -45,7 +45,8 @@ class ProfileCoordinator: NSObject, Coordinator {
     }
     
     func goToLoginHome() {
-        coordinatorDidFinish()
-        navigationController.popToRootViewController(animated: true)
+        let coordinator = SplashCoordinator(navigationController: navigationController)
+        childCoordinators.append(coordinator)
+        coordinator.start()
     }
 }

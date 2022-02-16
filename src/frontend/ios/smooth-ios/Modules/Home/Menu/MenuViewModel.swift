@@ -31,7 +31,7 @@ class MenuViewModel: BaseViewModel {
         let members = PublishRelay<[Member]>()
         
         let communityInfo = PublishRelay<CommunityInfo>()
-        let rooms = PublishRelay<[Room]>()
+        let rooms = PublishRelay<[Room]?>()
         
         let selectedServer = PublishRelay<Int?>()
         let selectedChannel = PublishRelay<IndexPath?>()
@@ -153,14 +153,22 @@ class MenuViewModel: BaseViewModel {
     }
     
     private func fetchDirect() {
+        self.output.rooms.accept(nil)
+        
         self.serverService.getDirectRoom() { response, error in
-            
-            guard let response = response else {
-                return
+            if (error?.response != nil) {
+                let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
+                self.showErrorMessage.accept(body.message)
+                self.output.rooms.accept([])
+            } else {
+                guard let response = response else {
+                    return
+                }
+                
+                self.model.rooms = response
+                self.output.rooms.accept(self.model.rooms)
             }
             
-            self.model.rooms = response
-            self.output.rooms.accept(self.model.rooms)
         }
     }
 }

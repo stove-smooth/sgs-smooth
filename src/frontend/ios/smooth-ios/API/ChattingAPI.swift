@@ -10,7 +10,8 @@ import Moya
 
 enum ChattingTarget {
     // MARK: - GET
-    case fetchMessgae(channelId: Int, page: Int, size: Int)
+    case fetchMessgaeByCommunity(channelId: Int, page: Int, size: Int)
+    case fetchMessgaeByDirect(channelId: Int, page: Int, size: Int)
     
     // MARK: - POST
     case sendFileMessage(request: FileMessageRequest)
@@ -20,8 +21,10 @@ enum ChattingTarget {
 extension ChattingTarget: BaseAPI, AccessTokenAuthorizable {
     var path: String {
         switch self {
-        case .fetchMessgae:
+        case .fetchMessgaeByCommunity:
             return "/chat-server/community"
+        case .fetchMessgaeByDirect:
+            return "/chat-server/direct"
         case .sendFileMessage:
             return "/chat-server/channel/file"
         }
@@ -29,14 +32,21 @@ extension ChattingTarget: BaseAPI, AccessTokenAuthorizable {
     
     var method: Moya.Method {
         switch self {
-        case .fetchMessgae: return .get
+        case .fetchMessgaeByCommunity: return .get
+        case .fetchMessgaeByDirect: return .get
         case .sendFileMessage: return .post
         }
     }
     
     var task: Task {
         switch self {
-        case .fetchMessgae(let channelId, let page, let size):
+        case .fetchMessgaeByCommunity(let channelId, let page, let size):
+            return .requestParameters(parameters: [
+                "ch_id": channelId,
+                "page": page,
+                "size": size
+            ], encoding: URLEncoding.queryString)
+        case .fetchMessgaeByDirect(let channelId, let page, let size):
             return .requestParameters(parameters: [
                 "ch_id": channelId,
                 "page": page,
@@ -49,7 +59,7 @@ extension ChattingTarget: BaseAPI, AccessTokenAuthorizable {
                 MultipartFormData(
                     provider: .data(request.image!),
                     name: "image",
-                    fileName: "messgae-image-\(String(describing: request.communityId))-\(request.userId)-\(Date()).png",
+                    fileName: "messgae-image-\(String(describing: request.communityId))-\(UUID())-\(Date()).png",
                     mimeType: request.image!.mimeType
                 )
             )
@@ -58,7 +68,7 @@ extension ChattingTarget: BaseAPI, AccessTokenAuthorizable {
                 MultipartFormData(
                     provider: .data(request.thumbnail!),
                     name: "thumbnail",
-                    fileName: "messgae-thumbnail-\(String(describing: request.communityId))-\(request.userId)-\(Date()).png",
+                    fileName: "messgae-thumbnail-\(String(describing: request.communityId))-\(UUID())-\(Date()).png",
                     mimeType: request.image!.mimeType
                 )
             )
@@ -93,7 +103,7 @@ extension ChattingTarget: BaseAPI, AccessTokenAuthorizable {
     
     var authorizationType: AuthorizationType? {
         switch self {
-        case .fetchMessgae:
+        case .fetchMessgaeByCommunity, .fetchMessgaeByDirect:
             return .none
         case .sendFileMessage:
             return .custom("")

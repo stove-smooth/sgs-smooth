@@ -63,7 +63,7 @@ extension Reactive where Base: MenuView {
             }
         }
     }
-
+    
     var communityInfo: Binder<(CommunityInfo, IndexPath?)> {
         return Binder(self.base) { view, communityInfo in
             view.channelView.isHidden = false
@@ -78,12 +78,19 @@ extension Reactive where Base: MenuView {
         }
     }
     
-    var rooms: Binder<[Room]> {
+    var rooms: Binder<[Room]?> {
         return Binder(self.base) { view, directList in
             view.channelView.isHidden = true
             view.directView.isHidden = false
             
-            view.directView.bind(directList: directList)
+            if (directList != nil) {
+                view.directView.showLoading(isShow: false)
+                view.directView.showEmpty(isShow: directList!.isEmpty)
+                view.directView.bind(directList: directList!)
+            } else {
+                view.directView.showLoading(isShow: true)
+            }
+            
         }
     }
 }

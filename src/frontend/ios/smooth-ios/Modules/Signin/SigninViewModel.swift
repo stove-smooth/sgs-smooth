@@ -53,6 +53,8 @@ class SigninViewModel: BaseViewModel {
                 self.showErrorMessage.accept(body.message)
             } else {
                 self.userDefaults.setUserToken(token: response!.accessToken)
+                self.userDefaults.setChatURL(url: response!.url)
+                
                 self.fetchUserInfo()
                 self.showToastMessage.accept("로그인 성공")
                 

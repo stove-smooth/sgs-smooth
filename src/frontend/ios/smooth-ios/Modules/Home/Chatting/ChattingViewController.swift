@@ -12,8 +12,8 @@ import InputBarAccessoryView
 import Toast_Swift
 
 protocol ChattingViewControllerDelegate: AnyObject {
-    func didTapMenuButton(channel: Channel?, communityId: Int?)
-    func dismiss(channel: Channel?, communityId: Int?)
+    func didTapMenuButton(channelId: Int?, communityId: Int?)
+    func dismiss(channelId: Int?, communityId: Int?)
 }
 
 class ChattingViewController: MessagesViewController {
@@ -23,24 +23,27 @@ class ChattingViewController: MessagesViewController {
     weak var delegate: ChattingViewControllerDelegate?
     
     private let emptyView = ChannelEmptyView()
-    private let viewModel: ChattingViewModel
+    private let editInputAccessoryView = EditInputBarAccessoryView()
     
-    lazy var messageList: [MockMessage] = []
-    let messageUser: MockUser
+    internal let viewModel: ChattingViewModel
     
-    var channel: Channel?
-    var communityId: Int?
+    var messageList: [MockMessage] = []
     
     static func instance() -> ChattingViewController {
         return ChattingViewController()
     }
     
     init() {
-        self.viewModel = ChattingViewModel(
-            chattingService: ChattingService()
-        )
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        
         let user = UserDefaultsUtil().getUserInfo()!
-        self.messageUser = MockUser(senderId: "\(user.id)", displayName: user.name, profileImage: user.profileImage)
+        let messageUser = MockUser(senderId: "\(user.id)", displayName: user.name, profileImage: user.profileImage)
+        
+        self.viewModel = ChattingViewModel(
+            messageUser: messageUser,
+            chattingService: ChattingService(),
+            chatWebSocketService: appDelegate?.coordinator?.chatWebSocketService as! ChatWebSocketService
+        )
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -51,7 +54,7 @@ class ChattingViewController: MessagesViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         self.messageInputBar.isHidden = false
-        delegate?.dismiss(channel: channel, communityId: communityId)
+        delegate?.dismiss(channelId: self.viewModel.model.channelId, communityId: self.viewModel.model.communityId)
         
         super.viewWillAppear(animated)
     }
@@ -59,13 +62,16 @@ class ChattingViewController: MessagesViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        configureNavigationController(channel: nil)
+        configureNavigationController(channelId: nil)
         configureMessageCollectionView()
         configureMessageInputBar()
         
+        // VC <-> VM
+        bindEvent()
         bindViewModel()
     }
     
+    // MARK: 메시지 불러오기
     private(set) lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl()
         control.addTarget(self, action: #selector(loadMoreMessages), for: .valueChanged)
@@ -73,40 +79,81 @@ class ChattingViewController: MessagesViewController {
     }()
     
     @objc func didTapMenuButton() {
-        delegate?.didTapMenuButton(channel: channel, communityId: communityId)
+        delegate?.didTapMenuButton(channelId: self.viewModel.model.channelId, communityId: self.viewModel.model.communityId)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        delegate?.dismiss(channel: channel, communityId: communityId)
+        delegate?.dismiss(channelId: self.viewModel.model.channelId, communityId: self.viewModel.model.communityId)
         
         super.viewWillDisappear(animated)
     }
     
-    private func bindViewModel() {
-        self.viewModel.output.channel
-            .bind(onNext: { channel in
-                self.viewModel.input.fetch.onNext(channel)
-                self.channel = channel
-                
-                self.configureNavigationController(channel: channel)
-                self.messagesCollectionView.reloadData()
-                self.messagesCollectionView.scrollToLastItem()
-                self.messageInputBar.inputTextView.placeholder = "#\(channel.name)에 메시지 보내기"
+    func bindEvent() {
+        self.viewModel.showToastMessage
+            .asDriver(onErrorJustReturn: "")
+            .drive(onNext: { message in
+                self.showToast(message: message, isWarning: false)
             })
             .disposed(by: disposeBag)
         
-        self.viewModel.output.commniutyId
-            .bind(onNext: { communityId in self.communityId = communityId })
+        self.viewModel.showErrorMessage
+            .asDriver(onErrorJustReturn: "")
+            .drive(onNext: { message in
+                self.showToast(message: message, isWarning: true)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func bindViewModel() {
+        // MARK: - Model Binding
+        // input
+        self.messageInputBar.inputTextView.rx.text
+            .asDriver()
+            .debounce(.seconds(3))
+            .drive(onNext: { value in
+                self.viewModel.input.inputMessage.onNext(value)
+            })
+            .disposed(by: disposeBag)
+            
+        // output
+        self.viewModel.output.channelId
+            .bind(onNext: { channelId in
+                self.viewModel.input.fetch.onNext((channelId, nil))
+                self.viewModel.model.channelId = channelId
+                self.viewModel.model.page = 0
+                self.configureNavigationController(channelId: channelId)
+                self.messagesCollectionView.reloadData()
+                self.messagesCollectionView.scrollToLastItem()
+                
+//                self.messageInputBar.inputTextView.placeholder = "#\(channel.name)에 메시지 보내기"
+            })
             .disposed(by: disposeBag)
         
         self.viewModel.output.messages
-            .bind(onNext: { messages in
-                self.messageList = messages
-                self.messagesCollectionView.reloadData()
-                self.messagesCollectionView.scrollToLastItem()
-            }).disposed(by: disposeBag)
+            .asDriver(onErrorJustReturn: ([], nil))
+            .drive { (messages, type) in
+                switch type {
+                case .message, .delete, .modify:
+                    self.messageList = messages
+                    self.messagesCollectionView.reloadDataAndKeepOffset()
+                    self.refreshControl.endRefreshing()
+                    if(self.viewModel.model.page == 0) {
+                        self.messagesCollectionView.scrollToLastItem()
+                    }
+                case .reply: break
+                case .typing: break
+                case .none:
+                    self.messageList.insert(contentsOf: messages, at: 0)
+                    self.messagesCollectionView.reloadDataAndKeepOffset()
+                    self.refreshControl.endRefreshing()
+                    if(self.viewModel.model.page == 0) {
+                        self.messagesCollectionView.scrollToLastItem()
+                    }
+                }
+            }.disposed(by: disposeBag)
+
         
-        
+        // MARK: - Toast Popup
         self.viewModel.showErrorMessage
             .asDriver(onErrorJustReturn: "")
             .drive(onNext: { message in
@@ -146,26 +193,26 @@ class ChattingViewController: MessagesViewController {
 
 // MARK: - HomeVC Delegate
 extension ChattingViewController: HomeViewControllerDelegate {
-    func loadChatting(channel: Channel, communityId: Int?) {
-        self.viewModel.output.channel.accept(channel)
-        self.viewModel.output.commniutyId.accept(communityId)
+    func loadChatting(channelId: Int, communityId: Int?) {
+        self.messageList = []
+        self.viewModel.model.page = 0
+        self.viewModel.model.communityId = communityId
+        self.viewModel.output.channelId.accept(channelId)
     }
 }
 
 // MARK: - Message
 extension ChattingViewController {
+    
+    // MARK: 메시지 불러오기
     @objc func loadMoreMessages() {
-        self.viewModel.output.messages
-            .asDriver(onErrorJustReturn: [])
-            .drive(onNext: { messsages in
-                self.messageList.insert(contentsOf: messsages, at: 0)
-                self.messagesCollectionView.reloadDataAndKeepOffset()
-                self.refreshControl.endRefreshing()
-            }).disposed(by: self.disposeBag)
+        self.viewModel.input.fetch.onNext((self.viewModel.model.channelId, self.viewModel.model.page))
     }
     
+    // MARK: 메시지 보내기
     func insertMessage(_ message: MockMessage) {
         messageList.append(message)
+        
         // Reload last section to update header/footer labels and insert a new one
         messagesCollectionView.performBatchUpdates({
             messagesCollectionView.insertSections([messageList.count - 1])
@@ -180,9 +227,7 @@ extension ChattingViewController {
     }
     
     func deleteMessage(_ indexPath: IndexPath) {
-        print("deleteMessage \(indexPath) \(messageList.count)")
-        
-        self.viewModel.deleteMessage(message: messageList[indexPath.section])
+        self.viewModel.input.socketMessage.onNext((messageList[indexPath.section], .delete))
         
         messagesCollectionView.performBatchUpdates({
             messageList.remove(at: indexPath.section)
@@ -220,6 +265,8 @@ extension ChattingViewController {
         guard indexPath.section - 1 >= 0 else { return false }
         return messageList[indexPath.section].user == messageList[indexPath.section - 1].user
     }
+    
+
 }
 
 // MARK: - InputBar
@@ -287,30 +334,21 @@ extension ChattingViewController: InputBarAccessoryViewDelegate, CameraInputBarA
         for component in data {
             // MARK: 텍스트
             if let str = component as? String {
-                self.viewModel.sendMessage(message: str, communityId: self.communityId)
+                let message = MockMessage(
+                    kind: .text(str),
+                    user: self.viewModel.model.messageUser,
+                    messageId: UUID().uuidString,
+                    date: Date()
+                )
                 
-                let message = MockMessage(kind: .text(str), user: messageUser, messageId: UUID().uuidString, date: Date())
+                self.viewModel.input.socketMessage.onNext((message, .message))
                 insertMessage(message)
             }
             // MARK: 이미지
             else if let img = component as? UIImage {
-                let message = MockMessage(image: img, user: messageUser, messageId: UUID().uuidString, date: Date())
+                let message = MockMessage(image: img, user: self.viewModel.model.messageUser, messageId: UUID().uuidString, date: Date())
                 
-                let thumb = img.generateThumbnail()!
-                
-                let request = FileMessageRequest(
-                    image: img.jpegData(compressionQuality: 0.5),
-                    thumbnail: thumb.data,
-                    userId: Int(messageUser.senderId)!,
-                    channelId: channel!.id,
-                    communityId: communityId,
-                    type: communityId != nil ? "community" : "direct",
-                    fileType: FileType.image,
-                    name: messageUser.displayName,
-                    profileImage: messageUser.profileImage
-                )
-                
-                self.viewModel.sendFileMessage(request: request)
+                self.viewModel.input.socketMessage.onNext((message, .message))
                 insertMessage(message)
             }
         }

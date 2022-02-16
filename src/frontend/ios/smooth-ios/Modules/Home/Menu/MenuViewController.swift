@@ -11,30 +11,13 @@ import RxCocoa
 import RxDataSources
 
 protocol MenuViewControllerDelegate: AnyObject {
-    func swipe(channel: Channel?, communityId: Int)
-}
-
-extension MenuViewController: DeliveryDelegate{
-    func appear(channel: Channel?, communityId: Int?) {
-        //        let servers = self.viewModel.model.servers
-        
-        //        if (servers.count > 0) {
-        //            for index in 0...servers.count-1 {
-        //                if(servers[index].id == communityId) {
-        //                    self.viewModel.input.tapServer.onNext(IndexPath(row: index, section: 1))
-        //                    break
-        //                }
-        //            }
-        //        }
-        
-    }
+    func swipe(channelId: Int?, communityId: Int?)
 }
 
 class MenuViewController: BaseViewController, CoordinatorContext {
     weak var coordinator: HomeCoordinator?
     
     weak var delegate: MenuViewControllerDelegate?
-    weak var delivery: DeliveryDelegate?
     
     private lazy var menuView = MenuView(frame: self.view.frame)
     private let viewModel: MenuViewModel
@@ -55,8 +38,7 @@ class MenuViewController: BaseViewController, CoordinatorContext {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        self.tabBarController?.tabBar.isHidden = false
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
         
         self.viewModel.input.fetch.onNext(())
         
@@ -112,6 +94,16 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             .disposed(by: disposeBag)
         
         Observable.zip(
+            self.menuView.directView.tableView.rx.itemSelected,
+            self.menuView.directView.tableView.rx.modelSelected(Room.self)
+        ).subscribe(onNext: { [weak self] (indexPath, room) in
+            self?.menuView.directView.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+            
+            self?.delegate?.swipe(channelId: room.id, communityId: nil)
+        })
+            .disposed(by: disposeBag)
+        
+        Observable.zip(
             self.menuView.serverView.tableView.rx.itemSelected,
             self.menuView.serverView.tableView.rx.modelSelected(ServerCellType.self)
         ).subscribe(onNext: { [weak self] (indexPath, cellType) in
@@ -131,7 +123,7 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             case .text :
                 let server = self.viewModel.model.servers[self.viewModel.model.selectedServerIndex!]
                 
-                self.delegate?.swipe(channel: channel, communityId: server.id)
+                self.delegate?.swipe(channelId: channel.id, communityId: server.id)
             case .voice:
             #warning("웹알티씨 연결하기")
             }
@@ -149,7 +141,7 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             .disposed(by: disposeBag)
         
         self.viewModel.output.rooms
-            .asDriver(onErrorJustReturn: [])
+            .asDriver(onErrorJustReturn: nil)
             .drive(self.menuView.rx.rooms)
             .disposed(by: disposeBag)
         

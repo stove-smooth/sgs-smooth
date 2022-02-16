@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 
 class VerifyCodeViewController: BaseViewController {
-    weak var coordinator: MainCoordinator?
+    weak var coordinator: SplashCoordinator?
     
     private let verifyCodeView = VerifyCodeView()
     private let viewModel: VerifyCodeViewModel

@@ -10,7 +10,7 @@ import MessageKit
 extension ChattingViewController {
     
     // MARK: - NavigationController
-    func configureNavigationController(channel: Channel?) {
+    func configureNavigationController(channelId: Int?) {
         navigationController?.navigationBar.tintColor = .white
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             image: UIImage(named: "Menu")?.resizeImage(size: CGSize(width: 25, height: 25)),
@@ -26,12 +26,7 @@ extension ChattingViewController {
             $0.textColor = .white
         }
         
-        if channel != nil {
-            titleImgView.image = UIImage(named: "Channel+\(channel!.type.rawValue.lowercased())")?.resizeImage(size: CGSize(width: 20, height: 20))
-            titleLabel.text = channel!.name
-        } else {
-            titleLabel.text = "채팅 없음"
-        }
+        titleLabel.text = "채팅 없음"
         
         let titleView = UIStackView().then {
             $0.distribution = .fill
