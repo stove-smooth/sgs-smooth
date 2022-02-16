@@ -2,6 +2,7 @@ package com.example.signalingserver.util;
 
 import com.example.signalingserver.dto.request.AudioStateRequest;
 import com.example.signalingserver.dto.request.VideoStateRequest;
+import com.example.signalingserver.dto.response.ParticipantInfoResponse;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -9,6 +10,7 @@ import com.google.gson.JsonPrimitive;
 import lombok.extern.slf4j.Slf4j;
 import org.kurento.client.Continuation;
 import org.kurento.client.MediaPipeline;
+import org.kurento.jsonrpc.JsonUtils;
 import org.springframework.web.socket.WebSocketSession;
 
 import javax.annotation.PreDestroy;
@@ -51,8 +53,8 @@ public class Room implements Closeable {
         this.close();
     }
 
-    public UserSession join(String userId, WebSocketSession session, String communityId) throws IOException {
-        final UserSession participant = new UserSession(userId, this.roomId, session, this.pipeline, communityId);
+    public UserSession join(String userId, WebSocketSession session, String communityId, boolean video, boolean audio) throws IOException {
+        final UserSession participant = new UserSession(userId, this.roomId, session, this.pipeline, communityId, video, audio);
         // 최대 접속 인원 초과 시 입장 제한
         if (this.participants.size() > ROOM_LIMIT) {
             final JsonObject limitJoinAnswerMsg = limitJoinAnswer(this.roomId);
@@ -71,7 +73,10 @@ public class Room implements Closeable {
     }
 
     private Collection<String> joinRoom(UserSession newParticipant) throws IOException {
-        final JsonObject newParticipantMsg = newParticipantArrived(newParticipant.getUserId());
+        ParticipantInfoResponse participantInfoResponse = new ParticipantInfoResponse(
+                newParticipant.getUserId(), newParticipant.getVideo(), newParticipant.getAudio());
+        final JsonElement participantInfo = JsonUtils.toJsonObject(participantInfoResponse);
+        final JsonObject newParticipantMsg = newParticipantArrived(participantInfo);
         final List<String> participantsList = new ArrayList<>(participants.values().size());
 
         for (final UserSession participant : participants.values()) {
@@ -111,8 +116,10 @@ public class Room implements Closeable {
         final JsonArray participantsArray = new JsonArray();
         for (final UserSession participant : this.getParticipants()) {
             if (!participant.equals(user)) {
-                final JsonElement participantName = new JsonPrimitive(participant.getUserId());
-                participantsArray.add(participantName);
+                ParticipantInfoResponse participantInfoResponse = new ParticipantInfoResponse(
+                        participant.getUserId(), participant.getVideo(), participant.getAudio());
+                final JsonElement participantInfo = JsonUtils.toJsonObject(participantInfoResponse);
+                participantsArray.add(participantInfo);
             }
         }
 
@@ -121,14 +128,18 @@ public class Room implements Closeable {
     }
 
     public void updateVideo(VideoStateRequest request) throws IOException {
-        final JsonObject updateVideoStateJson = videoStateAnswer(request.getUserId(), request.getVideo());
+        final UserSession user = participants.get(request.getUserId());
+        user.setVideo(request.isVideo());
+        final JsonObject updateVideoStateJson = videoStateAnswer(request.getUserId(), request.isVideo());
         for (final UserSession participant: participants.values()) {
             participant.sendMessage(updateVideoStateJson);
         }
     }
 
     public void updateAudio(AudioStateRequest request) throws IOException {
-        final JsonObject updateAudioStateJson = audioStateAnswer(request.getUserId(), request.getAudio());
+        final UserSession user = participants.get(request.getUserId());
+        user.setAudio(request.isAudio());
+        final JsonObject updateAudioStateJson = audioStateAnswer(request.getUserId(), request.isAudio());
         for (final UserSession participant: participants.values()) {
             participant.sendMessage(updateAudioStateJson);
         }

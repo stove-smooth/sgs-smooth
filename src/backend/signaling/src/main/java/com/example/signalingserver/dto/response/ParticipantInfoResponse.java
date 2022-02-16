@@ -1,4 +1,4 @@
-package com.example.signalingserver.dto.request;
+package com.example.signalingserver.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class VideoStateRequest {
-    private String id;
+public class ParticipantInfoResponse {
     private String userId;
     private boolean video;
+    private boolean audio;
 }

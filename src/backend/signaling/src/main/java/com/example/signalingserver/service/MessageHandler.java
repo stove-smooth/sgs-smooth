@@ -188,9 +188,11 @@ public class MessageHandler extends TextWebSocketHandler {
         final String roomId = request.getRoomId();
         final String userId = request.getUserId();
         final String communityId = request.getCommunityId();
+        final boolean video = request.isVideo();
+        final boolean audio = request.isAudio();
 
         Room room = roomManager.getRoom(roomId, communityId);
-        final UserSession user = room.join(userId, session, communityId);
+        final UserSession user = room.join(userId, session, communityId, video, audio);
         // 최대 접속 인원 초과 시 입장 제한
         if (Objects.isNull(user)) return;
         registry.register(user);
