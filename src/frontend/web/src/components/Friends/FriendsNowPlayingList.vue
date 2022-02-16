@@ -54,7 +54,7 @@
                       </div>
                     </div>
                   </div>
-                  <!-- <div class="voice-section-members-wrapper">
+                  <div class="voice-section-members-wrapper">
                     <div class="voice-section-members">
                       <div class="known-voice-section-member">
                         <img
@@ -73,7 +73,7 @@
                         />
                       </div>
                     </div>
-                  </div> -->
+                  </div>
                 </div>
               </section>
             </div>

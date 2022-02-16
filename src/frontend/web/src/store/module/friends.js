@@ -1,4 +1,4 @@
-import { fetchFriends } from "../../api/index.js";
+import { fetchFriends, fetchFriendsState } from "../../api/index.js";
 const friends = {
   namespaced: true,
   state: {
@@ -22,13 +22,14 @@ const friends = {
     friendsReadyToDelete: null,
     friendsReadyToBlock: null,
     friendsProfileModal: null,
+    friendsState: [],
   },
   mutations: {
     setAllFriends(state, friendsAccept) {
       state.friendsAccept = friendsAccept;
     },
-    setOnlineFriends(state) {
-      state.friendsOnline = "";
+    setOnlineFriends(state, friendsOnline) {
+      state.friendsOnline = friendsOnline;
     },
     setWaitingFriends(state, friendsWait) {
       state.friendsWait = friendsWait;
@@ -55,6 +56,9 @@ const friends = {
     setFriendsProfileModal(state, friendsProfileModal) {
       state.friendsProfileModal = friendsProfileModal;
     },
+    setFriendsState(state, friendsState) {
+      state.friendsState = friendsState;
+    },
   },
   actions: {
     async FETCH_FRIENDSLIST({ commit }) {
@@ -69,6 +73,7 @@ const friends = {
         } else if (result.data.result[i].state == "WAIT") {
           friendsWait.push(result.data.result[i]);
         } else if (result.data.result[i].state == "ACCEPT") {
+          result.data.result[i].onlineState = false;
           friendsAccept.push(result.data.result[i]);
         } else if (result.data.result[i].state == "BAN") {
           friendsBan.push(result.data.result[i]);
@@ -78,6 +83,28 @@ const friends = {
       commit("setWaitingFriends", friendsWait);
       commit("setAllFriends", friendsAccept);
       commit("setBanFriends", friendsBan);
+    },
+    async fetchFriendsStates(context) {
+      let friendsIds = [];
+      for (let i = 0; i < context.state.friendsAccept.length; i++) {
+        friendsIds.push(context.state.friendsAccept[i].id);
+      }
+      const result = await fetchFriendsState(friendsIds);
+      console.log(result.data.result);
+
+      context.commit("setFriendsState", result.data.result);
+      let friendsOnline = [];
+      for (let j = 0; j < context.state.friendsAccept.length; j++) {
+        if (
+          result.data.result[context.state.friendsAccept[j].id] != "offline"
+        ) {
+          context.state.friendsAccept[j].onlineState = true;
+          friendsOnline.push(context.state.friendsAccept[j]);
+        }
+      }
+      context.commit("setAllFriends", context.state.friendsAccept);
+      console.log("friendsOnline", friendsOnline);
+      context.commit("setOnlineFriends", friendsOnline);
     },
   },
 };

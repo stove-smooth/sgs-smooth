@@ -38,7 +38,7 @@
           <template slot="title"
             >모든친구-{{ friendsAccept.length }}명</template
           >
-          <template slot="status"><span>오프라인</span></template>
+          <!-- <template slot="status"><span>오프라인</span></template> -->
           <template v-slot:action="slotProps">
             <div
               class="action-button"
@@ -121,16 +121,14 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapMutations } from "vuex";
+import { mapState, mapMutations } from "vuex";
 import FriendsForm from "./FriendsForm.vue";
 import { acceptFriend, deleteFriend } from "../../api/index.js";
 import { sendDirectMessage } from "@/utils/common";
 
 export default {
   components: { FriendsForm },
-  async created() {
-    await this.FETCH_FRIENDSLIST();
-  },
+
   mounted() {
     window.addEventListener("click", this.onClick);
   },
@@ -148,7 +146,6 @@ export default {
     ...mapState("dm", ["directMessageList"]),
   },
   methods: {
-    ...mapActions("friends", ["FETCH_FRIENDSLIST"]),
     ...mapMutations("utils", ["setClientX", "setClientY"]),
     ...mapMutations("friends", ["setFriendsPlusMenu"]),
     async accept(id) {

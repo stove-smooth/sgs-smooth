@@ -55,6 +55,9 @@ function blockFriend(userId) {
 function fetchMemberInfo(id) {
   return instance.get(`auth-server/name?id=${id}`);
 }
+function fetchFriendsState(friendIds) {
+  return instance.post(`presence-server/friends-state`, friendIds);
+}
 export {
   registerUser,
   loginUser,
@@ -68,4 +71,5 @@ export {
   deleteFriend,
   blockFriend,
   fetchMemberInfo,
+  fetchFriendsState,
 };
