@@ -5,11 +5,14 @@ import com.example.communityserver.dto.response.*;
 import com.example.communityserver.service.CommunityService;
 import com.example.communityserver.service.ResponseService;
 import com.example.communityserver.util.DataCorrectionUtil;
+import com.example.communityserver.util.UserStateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -238,5 +241,24 @@ public class CommunityController {
     ) {
         log.info("GET /community-server/community/feign/{}/member", communityId);
         return responseService.getDataResponse(communityService.getCommunityMember(communityId));
+    }
+
+    /**
+     * 사용자가 속한 커뮤니티, 룸 리스트 조회
+     */
+    @GetMapping("/feign/room-list/{userId}")
+    public List<String> getIncludeRoomList(
+            @PathVariable Long userId
+    ) {
+        log.info("GET /community-server/community/feign/room-list/{}", userId);
+        return communityService.getIncludeRoomList(userId);
+    }
+
+    /**
+     * 현재 메모리에 저장된 사용자 접속 정보 조회
+     */
+    @GetMapping("/test/member-state")
+    public Map<Long, String> getMemberState() {
+        return UserStateUtil.status;
     }
 }

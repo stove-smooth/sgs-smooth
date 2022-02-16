@@ -40,7 +40,9 @@ public class CommunityService {
 
     @Value("${smooth.url}")
     private String HOST_ADDRESS;
-    private String COMMUNITY_INVITATION_PREFIX = "/c/";
+    private static final String COMMUNITY_INVITATION_PREFIX = "/c/";
+    private static final String COMMUNITY = "community/";
+    private static final String DIRECT = "direct/";
 
     private final CommunityRepository communityRepository;
     private final CommunityMemberRepository communityMemberRepository;
@@ -459,5 +461,25 @@ public class CommunityService {
                 .collect(Collectors.toList());
 
         return new MemberListFeignResponse(ids);
+    }
+
+    /**
+     * /community/1
+     * /direct/1
+     */
+    public List<String> getIncludeRoomList(Long userId) {
+        List<String> communities = communityMemberRepository.findByUserId(userId).stream()
+                .filter(cm -> cm.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .map(cm -> COMMUNITY + cm.getId())
+                .collect(Collectors.toList());
+        List<String> rooms = roomMemberRepository.findByUserId(userId).stream()
+                .filter(rm -> rm.getStatus().equals(CommonStatus.NORMAL))
+                .map(rm -> DIRECT + rm.getId())
+                .collect(Collectors.toList());
+
+        List<String> list = new ArrayList<>();
+        list.addAll(communities);
+        list.addAll(rooms);
+        return list;
     }
 }
