@@ -162,14 +162,14 @@ public class MessageHandler extends TextWebSocketHandler {
         }
         log.info("[Connection Closed] user {}, CloseStatus : {}", user.getUserId(), status);
         // 상태관리 서버로 접속 정보 전송
-//        try {
-//            StateRequest logoutRequest = new StateRequest(State.DISCONNECT, user.getUserId(), user.getCommunityId(), user.getRoomId());
-//            log.info("PRESENCE SERVER SEND : {}", logoutRequest.toString());
-//            tcpClientGateway.send(logoutRequest.toString());
-//        } catch (Exception e) {
-//            log.error("PRESENCE ERROR : {}", e.getMessage());
-//            e.printStackTrace();
-//        }
+        try {
+            StateRequest logoutRequest = new StateRequest(State.DISCONNECT, user.getUserId(), user.getCommunityId(), user.getRoomId());
+            log.info("PRESENCE SERVER SEND : {}", logoutRequest.toString());
+            tcpClientGateway.send(logoutRequest.toString());
+        } catch (Exception e) {
+            log.error("PRESENCE ERROR : {}", e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
