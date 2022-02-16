@@ -117,10 +117,13 @@ public class FcmUtil {
 
     private ApnsConfig makeApnsConfig(Map<String, String> data) {
         ApnsConfig.Builder apnsConfigBuilder = ApnsConfig.builder();
+        Aps.Builder apsBuilder = Aps.builder();
         Map<String, Object> map = new HashMap<>();
         for (Entry<String, String> entry: data.entrySet()) {
             map.put(entry.getKey(), entry.getValue());
         }
+        Optional.ofNullable(map).ifPresent(sit -> apsBuilder.putAllCustomData(sit));
+        apnsConfigBuilder.setAps(apsBuilder.build());
         Optional.ofNullable(map).ifPresent(sit -> apnsConfigBuilder.putAllCustomData(sit));
         return apnsConfigBuilder.build();
     }
