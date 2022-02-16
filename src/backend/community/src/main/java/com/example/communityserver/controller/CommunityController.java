@@ -32,10 +32,11 @@ public class CommunityController {
      */
     @GetMapping()
     public DataResponse<MainResponse> getCommunityList(
+            @RequestHeader(AUTHORIZATION) String token,
             @RequestHeader(ID) String userId
     ) {
         log.info("GET /community-server/community");
-        MainResponse response = communityService.getCommunityList(Long.parseLong(userId));
+        MainResponse response = communityService.getCommunityList(Long.parseLong(userId), token);
         return responseService.getDataResponse(response);
     }
 
