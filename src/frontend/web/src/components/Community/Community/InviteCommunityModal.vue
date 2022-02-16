@@ -140,7 +140,7 @@ export default {
       };
       const result = await createDirectMessage(dmMembers);
       const msg = {
-        content: this.invitationUrl,
+        content: `<~inviting~>${this.invitationUrl}`,
         channelId: result.data.result.id,
         userId: friend.userId,
         name: friend.name,

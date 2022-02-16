@@ -136,9 +136,12 @@
                         <div v-if="!imageLoading" class="loading-img"></div>
                         <div v-else v-html="item.thumbnail"></div>
                       </template>
-                      <template v-else
-                        ><div>{{ item.message }}</div></template
-                      >
+                      <template v-else>
+                        <template v-if="item.isInviteUrl">
+                          <div v-html="item.message"></div>
+                        </template>
+                        <template v-else>{{ item.message }}</template>
+                      </template>
                       <span v-if="item.calling" class="chat-time-stamp">{{
                         item.time
                       }}</span>
@@ -434,10 +437,17 @@ export default {
         } else {
           console.log("타이핑에 관한 구독이 등장.", receivedForm);
         }
+        //초대장 관련
+        if (receivedForm.message.startsWith("<~inviting~>")) {
+          let callingMessage = receivedForm.message.replace("<~inviting~>", "");
+          receivedForm.isInviteUrl = true;
+          receivedForm.message = this.transUrl(callingMessage);
+        }
         //이미지를 보낼시 이미지 처리
         if (receivedForm.fileType && receivedForm.fileType == "image") {
           receivedForm.thumbnail = this.urlify(receivedForm.thumbnail);
         }
+
         //dm calling 메시지 받기
         if (receivedForm.message.startsWith("<~dmcalling~>")) {
           let callingMessage = receivedForm.message.replace(
@@ -763,6 +773,13 @@ export default {
         return `<img alt="이미지" src="${url}"/>`;
       });
     },
+    transUrl(text) {
+      var regURL =
+        /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])/gim;
+      return text.replace(regURL, function (url) {
+        return `<a href="${url}" target='_blank'>${url}</a>`;
+      });
+    },
     scrollToBottom() {
       let scrollRef = this.$refs["scrollRef"];
       scrollRef.scrollTop = scrollRef.scrollHeight;
@@ -816,6 +833,15 @@ export default {
               }
             }
             receivedAllMessage[i].isOther = isOther;
+            //초대장 관련
+            if (receivedAllMessage[i].message.startsWith("<~inviting~>")) {
+              let callingMessage = receivedAllMessage[i].message.replace(
+                "<~inviting~>",
+                ""
+              );
+              receivedAllMessage[i].isInviteUrl = true;
+              receivedAllMessage[i].message = this.transUrl(callingMessage);
+            }
           }
           //이미지를 보낼시 이미지 처리
           if (
