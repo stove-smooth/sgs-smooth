@@ -13,10 +13,13 @@ class SplashCoordinator: NSObject, Coordinator {
     var childCoordinators: [Coordinator]
     var navigationController: UINavigationController
     
+    
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
         self.childCoordinators = []
         self.navigationController.tabBarController?.tabBar.setUpUITabBar()
+        
+        
     }
     
     func start() {
@@ -28,7 +31,10 @@ class SplashCoordinator: NSObject, Coordinator {
     }
     
     func goToSigIn() {
-        let vc = SigninViewController.instance()
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let deviceToken = appDelegate.deviceToken
+        
+        let vc = SigninViewController.instance(deviceToken: deviceToken!)
         vc.coordinator = self
         navigationController.removeFromParent()
         navigationController.pushViewController(vc, animated: true)
