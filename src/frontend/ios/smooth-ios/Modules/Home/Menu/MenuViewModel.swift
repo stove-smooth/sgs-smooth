@@ -35,6 +35,8 @@ class MenuViewModel: BaseViewModel {
         
         let selectedServer = PublishRelay<IndexPath>()
         let selectedChannel = PublishRelay<IndexPath?>()
+        let selectedRoom = PublishRelay<RoomInfo?>()
+        
         let defaultChannelIndex = PublishRelay<IndexPath>()
         let goToAddServer = PublishRelay<Void>()
     }
@@ -79,8 +81,7 @@ class MenuViewModel: BaseViewModel {
                 case .direct(let server): // MARK: 서버 리스트 (미수신 다렉 메시지)
                     self.model.selectedServerIndex = serverInfo.0
                     self.output.selectedServer.accept(self.model.selectedServerIndex)
-                    print("다렉으로 이동")
-                    
+                    self.fetchDirectById(roomId: server.id)
                     
                 case .normal(let server): // MARK: 서버 리스트 (서버)
                     self.model.selectedServerIndex = serverInfo.0
@@ -106,11 +107,8 @@ class MenuViewModel: BaseViewModel {
             }
             self.model.servers = [community.rooms] + [community.communities]
             
-            
-            if (self.model.selectedServerIndex != nil) {
-                self.fetchChannel(server: self.model.servers[1][0])
-                self.fetchMemebr(server: self.model.servers[1][0])
-            }
+            self.fetchChannel(server: self.model.servers[1][0])
+            self.fetchMemebr(server: self.model.servers[1][0])
             
             self.output.community.accept(community)
             self.input.tapServer.onNext((IndexPath(row: 0, section: 0), .home)) // 서버 홈으로 초기화
@@ -169,6 +167,18 @@ class MenuViewModel: BaseViewModel {
                 self.output.rooms.accept(self.model.rooms)
             }
             
+        }
+    }
+    
+    private func fetchDirectById(roomId: Int) {
+        self.output.rooms.accept(nil)
+        self.serverService.getDirectRoomById(roomId) { response, error in
+            
+            guard let response = response else {
+                return
+            }
+            
+            self.output.selectedRoom.accept(response)
         }
     }
 }

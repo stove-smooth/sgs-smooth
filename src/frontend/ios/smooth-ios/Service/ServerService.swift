@@ -16,6 +16,7 @@ protocol ServerServiceProtocol {
     func getMemberFromServer(_ serverId: Int, _ completion: @escaping ([Member]?, MoyaError?) -> Void)
     func getInvitByServer(_ serverId: Int, _ completion: @escaping ([Invitation]?, MoyaError?) -> Void)
     func getDirectRoom(_ completion: @escaping ([Room]?, MoyaError?) -> Void)
+    func getDirectRoomById(_ roomId: Int, _ completion: @escaping (RoomInfo?, MoyaError?) -> Void)
     
     // MARK: POST
     func createServer(_ request: ServerRequest, _ completion: @escaping (Server?, MoyaError?) -> Void)
@@ -108,6 +109,22 @@ struct ServerService: Networkable, ServerServiceProtocol {
                 }
                 
                 return completion(response.rooms, nil)
+            
+            case .failure(let error):
+                return completion(nil, error)
+            }
+        }
+    }
+    
+    func getDirectRoomById(_ roomId: Int, _ completion: @escaping (RoomInfo?, MoyaError?) -> Void) {
+        makeProvider().request(.getDirectRoomById(roomId: roomId)) { result in
+            switch BaseResponse<RoomInfo>.processResponse(result) {
+            case .success(let response):
+                guard let response = response else {
+                    return
+                }
+                
+                return completion(response, nil)
             
             case .failure(let error):
                 return completion(nil, error)

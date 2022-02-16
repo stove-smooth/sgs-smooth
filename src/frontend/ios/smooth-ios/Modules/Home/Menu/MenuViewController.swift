@@ -41,20 +41,6 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         self.navigationController?.setNavigationBarHidden(true, animated: false)
         
         self.viewModel.input.fetch.onNext(())
-        
-        let selectedServerIndex = self.viewModel.model.selectedServerIndex
-        
-        // 선택한 서버가 있는 경우
-        //        if selectedServerIndex == nil {
-        //            self.viewModel.input.tapServer.onNext(IndexPath(row: 0, section: 0))
-        //        } else {
-        //            self.viewModel.input.tapServer.onNext(IndexPath(row: selectedServerIndex!, section: 1))
-        //
-        //            let indexPath = IndexPath(row: selectedServerIndex!, section: 1)
-        //            self.menuView.serverView.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
-        //        }
-        
-        
     }
     
     override func viewDidLoad() {
@@ -149,6 +135,13 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             .asDriver(onErrorJustReturn: IndexPath(row: 0, section: 0))
             .drive(self.menuView.rx.selectedServer)
             .disposed(by: disposeBag)
+        
+        self.viewModel.output.selectedRoom
+            .asDriver(onErrorJustReturn: nil)
+            .drive(onNext: { roomInfo in
+                guard let roomInfo = roomInfo else { return }
+                self.delegate?.swipe(roomInfo.name, channelId: Int(roomInfo.id), communityId: nil)
+            }).disposed(by: disposeBag)
         
         // MARK: coordinator
         self.viewModel.output.goToAddServer
