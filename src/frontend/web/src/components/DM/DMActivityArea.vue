@@ -163,7 +163,7 @@
                         class="highlight-text contents clickable red-color"
                         @click="deleteMessage(item.id)"
                       >
-                        댓글 삭제
+                        삭제
                       </span>
                     </div>
                   </div>

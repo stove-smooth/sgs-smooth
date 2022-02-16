@@ -53,7 +53,7 @@
                     </div>
                   </div>
                   <div class="profile-info">
-                    <div class="primary-divider" />
+                    <!-- <div class="primary-divider" />
                     <div class="margin-bottom-16px">
                       <div class="justify-content-space-between">
                         <div class="subtext white-color">내 소개</div>
@@ -65,7 +65,7 @@
                         placeholder="useraboutme"
                         v-model="useraboutme"
                       />
-                    </div>
+                    </div> -->
                   </div>
                   <div class="justify-content-center">
                     <button class="grey-large-button">
@@ -153,7 +153,7 @@ export default {
   position: relative;
   width: 300px;
   min-width: 300px;
-  min-height: 280px;
+  min-height: 200px;
   background-color: #18191c;
   border-radius: 8px;
   overflow: hidden;

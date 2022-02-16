@@ -80,11 +80,8 @@
 </template>
 
 <script>
-import firebase from "firebase/compat/app";
-import "firebase/compat/messaging";
-import { firebaseConfig } from "@/utils/firebaseConfig";
-
-import { mapActions, mapMutations } from "vuex";
+import { getToken } from "@/utils/firebase";
+import { mapActions, mapMutations, mapState } from "vuex";
 import { validateEmail } from "../utils/validation.js";
 import { joinCommunity } from "../api/index.js";
 export default {
@@ -106,6 +103,7 @@ export default {
     },
   },
   computed: {
+    ...mapState("utils", ["webPushToken"]),
     ispwdValid() {
       if (this.pwd.length >= 8 && this.pwd.length <= 15) {
         return true;
@@ -122,18 +120,13 @@ export default {
     ...mapMutations("utils", ["setWebPushToken"]),
     async submitForm() {
       try {
-        await firebase.initializeApp(firebaseConfig);
-        const messaging = await firebase.messaging();
-        // 토큰
-        const token = await messaging.getToken();
-        this.setWebPushToken(token);
+        let fcmToken = await getToken();
         const userData = {
           email: this.id,
           password: this.pwd,
           type: "web",
-          deviceToken: token,
+          deviceToken: fcmToken,
         };
-
         await this.LOGIN(userData);
         //만약 초대링크로 들어온 경우면, community로 이동시켜줌.
         if (this.path != "" && this.communityId != "") {

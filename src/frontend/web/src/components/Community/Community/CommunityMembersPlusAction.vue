@@ -2,7 +2,10 @@
   <div :style="cssProps" v-if="communityMemberPlusMenu">
     <template v-if="communityMemberPlusMenu.id == getUserId">
       <div class="server-members-plus-action-container">
-        <div class="plus-action-wrapper">
+        <div
+          class="plus-action-wrapper"
+          @click="setFriendsProfileModal(communityMemberPlusMenu)"
+        >
           <div class="plus-action-label-container">프로필</div>
         </div>
       </div>
@@ -10,7 +13,10 @@
     <template v-else>
       <div class="server-members-plus-action-container">
         <div class="plus-action-wrapper">
-          <div class="plus-action-label-container">
+          <div
+            class="plus-action-label-container"
+            @click="setFriendsProfileModal(communityMemberPlusMenu)"
+          >
             <div class="plus-action-label">프로필</div>
           </div>
           <div
@@ -57,6 +63,7 @@ export default {
     },
   },
   methods: {
+    ...mapMutations("friends", ["setFriendsProfileModal"]),
     ...mapMutations("community", [
       "setCommunityReadyToExit",
       "setCommunityList",
@@ -69,7 +76,9 @@ export default {
     async sendDirectMessage(userId) {
       await this.fetchDirectMessageList();
       const channelid = await sendDirectMessage(this.directMessageList, userId);
-      this.$router.push(`/channels/@me/${channelid}`);
+      if (this.$route.path !== `/channels/@me/${channelid}`) {
+        this.$router.push(`/channels/@me/${channelid}`);
+      }
     },
     async startCalling(userId) {
       console.log(userId);
@@ -100,7 +109,9 @@ export default {
         JSON.stringify(msg),
         {}
       );
-      this.$router.push(`/channels/@me/${channelid}`);
+      if (this.$route.path !== `/channels/@me/${channelid}`) {
+        this.$router.push(`/channels/@me/${channelid}`);
+      }
     },
   },
 };

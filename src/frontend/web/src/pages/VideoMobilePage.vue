@@ -1,9 +1,5 @@
 <template>
-  <div class="wrapper2">
-    <div class="wrapper">
-      <div v-if="wsOpen"><video-mobile-form></video-mobile-form></div>
-    </div>
-  </div>
+  <div v-if="wsOpen"><video-mobile-form></video-mobile-form></div>
 </template>
 
 <script>
