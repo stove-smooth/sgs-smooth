@@ -11,9 +11,8 @@ import RxCocoa
 class FriendInfoViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
-    var model = Model()
+    var model: Model
     
-    let friendId: Int
     let friendService: FriendServiceProtocol
     let userService: UserServiceProtocol
     
@@ -30,6 +29,7 @@ class FriendInfoViewModel: BaseViewModel {
     
     struct Model {
         var friend = Friend()
+        let friendId: Int
     }
     
     init(
@@ -39,14 +39,14 @@ class FriendInfoViewModel: BaseViewModel {
     ) {
         self.friendService = friendService
         self.userService = userService
-        self.friendId = friendId
+        self.model = Model(friendId: friendId)
         super.init()
     }
     
     override func bind() {
         self.input.fetch
             .subscribe(onNext: {
-                self.fetchFriendInfo(userId: self.friendId)
+                self.fetchFriendInfo(userId: self.model.friendId)
             })
             .disposed(by: disposeBag)
         
@@ -67,7 +67,7 @@ class FriendInfoViewModel: BaseViewModel {
     
     // TODO: 얼럿 통해서 친구 변동 있을 경우 ListView 변동사항 반영
     private func banFriend() {
-        self.friendService.banFriend(model.friend.id) {  response, error in
+        self.friendService.banFriend(model.friendId) {  response, error in
             guard let response = response else {
                 return
             }
@@ -81,7 +81,7 @@ class FriendInfoViewModel: BaseViewModel {
     }
     
     private func deleteFriend() {
-        self.friendService.deleteFriend(model.friend.id) {  response, error in
+        self.friendService.deleteFriend(model.friendId) {  response, error in
             guard let response = response else {
                 return
             }
@@ -106,7 +106,12 @@ class FriendInfoViewModel: BaseViewModel {
                     return
                 }
 
-                self.model.friend = Friend(id: self.friendId, name: userInfo.name, code: userInfo.code, profileImage: userInfo.profileImage, state: .none)
+                self.model.friend = Friend(id: -1,
+                                           userId: userId,
+                                           name: userInfo.name,
+                                           code: userInfo.code,
+                                           profileImage: userInfo.profileImage,
+                                           state: .none)
                 
                 self.output.friend.accept(self.model.friend)
             }
