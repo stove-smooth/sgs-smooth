@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -238,5 +239,16 @@ public class CommunityController {
     ) {
         log.info("GET /community-server/community/feign/{}/member", communityId);
         return responseService.getDataResponse(communityService.getCommunityMember(communityId));
+    }
+
+    /**
+     * 사용자가 속한 커뮤니티, 룸 리스트 조회
+     */
+    @GetMapping("/feign/room-list/{userId}")
+    public List<String> getIncludeRoomList(
+            @PathVariable Long userId
+    ) {
+        log.info("GET /community-server/community/feign/room-list/{}", userId);
+        return communityService.getIncludeRoomList(userId);
     }
 }
