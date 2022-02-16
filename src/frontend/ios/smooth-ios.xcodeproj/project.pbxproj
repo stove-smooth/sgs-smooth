@@ -102,6 +102,7 @@
 		C17A95E227BB40E000BA4F6C /* EditProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17A95E127BB40E000BA4F6C /* EditProfileViewModel.swift */; };
 		C17A95E427BB66AD00BA4F6C /* SplashCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17A95E327BB66AD00BA4F6C /* SplashCoordinator.swift */; };
 		C17A95E727BC04D400BA4F6C /* EditInputBarAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C17A95E627BC04D400BA4F6C /* EditInputBarAccessoryView.swift */; };
+		C17A95EA27BCDE9500BA4F6C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C17A95E927BCDE9500BA4F6C /* GoogleService-Info.plist */; };
 		C1AA6AF927A40312003A32A4 /* ServerInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AA6AF827A40312003A32A4 /* ServerInfoView.swift */; };
 		C1AA6AFB27A4031F003A32A4 /* ServerInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AA6AFA27A4031F003A32A4 /* ServerInfoViewController.swift */; };
 		C1AA6AFD27A4032B003A32A4 /* ServerInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1AA6AFC27A4032B003A32A4 /* ServerInfoViewModel.swift */; };
@@ -224,6 +225,7 @@
 		C102417827A0041D00B702DB /* RegisterServerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterServerViewController.swift; sourceTree = "<group>"; };
 		C102417B27A0050B00B702DB /* RegisterServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterServerView.swift; sourceTree = "<group>"; };
 		C102417D27A005E300B702DB /* RegisterIconViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterIconViewModel.swift; sourceTree = "<group>"; };
+		C106847027BD11550026D874 /* smooth-ios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "smooth-ios.entitlements"; sourceTree = "<group>"; };
 		C118D2BD27A6AE39009CB96C /* ServerSettingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSettingCoordinator.swift; sourceTree = "<group>"; };
 		C118D2BF27A6B232009CB96C /* ServerSettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSettingCell.swift; sourceTree = "<group>"; };
 		C118D2C327A6BA5D009CB96C /* ServerSettingHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSettingHeaderCell.swift; sourceTree = "<group>"; };
@@ -275,6 +277,7 @@
 		C17A95E127BB40E000BA4F6C /* EditProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewModel.swift; sourceTree = "<group>"; };
 		C17A95E327BB66AD00BA4F6C /* SplashCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashCoordinator.swift; sourceTree = "<group>"; };
 		C17A95E627BC04D400BA4F6C /* EditInputBarAccessoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditInputBarAccessoryView.swift; sourceTree = "<group>"; };
+		C17A95E927BCDE9500BA4F6C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C1AA6AF827A40312003A32A4 /* ServerInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerInfoView.swift; sourceTree = "<group>"; };
 		C1AA6AFA27A4031F003A32A4 /* ServerInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerInfoViewController.swift; sourceTree = "<group>"; };
 		C1AA6AFC27A4032B003A32A4 /* ServerInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerInfoViewModel.swift; sourceTree = "<group>"; };
@@ -651,6 +654,14 @@
 			path = Splash;
 			sourceTree = "<group>";
 		};
+		C17A95E827BCDE8B00BA4F6C /* Firebase */ = {
+			isa = PBXGroup;
+			children = (
+				C17A95E927BCDE9500BA4F6C /* GoogleService-Info.plist */,
+			);
+			path = Firebase;
+			sourceTree = "<group>";
+		};
 		C1AA6AFE27A40332003A32A4 /* Server-Info */ = {
 			isa = PBXGroup;
 			children = (
@@ -741,6 +752,7 @@
 		C1D47EC12779570000DBA3CA /* smooth-ios */ = {
 			isa = PBXGroup;
 			children = (
+				C106847027BD11550026D874 /* smooth-ios.entitlements */,
 				C1D47EE327795AB900DBA3CA /* Modules */,
 				272189082782EB8700ABEF60 /* Service */,
 				277CD09B277D976100948125 /* API */,
@@ -756,6 +768,7 @@
 		C1D47ED62779597900DBA3CA /* Commons */ = {
 			isa = PBXGroup;
 			children = (
+				C17A95E827BCDE8B00BA4F6C /* Firebase */,
 				C1D47F292784212800DBA3CA /* Fonts */,
 				C1D47EC22779570000DBA3CA /* AppDelegate.swift */,
 				C1D47ECB2779570200DBA3CA /* Assets.xcassets */,
@@ -1030,6 +1043,7 @@
 			files = (
 				C1D47F31278433CF00DBA3CA /* ABCGintoNord-Black-Trial.otf in Resources */,
 				C1D47F332784351800DBA3CA /* ABCGintoNord-Medium-Trial.otf in Resources */,
+				C17A95EA27BCDE9500BA4F6C /* GoogleService-Info.plist in Resources */,
 				C1D47ECF2779570200DBA3CA /* LaunchScreen.storyboard in Resources */,
 				C1D47ECC2779570200DBA3CA /* Assets.xcassets in Resources */,
 			);
@@ -1387,6 +1401,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "smooth-ios/smooth-ios.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9Y2YJ5DNS7;
 				INFOPLIST_FILE = "smooth-ios/Commons/Info.plist";
@@ -1396,6 +1412,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "doitduri.smooth-ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -1407,6 +1424,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "smooth-ios/smooth-ios.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9Y2YJ5DNS7;
 				INFOPLIST_FILE = "smooth-ios/Commons/Info.plist";
@@ -1416,6 +1435,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "doitduri.smooth-ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

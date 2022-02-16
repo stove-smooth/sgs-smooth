@@ -16,6 +16,7 @@ enum ServerTarget {
     case getMemberFromServer(param: Int)
     case getInvitByServer(serverId: Int)
     case getDirectRoom
+    case getDirectRoomById(roomId: Int)
     
     // MARK: POST
     case createServer(param: ServerRequest)
@@ -46,6 +47,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
             return "/community-server/community/\(serverId)/invitation"
         case .getDirectRoom:
             return "/community-server/room"
+        case .getDirectRoomById(let roomId):
+            return "/community-server/room/\(roomId)"
             
         case .createServer:
             return "/community-server/community"
@@ -75,6 +78,7 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
         case .getMemberFromServer: return .get
         case .getInvitByServer: return .get
         case .getDirectRoom: return .get
+        case .getDirectRoomById: return .get
             
         case .createServer: return .post
         case .createInvitation: return .post
@@ -100,6 +104,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
         case .getInvitByServer:
             return .requestPlain
         case .getDirectRoom:
+            return .requestPlain
+        case .getDirectRoomById:
             return .requestPlain
             
         case .createServer(let request):
@@ -171,6 +177,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
         case .getInvitByServer:
             return .custom("")
         case .getDirectRoom:
+            return .custom("")
+        case .getDirectRoomById:
             return .custom("")
             
         case .createServer:

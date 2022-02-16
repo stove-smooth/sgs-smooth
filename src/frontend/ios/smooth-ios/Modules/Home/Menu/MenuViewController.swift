@@ -11,7 +11,7 @@ import RxCocoa
 import RxDataSources
 
 protocol MenuViewControllerDelegate: AnyObject {
-    func swipe(channelId: Int?, communityId: Int?)
+    func swipe(_ chatName: String, channelId: Int?, communityId: Int?)
 }
 
 class MenuViewController: BaseViewController, CoordinatorContext {
@@ -41,20 +41,6 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         self.navigationController?.setNavigationBarHidden(true, animated: false)
         
         self.viewModel.input.fetch.onNext(())
-        
-        let selectedServerIndex = self.viewModel.model.selectedServerIndex
-        
-        // 선택한 서버가 있는 경우
-        //        if selectedServerIndex == nil {
-        //            self.viewModel.input.tapServer.onNext(IndexPath(row: 0, section: 0))
-        //        } else {
-        //            self.viewModel.input.tapServer.onNext(IndexPath(row: selectedServerIndex!, section: 1))
-        //
-        //            let indexPath = IndexPath(row: selectedServerIndex!, section: 1)
-        //            self.menuView.serverView.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
-        //        }
-        
-        
     }
     
     override func viewDidLoad() {
@@ -77,10 +63,10 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         self.menuView.channelView.serverInfoButton.rx.tap
             .asDriver()
             .drive(onNext: {
-                guard let index = self.viewModel.model.selectedServerIndex else { return }
+                let indexPath = self.viewModel.model.selectedServerIndex
                 
                 self.showServerInfoModal(
-                    server: self.viewModel.model.servers[index],
+                    server: self.viewModel.model.servers[indexPath.section][indexPath.row],
                     member: self.viewModel.model.user!
                 )
             })
@@ -99,7 +85,7 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         ).subscribe(onNext: { [weak self] (indexPath, room) in
             self?.menuView.directView.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
             
-            self?.delegate?.swipe(channelId: room.id, communityId: nil)
+            self?.delegate?.swipe(room.name, channelId: room.id, communityId: nil)
         })
             .disposed(by: disposeBag)
         
@@ -109,7 +95,7 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         ).subscribe(onNext: { [weak self] (indexPath, cellType) in
             
             self?.menuView.serverView.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
-            self?.viewModel.input.tapServer.onNext(cellType)
+            self?.viewModel.input.tapServer.onNext((indexPath, cellType))
         }).disposed(by: disposeBag)
         
         Observable.zip(
@@ -121,11 +107,11 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             
             switch channel.type {
             case .text :
-                let server = self.viewModel.model.servers[self.viewModel.model.selectedServerIndex!]
+                let server = self.viewModel.model.servers[1][self.viewModel.model.selectedServerIndex.row]
                 
-                self.delegate?.swipe(channelId: channel.id, communityId: server.id)
+                self.delegate?.swipe(channel.name, channelId: channel.id, communityId: server.id)
             case .voice:
-            #warning("웹알티씨 연결하기")
+#warning("웹알티씨 연결하기")
             }
         }.disposed(by: disposeBag)
         
@@ -146,9 +132,16 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             .disposed(by: disposeBag)
         
         self.viewModel.output.selectedServer
-            .asDriver(onErrorJustReturn: nil)
+            .asDriver(onErrorJustReturn: IndexPath(row: 0, section: 0))
             .drive(self.menuView.rx.selectedServer)
             .disposed(by: disposeBag)
+        
+        self.viewModel.output.selectedRoom
+            .asDriver(onErrorJustReturn: nil)
+            .drive(onNext: { roomInfo in
+                guard let roomInfo = roomInfo else { return }
+                self.delegate?.swipe(roomInfo.name, channelId: Int(roomInfo.id), communityId: nil)
+            }).disposed(by: disposeBag)
         
         // MARK: coordinator
         self.viewModel.output.goToAddServer
@@ -173,4 +166,3 @@ extension MenuViewController: UITableViewDelegate {
         header.textLabel?.textColor = .white
     }
 }
-

@@ -29,7 +29,7 @@ class ChattingViewModel: BaseViewModel {
     }
     
     struct Output {
-        let channelId = PublishRelay<Int>()
+        let channel = PublishRelay<(Int, String)>()
         
         let messages = PublishRelay<([MockMessage],ReceivedMessageType?)>()
         let socketMessage = PublishSubject<MockMessage>()
@@ -43,7 +43,7 @@ class ChattingViewModel: BaseViewModel {
         let messageUser: MockUser
         var messages = [MockMessage]()
         var communityId: Int?
-        var channelId: Int = 0
+        var channel: (Int, String) = (0, "채팅 없음")
         
         var isConnected = false
         var edittingMsg: MockMessage?
@@ -84,6 +84,7 @@ class ChattingViewModel: BaseViewModel {
                     self.fetchMessgaeByDirect(chattingId: channelId)
                 } else {
                     self.fetchMessgaeByCommunity(chattingId: channelId)
+                    self.chatWebSocketService.communitySignaling(communityId: self.model.communityId!)
                 }
             })
             .disposed(by: disposeBag)
@@ -132,7 +133,7 @@ class ChattingViewModel: BaseViewModel {
                             image: img.image!.jpegData(compressionQuality: 0.5),
                             thumbnail: thumb.data,
                             userId: Int(self.model.messageUser.senderId)!,
-                            channelId: self.model.channelId,
+                            channelId: self.model.channel.0,
                             communityId: self.model.communityId,
                             type: self.model.communityId != nil ? "community" : "direct",
                             fileType: FileType.image,

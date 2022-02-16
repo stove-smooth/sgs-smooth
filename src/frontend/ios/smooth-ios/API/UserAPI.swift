@@ -10,7 +10,7 @@ import Moya
 
 enum UserTarget {
     // MARK: POST
-    case signIn(email: String, password: String)
+    case signIn(email: String, password: String, deviceToken: String)
     case signUp(email: String, password: String, name: String)
     case sendMail(email: String)
     case updateUserProfile(imageData: Data?)
@@ -60,8 +60,8 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
     
     var task: Task {
         switch self {
-        case .signIn(let email, let password):
-            return .requestParameters(parameters: ["email": email, "password": password], encoding: JSONEncoding.default)
+        case .signIn(let email, let password, let deviceToken):
+            return .requestParameters(parameters: ["email": email, "password": password, "type": "ios", "deviceToken": deviceToken], encoding: JSONEncoding.default)
         case .signUp(let email, let password, let name):
             return .requestParameters(parameters: ["email": email, "password": password, "name": name], encoding: JSONEncoding.default)
         case .sendMail(let email):

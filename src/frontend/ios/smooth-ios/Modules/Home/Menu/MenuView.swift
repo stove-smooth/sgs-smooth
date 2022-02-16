@@ -54,13 +54,9 @@ extension Reactive where Base: MenuView {
         }
     }
     
-    var selectedServer: Binder<Int?> {
+    var selectedServer: Binder<IndexPath> {
         return Binder(self.base) { view, selectedServer in
-            if (selectedServer == nil) {
-                view.serverView.tableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .none)
-            } else {
-                view.serverView.tableView.selectRow(at: IndexPath(row: selectedServer!, section: 1), animated: false, scrollPosition: .none)
-            }
+            view.serverView.tableView.selectRow(at: IndexPath(row: selectedServer.row, section: selectedServer.section), animated: false, scrollPosition: .none)
         }
     }
     

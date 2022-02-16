@@ -11,6 +11,7 @@ import RxCocoa
 class SigninViewModel: BaseViewModel {
     let input = Input()
     let output = Output()
+    let model: Model
     
     let userDefaults: UserDefaultsUtil
     let userService: UserServiceProtocol
@@ -25,10 +26,16 @@ class SigninViewModel: BaseViewModel {
         let goToMain = PublishRelay<Void>()
     }
     
+    struct Model {
+        let deviceToken: String
+    }
+    
     init(
+        deviceToken: String,
         userDefaults: UserDefaultsUtil,
         userService: UserServiceProtocol
     ) {
+        self.model = Model(deviceToken: deviceToken)
         self.userDefaults = userDefaults
         self.userService = userService
         super.init()
@@ -40,14 +47,15 @@ class SigninViewModel: BaseViewModel {
             .drive(onNext: {
                 self.signIn(
                     email: self.input.emailTextField.value,
-                    password: self.input.passwordTextFiled.value
+                    password: self.input.passwordTextFiled.value,
+                    deviceToken: self.model.deviceToken
                 )
             })
             .disposed(by: disposeBag)
     }
     
-    private func signIn(email: String, password: String) {
-        self.userService.signIn(email: email, password: password) { response, error in
+    private func signIn(email: String, password: String, deviceToken: String) {
+        self.userService.signIn(email: email, password: password, deviceToken: deviceToken) { response, error in
             if (error?.response != nil) {
                 let body = try! JSONDecoder().decode(DefaultResponse.self, from: error!.response!.data)
                 self.showErrorMessage.accept(body.message)

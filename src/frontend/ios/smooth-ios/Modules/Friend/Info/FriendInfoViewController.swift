@@ -14,7 +14,6 @@ class FriendInfoViewController: BaseViewController, PanModalPresentable {
     private lazy var infoView = FriendInfoView(frame: self.view.frame)
     private let viewModel: FriendInfoViewModel
     
-    private let friendId: Int
     private let friendState: FriendState
     
     // TODO: 친구 상태에 따라 alert action, friend 정보 변경
@@ -25,7 +24,6 @@ class FriendInfoViewController: BaseViewController, PanModalPresentable {
     ]
     
     init(friendId: Int, state: FriendState) {
-        self.friendId = friendId
         self.friendState = state
         self.viewModel = FriendInfoViewModel(
             friendService: FriendService(),

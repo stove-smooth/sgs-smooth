@@ -10,7 +10,7 @@ import Moya
 
 protocol UserServiceProtocol {
     // MARK: POST
-    func signIn(email: String, password: String, _ completion: @escaping (SignIn?, MoyaError?) -> Void)
+    func signIn(email: String, password: String, deviceToken: String, _ completion: @escaping (SignIn?, MoyaError?) -> Void)
     func signUp(email: String, password: String, name: String, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
     func sendMail(_ email: String, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
     func updateUserProfile(_ imageData: Data?, _  completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
@@ -27,8 +27,8 @@ protocol UserServiceProtocol {
 struct UserService: Networkable, UserServiceProtocol {
     typealias Target = UserTarget
     
-    func signIn(email: String, password: String, _ completion: @escaping (SignIn?, MoyaError?) -> Void) {
-        makeProvider().request(.signIn(email: email, password: password)) { result in
+    func signIn(email: String, password: String, deviceToken: String, _ completion: @escaping (SignIn?, MoyaError?) -> Void) {
+        makeProvider().request(.signIn(email: email, password: password, deviceToken: deviceToken)) { result in
             switch BaseResponse<SignIn>.processResponse(result) {
             case .success(let response):
                 guard let response = response else {

@@ -109,6 +109,7 @@ class ProfileView: BaseView {
         self.addSubview(containerView)
         self.addSubview(tabBarView)
         
+        tabBarView.setItem(tag: .profile)
         self.profileImg.bringSubviewToFront(presenceView)
     }
     

@@ -15,8 +15,9 @@ class SigninViewController: BaseViewController {
     private let signinView = SigninView()
     private let viewModel: SigninViewModel
     
-    init() {
+    init(deviceToken: String) {
         self.viewModel = SigninViewModel(
+            deviceToken: deviceToken,
             userDefaults: UserDefaultsUtil(),
             userService: UserService()
         )
@@ -27,8 +28,8 @@ class SigninViewController: BaseViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    static func instance() -> SigninViewController {
-        return SigninViewController()
+    static func instance(deviceToken: String) -> SigninViewController {
+        return SigninViewController(deviceToken: deviceToken)
     }
     
     override func loadView() {

@@ -18,6 +18,7 @@ enum FriendState: String, Codable {
 
 struct Friend: Codable, Equatable, IdentifiableType {
     let id: Int
+    let userId: Int
     let name: String
     let code: String
     let profileImage: String?
@@ -29,6 +30,7 @@ struct Friend: Codable, Equatable, IdentifiableType {
     
     init() {
         self.id = 0
+        self.userId = 0
         self.code = ""
         self.name = ""
         self.profileImage = nil
@@ -36,11 +38,13 @@ struct Friend: Codable, Equatable, IdentifiableType {
     }
     
     init(     id: Int,
+              userId: Int,
               name: String,
               code: String,
               profileImage: String?,
               state: FriendState) {
         self.id = id
+        self.userId = userId
         self.code = code
         self.name = name
         self.profileImage = profileImage

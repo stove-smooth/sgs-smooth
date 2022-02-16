@@ -36,3 +36,20 @@ struct Room: Codable {
 struct RoomList: Codable {
     let rooms: [Room]
 }
+
+struct RoomInfo: Codable {
+    let id: Int
+    let group: Bool
+    let count: Int
+    let members: [RoomMember]
+    let name: String
+}
+
+struct RoomMember: Codable {
+    let id: Int
+    let nickname: String
+    let image: String?
+    let code: String
+    let owner: Bool
+    let state: String
+}

@@ -16,9 +16,12 @@ class MainCoordinator: NSObject, Coordinator {
     let chatWebSocketService: ChatWebSocketServiceProtocol?
     
     private let window: UIWindow
+    private let deviceToken: String
     
-    init(window: UIWindow) {
+    init(window: UIWindow, deviceToken: String) {
         self.window = window
+        self.deviceToken = deviceToken
+        
         self.chatWebSocketService = ChatWebSocketService()
         
         let navigationController = UINavigationController().setup
