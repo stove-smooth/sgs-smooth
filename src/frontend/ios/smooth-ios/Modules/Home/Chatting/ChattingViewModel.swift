@@ -42,8 +42,10 @@ class ChattingViewModel: BaseViewModel {
     struct Model {
         let messageUser: MockUser
         var messages = [MockMessage]()
+        var members: [Member]?
+        
         var communityId: Int?
-        var channel: (Int, String) = (0, "채팅 없음")
+        var channel: (Int, String) = (0, "채팅 없음") // 채널id, 채널 이름 
         
         var isConnected = false
         var edittingMsg: MockMessage?

@@ -82,6 +82,18 @@ class ChattingViewController: MessagesViewController {
         delegate?.didTapMenuButton(channelId: self.viewModel.model.channel.0, communityId: self.viewModel.model.communityId)
     }
     
+    @objc func didTapInfoButton() {
+        let isGroup = self.viewModel.model.communityId != nil
+        var id: Int
+        if (self.viewModel.model.communityId != nil) {
+            id = self.viewModel.model.communityId!
+        } else {
+            id = self.viewModel.model.channel.0 // channelId
+        }
+        
+        self.coordinator?.goToInfo(isGroup: isGroup, id: id)
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         delegate?.dismiss(channelId: self.viewModel.model.channel.0, communityId: self.viewModel.model.communityId)
         
@@ -193,6 +205,7 @@ class ChattingViewController: MessagesViewController {
 extension ChattingViewController: HomeViewControllerDelegate {
     func loadChatting(_ chatName: String, channelId: Int, communityId: Int?) {
         self.messageList = []
+        self.viewModel.output.messages.accept(([], nil))
         self.viewModel.model.page = 0
         self.viewModel.input.disappear.onNext(())
         self.viewModel.model.communityId = communityId
@@ -257,12 +270,20 @@ extension ChattingViewController {
     
     func isNextMessageSameSender(at indexPath: IndexPath) -> Bool {
         guard indexPath.section + 1 < messageList.count else { return false }
-        return messageList[indexPath.section].user == messageList[indexPath.section + 1].user
+        
+        let sameUser =  messageList[indexPath.section].user == messageList[indexPath.section + 1].user
+        let sameDate = Int(messageList[indexPath.section].sentDate.timeIntervalSince(messageList[indexPath.section+1].sentDate))
+        
+        return sameUser && (sameDate < 60)
     }
     
     func isPreviousMessageSameSender(at indexPath: IndexPath) -> Bool {
         guard indexPath.section - 1 >= 0 else { return false }
-        return messageList[indexPath.section].user == messageList[indexPath.section - 1].user
+        
+        let sameUser =  messageList[indexPath.section].user == messageList[indexPath.section - 1].user
+        let sameDate = Int(messageList[indexPath.section].sentDate.timeIntervalSince(messageList[indexPath.section-1].sentDate))
+        
+        return sameUser && (sameDate < 60)
     }
     
 
