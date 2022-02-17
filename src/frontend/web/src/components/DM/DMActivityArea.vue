@@ -386,6 +386,7 @@ export default {
       messageTyper: "",
       setTimeId: "",
       imageLoading: false,
+      stompSocket: "",
     };
   },
   mounted() {
@@ -399,16 +400,8 @@ export default {
     ...mapGetters("user", ["getUserId"]),
   },
   async created() {
-    //전 구독 초기화
-    if (this.stompSocketClient) {
-      const subscriptions = this.stompSocketClient.subscriptions;
-      Object.keys(subscriptions).forEach((subscription) => {
-        this.stompSocketClient.unsubscribe(subscription);
-      });
-      this.stompSocketClient.disconnect();
-      console.log("구독을 해제하였습니다.");
-    }
     //들어온 채널의 상태를 보냄.
+
     const msg = {
       user_id: this.getUserId,
       channel_id: `r-${this.$route.params.id}`,
@@ -416,7 +409,7 @@ export default {
     };
     this.stompSocketClient.send("/kafka/join-channel", JSON.stringify(msg), {});
     await this.readChannelMessage();
-    this.stompSocketClient.subscribe(
+    this.stompSocket = this.stompSocketClient.subscribe(
       "/topic/direct/" + this.$route.params.id,
       async (res) => {
         console.log("구독으로 받은 메시지 입니다.", res.body);
@@ -927,6 +920,9 @@ export default {
         return false;
       }
     },
+  },
+  destroyed() {
+    this.stompSocket.unsubscribe();
   },
 };
 </script>

@@ -201,15 +201,6 @@ export default {
     };
   },
   created() {
-    //전 구독 초기화
-    if (this.stompSocketClient) {
-      const subscriptions = this.stompSocketClient.subscriptions;
-      Object.keys(subscriptions).forEach((subscription) => {
-        this.stompSocketClient.unsubscribe(subscription);
-      });
-      this.stompSocketClient.disconnect();
-      console.log("구독을 해제하였습니다.");
-    }
     this.stompSocketClient.subscribe(
       `/topic/community/${this.$route.params.serverid}`,
       (res) => {
@@ -218,7 +209,6 @@ export default {
           JSON.parse(res.body)
         );
         this.voiceChannelMember = JSON.parse(res.body);
-        //this.compareVoiceMemberState(JSON.parse(res.body));
       }
     );
 
@@ -297,28 +287,15 @@ export default {
               for (let j = 0; j < oldMemberList.length; j++) {
                 //전 멤버중에 최신 멤버에서 포함하지 않는 자가 있다면 삭제한다.
                 if (!latestMemberList.includes(oldMemberList[j])) {
-                  //oldMemberList.splice(j, 1);
-                  //return;
                   removeMember.push(oldMemberList[j]);
                 }
               }
               for (let k = 0; k < latestMemberList.length; k++) {
                 if (!oldMemberList.includes(latestMemberList[k])) {
-                  //oldMemberList.push(...latestMemberList[k]);
-                  //return;
                   addMember.push(latestMemberList[k]);
                 }
               }
-              /* console.log(
-                "삭제할멤버",
-                removeMember,
-                "추가할멤버",
-                addMember,
-                "최신 멤버리스트",
-                latestMemberList,
-                "예전 멤버리스트",
-                oldMemberList
-              ); */
+
               oldMemberList.push(...addMember);
             }
           }
@@ -473,6 +450,7 @@ export default {
       }
     },
     async routeChannel(id, type) {
+      //채널을 바꾸는 것.
       if (type == "VOICE") {
         if (this.wsOpen) {
           this.sendMessage({ id: "leaveRoom" });

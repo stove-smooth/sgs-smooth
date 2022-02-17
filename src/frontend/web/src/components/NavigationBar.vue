@@ -181,12 +181,28 @@ export default {
       this.setNavigationSelected("");
     },
     enter(index) {
+      //서버를 바꾸는 것.
+      if (this.stompSocketClient) {
+        const subscriptions = this.stompSocketClient.subscriptions;
+        Object.keys(subscriptions).forEach((subscription) => {
+          this.stompSocketClient.unsubscribe(subscription);
+        });
+      }
       if (this.$route.path !== "/channels/" + index) {
         this.$router.push("/channels/" + index);
       }
       this.setNavigationSelected(index);
     },
     enterRoom(index) {
+      //안읽은 DM으로 입장.
+      if (this.stompSocketClient) {
+        const subscriptions = this.stompSocketClient.subscriptions;
+        Object.keys(subscriptions).forEach((subscription) => {
+          this.stompSocketClient.unsubscribe(subscription);
+        });
+
+        console.log("안읽은 DM구독을 해제하였습니다.");
+      }
       this.$router.push("/channels/@me/" + index);
       //읽음 처리..
       let array = this.communityList.rooms.filter(
@@ -215,7 +231,7 @@ export default {
   computed: {
     ...mapState("friends", ["friendsWaitNumber"]),
     ...mapState("community", ["communityList"]),
-    ...mapState("utils", ["navigationSelected"]),
+    ...mapState("utils", ["navigationSelected", "stompSocketClient"]),
   },
   async created() {
     const currentUrl = window.location.pathname;
