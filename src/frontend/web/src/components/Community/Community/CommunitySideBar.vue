@@ -208,8 +208,12 @@ export default {
           "@@@@@@@@@@@시그널링 서버 상태 구독입니다",
           JSON.parse(res.body)
         );
-        this.voiceChannelMember = JSON.parse(res.body);
-
+        if (
+          JSON.parse(res.body).type != "disconnect" &&
+          JSON.parse(res.body).type != "connect"
+        ) {
+          this.voiceChannelMember = JSON.parse(res.body);
+        }
         //같은 방 유저가 disconnect일경우.
         if (this.voiceChannelMember.type == "disconnect") {
           for (let i = 0; i < this.communityOnlineMemberList.length; i++) {
