@@ -31,6 +31,9 @@ public class KafkaTopicConfig {
     @Value("${spring.kafka.consumer.file-topic}")
     private String fileTopic;
 
+    @Value("${spring.kafka.consumer.state-topic}")
+    private String stateTopic;
+
     @Bean
     public KafkaAdmin kafkaAdmin() {
         Map<String,Object> configs = new HashMap<>();
@@ -62,4 +65,10 @@ public class KafkaTopicConfig {
     public NewTopic fileUpload() {
         return new NewTopic(fileTopic,1, (short) 1);
     }
+
+    @Bean
+    public NewTopic stateMessage() {
+        return new NewTopic(stateTopic,1, (short) 1);
+    }
+
 }

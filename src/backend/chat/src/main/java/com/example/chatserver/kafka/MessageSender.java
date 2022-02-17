@@ -6,6 +6,7 @@ import com.example.chatserver.config.TcpClientGateway;
 import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.domain.DirectMessage;
 import com.example.chatserver.dto.request.LoginSessionRequest;
+import com.example.chatserver.dto.request.StateRequest;
 import com.example.chatserver.dto.response.CommunityFeignResponse;
 import com.example.chatserver.dto.response.FileUploadResponse;
 import com.example.chatserver.exception.CustomException;
@@ -46,6 +47,8 @@ public class MessageSender {
     private final KafkaTemplate<String, ChannelMessage> kafkaTemplateForChannelMessage;
 
     private final KafkaTemplate<String, FileUploadResponse> kafkaTemplateForFileUpload;
+
+    private final KafkaTemplate<String, StateRequest> kafkaTemplateForSignaling;
 
     public void sendToDirectChat(String topic, DirectMessage directChat) {
         Object Community_key = redisTemplateForIds.opsForValue().get("R" + directChat.getChannelId());
@@ -135,6 +138,7 @@ public class MessageSender {
 
                 result.setContent(directChat.getContent());
                 directChatRepository.save(result);
+                result.setType("modify");
                 kafkaTemplateForDirectMessage.send(topic,result);
                 break;
             }
@@ -145,8 +149,8 @@ public class MessageSender {
                 if (!result.getUserId().equals(directChat.getUserId())) {
                     throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID);
                 }
-
-                directChatRepository.deleteById(result.getId());
+                directChatRepository.deleteById(directChat.getId());
+                result.setType("delete");
                 kafkaTemplateForDirectMessage.send(topic,result);
                 break;
             }
@@ -166,6 +170,7 @@ public class MessageSender {
 
                 result.setContent(channelMessage.getContent());
                 channelChatRepository.save(result);
+                result.setType("modify");
                 kafkaTemplateForChannelMessage.send(topic,result);
                 break;
             }
@@ -177,6 +182,7 @@ public class MessageSender {
                     throw new CustomException(CustomExceptionStatus.ACCOUNT_NOT_VALID);
                 }
                 channelChatRepository.deleteById(channelMessage.getId());
+                result.setType("delete");
                 kafkaTemplateForChannelMessage.send(topic,result);
                 break;
             }
@@ -185,5 +191,9 @@ public class MessageSender {
 
     public void fileUpload(String topic, FileUploadResponse fileUploadResponse) {
         kafkaTemplateForFileUpload.send(topic,fileUploadResponse);
+    }
+
+    public void signaling(String topic, StateRequest stateRequest) {
+        kafkaTemplateForSignaling.send(topic,stateRequest);
     }
 }
