@@ -11,7 +11,7 @@ import RxCocoa
 import RxDataSources
 
 protocol MenuViewControllerDelegate: AnyObject {
-    func swipe(_ chatName: String, channelId: Int?, communityId: Int?)
+    func swipe(_ chatName: String, destinationStatus: DestinationStatus)
 }
 
 class MenuViewController: BaseViewController, CoordinatorContext {
@@ -66,7 +66,7 @@ class MenuViewController: BaseViewController, CoordinatorContext {
                 let indexPath = self.viewModel.model.selectedServerIndex
                 
                 self.showServerInfoModal(
-                    server: self.viewModel.model.servers[indexPath.section][indexPath.row],
+                    server: self.viewModel.model.servers[indexPath.section-1][indexPath.row],
                     member: self.viewModel.model.user!
                 )
             })
@@ -85,7 +85,8 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         ).subscribe(onNext: { [weak self] (indexPath, room) in
             self?.menuView.directView.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
             
-            self?.delegate?.swipe(room.name, channelId: room.id, communityId: nil)
+            self?.delegate?.swipe(room.name,
+                                  destinationStatus: .direct(room.id))
         })
             .disposed(by: disposeBag)
         
@@ -109,7 +110,7 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             case .text :
                 let server = self.viewModel.model.servers[1][self.viewModel.model.selectedServerIndex.row]
                 
-                self.delegate?.swipe(channel.name, channelId: channel.id, communityId: server.id)
+                self.delegate?.swipe(channel.name, destinationStatus:  .community((server.id, channel.id)))
             case .voice:
 #warning("웹알티씨 연결하기")
             }
@@ -140,7 +141,14 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             .asDriver(onErrorJustReturn: nil)
             .drive(onNext: { roomInfo in
                 guard let roomInfo = roomInfo else { return }
-                self.delegate?.swipe(roomInfo.name, channelId: Int(roomInfo.id), communityId: nil)
+                self.delegate?.swipe(roomInfo.name, destinationStatus: .direct(roomInfo.id))
+            }).disposed(by: disposeBag)
+        
+        self.viewModel.output.selectedChannel
+            .bind(onNext: { indexPath in
+                if (indexPath == nil) {
+                    self.delegate?.swipe("채팅 없음", destinationStatus: .home)
+                }
             }).disposed(by: disposeBag)
         
         // MARK: coordinator

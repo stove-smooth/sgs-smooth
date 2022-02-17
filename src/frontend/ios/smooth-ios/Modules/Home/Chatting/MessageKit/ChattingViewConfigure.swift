@@ -28,8 +28,14 @@ extension ChattingViewController {
             )
         }
         
+        var imageName = ""
+        if (self.viewModel.model.communityId == nil) {
+            imageName = "Channel+direct"
+        } else {
+            imageName = "Channel+text"
+        }
         let titleImgView = UIImageView().then {
-            $0.image = UIImage(named: "Channel+text")?.resizeImage(size: CGSize(width: 20, height: 20))
+            $0.image = UIImage(named: "\(imageName)")?.resizeImage(size: CGSize(width: 20, height: 20))
         }
         let titleLabel = UILabel().then{
             $0.textColor = .white
@@ -40,7 +46,9 @@ extension ChattingViewController {
         let titleView = UIStackView().then {
             $0.distribution = .fill
             $0.axis = .horizontal
+            $0.spacing = 10
         }
+        
         let spacer = UIView()
         let constraint = spacer.widthAnchor.constraint(greaterThanOrEqualToConstant: CGFloat.greatestFiniteMagnitude)
         constraint.isActive = true
@@ -49,6 +57,8 @@ extension ChattingViewController {
         [titleImgView, titleLabel, spacer].forEach { titleView.addArrangedSubview($0)}
         
         navigationItem.titleView = titleView
+        
+        
     }
     
     // MARK: - Collection

@@ -10,11 +10,6 @@ import RxSwift
 import RxCocoa
 import SnapKit
 
-enum MenuState {
-    case opened
-    case closed
-}
-
 protocol HomeViewControllerDelegate: AnyObject {
     func loadChatting(_ chatName: String, channelId: Int, communityId: Int?)
 }
@@ -22,20 +17,31 @@ protocol HomeViewControllerDelegate: AnyObject {
 class HomeViewController: BaseViewController, CoordinatorContext {
     
     weak var coordinator: HomeCoordinator?
+    weak var delegate: HomeViewControllerDelegate?
     
     private let tabBarView = TabBarView()
-    
-    weak var delegate: HomeViewControllerDelegate?
+    private let viewModel: HomeViewModel
     
     var navigationViewController: UINavigationController?
     
     private let menuViewController = MenuViewController.instance()
     private let chattingViewController = ChattingViewController()
+
+    init() {
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        self.viewModel = HomeViewModel(
+            chatWebSocketService: appDelegate?.coordinator?.chatWebSocketService as! ChatWebSocketService
+        )
+        
+        super.init(nibName: nil, bundle: nil)
+    }
     
-    private var menuState: MenuState = .closed
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     static func instance() -> HomeViewController {
-        return HomeViewController(nibName: nil, bundle: nil)
+        return HomeViewController()
     }
     
     override func viewDidLoad() {
@@ -99,19 +105,38 @@ class HomeViewController: BaseViewController, CoordinatorContext {
     }
 }
 
+// TODO: - RxStream으로 리팩토링 필요
 // MARK: - Data 동기화 (menu < - home - > chatting)
 extension HomeViewController: MenuViewControllerDelegate {
-    func swipe(_ chatName: String, channelId: Int?, communityId: Int?) {
-        self.didTapMenuButton(channelId: channelId, communityId: communityId) // 화면전환 애니메이션
-        // delegate로 전달
-        self.delegate?.loadChatting(chatName, channelId: channelId!, communityId: communityId)
+    func swipe(_ chatName: String, destinationStatus: DestinationStatus) {
+        
+        switch (destinationStatus) {
+        case .home, .direct:
+            self.viewModel.chatWebSocketService.unsubscribe(nil)
+        case .community((let communityId, _)): // community, channel id
+            self.viewModel.chatWebSocketService.unsubscribe(communityId)
+        }
+        
+        self.viewModel.chatWebSocketService.joinChannel(destinationStatus)
+        
+        switch destinationStatus {
+        case .home:
+            break
+        case .direct(let channelId):
+            self.didTapMenuButton(channelId: channelId, communityId: nil) // 화면전환
+            self.delegate?.loadChatting(chatName, channelId: channelId, communityId: nil)
+        case .community( (let communityId, let channelId) ):
+            self.didTapMenuButton(channelId: channelId, communityId: communityId) // 화면전환
+            self.delegate?.loadChatting(chatName, channelId: channelId, communityId: communityId)
+        }
+       
     }
 }
 
 // MARK: - Menu Animation
 extension HomeViewController: ChattingViewControllerDelegate {
     func dismiss(channelId: Int?, communityId: Int?) {
-        self.menuState = .closed
+        self.viewModel.model.menuState = .closed
         toggleMenu(completion: nil)
         
     }
@@ -121,7 +146,7 @@ extension HomeViewController: ChattingViewControllerDelegate {
     }
     
     func toggleMenu(completion: (() -> Void)?) {
-        switch menuState {
+        switch self.viewModel.model.menuState {
         case .opened:
             self.tabBarView.isHidden = false
             self.chattingViewController.messageInputBar.isHidden = true
@@ -131,7 +156,7 @@ extension HomeViewController: ChattingViewControllerDelegate {
                     .width-50
             } completion: { [weak self] done in
                 if done {
-                    self?.menuState = .closed
+                    self?.self.viewModel.model.menuState = .closed
                 }
             }
             
@@ -143,7 +168,7 @@ extension HomeViewController: ChattingViewControllerDelegate {
                 self.navigationViewController?.view.frame.origin.x = 0
             } completion: { [weak self] done in
                 if done {
-                    self?.menuState = .opened
+                    self?.viewModel.model.menuState = .opened
                     DispatchQueue.main.async {
                         completion?()
                     }

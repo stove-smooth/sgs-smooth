@@ -56,6 +56,7 @@
 		C10308C327BE0CE0007B3804 /* InfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10308C227BE0CE0007B3804 /* InfoViewModel.swift */; };
 		C10308C627BE1F18007B3804 /* MemberCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10308C527BE1F18007B3804 /* MemberCell.swift */; };
 		C10308C827BE2414007B3804 /* MemberSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10308C727BE2414007B3804 /* MemberSection.swift */; };
+		C10308CA27BE428A007B3804 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10308C927BE428A007B3804 /* HomeViewModel.swift */; };
 		C118D2BE27A6AE39009CB96C /* ServerSettingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C118D2BD27A6AE39009CB96C /* ServerSettingCoordinator.swift */; };
 		C118D2C027A6B232009CB96C /* ServerSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C118D2BF27A6B232009CB96C /* ServerSettingCell.swift */; };
 		C118D2C427A6BA5D009CB96C /* ServerSettingHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C118D2C327A6BA5D009CB96C /* ServerSettingHeaderCell.swift */; };
@@ -235,6 +236,7 @@
 		C10308C227BE0CE0007B3804 /* InfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoViewModel.swift; sourceTree = "<group>"; };
 		C10308C527BE1F18007B3804 /* MemberCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberCell.swift; sourceTree = "<group>"; };
 		C10308C727BE2414007B3804 /* MemberSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberSection.swift; sourceTree = "<group>"; };
+		C10308C927BE428A007B3804 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		C106847027BD11550026D874 /* smooth-ios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "smooth-ios.entitlements"; sourceTree = "<group>"; };
 		C118D2BD27A6AE39009CB96C /* ServerSettingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSettingCoordinator.swift; sourceTree = "<group>"; };
 		C118D2BF27A6B232009CB96C /* ServerSettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSettingCell.swift; sourceTree = "<group>"; };
@@ -884,6 +886,7 @@
 			isa = PBXGroup;
 			children = (
 				C1D47F0327795ED100DBA3CA /* HomeViewController.swift */,
+				C10308C927BE428A007B3804 /* HomeViewModel.swift */,
 				C1024163279F911A00B702DB /* SubView */,
 				C1D47F0F2779D66700DBA3CA /* Menu */,
 				C1D47F4B2787CFC200DBA3CA /* Chatting */,
@@ -1274,6 +1277,7 @@
 				C1FAF64027B15B3800269EEF /* String+Extension.swift in Sources */,
 				C1D47F0E2779D66300DBA3CA /* MenuViewController.swift in Sources */,
 				C1FF758427B9F886005AAAB9 /* DirectCell.swift in Sources */,
+				C10308CA27BE428A007B3804 /* HomeViewModel.swift in Sources */,
 				C1DF653627AC32B2007FC317 /* ChannelReorderCell.swift in Sources */,
 				C1024167279F919400B702DB /* AddServerView.swift in Sources */,
 				C118D2C427A6BA5D009CB96C /* ServerSettingHeaderCell.swift in Sources */,

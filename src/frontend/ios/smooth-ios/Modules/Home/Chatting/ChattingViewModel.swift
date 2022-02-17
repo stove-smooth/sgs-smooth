@@ -21,15 +21,14 @@ class ChattingViewModel: BaseViewModel {
     
     struct Input {
         let fetch = PublishSubject<(Int?, Int?)>()
-        
         let socketMessage = PublishSubject<(MockMessage, ReceivedMessageType)>()
         
         let inputMessage = PublishSubject<String?>()
-        let disappear = PublishSubject<Void>()
     }
     
     struct Output {
         let channel = PublishRelay<(Int, String)>()
+
         
         let messages = PublishRelay<([MockMessage],ReceivedMessageType?)>()
         let socketMessage = PublishSubject<MockMessage>()
@@ -160,12 +159,6 @@ class ChattingViewModel: BaseViewModel {
                 self.chatWebSocketService.typing()
             })
             .disposed(by: disposeBag)
-        
-        self.input.disappear
-            .bind(onNext: {
-                self.chatWebSocketService.disconnect()
-            })
-            .disposed(by: disposeBag)
     }
     
     // MARK: 메시지 불러오기
@@ -207,8 +200,11 @@ class ChattingViewModel: BaseViewModel {
                     return
                 }
                 
-                self.fetchMessageToModel(response: response)
-                self.model.page = page + 1
+                let isLast = self.fetchMessageToModel(response: response)
+                
+                if (!isLast) {
+                    self.model.page = page + 1
+                }
             }
         }
     }
@@ -273,11 +269,6 @@ class ChattingViewModel: BaseViewModel {
         }
         
         self.model.isConnected = true
-    }
-    
-    private func disappear() {
-        self.chatWebSocketService.disconnect()
-        self.model.isConnected = false
     }
     
     private func sendMessage(message: String) {

@@ -13,7 +13,6 @@ import Toast_Swift
 
 protocol ChattingViewControllerDelegate: AnyObject {
     func didTapMenuButton(channelId: Int?, communityId: Int?)
-    func dismiss(channelId: Int?, communityId: Int?)
 }
 
 class ChattingViewController: MessagesViewController {
@@ -52,13 +51,6 @@ class ChattingViewController: MessagesViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        self.messageInputBar.isHidden = false
-        delegate?.dismiss(channelId: self.viewModel.model.channel.0, communityId: self.viewModel.model.communityId)
-        
-        super.viewWillAppear(animated)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -94,12 +86,6 @@ class ChattingViewController: MessagesViewController {
         self.coordinator?.goToInfo(isGroup: isGroup, id: id)
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        delegate?.dismiss(channelId: self.viewModel.model.channel.0, communityId: self.viewModel.model.communityId)
-        
-        super.viewWillDisappear(animated)
-    }
-    
     func bindEvent() {
         self.viewModel.showToastMessage
             .asDriver(onErrorJustReturn: "")
@@ -132,7 +118,7 @@ class ChattingViewController: MessagesViewController {
             .bind(onNext: { (channelId, channelName) in
                 self.viewModel.input.fetch.onNext((channelId, nil))
                 self.viewModel.model.channel = (channelId, channelName)
-                self.viewModel.model.page = 0
+                
                 self.configureNavigationController(channelId: channelId, channelName: channelName)
                 self.messagesCollectionView.reloadData()
                 self.messagesCollectionView.scrollToLastItem()
@@ -147,6 +133,8 @@ class ChattingViewController: MessagesViewController {
                     
                     if (messages.count > 0) {
                         self.messageList = messages
+                    } else {
+                        self.viewModel.showErrorMessage.accept("메시지 불러오기 완료")
                     }
                     
                     self.messagesCollectionView.reloadDataAndKeepOffset()
@@ -212,7 +200,7 @@ extension ChattingViewController: HomeViewControllerDelegate {
         self.messageList = []
         self.viewModel.output.messages.accept(([], nil))
         self.viewModel.model.page = 0
-        self.viewModel.input.disappear.onNext(())
+        
         self.viewModel.model.communityId = communityId
         self.viewModel.output.channel.accept((channelId, chatName))
     }
