@@ -80,8 +80,9 @@ public class UserController {
 
     @PostMapping("/refresh")
     public DataResponse<SignInResponse> refreshToken(@RequestHeader("AUTHORIZATION") String token,
-                                                     @RequestHeader("REFRESH-TOKEN") String refreshToken) {
-        return responseService.getDataResponse(accountService.checkRefreshToken(token,refreshToken));
+                                                     @RequestHeader("REFRESH-TOKEN") String refreshToken,
+                                                     @RequestHeader("URL") String url) {
+        return responseService.getDataResponse(accountService.checkRefreshToken(token,refreshToken,url));
     }
 
     @PostMapping("/find-id-list")
@@ -112,8 +113,8 @@ public class UserController {
         return responseService.getSuccessResponse();
     }
 
-    @GetMapping("/name")
-    public DataResponse<NameAndPhotoResponse> getNameAndPhotoById(@RequestParam(value = "id") Long id) {
+    @GetMapping("/auth/name/{id}")
+    public DataResponse<NameAndPhotoResponse> getNameAndPhotoById(@PathVariable(value = "id") Long id) {
 
         return responseService.getDataResponse(accountService.getNameAndPhoto(id));
     }
@@ -121,6 +122,4 @@ public class UserController {
     public Map<Long,DeviceResponse> getDeviceToken(@RequestBody List<Long> ids) {
         return accountService.getDeviceToken(ids);
     }
-
-
 }

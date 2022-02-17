@@ -1,6 +1,7 @@
 package com.example.chatserver.controller;
 
 import com.example.chatserver.dto.request.SignalingRequest;
+import com.example.chatserver.dto.request.StateRequest;
 import com.example.chatserver.kafka.MessageSender;
 import com.example.chatserver.domain.DirectMessage;
 import com.example.chatserver.dto.request.FileUploadRequest;
@@ -36,10 +37,12 @@ public class DirectMessageController {
     @Value("${spring.kafka.consumer.file-topic}")
     private String fileTopic;
 
+    @Value("${spring.kafka.consumer.state-topic}")
+    private String stateTopic;
+
     private final MessageSender messageSender;
     private final DirectMessageService directChatService;
     private final ResponseService responseService;
-    private final SimpMessagingTemplate template;
 
     @MessageMapping("/send-direct-typing")
     public void sendTyping(@Payload DirectMessage directChat) {
@@ -96,6 +99,11 @@ public class DirectMessageController {
 
     @PostMapping("/signaling-list-direct")
     public void getSignalingListForDirect(@RequestBody SignalingRequest signalingRequest) {
-        template.convertAndSend("/topic/direct/" + signalingRequest.getChannelId(), signalingRequest.toString());
+        StateRequest stateRequest = StateRequest.builder()
+                .type("exit-community")
+                .typeForExit(signalingRequest.getType())
+                .channelId(signalingRequest.getChannelId())
+                .ids(signalingRequest.getIds()).build();
+        messageSender.signaling(stateTopic, stateRequest);
     }
 }

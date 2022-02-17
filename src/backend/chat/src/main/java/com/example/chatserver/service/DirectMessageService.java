@@ -109,7 +109,7 @@ public class DirectMessageService {
 
             FileUploadResponse uploadResponse = FileUploadResponse.builder()
                     .id(save.getId())
-                    .userId(save.getUserId())
+                    .userId(String.valueOf(save.getUserId()))
                     .name(fileUploadRequest.getName())
                     .profileImage(fileUploadRequest.getProfileImage())
                     .channelId(fileUploadRequest.getChannelId())
@@ -138,7 +138,7 @@ public class DirectMessageService {
 
             FileUploadResponse uploadResponse = FileUploadResponse.builder()
                     .id(save.getId())
-                    .userId(save.getUserId())
+                    .userId(String.valueOf(save.getUserId()))
                     .name(fileUploadRequest.getName())
                     .profileImage(fileUploadRequest.getProfileImage())
                     .channelId(save.getChannelId())
@@ -193,7 +193,7 @@ public class DirectMessageService {
                 }
                 // 유저가 그 채널에 들어간적 있으면
                 else {
-                    List<DirectMessage> msg = directChatRepository.findByChannelIdAndLocalDateTimeBetween(roomId, start,LocalDateTime.now());
+                    List<DirectMessage> msg = directChatRepository.findByChannelIdAndLocalDateTimeAfter(roomId, start);
                     int size = msg.size();
                     // 메세지를 다 읽었으면
                     if (size == 0) {

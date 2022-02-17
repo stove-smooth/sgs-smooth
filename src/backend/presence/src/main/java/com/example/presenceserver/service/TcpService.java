@@ -101,7 +101,7 @@ public class TcpService {
                     String s = mapper.writeValueAsString(temp);
                     redisTemplate.opsForValue().set(place, s, TIME, TimeUnit.MILLISECONDS);
                 }
-                return lastRoom;
+                return lastRoom + SEP + place;
             }
             case "direct":
             case "community": {
@@ -115,13 +115,22 @@ public class TcpService {
             }
             case "before-enter": {
                 Map<String,List<String>> result = new HashMap<>();
+                String lastRoom = String.valueOf(redisTemplate.opsForValue().get("USER" + request.getUser_id()));
+                log.info(lastRoom);
+                String lastRoomList = String.valueOf(redisTemplate.opsForValue().get(lastRoom));
+                if (!lastRoom.equals("null")) {
+                    if (!lastRoom.equals("[]")) {
+                        HashSet hashSet = objectMapper.readValue(lastRoomList, HashSet.class);
+                        hashSet.remove(request.getUser_id());
+                        redisTemplate.opsForValue().set(lastRoom,objectMapper.writeValueAsString(hashSet));
+                    }
+                }
                 List<String> keys = redisTemplate.keys("*").stream()
                         .filter(k -> String.valueOf(k).startsWith("com" + request.getCommunity_id())).collect(Collectors.toList());
                 for (String i : keys) {
-                    log.info("방이름:" + i);
+                    log.info("before-enter방이름:" + i);
                     String value = String.valueOf(redisTemplate.opsForValue().get(i));
                     if (value.equals("null") || value.equals("[]")) {
-                        log.info("여기로와");
                         ArrayList arrayList = new ArrayList();
                         String channelId = i.split(",")[1].split("-")[1];
                         result.put(channelId,arrayList);
@@ -137,18 +146,15 @@ public class TcpService {
             case "enter": {
                 String user_id = "USER" + request.getUser_id();
                 String lastRoom = String.valueOf(redisTemplate.opsForValue().get(user_id));
-                log.info("지난 방:" + lastRoom);
+                log.info("enter지난 방:" + lastRoom);
                 String lastRoomList = String.valueOf(redisTemplate.opsForValue().get(lastRoom));
-                log.info("지난 방 인원들:" + lastRoomList);
+                log.info("enter지난 방 인원들:" + lastRoomList);
                 // 지난 방에서 내 기록 삭제
                 if (!lastRoomList.equals("null")) {
-                    log.info("check1");
                     if (!lastRoomList.equals("[]")) {
-                        log.info("check2");
                         HashSet hashSet = objectMapper.readValue(lastRoomList, HashSet.class);
                         hashSet.remove(request.getUser_id());
                         redisTemplate.opsForValue().set(lastRoom,objectMapper.writeValueAsString(hashSet));
-                        log.info("check3");
                     }
                 }
 
@@ -172,10 +178,9 @@ public class TcpService {
                 List<String> keys = redisTemplate.keys("*").stream()
                         .filter(k -> String.valueOf(k).startsWith("com" + request.getCommunity_id())).collect(Collectors.toList());
                 for (String i : keys) {
-                    log.info("방이름:" + i);
+                    log.info("enter방이름:" + i);
                     String value = String.valueOf(redisTemplate.opsForValue().get(i));
                     if (value.equals("null") || value.equals("[]")) {
-                        log.info("여기로와");
                         ArrayList arrayList = new ArrayList();
                         String channelId = i.split(",")[1].split("-")[1];
                         result.put(channelId,arrayList);
@@ -190,32 +195,39 @@ public class TcpService {
             }
             case "signaling": {
                 if (request.getCommunity_id() != null) {
-                    String lastRoom = String.valueOf(redisTemplate.opsForValue().get(request.getUser_id()));
-                    String communityId = lastRoom.split(",")[0].split("com")[1];
-                    String channelId = lastRoom.split(",")[1].split("-")[1];
+                    String lastRoom = "com" + request.getCommunity_id() + SEP + request.getChannel_id();
+                    log.info(lastRoom);
                     String lastRoomList = String.valueOf(redisTemplate.opsForValue().get(lastRoom));
                     if (!lastRoom.equals("null")) {
-                        HashSet hashSet = objectMapper.readValue(lastRoomList, HashSet.class);
-                        hashSet.remove(request.getUser_id());
-                        redisTemplate.opsForValue().set(lastRoom,objectMapper.writeValueAsString(hashSet));
+                        if (!lastRoom.equals("[]")) {
+                            HashSet hashSet = objectMapper.readValue(lastRoomList, HashSet.class);
+                            hashSet.remove(request.getUser_id());
+                            redisTemplate.opsForValue().set(lastRoom,objectMapper.writeValueAsString(hashSet));
+                        }
                     }
                     String value = String.valueOf(redisTemplate.opsForValue().get(lastRoom));
+                    log.info("signaling유저리스트커뮤있을때:" + value);
                     ArrayList arrayList = objectMapper.readValue(value, ArrayList.class);
                     SignalingRequest signalingRequest = SignalingRequest.builder()
                             .type("disconnect")
-                            .communityId(communityId)
-                            .channelId(channelId)
+                            .communityId(request.getCommunity_id())
                             .ids(arrayList).build();
+                    log.info(signalingRequest.getCommunityId());
                     chatClient.getSignalingListForCommunity(signalingRequest);
                 } else {
+
+                    HashSet hashSet = new HashSet();
                     String lastRoom = request.getChannel_id();
                     String lastRoomList = String.valueOf(redisTemplate.opsForValue().get(lastRoom));
                     if (!lastRoom.equals("null")) {
-                        HashSet hashSet = objectMapper.readValue(lastRoomList, HashSet.class);
-                        hashSet.remove(request.getUser_id());
-                        redisTemplate.opsForValue().set(lastRoom,objectMapper.writeValueAsString(hashSet));
+                        if (!lastRoom.equals("[]")) {
+                            hashSet = objectMapper.readValue(lastRoomList, HashSet.class);
+                            hashSet.remove(request.getUser_id());
+                            redisTemplate.opsForValue().set(lastRoom,objectMapper.writeValueAsString(hashSet));
+                        }
                     }
-                    String value = String.valueOf(redisTemplate.opsForValue().get(lastRoom));
+                    String value = String.valueOf(hashSet);
+                    log.info("signaling유저리스트커무없을때:" + value);
                     ArrayList arrayList = objectMapper.readValue(value, ArrayList.class);
                     SignalingRequest signalingRequest = SignalingRequest.builder()
                             .type("disconnect")

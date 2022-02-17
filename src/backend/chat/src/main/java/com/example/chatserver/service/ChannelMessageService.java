@@ -10,6 +10,8 @@ import com.example.chatserver.dto.request.LoginSessionRequest;
 import com.example.chatserver.dto.response.*;
 import com.example.chatserver.repository.ChannelMessageRepository;
 import com.example.chatserver.repository.MessageTimeRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -35,6 +38,8 @@ public class ChannelMessageService {
     private final UserClient userClient;
     private final S3Config s3Config;
     private final MessageTimeRepository messageTimeRepository;
+    private final ObjectMapper objectMapper;
+    private final SimpMessagingTemplate template;
     // 2주
     private long TIME = 14 * 24 * 60 * 60 * 1000L;
 
@@ -109,7 +114,7 @@ public class ChannelMessageService {
 
             FileUploadResponse uploadResponse = FileUploadResponse.builder()
                     .id(save.getId())
-                    .userId(save.getUserId())
+                    .userId(String.valueOf(save.getUserId()))
                     .name(fileUploadRequest.getName())
                     .profileImage(fileUploadRequest.getProfileImage())
                     .message(image)
@@ -137,7 +142,7 @@ public class ChannelMessageService {
 
             FileUploadResponse uploadResponse = FileUploadResponse.builder()
                     .id(save.getId())
-                    .userId(save.getUserId())
+                    .userId(String.valueOf(save.getUserId()))
                     .name(fileUploadRequest.getName())
                     .profileImage(fileUploadRequest.getProfileImage())
                     .message(image)
@@ -163,20 +168,39 @@ public class ChannelMessageService {
         }
     }
 
-    public void setRoomTime(LoginSessionRequest loginSessionRequest, String lastRoom) {
-        MessageTime result = messageTimeRepository.findByChannelId(lastRoom);
-        if (result == null) {
-            Map<String,LocalDateTime> users = new HashMap<>();
-            users.put(loginSessionRequest.getUser_id(), LocalDateTime.now());
-            MessageTime messageTime = MessageTime.builder()
-                    .channelId(lastRoom)
-                    .read(users).build();
-            messageTimeRepository.save(messageTime);
-        } else {
-            Map<String, LocalDateTime> read = result.getRead();
-            read.put(loginSessionRequest.getUser_id(),LocalDateTime.now());
-            result.setRead(read);
-            messageTimeRepository.save(result);
+    public void setRoomTime(LoginSessionRequest loginSessionRequest, String lastRoom, String nowRoom) {
+        if (!lastRoom.equals("home")) {
+            MessageTime result = messageTimeRepository.findByChannelId(lastRoom);
+            if (result == null) {
+                Map<String,LocalDateTime> users = new HashMap<>();
+                users.put(loginSessionRequest.getUser_id(), LocalDateTime.now());
+                MessageTime messageTime = MessageTime.builder()
+                        .channelId(lastRoom)
+                        .read(users).build();
+                messageTimeRepository.save(messageTime);
+            } else {
+                Map<String, LocalDateTime> read = result.getRead();
+                read.put(loginSessionRequest.getUser_id(),LocalDateTime.now());
+                result.setRead(read);
+                messageTimeRepository.save(result);
+            }
+        }
+
+        if (!nowRoom.equals("home")) {
+            MessageTime r = messageTimeRepository.findByChannelId(nowRoom);
+            if (r == null) {
+                Map<String,LocalDateTime> users = new HashMap<>();
+                users.put(loginSessionRequest.getUser_id(), LocalDateTime.now());
+                MessageTime messageTime = MessageTime.builder()
+                        .channelId(lastRoom)
+                        .read(users).build();
+                messageTimeRepository.save(messageTime);
+            } else {
+                Map<String, LocalDateTime> read = r.getRead();
+                read.put(loginSessionRequest.getUser_id(),LocalDateTime.now());
+                r.setRead(read);
+                messageTimeRepository.save(r);
+            }
         }
     }
 }
