@@ -51,6 +51,11 @@
 		C102417927A0041D00B702DB /* RegisterServerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C102417827A0041D00B702DB /* RegisterServerViewController.swift */; };
 		C102417C27A0050B00B702DB /* RegisterServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C102417B27A0050B00B702DB /* RegisterServerView.swift */; };
 		C102417E27A005E300B702DB /* RegisterIconViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C102417D27A005E300B702DB /* RegisterIconViewModel.swift */; };
+		C10308BF27BDDF40007B3804 /* InfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10308BE27BDDF40007B3804 /* InfoViewController.swift */; };
+		C10308C127BDDFD8007B3804 /* InfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10308C027BDDFD8007B3804 /* InfoView.swift */; };
+		C10308C327BE0CE0007B3804 /* InfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10308C227BE0CE0007B3804 /* InfoViewModel.swift */; };
+		C10308C627BE1F18007B3804 /* MemberCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10308C527BE1F18007B3804 /* MemberCell.swift */; };
+		C10308C827BE2414007B3804 /* MemberSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10308C727BE2414007B3804 /* MemberSection.swift */; };
 		C118D2BE27A6AE39009CB96C /* ServerSettingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C118D2BD27A6AE39009CB96C /* ServerSettingCoordinator.swift */; };
 		C118D2C027A6B232009CB96C /* ServerSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C118D2BF27A6B232009CB96C /* ServerSettingCell.swift */; };
 		C118D2C427A6BA5D009CB96C /* ServerSettingHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C118D2C327A6BA5D009CB96C /* ServerSettingHeaderCell.swift */; };
@@ -225,6 +230,11 @@
 		C102417827A0041D00B702DB /* RegisterServerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterServerViewController.swift; sourceTree = "<group>"; };
 		C102417B27A0050B00B702DB /* RegisterServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterServerView.swift; sourceTree = "<group>"; };
 		C102417D27A005E300B702DB /* RegisterIconViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterIconViewModel.swift; sourceTree = "<group>"; };
+		C10308BE27BDDF40007B3804 /* InfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoViewController.swift; sourceTree = "<group>"; };
+		C10308C027BDDFD8007B3804 /* InfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoView.swift; sourceTree = "<group>"; };
+		C10308C227BE0CE0007B3804 /* InfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoViewModel.swift; sourceTree = "<group>"; };
+		C10308C527BE1F18007B3804 /* MemberCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberCell.swift; sourceTree = "<group>"; };
+		C10308C727BE2414007B3804 /* MemberSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberSection.swift; sourceTree = "<group>"; };
 		C106847027BD11550026D874 /* smooth-ios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "smooth-ios.entitlements"; sourceTree = "<group>"; };
 		C118D2BD27A6AE39009CB96C /* ServerSettingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSettingCoordinator.swift; sourceTree = "<group>"; };
 		C118D2BF27A6B232009CB96C /* ServerSettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSettingCell.swift; sourceTree = "<group>"; };
@@ -520,6 +530,16 @@
 			path = Regist;
 			sourceTree = "<group>";
 		};
+		C10308C427BE0F2F007B3804 /* Info */ = {
+			isa = PBXGroup;
+			children = (
+				C10308BE27BDDF40007B3804 /* InfoViewController.swift */,
+				C10308C227BE0CE0007B3804 /* InfoViewModel.swift */,
+				C10308C027BDDFD8007B3804 /* InfoView.swift */,
+			);
+			path = Info;
+			sourceTree = "<group>";
+		};
 		C118D2C527A6D5A6009CB96C /* SubView */ = {
 			isa = PBXGroup;
 			children = (
@@ -727,6 +747,7 @@
 				C1D47F51278B0F4900DBA3CA /* ChannalCell.swift */,
 				C118D2F027A7B61A009CB96C /* ChannelCategoryCell.swift */,
 				C1FF758327B9F886005AAAB9 /* DirectCell.swift */,
+				C10308C527BE1F18007B3804 /* MemberCell.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -854,6 +875,7 @@
 				C1C8B23527A97B2100E8758E /* Message.swift */,
 				C1C8B24527AA438900E8758E /* MockMessage.swift */,
 				C1FF757927B92984005AAAB9 /* Room.swift */,
+				C10308C727BE2414007B3804 /* MemberSection.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -865,6 +887,7 @@
 				C1024163279F911A00B702DB /* SubView */,
 				C1D47F0F2779D66700DBA3CA /* Menu */,
 				C1D47F4B2787CFC200DBA3CA /* Chatting */,
+				C10308C427BE0F2F007B3804 /* Info */,
 				C118D2E627A78D4D009CB96C /* Category */,
 				C118D2D327A70F12009CB96C /* Channel-make */,
 				C1AA6AFE27A40332003A32A4 /* Server-Info */,
@@ -1132,6 +1155,7 @@
 				2709161C27912CB000A0772D /* FriendEmptyView.swift in Sources */,
 				C118D2C827A6D6E3009CB96C /* ServerInviteListView.swift in Sources */,
 				C17A95D827BAC47A00BA4F6C /* ProfileCoordinator.swift in Sources */,
+				C10308BF27BDDF40007B3804 /* InfoViewController.swift in Sources */,
 				C1244F8027A63D4000BEC173 /* Member.swift in Sources */,
 				C1D47ED8277959AA00DBA3CA /* Coordinator.swift in Sources */,
 				C102414A279DAA5700B702DB /* Channel.swift in Sources */,
@@ -1164,6 +1188,7 @@
 				C1024177279FEB3F00B702DB /* MakeServerView.swift in Sources */,
 				C1244F8727A64B2100BEC173 /* EditServerInfoViewModel.swift in Sources */,
 				C1D47F2F2784220800DBA3CA /* Font+Extension.swift in Sources */,
+				C10308C627BE1F18007B3804 /* MemberCell.swift in Sources */,
 				C1D47EF027795D1E00DBA3CA /* BaseViewModel.swift in Sources */,
 				C15A22C4279A37230009095E /* Image+Extension.swift in Sources */,
 				C102416D279FBBA100B702DB /* JoinServerView.swift in Sources */,
@@ -1185,6 +1210,7 @@
 				C150A0A527B659ED00704B50 /* VerifyCodeView.swift in Sources */,
 				C1B63F5827A104F900382BF6 /* ImagePickerController+Rx.swift in Sources */,
 				C1C8B23027A8FEC400E8758E /* DirectView.swift in Sources */,
+				C10308C327BE0CE0007B3804 /* InfoViewModel.swift in Sources */,
 				C1D47F112779D6FD00DBA3CA /* ChattingViewController.swift in Sources */,
 				C1D47F3C278474AA00DBA3CA /* SignupViewController.swift in Sources */,
 				C1C8B21027A8138600E8758E /* ChannelSettingView.swift in Sources */,
@@ -1205,6 +1231,7 @@
 				C102417927A0041D00B702DB /* RegisterServerViewController.swift in Sources */,
 				C118D2D227A70062009CB96C /* ServerInviteEmptyView.swift in Sources */,
 				C1C8B22D27A8CA2B00E8758E /* CategoryReorderCell.swift in Sources */,
+				C10308C127BDDFD8007B3804 /* InfoView.swift in Sources */,
 				C1024169279F91A600B702DB /* AddServerViewModel.swift in Sources */,
 				C1C8B23627A97B2100E8758E /* Message.swift in Sources */,
 				C1AA6AFB27A4031F003A32A4 /* ServerInfoViewController.swift in Sources */,
@@ -1261,6 +1288,7 @@
 				C118D2D727A77219009CB96C /* MakeChannelViewController.swift in Sources */,
 				C1024172279FEA2100B702DB /* MakeServerViewController.swift in Sources */,
 				2709162B2791804200A0772D /* Friend.swift in Sources */,
+				C10308C827BE2414007B3804 /* MemberSection.swift in Sources */,
 				C102414E279DADAE00B702DB /* ChannelSection.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

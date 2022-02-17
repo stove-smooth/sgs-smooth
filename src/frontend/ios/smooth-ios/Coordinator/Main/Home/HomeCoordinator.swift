@@ -88,4 +88,11 @@ class HomeCoordinator: NSObject, Coordinator {
         
         coordinator.start()
     }
+    
+    func goToInfo(isGroup: Bool, id: Int) {
+        let infoVC = InfoViewController.instance(isGroup: isGroup, id: id)
+        infoVC.coordinator = self
+        
+        navigationController.pushViewController(infoVC, animated: true)
+    }
 }
