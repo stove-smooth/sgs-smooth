@@ -415,8 +415,10 @@ public class CommunityService {
                             .filter(rm -> !rm.getUserId().equals(userId))
                             .map(RoomMember::getUserId)
                             .findAny().orElse(null);
-                    UserResponse otherUser = userMap.get(otherUserId);
-                    unreceivedMessageRoomResponse.setIcon(otherUser.getImage());
+                    if (!Objects.isNull(otherUserId)) {
+                        UserResponse otherUser = userMap.get(otherUserId);
+                        unreceivedMessageRoomResponse.setIcon(otherUser.getImage());
+                    }
                 }
                 roomResponses.add(unreceivedMessageRoomResponse);
             }

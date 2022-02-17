@@ -423,7 +423,7 @@ public class RoomService {
                 .orElseThrow(() -> new CustomException(NON_VALID_ROOM));
 
         List<Long> ids = room.getMembers().stream()
-                .filter(cm -> cm.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .filter(rm -> rm.getStatus().equals(CommonStatus.NORMAL))
                 .map(RoomMember::getUserId)
                 .collect(Collectors.toList());
 
