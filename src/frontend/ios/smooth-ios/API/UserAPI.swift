@@ -38,8 +38,8 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
             return "/auth-server/check-email"
         case .fetchUserInfo:
             return "/auth-server/auth/info"
-        case .fetchUserInfoById:
-            return "/auth-server/name"
+        case .fetchUserInfoById(let userId):
+            return "/auth-server/auth/name/\(userId)"
         case .updateUserBio:
             return "/auth-server/auth/profile"
         }
@@ -84,8 +84,8 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
             return .requestParameters(parameters: ["key": key], encoding: URLEncoding.queryString)
         case .fetchUserInfo:
             return .requestPlain
-        case .fetchUserInfoById(let userId):
-            return .requestParameters(parameters: ["id": userId], encoding: URLEncoding.queryString)
+        case .fetchUserInfoById:
+            return .requestPlain
         case .updateUserBio(let bio):
             return .requestParameters(
                 parameters: ["bio": bio],
@@ -95,8 +95,10 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
     
     var authorizationType: AuthorizationType? {
         switch  self {
-        case .signIn, .signUp, .sendMail, .verifyCode, .fetchUserInfoById:
+        case .signIn, .signUp, .sendMail, .verifyCode:
             return nil
+        case .fetchUserInfoById:
+            return .custom("")
         case .fetchUserInfo:
             return .custom("")
         case .updateUserProfile:
