@@ -12,5 +12,5 @@ import lombok.Setter;
 public class AudioStateRequest {
     private String id;
     private String userId;
-    private String audio;
+    private boolean audio;
 }

@@ -3,6 +3,7 @@ package com.example.notificationserver.service;
 import com.example.notificationserver.client.UserClient;
 import com.example.notificationserver.dto.request.ChannelMessageRequest;
 import com.example.notificationserver.dto.request.DirectMessageRequest;
+import com.example.notificationserver.dto.request.Test2Request;
 import com.example.notificationserver.dto.request.TestRequest;
 import com.example.notificationserver.dto.response.DeviceTokenResponse;
 import com.example.notificationserver.util.FcmUtil;
@@ -27,6 +28,25 @@ public class NotificationService {
     private final static int PROCESS_INTERVAL = 1000 * 2;
 
     private static ConcurrentHashMap<Long, List<MulticastMessage>> job = new ConcurrentHashMap<>();
+
+    public void testSend(Test2Request testRequest) {
+        Long userId = 1L;
+        String username = "김희동";
+        String type = "text";
+        String content = "ㅎㅇㅎㅇㅎㅇ";
+        String channelName = "스무th";
+        String target = "[1, 2, 3]";
+        ChannelMessageRequest request =
+                new ChannelMessageRequest(userId, username, type, content, channelName, testRequest.getCommunityId(), testRequest.getChannelId(), target);
+        Map<Long, DeviceTokenResponse> deviceTokens = new HashMap<>();
+        String token = testRequest.getToken();
+        String requestPlatform = testRequest.getPlatform();
+        deviceTokens.put(3L, new DeviceTokenResponse(requestPlatform, token));
+        Map<String, List<String>> targetTokensByPlatform = getTokensByPlatform(deviceTokens);
+        for (Entry<String, List<String>> platform: targetTokensByPlatform.entrySet()) {
+            sendMessage(platform.getValue(), request, platform.getKey());
+        }
+    }
 
     public void send(DirectMessageRequest request) {
         List<Long> ids = convertStringToList(request.getTarget());

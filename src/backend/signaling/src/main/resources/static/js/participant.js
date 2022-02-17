@@ -1,8 +1,11 @@
 const PARTICIPANT_MAIN_CLASS = 'participant main';
 const PARTICIPANT_CLASS = 'participant';
 
-function Participant(userId) {
+function Participant(userId, videoStatus, audioStatus) {
     this.userId = userId;
+    this.videoStatus = videoStatus;
+    this.audioStatus = audioStatus;
+
     var container = document.createElement('div');
     container.className = isPresentMainParticipant() ? PARTICIPANT_CLASS : PARTICIPANT_MAIN_CLASS;
     container.id = userId;
