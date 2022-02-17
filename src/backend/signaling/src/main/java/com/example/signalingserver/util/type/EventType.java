@@ -21,6 +21,7 @@ public class EventType {
     // properties in event
     public static final String USER_ID = "userId";
     public static final String ROOM_ID = "roomId";
+    public static final String MEMBER = "member";
     public static final String MEMBERS = "members";
     public static final String SDP_ANSWER = "sdpAnswer";
     public static final String CANDIDATE = "candidate";

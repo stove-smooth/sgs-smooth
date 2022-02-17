@@ -16,6 +16,7 @@ import com.example.communityserver.repository.CommunityRepository;
 import com.example.communityserver.repository.RoomMemberRepository;
 import com.example.communityserver.util.AmazonS3Connector;
 import com.example.communityserver.util.Base62;
+import com.example.communityserver.util.UserStateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -350,7 +351,7 @@ public class CommunityService {
         return CommunityDetailResponse.fromEntity(community);
     }
 
-    public MainResponse getCommunityList(Long userId) {
+    public MainResponse getCommunityList(Long userId, String token) {
         CommunityMember firstNode = getFirstNode(userId);
 
         // 소속 커뮤니티 조회
@@ -377,8 +378,21 @@ public class CommunityService {
                 .filter(rm -> rm.getStatus().equals(CommonStatus.NORMAL))
                 .map(RoomMember::getRoom)
                 .collect(Collectors.toList());
+
+        // auth service에 요청보낼 user id 리스트
+        List<Long> ids = new ArrayList<>();
+        rooms.forEach(room -> {
+            // 1:1 메세지의 경우 상대방 user id 추출 후 리스트에 추가
+            if (!room.getIsGroup()) {
+                Long otherUserId = getOtherAccountIdInRoom(room, userId);
+                ids.add(otherUserId);
+            }
+        });
+        // 유저 정보 요청
+        HashMap<Long, UserResponse> userMap = getUserMap(ids, token);
+
         List<Long> roomIds = rooms.stream().map(Room::getId).collect(Collectors.toList());
-        List<UnreceivedMessageRoomResponse> roomResponse = new ArrayList<>();
+        List<UnreceivedMessageRoomResponse> roomResponses = new ArrayList<>();
 
         try {
             List<MessageCountResponse> sortedRoomsWithCount = chatClient.getMyMessages(new MessageCountRequest(userId, roomIds)).stream()
@@ -392,15 +406,35 @@ public class CommunityService {
             }
 
             for (MessageCountResponse roomWithCount: sortedRoomsWithCount) {
-                roomResponse.add(UnreceivedMessageRoomResponse.fromEntity(
-                        roomHashMap.get(roomWithCount.getRoomId()), roomWithCount.getCount())
-                );
+                Room r = roomHashMap.get(roomWithCount.getRoomId());
+                int count = roomWithCount.getCount();
+                UnreceivedMessageRoomResponse unreceivedMessageRoomResponse = UnreceivedMessageRoomResponse.fromEntity(r, count);
+
+                if (!r.getIsGroup()) {
+                    Long otherUserId = r.getMembers().stream()
+                            .filter(rm -> !rm.getUserId().equals(userId))
+                            .map(RoomMember::getUserId)
+                            .findAny().orElse(null);
+                    if (!Objects.isNull(otherUserId)) {
+                        UserResponse otherUser = userMap.get(otherUserId);
+                        unreceivedMessageRoomResponse.setIcon(otherUser.getImage());
+                    }
+                }
+                roomResponses.add(unreceivedMessageRoomResponse);
             }
         } catch (Exception e) {
             log.error("CHAT SERVER ERROR");
+            e.printStackTrace();
         }
 
-        return new MainResponse(roomResponse, communityResponses);
+        return new MainResponse(roomResponses, communityResponses);
+    }
+
+    private Long getOtherAccountIdInRoom(Room room, Long userId) {
+        return room.getMembers().stream()
+                .filter(rm -> !rm.getUserId().equals(userId))
+                .findAny().orElseThrow(() -> new CustomException(EMPTY_USER_IN_ROOM))
+                .getUserId();
     }
 
     public CommunityMember getFirstNode(Long userId) {
@@ -470,11 +504,13 @@ public class CommunityService {
     public List<String> getIncludeRoomList(Long userId) {
         List<String> communities = communityMemberRepository.findByUserId(userId).stream()
                 .filter(cm -> cm.getStatus().equals(CommunityMemberStatus.NORMAL))
-                .map(cm -> COMMUNITY + cm.getId())
+                .map(CommunityMember::getCommunity)
+                .map(c -> COMMUNITY + c.getId())
                 .collect(Collectors.toList());
         List<String> rooms = roomMemberRepository.findByUserId(userId).stream()
                 .filter(rm -> rm.getStatus().equals(CommonStatus.NORMAL))
-                .map(rm -> DIRECT + rm.getId())
+                .map(RoomMember::getRoom)
+                .map(r -> DIRECT + r.getId())
                 .collect(Collectors.toList());
 
         List<String> list = new ArrayList<>();

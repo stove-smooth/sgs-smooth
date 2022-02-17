@@ -162,14 +162,14 @@ public class MessageHandler extends TextWebSocketHandler {
         }
         log.info("[Connection Closed] user {}, CloseStatus : {}", user.getUserId(), status);
         // 상태관리 서버로 접속 정보 전송
-//        try {
-//            StateRequest logoutRequest = new StateRequest(State.DISCONNECT, user.getUserId(), user.getCommunityId(), user.getRoomId());
-//            log.info("PRESENCE SERVER SEND : {}", logoutRequest.toString());
-//            tcpClientGateway.send(logoutRequest.toString());
-//        } catch (Exception e) {
-//            log.error("PRESENCE ERROR : {}", e.getMessage());
-//            e.printStackTrace();
-//        }
+        try {
+            StateRequest logoutRequest = new StateRequest(State.DISCONNECT, user.getUserId(), user.getCommunityId(), user.getRoomId());
+            log.info("PRESENCE SERVER SEND : {}", logoutRequest.toString());
+            tcpClientGateway.send(logoutRequest.toString());
+        } catch (Exception e) {
+            log.error("PRESENCE ERROR : {}", e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -188,9 +188,11 @@ public class MessageHandler extends TextWebSocketHandler {
         final String roomId = request.getRoomId();
         final String userId = request.getUserId();
         final String communityId = request.getCommunityId();
+        final boolean video = request.isVideo();
+        final boolean audio = request.isAudio();
 
         Room room = roomManager.getRoom(roomId, communityId);
-        final UserSession user = room.join(userId, session, communityId);
+        final UserSession user = room.join(userId, session, communityId, video, audio);
         // 최대 접속 인원 초과 시 입장 제한
         if (Objects.isNull(user)) return;
         registry.register(user);

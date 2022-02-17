@@ -15,4 +15,6 @@ public class JoinRequest {
     private String userId;
     private String communityId;
     private String roomId;
+    private boolean video;
+    private boolean audio;
 }

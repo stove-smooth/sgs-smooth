@@ -10,10 +10,10 @@ import static com.example.signalingserver.util.type.EventType.*;
 public class Message {
 
     // 새로운 참가자에 대한 정보 전송
-    public static JsonObject newParticipantArrived(String userId) {
+    public static JsonObject newParticipantArrived(JsonElement participantInfo) {
         final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(ID, NEW_PARTICIPANT_ARRIVED);
-        jsonObject.addProperty(USER_ID, userId);
+        jsonObject.add(MEMBER, participantInfo);
         return jsonObject;
     }
 
@@ -52,7 +52,7 @@ public class Message {
     }
 
     // 비디오 상태 변경에 대한 응답
-    public static JsonObject videoStateAnswer(String userId, String video) {
+    public static JsonObject videoStateAnswer(String userId, boolean video) {
         final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(ID, VIDEO_STATE_ANSWER);
         jsonObject.addProperty(USER_ID, userId);
@@ -61,7 +61,7 @@ public class Message {
     }
 
     // 오디오 상태 변경에 대한 응답
-    public static JsonObject audioStateAnswer(String userId, String audio) {
+    public static JsonObject audioStateAnswer(String userId, boolean audio) {
         final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty(ID, AUDIO_STATE_ANSWER);
         jsonObject.addProperty(USER_ID, userId);
