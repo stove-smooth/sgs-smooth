@@ -183,8 +183,12 @@ class ChattingViewModel: BaseViewModel {
                     return
                 }
                 
-                self.fetchMessageToModel(response: response)
-                self.model.page = page + 1
+                let isLast = self.fetchMessageToModel(response: response)
+                
+                if (!isLast) {
+                    self.model.page = page + 1
+                }
+               
             }
         }
     }
@@ -209,7 +213,7 @@ class ChattingViewModel: BaseViewModel {
         }
     }
     
-    private func fetchMessageToModel(response: [Message]) {
+    private func fetchMessageToModel(response: [Message]) -> Bool {
         var fetchMessages: [MockMessage] = []
         
         for msg in response {
@@ -248,16 +252,17 @@ class ChattingViewModel: BaseViewModel {
             
             fetchMessages.append(newMessage!)
         }
+        // self.output.showEmpty.accept(response.count == 0)
         
-        self.output.showEmpty.accept(response.count == 0)
-        
-        if (self.model.messages.isEmpty) {
+        if (self.model.messages.isEmpty && !fetchMessages.isEmpty) {
             self.model.messages = fetchMessages
         } else {
             self.model.messages.insert(contentsOf: fetchMessages, at: 0)
         }
         
         self.output.messages.accept((fetchMessages, .none))
+        
+        return fetchMessages.isEmpty
     }
     
     // MARK: - chatWebsocket

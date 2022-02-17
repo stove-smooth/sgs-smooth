@@ -144,9 +144,14 @@ class ChattingViewController: MessagesViewController {
             .drive { (messages, type) in
                 switch type {
                 case .message, .delete, .modify:
-                    self.messageList = messages
+                    
+                    if (messages.count > 0) {
+                        self.messageList = messages
+                    }
+                    
                     self.messagesCollectionView.reloadDataAndKeepOffset()
                     self.refreshControl.endRefreshing()
+                    
                     if(self.viewModel.model.page == 0) {
                         self.messagesCollectionView.scrollToLastItem()
                     }
