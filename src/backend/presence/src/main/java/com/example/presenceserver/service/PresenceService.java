@@ -36,6 +36,20 @@ public class PresenceService {
         return result;
     }
 
+    public Map<String,String> getFriendsState(List<String> friendsId) {
+        Map<String,String> result = new HashMap<>();
+
+        for (String i : friendsId) {
+            String state = String.valueOf(redisTemplate.opsForValue().get("USER" + i));
+            if (state.equals("null")) {
+                result.put(i,"offline");
+            } else {
+                result.put(i,state);
+            }
+        }
+        return result;
+    }
+
     public Map<String,String> getState() {
         Map<String,String> result = new HashMap<>();
         List<String> keys = redisTemplate.keys("*").stream()
