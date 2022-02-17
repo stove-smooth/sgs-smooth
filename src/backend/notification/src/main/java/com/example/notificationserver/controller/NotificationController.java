@@ -2,6 +2,7 @@ package com.example.notificationserver.controller;
 
 import com.example.notificationserver.dto.request.ChannelMessageRequest;
 import com.example.notificationserver.dto.request.DirectMessageRequest;
+import com.example.notificationserver.dto.request.Test2Request;
 import com.example.notificationserver.dto.request.TestRequest;
 import com.example.notificationserver.dto.response.CommonResponse;
 import com.example.notificationserver.service.NotificationService;
@@ -23,22 +24,28 @@ public class NotificationController {
 
     @PostMapping("/direct")
     public CommonResponse sendDirectMessage(@Valid @RequestBody DirectMessageRequest request) {
-        log.info("POST /notification-server/direct");
+        log.info("POST /notification-server/direct / {}", request.getTarget());
         notificationService.send(request);
         return responseService.getSuccessResponse();
     }
 
     @PostMapping("/channel")
     public CommonResponse sendChannelMessage(@Valid @RequestBody ChannelMessageRequest request) {
-        log.info("POST /notification-server/channel");
+        log.info("POST /notification-server/channel / {}", request.getTarget());
         notificationService.send(request);
         return responseService.getSuccessResponse();
     }
 
-    @PostMapping("/test")
+    @PostMapping("/web/test")
     public CommonResponse sendTestMessage(@Valid @RequestBody TestRequest request) {
         log.info("POST /notification-server/test");
         notificationService.sendTestMessage(request);
+        return responseService.getSuccessResponse();
+    }
+
+    @PostMapping("/test")
+    public CommonResponse sendTest(@Valid @RequestBody Test2Request request) {
+        notificationService.testSend(request);
         return responseService.getSuccessResponse();
     }
 }
