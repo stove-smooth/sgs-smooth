@@ -135,6 +135,7 @@ public class RoomService {
                             .findFirst().get());
             if (!Objects.isNull(otherUser)) {
                 roomDetailResponse.setName(otherUser.getName());
+                roomDetailResponse.setIcon(otherUser.getImage());
             }
         }
     }
