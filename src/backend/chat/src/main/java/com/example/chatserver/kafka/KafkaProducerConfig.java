@@ -2,6 +2,7 @@ package com.example.chatserver.kafka;
 
 import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.domain.DirectMessage;
+import com.example.chatserver.dto.request.StateRequest;
 import com.example.chatserver.dto.response.FileUploadResponse;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -36,6 +37,10 @@ public class KafkaProducerConfig {
         return new DefaultKafkaProducerFactory<>(producerConfigurations());
     }
 
+    public ProducerFactory<String, StateRequest> producerFactoryForState() {
+        return new DefaultKafkaProducerFactory<>(producerConfigurations());
+    }
+
     @Bean
     public Map<String,Object> producerConfigurations() {
         Map<String,Object> configurations = new HashMap<>();
@@ -58,5 +63,10 @@ public class KafkaProducerConfig {
     @Bean
     KafkaTemplate<String,FileUploadResponse> kafkaTemplateForFileUpload() {
         return new KafkaTemplate<>(producerFactoryForFileUpload());
+    }
+
+    @Bean
+    KafkaTemplate<String,StateRequest> kafkaTemplateForState() {
+        return new KafkaTemplate<>(producerFactoryForState());
     }
 }

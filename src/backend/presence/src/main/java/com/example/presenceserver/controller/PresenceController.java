@@ -28,6 +28,11 @@ public class PresenceController {
         return presenceService.getUsersState();
     }
 
+    @PostMapping("/friends-state")
+    public DataResponse<Map<String,String>> getFriendsState(@RequestBody List<String> ids) {
+        return responseService.getDataResponse(presenceService.getFriendsState(ids));
+    }
+
     // 테스트 용
     @GetMapping("/for-me")
     public Map<String,String> getState () {

@@ -10,7 +10,9 @@ import java.util.List;
 
 public interface DirectMessageRepository extends MongoRepository<DirectMessage, String> {
 
+    boolean existsById(String id);
     Page<DirectMessage> findByChannelId(Long ch_id, Pageable paging);
     List<DirectMessage> findByChannelId(Long ch_id);
     List<DirectMessage> findByChannelIdAndLocalDateTimeBetween(Long channelId, LocalDateTime start, LocalDateTime end);
+    List<DirectMessage> findByChannelIdAndLocalDateTimeAfter(Long channelId, LocalDateTime start);
 }

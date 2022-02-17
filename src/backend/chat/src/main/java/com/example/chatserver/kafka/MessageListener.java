@@ -1,36 +1,20 @@
 package com.example.chatserver.kafka;
 
-import com.example.chatserver.client.CommunityClient;
-import com.example.chatserver.client.NotificationClient;
-import com.example.chatserver.client.PresenceClient;
-import com.example.chatserver.client.UserClient;
-import com.example.chatserver.config.TcpClientGateway;
 import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.domain.DirectMessage;
-import com.example.chatserver.dto.request.ChannelNotiRequest;
-import com.example.chatserver.dto.request.DirectNotiRequest;
-import com.example.chatserver.dto.request.LoginSessionRequest;
-import com.example.chatserver.dto.response.CommunityFeignResponse;
+import com.example.chatserver.dto.request.*;
 import com.example.chatserver.dto.response.FileUploadResponse;
-import com.example.chatserver.dto.response.UserInfoFeignResponse;
-import com.example.chatserver.exception.CustomException;
-import com.example.chatserver.exception.CustomExceptionStatus;
-import com.example.chatserver.repository.ChannelMessageRepository;
-import com.example.chatserver.repository.DirectMessageRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -43,12 +27,14 @@ public class MessageListener {
     private final String topicNameForCommunity = "channel-server-topic";
     private final String topicNameForCommunityEtc = "etc-community-topic";
     private final String topicForFileUpload = "file-topic";
+    private final String topicForSignaling = "state-topic";
 
     private final String directGroup = "direct-server-group1";
     private final String directETCGroup = "direct-etc-server-group1";
     private final String channelGroup = "channel-server-group1";
     private final String channelETCGroup = "channel-etc-server-group1";
     private final String fileGroup = "file-server-group1";
+    private final String stateGroup = "state-group1";
 
     private final ObjectMapper objectMapper;
     private final SimpMessagingTemplate template;
@@ -64,10 +50,8 @@ public class MessageListener {
         msg.put("time", String.valueOf(directChat.getLocalDateTime()));
         msg.put("id",directChat.getId());
 
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(msg);
+        String json = objectMapper.writeValueAsString(msg);
         template.convertAndSend("/topic/direct/" + directChat.getChannelId(), json);
-        template.convertAndSend("/topic/user/" + directChat.getUserId(),json);
     }
 
     @KafkaListener(topics = topicNameForDirectEtc,groupId = directETCGroup, containerFactory = "directETCFactory")
@@ -89,9 +73,6 @@ public class MessageListener {
                 msg.put("time", String.valueOf(result.getLocalDateTime()));
                 msg.put("parentName", result.getParentName());
                 msg.put("parentContent", result.getParentContent());
-                ObjectMapper mapper = new ObjectMapper();
-                String json = mapper.writeValueAsString(msg);
-                template.convertAndSend("/topic/user/" + result.getUserId(),json);
 
                 break;
             }
@@ -111,9 +92,7 @@ public class MessageListener {
                 break;
             }
         }
-
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(msg);
+        String json = objectMapper.writeValueAsString(msg);
 
         template.convertAndSend("/topic/direct/" + result.getChannelId(), json);
     }
@@ -129,8 +108,7 @@ public class MessageListener {
         msg.put("message",channelMessage.getContent());
         msg.put("time", String.valueOf(channelMessage.getLocalDateTime()));
         msg.put("id",channelMessage.getId());
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(msg);
+        String json = objectMapper.writeValueAsString(msg);
 
         template.convertAndSend("/topic/group/" + channelMessage.getChannelId(), json);
     }
@@ -173,8 +151,7 @@ public class MessageListener {
             }
         }
 
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(msg);
+        String json = objectMapper.writeValueAsString(msg);
 
         template.convertAndSend("/topic/group/" + result.getChannelId(), json);
     }
@@ -183,11 +160,50 @@ public class MessageListener {
     public void fileUpload(FileUploadResponse fileUploadResponse) throws IOException {
         if (fileUploadResponse.getType().equals("direct")) {
             String json = objectMapper.writeValueAsString(fileUploadResponse);
-            template.convertAndSend("/topic/user/" + fileUploadResponse.getUserId(),json);
             template.convertAndSend("/topic/direct/" + fileUploadResponse.getChannelId(), json);
         } else {
             String json = objectMapper.writeValueAsString(fileUploadResponse);
             template.convertAndSend("/topic/group/" + fileUploadResponse.getChannelId(), json);
+        }
+    }
+
+    @KafkaListener(topics = topicForSignaling, groupId = stateGroup, containerFactory = "kafkaListenerContainerFactoryForSignaling")
+    public void signaling(StateRequest stateRequest) throws JsonProcessingException {
+        switch (stateRequest.getType()) {
+            case "before-enter":
+            case "enter": {
+                template.convertAndSend("/topic/community/" + stateRequest.getCommunityId(), stateRequest.getState());
+                break;
+            }
+            case "exit-community": {
+                SignalingRequest signalingRequest = SignalingRequest.builder()
+                        .type(stateRequest.getTypeForExit())
+                        .communityId(stateRequest.getCommunityId())
+                        .channelId(stateRequest.getChannelId())
+                        .ids(stateRequest.getIds()).build();
+                template.convertAndSend("/topic/community/" + signalingRequest.getCommunityId(), signalingRequest.toString());
+                break;
+            }
+            case "exit-room": {
+                SignalingRequest signalingRequest = SignalingRequest.builder()
+                        .type(stateRequest.getTypeForExit())
+                        .channelId(stateRequest.getChannelId())
+                        .ids(stateRequest.getIds()).build();
+                template.convertAndSend("/topic/direct/" + signalingRequest.getChannelId(), signalingRequest.toString());
+                break;
+            }
+            case "connect":
+            case "disconnect": {
+                log.info("connect/disconnect log");
+                HashMap<String,String> msg = new HashMap<>();
+                msg.put("type",stateRequest.getType());
+                msg.put("userId",stateRequest.getUserId());
+                String json = objectMapper.writeValueAsString(msg);
+                for (String i : stateRequest.getIds()) {
+                    template.convertAndSend("/topic/" + i, json);
+                }
+                break;
+            }
         }
     }
 }

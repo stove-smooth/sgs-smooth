@@ -148,7 +148,7 @@ public class UserService extends BaseTimeEntity {
     }
 
     @Transactional
-    public SignInResponse checkRefreshToken(String token, String refreshToken) {
+    public SignInResponse checkRefreshToken(String token, String refreshToken,String url) {
         String email = jwtTokenProvider.getUsername(token);
         String refresh = (String) redisTemplate.opsForValue().get(email);
 
@@ -160,8 +160,14 @@ public class UserService extends BaseTimeEntity {
         }
         User account = accountRepository.findByEmailAndStatus(email, VALID).orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
+        String count = String.valueOf(redisTemplate.opsForValue().get(url));
+        redisTemplate.opsForValue().set(url,Integer.parseInt(count) -1,refreshTime, TimeUnit.MILLISECONDS);
+
+        String newUrl = setURL();
         SignInResponse res = SignInResponse.builder()
-                .refreshToken(jwtTokenProvider.createToken(account.getEmail(),account.getRoleType(),account.getId()))
+                .accessToken(jwtTokenProvider.createToken(account.getEmail(),account.getRoleType(),account.getId()))
+                .refreshToken(refreshToken)
+                .url(newUrl)
                 .build();
 
         return res;
@@ -205,6 +211,7 @@ public class UserService extends BaseTimeEntity {
         NameAndPhotoResponse result = NameAndPhotoResponse.builder()
                 .name(user.getName())
                 .code(user.getCode())
+                .bio(user.getBio())
                 .profileImage(user.getProfileImage()).build();
 
         return result;
