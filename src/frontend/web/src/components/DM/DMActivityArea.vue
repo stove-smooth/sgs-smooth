@@ -48,10 +48,12 @@
                   class="primary-chat-message-wrapper"
                   v-bind:class="{
                     'others-chat-message-wrapper':
-                      item.isOther || item.parentName != null,
+                      (item.isOther && !item.calling) ||
+                      item.parentName != null,
                     'message-replying':
                       directMessageReplyId !== '' &&
                       directMessageReplyId.messageInfo.id == item.id,
+                    'margin-top-8px': item.calling,
                   }"
                 >
                   <!--메세지답장-->
@@ -64,12 +66,16 @@
                   </div>
                   <div class="chat-message-content">
                     <template v-if="item.isOther || item.parentName != null">
-                      <img
-                        :src="item.profileImage"
-                        class="chat-avatar clickable"
-                        alt="image"
-                      />
-                      <h2 class="chat-avatar-header">
+                      <template v-if="item.calling"
+                        ><svg class="dm-avatar dm_call"></svg
+                      ></template>
+                      <template v-else
+                        ><img
+                          :src="item.profileImage"
+                          class="chat-avatar clickable"
+                          alt="image"
+                      /></template>
+                      <h2 class="chat-avatar-header" v-if="!item.calling">
                         <span class="chat-user-name">{{ item.name }}</span>
                         <span class="chat-time-stamp">{{ item.time }}</span>
                       </h2>
@@ -123,16 +129,22 @@
                         {{ modifyLogMessage }}
                       </p>
                     </div>
-                    <div v-else class="message-content">
+                    <div v-else class="message-content display-flex">
                       <template
                         v-if="item.fileType && item.fileType == 'image'"
                       >
                         <div v-if="!imageLoading" class="loading-img"></div>
                         <div v-else v-html="item.thumbnail"></div>
                       </template>
-                      <template v-else
-                        ><div>{{ item.message }}</div></template
-                      >
+                      <template v-else>
+                        <template v-if="item.isInviteUrl">
+                          <div v-html="item.message"></div>
+                        </template>
+                        <template v-else>{{ item.message }}</template>
+                      </template>
+                      <span v-if="item.calling" class="chat-time-stamp">{{
+                        item.time
+                      }}</span>
                     </div>
                     <!--정말 삭제하시겠어요?-->
                     <div
@@ -151,26 +163,19 @@
                         class="highlight-text contents clickable red-color"
                         @click="deleteMessage(item.id)"
                       >
-                        댓글 삭제
+                        삭제
                       </span>
                     </div>
                   </div>
                   <div
                     class="chat-message-plus-action-container"
                     v-show="
-                      messageHovered === item.id || messagePlusMenu === item.id
+                      (messageHovered === item.id ||
+                        messagePlusMenu === item.id) &&
+                      !item.calling
                     "
                   >
                     <div class="actionbar-wrapper2">
-                      <div
-                        v-show="false"
-                        class="chat-action-button"
-                        aria-label="반응 추가하기"
-                        role="button"
-                        tabindex="0"
-                      >
-                        <svg class="add-emotion"></svg>
-                      </div>
                       <!--내꺼면 수정아니면 답장-->
                       <div
                         v-if="item.userId == getUserId"
@@ -409,7 +414,12 @@ export default {
         /**메세지의 종류: 일반 채팅, 이미지 채팅, 수정, 삭제, 답장, 타이핑 상태  */
         //한국시간에 맞게 시간 커스텀
         const receivedForm = JSON.parse(res.body);
-        if (receivedForm.type != "typing" && receivedForm.type != "delete") {
+        if (
+          receivedForm.type != "typing" &&
+          receivedForm.type != "delete" &&
+          receivedForm.type != "connect" &&
+          receivedForm.type != "disconnect"
+        ) {
           console.log("날짜가 있는 메시지인 경우");
           const translatedTime = convertFromStringToDate(receivedForm.time);
           receivedForm.date = translatedTime[0];
@@ -432,15 +442,41 @@ export default {
         } else {
           console.log("타이핑에 관한 구독이 등장.", receivedForm);
         }
+        //초대장 관련
+        console.log("receivedForm", receivedForm);
+        if (
+          receivedForm.message &&
+          receivedForm.message.startsWith("<~inviting~>")
+        ) {
+          let callingMessage = receivedForm.message.replace("<~inviting~>", "");
+          receivedForm.isInviteUrl = true;
+          receivedForm.message = this.transUrl(callingMessage);
+        }
         //이미지를 보낼시 이미지 처리
         if (receivedForm.fileType && receivedForm.fileType == "image") {
           receivedForm.thumbnail = this.urlify(receivedForm.thumbnail);
+        }
+
+        //dm calling 메시지 받기
+        if (
+          receivedForm.message &&
+          receivedForm.message.startsWith("<~dmcalling~>")
+        ) {
+          let callingMessage = receivedForm.message.replace(
+            "<~dmcalling~>",
+            ""
+          );
+          receivedForm.message = callingMessage;
+          receivedForm.calling = true;
+          receivedForm.isOther = true;
         }
         //메세지 타입이 충족되는 경우 모두 메시지 리스트에 넣고, 렌더링이 된다면 스크롤을 바닥으로 내림
         if (
           receivedForm.type != "typing" &&
           receivedForm.type != "modify" &&
-          receivedForm.type != "delete"
+          receivedForm.type != "delete" &&
+          receivedForm.type != "connect" &&
+          receivedForm.type != "disconnect"
         ) {
           this.imageLoading = false;
           this.receiveList.push(receivedForm);
@@ -751,6 +787,13 @@ export default {
         return `<img alt="이미지" src="${url}"/>`;
       });
     },
+    transUrl(text) {
+      var regURL =
+        /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])/gim;
+      return text.replace(regURL, function (url) {
+        return `<a href="${url}" target='_blank'>${url}</a>`;
+      });
+    },
     scrollToBottom() {
       let scrollRef = this.$refs["scrollRef"];
       scrollRef.scrollTop = scrollRef.scrollHeight;
@@ -782,7 +825,9 @@ export default {
           //시간을 한국 시간+디스코드에 맞게 변환
           if (
             receivedAllMessage[i].type != "typing" &&
-            receivedAllMessage[i].type != "delete"
+            receivedAllMessage[i].type != "delete" &&
+            receivedAllMessage[i].type != "connect" &&
+            receivedAllMessage[i].type != "disconnect"
           ) {
             const translatedTime = convertFromStringToDate(
               receivedAllMessage[i].time
@@ -804,6 +849,18 @@ export default {
               }
             }
             receivedAllMessage[i].isOther = isOther;
+            //초대장 관련
+            if (
+              receivedAllMessage[i].message &&
+              receivedAllMessage[i].message.startsWith("<~inviting~>")
+            ) {
+              let callingMessage = receivedAllMessage[i].message.replace(
+                "<~inviting~>",
+                ""
+              );
+              receivedAllMessage[i].isInviteUrl = true;
+              receivedAllMessage[i].message = this.transUrl(callingMessage);
+            }
           }
           //이미지를 보낼시 이미지 처리
           if (
@@ -813,6 +870,19 @@ export default {
             receivedAllMessage[i].thumbnail = this.urlify(
               receivedAllMessage[i].thumbnail
             );
+          }
+          //dm calling 메시지 받기
+          if (
+            receivedAllMessage[i].message &&
+            receivedAllMessage[i].message.startsWith("<~dmcalling~>")
+          ) {
+            let callingMessage = receivedAllMessage[i].message.replace(
+              "<~dmcalling~>",
+              ""
+            );
+            receivedAllMessage[i].message = callingMessage;
+            receivedAllMessage[i].calling = true;
+            receivedAllMessage[i].isOther = true;
           }
           array.push(receivedAllMessage[i]);
         }
@@ -853,4 +923,25 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.dm_call {
+  width: 18px;
+  height: 18px;
+  background-image: url("../../assets/dm_call.svg");
+}
+.dm-avatar {
+  pointer-events: auto;
+  position: absolute;
+  left: 32px;
+  margin-top: calc(4px - 0.125rem);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+  -webkit-box-flex: 0;
+  flex: 0 0 auto;
+  z-index: 1;
+}
+</style>

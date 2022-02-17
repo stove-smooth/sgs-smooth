@@ -31,13 +31,64 @@
             </div>
           </div>
         </div>
+
+        <div aria-label="room">
+          <div v-for="unreadDm in communityList.rooms" :key="unreadDm.id">
+            <div
+              class="listItem"
+              @mouseover="hover(unreadDm.id)"
+              @mouseleave="hover('')"
+              @click="enterRoom(unreadDm.id)"
+            >
+              <div class="selected-wrapper" v-show="hovered == unreadDm.id">
+                <span class="selected-item"></span>
+              </div>
+              <div draggable="true">
+                <div class="listItem-wrapper">
+                  <div class="server-wrapper" v-if="unreadDm.icon">
+                    <img
+                      :src="unreadDm.icon"
+                      alt="image"
+                      class="server-nav-image"
+                      v-bind:class="{
+                        'selected-border-radius': hovered == unreadDm.id,
+                      }"
+                    />
+                  </div>
+                  <div class="server-wrapper" v-else>
+                    <div
+                      class="server"
+                      v-bind:class="{
+                        'selected-border-radius': hovered == unreadDm.id,
+                      }"
+                    >
+                      {{ unreadDm.name }}
+                    </div>
+                  </div>
+                  <div class="alarm-ring">
+                    <div class="room-lower-badge">
+                      <number-badge :alarms="unreadDm.count"></number-badge>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="listItem">
           <div class="guild-seperator"></div>
         </div>
         <div aria-label="서버">
           <!--서버 개수만큼 만들기.-->
-          <draggable :list="communityList" @change="log" group="community">
-            <div v-for="community in communityList" :key="community.id">
+          <draggable
+            :list="communityList.communities"
+            @change="log"
+            group="community"
+          >
+            <div
+              v-for="community in communityList.communities"
+              :key="community.id"
+            >
               <div
                 class="listItem"
                 @mouseover="hover(community.id)"
@@ -118,7 +169,7 @@ export default {
   },
   methods: {
     ...mapActions("community", ["FETCH_COMMUNITYLIST"]),
-    ...mapMutations("community", ["setCreateCommunity"]),
+    ...mapMutations("community", ["setCreateCommunity", "setCommunityList"]),
     ...mapMutations("utils", ["setNavigationSelected"]),
     hover(index) {
       this.hovered = index;
@@ -135,11 +186,20 @@ export default {
       }
       this.setNavigationSelected(index);
     },
+    enterRoom(index) {
+      this.$router.push("/channels/@me/" + index);
+      //읽음 처리..
+      let array = this.communityList.rooms.filter(
+        (element) => element.id !== index
+      );
+      this.communityList.rooms = array;
+      this.setCommunityList(this.communityList);
+    },
     log: async function (evt) {
       if (evt.moved.newIndex == 0) {
         this.new = 0;
       } else {
-        this.new = this.communityList[evt.moved.newIndex - 1].id;
+        this.new = this.communityList.communities[evt.moved.newIndex - 1].id;
       }
       const communityInfo = {
         id: evt.moved.element.id,
@@ -166,6 +226,7 @@ export default {
   watch: {
     // 라우터의 변경을 감시
     async $route(to) {
+      await this.FETCH_COMMUNITYLIST();
       if (to.path == "/channels/@me") {
         this.setNavigationSelected("@me");
       }
@@ -320,6 +381,15 @@ export default {
   position: absolute;
   right: 0;
   bottom: 0;
+}
+
+.room-lower-badge {
+  opacity: 1;
+  transform: translate(0px, 0px);
+  pointer-events: none;
+  position: absolute;
+  right: 15%;
+  bottom: 15%;
 }
 
 .selected-border-radius {

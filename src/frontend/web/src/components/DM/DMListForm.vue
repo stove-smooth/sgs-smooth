@@ -18,7 +18,7 @@
                 <template aria-label="status-invisible">
                   <div class="status-ring" v-show="!item.group">
                     <div
-                      v-if="item.state == '온라인'"
+                      v-if="item.state == 'online'"
                       class="status-online"
                     ></div>
                     <div v-else class="status-offline"></div>

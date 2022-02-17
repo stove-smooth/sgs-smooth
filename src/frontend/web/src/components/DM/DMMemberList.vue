@@ -15,7 +15,11 @@
             v-for="directMessageMember in directMessageMemberList.members"
             :key="directMessageMember.id"
           >
-            <div class="primary-member-container clickable" role="listitem">
+            <div
+              class="primary-member-container clickable"
+              @click="clickMemberPlusAction($event, directMessageMember)"
+              role="listitem"
+            >
               <div class="primary-member-layout">
                 <div class="avatar-container">
                   <div class="profile-wrapper">
@@ -58,31 +62,32 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions, mapMutations } from "vuex";
 export default {
   //추가할지 말지 고려중인 동작입니다.
-  /* mounted() {
+  mounted() {
     window.addEventListener("click", this.onClick);
-  }, */
+  },
   created() {
     this.fetchDirectMessageMemberList(this.$route.params.id);
   },
   computed: {
     ...mapState("dm", ["directMessageMemberList"]),
+    ...mapState("community", ["communityMemberPlusMenu"]),
   },
   methods: {
     ...mapActions("dm", ["fetchDirectMessageMemberList"]),
     //추가할지 말지 고려중인 동작입니다.
-    /* ...mapMutations("community", ["setCommunityMemberPlusMenu"]),
-    ...mapMutations("utils", ["setClientX", "setClientY"]), */
-    /* clickMemberPlusAction(event, memberInfo) {
+    ...mapMutations("community", ["setCommunityMemberPlusMenu"]),
+    ...mapMutations("utils", ["setClientX", "setClientY"]),
+    clickMemberPlusAction(event, memberInfo) {
       const x = event.clientX;
       const y = event.clientY;
       this.setClientX(x);
       this.setClientY(y);
       this.setCommunityMemberPlusMenu(memberInfo);
-    }, */
-    /* onClick(e) {
+    },
+    onClick(e) {
       if (this.communityMemberPlusMenu) {
         if (
           e.target.className !== "friends-name" &&
@@ -93,7 +98,7 @@ export default {
           this.setCommunityMemberPlusMenu(null);
         }
       }
-    }, */
+    },
   },
 };
 </script>

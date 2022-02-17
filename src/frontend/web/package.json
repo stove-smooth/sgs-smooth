@@ -10,7 +10,7 @@
   "dependencies": {
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
-    "firebase": "^9.6.6",
+    "firebase": "^8.10.0",
     "kurento-utils": "^6.16.0",
     "sockjs-client": "^1.5.2",
     "v-emoji-picker": "^2.3.3",

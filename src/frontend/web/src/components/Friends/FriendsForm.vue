@@ -9,9 +9,15 @@
           <div class="friends-state-info">
             <div class="profile-margin profile-wrapper">
               <img class="avatar" :src="item.profileImage" alt="image" />
-              <template aria-label="status-invisible">
+              <template
+                v-if="item.onlineState != null"
+                aria-label="status-invisible"
+              >
                 <div class="status-ring">
-                  <div class="status-offline"></div>
+                  <template v-if="item.onlineState == 'offline'"
+                    ><div class="status-offline"
+                  /></template>
+                  <template v-else><div class="status-online" /></template>
                 </div>
               </template>
             </div>
@@ -22,7 +28,12 @@
               </div>
               <div class="status-description">
                 <div class="status-subtext">
-                  <slot name="status"></slot>
+                  <template v-if="item.onlineState == 'offline'">
+                    <span>오프라인</span>
+                  </template>
+                  <template v-else>
+                    <span>온라인</span>
+                  </template>
                 </div>
               </div>
             </div>

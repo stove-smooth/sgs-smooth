@@ -126,11 +126,11 @@ const community = {
   actions: {
     async FETCH_COMMUNITYLIST({ commit }) {
       const result = await fetchCommunityList();
-      commit("setCommunityList", result.data.result.communities);
+      await commit("setCommunityList", result.data.result);
     },
     async FETCH_COMMUNITYINFO({ commit }, serverid) {
       const result = await fetchCommunityInfo(serverid);
-      commit("setCommunityInfo", result.data.result);
+      await commit("setCommunityInfo", result.data.result);
     },
     async FETCH_COMMUNITYMEMBERLIST({ commit }, serverid) {
       const result = await fetchCommunityMemberList(serverid);

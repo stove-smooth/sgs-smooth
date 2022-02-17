@@ -9,11 +9,12 @@
         >
           <div class="plus-action-label">프로필</div>
         </div>
-        <div class="plus-action-label-container" @mouseover="hover('call')">
-          <div class="plus-action-label">영상 통화 시작하기</div>
-        </div>
-        <div class="plus-action-label-container" @mouseover="hover('call')">
-          <div class="plus-action-label">음성 통화 시작하기</div>
+        <div
+          class="plus-action-label-container"
+          @mouseover="hover('call')"
+          @click="startCalling(friendsPlusMenu.userId)"
+        >
+          <div class="plus-action-label">통화 시작하기</div>
         </div>
         <!-- <div class="plus-action-label-container" @mouseover="hover('invite')">
           <div class="plus-action-label">서버에 초대하기</div>
@@ -59,7 +60,8 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
+import { sendDirectMessage } from "@/utils/common";
 export default {
   data() {
     return {
@@ -67,8 +69,12 @@ export default {
     };
   },
   computed: {
-    ...mapState("utils", ["clientX", "clientY"]),
+    ...mapState("utils", ["clientX", "clientY", "stompSocketClient"]),
+    ...mapState("dm", ["directMessageList"]),
     ...mapState("friends", ["friendsPlusMenu"]),
+    ...mapState("voice", ["wsOpen", "video"]),
+    ...mapState("user", ["nickname", "userimage"]),
+    ...mapGetters("user", ["getUserId"]),
     cssProps() {
       return {
         "--xpoint": this.clientX + "px",
@@ -79,13 +85,45 @@ export default {
     },
   },
   methods: {
+    ...mapActions("voice", ["wsInit", "sendMessage", "leaveRoom"]),
     ...mapMutations("friends", [
       "setFriendsReadyToDelete",
       "setFriendsReadyToBlock",
       "setFriendsProfileModal",
     ]),
+    ...mapMutations("voice", ["setVideo", "setCurrentVoiceRoom"]),
     hover(element) {
       this.readytoinvite = element;
+    },
+    async startCalling(userId) {
+      const channelid = await sendDirectMessage(this.directMessageList, userId);
+
+      if (this.wsOpen) {
+        this.sendMessage({ id: "leaveRoom" });
+        this.leaveRoom();
+        this.setCurrentVoiceRoom(null);
+      }
+      const wsInfo = {
+        url: process.env.VUE_APP_WEBRTC_URL,
+        type: "room",
+      };
+      await this.wsInit(wsInfo); //ws 전역 등록.
+      if (this.video) {
+        this.setVideo();
+      }
+      const msg = {
+        content: `<~dmcalling~>${this.nickname}님이 통화를 시작했어요. `,
+        channelId: channelid,
+        userId: this.getUserId,
+        name: this.nickname,
+        profileImage: this.userimage,
+      };
+      this.stompSocketClient.send(
+        "/kafka/send-direct-message",
+        JSON.stringify(msg),
+        {}
+      );
+      this.$router.push(`/channels/@me/${channelid}`);
     },
   },
 };

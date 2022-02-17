@@ -4,28 +4,30 @@
       class="frineds-now-playing-container thin-scrollbar now-playing-scroller"
     >
       <h3 class="header-title">현재 활동 중</h3>
-      <div v-for="(item, index) in 1" :key="index">
+      <div v-for="friend in this.friendsOnline" :key="friend.id">
         <div class="now-playing-card" tabindex="0" role="button">
           <div>
             <header class="now-playing-card-header">
               <div class="profile-margin profile-wrapper">
-                <img
-                  class="avatar"
-                  src="../../assets/default_stove.png"
-                  alt=" "
-                />
+                <img class="avatar" :src="friend.profileImage" alt=" " />
                 <template aria-label="status-invisible">
                   <div class="status-ring">
-                    <div class="status-offline"></div>
+                    <div class="status-online"></div>
                   </div>
                 </template>
               </div>
               <div>
                 <div class="large-white-description primary-text-content">
-                  밍디
+                  {{ friend.name }}
                 </div>
-                <div class="primary-text-content status-description">
+                <div
+                  v-if="friend.onlineState.startsWith('com')"
+                  class="primary-text-content status-description"
+                >
                   음성 채널 참여 중
+                </div>
+                <div class="primary-text-content status-description" v-else>
+                  온라인
                 </div>
               </div>
             </header>
@@ -33,47 +35,33 @@
               <section class="now-playing-server-container">
                 <div class="now-playing-server">
                   <div tabindex="-1" role="button">
-                    <div class="profile-wrapper justify-content-center">
-                      <img
-                        class="profile-wrapper"
-                        alt="image"
-                        src="https://cdn.discordapp.com/icons/917657762341740544/a82e694e7074d90e39503ee0a9044f46.webp?size=32"
-                      />
-                      <div class="voice-section-wrapper">
-                        <svg class="small-voice-channel"></svg>
-                      </div>
+                    <div
+                      class="profile-wrapper justify-content-center align-items-center"
+                    >
+                      <template v-if="computeCommunityImage(friend) != 'lobby'">
+                        <img
+                          class="profile-wrapper"
+                          alt="image"
+                          :src="computeCommunityImage(friend)"
+                        />
+                        <div class="voice-section-wrapper">
+                          <svg class="small-voice-channel"></svg>
+                        </div>
+                      </template>
+                      <template
+                        v-else
+                        v-bind:style="{ width: '22px', height: '22px' }"
+                        ><svg class="place-home"></svg>
+                      </template>
                     </div>
                   </div>
                   <div tabindex="0" role="button">
                     <div class="clickable" aria-label="voice-section-details">
                       <div class="large-white-description primary-text-content">
-                        스무th
-                      </div>
-                      <div class="subtext" v-bind:style="{ color: '#dcddde' }">
-                        공부방1
+                        {{ computeCommunityName(friend) }}
                       </div>
                     </div>
                   </div>
-                  <!-- <div class="voice-section-members-wrapper">
-                    <div class="voice-section-members">
-                      <div class="known-voice-section-member">
-                        <img
-                          class="small-profile-wrapper"
-                          alt="image"
-                          src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=32"
-                        />
-                      </div>
-                    </div>
-                    <div class="voice-section-members">
-                      <div class="known-voice-section-member">
-                        <img
-                          class="small-profile-wrapper"
-                          alt="image"
-                          src="https://cdn.discordapp.com/avatars/846330810000605208/e581f53f2ba1f0d06bbcd7b512834a47.webp?size=32"
-                        />
-                      </div>
-                    </div>
-                  </div> -->
                 </div>
               </section>
             </div>
@@ -85,7 +73,47 @@
 </template>
 
 <script>
-export default {};
+import { mapState } from "vuex";
+export default {
+  computed: {
+    ...mapState("friends", ["friendsOnline"]),
+    ...mapState("community", ["communityList"]),
+  },
+  methods: {
+    computeCommunityImage(friend) {
+      if (friend.onlineState.startsWith("com")) {
+        console.log("서버에 있을때", this.communityList);
+        let server = friend.onlineState.split(",");
+        let serverId = server[0].split("m");
+        console.log("server", serverId); //serverId[1]
+        for (let i = 0; i < this.communityList.length; i++) {
+          if (this.communityList[i].id == serverId[1]) {
+            console.log("ddddd", this.communityList[i].icon);
+            return this.communityList[i].icon;
+          }
+        }
+      } else {
+        return "lobby";
+      }
+    },
+    computeCommunityName(friend) {
+      if (friend.onlineState.startsWith("com")) {
+        console.log("서버에 있을때", friend.onlineState, this.communityList);
+        let server = friend.onlineState.split(",");
+        let serverId = server[0].split("m");
+        console.log("server", serverId); //serverId[1]
+        for (let i = 0; i < this.communityList.length; i++) {
+          if (this.communityList[i].id == serverId[1]) {
+            console.log("ddddd", this.communityList[i].icon);
+            return this.communityList[i].name;
+          }
+        }
+      } else {
+        return "lobby";
+      }
+    },
+  },
+};
 </script>
 
 <style>
@@ -190,5 +218,10 @@ export default {};
 .now-playing-scroller {
   overflow: hidden scroll;
   padding: 16px;
+}
+.place-home {
+  width: 22px;
+  height: 22px;
+  background-image: url("../../assets/places-home.svg");
 }
 </style>

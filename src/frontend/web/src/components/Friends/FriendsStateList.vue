@@ -27,7 +27,14 @@
             >
               <svg class="send-message"></svg>
             </div>
-            <div class="action-button" aria-label="기타" role="button">
+            <div
+              :data-key="slotProps.id"
+              ref="plusAction"
+              class="action-button"
+              aria-label="기타"
+              role="button"
+              @click="clickPlusAction($event, slotProps)"
+            >
               <svg class="plus-action"></svg>
             </div>
           </template>
@@ -38,7 +45,6 @@
           <template slot="title"
             >모든친구-{{ friendsAccept.length }}명</template
           >
-          <template slot="status"><span>오프라인</span></template>
           <template v-slot:action="slotProps">
             <div
               class="action-button"
@@ -121,16 +127,14 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapMutations } from "vuex";
+import { mapState, mapMutations } from "vuex";
 import FriendsForm from "./FriendsForm.vue";
 import { acceptFriend, deleteFriend } from "../../api/index.js";
 import { sendDirectMessage } from "@/utils/common";
 
 export default {
   components: { FriendsForm },
-  async created() {
-    await this.FETCH_FRIENDSLIST();
-  },
+
   mounted() {
     window.addEventListener("click", this.onClick);
   },
@@ -148,7 +152,6 @@ export default {
     ...mapState("dm", ["directMessageList"]),
   },
   methods: {
-    ...mapActions("friends", ["FETCH_FRIENDSLIST"]),
     ...mapMutations("utils", ["setClientX", "setClientY"]),
     ...mapMutations("friends", ["setFriendsPlusMenu"]),
     async accept(id) {
@@ -161,6 +164,7 @@ export default {
     },
     //친구 추가 기능을 보여주기 위해 마우스 좌표를 저장한다.
     clickPlusAction(event, userInfo) {
+      console.log(event.clientX, event.clientY, userInfo);
       const x = event.clientX;
       const y = event.clientY;
       this.setClientX(x);
@@ -181,7 +185,8 @@ export default {
     },
     //1:1 메시지를 걸었을 경우 dm방을 찾아 있을 경우 이동하고, 없을 경우 생성 후 이동한다.
     async sendDirectMessage(userId) {
-      await sendDirectMessage(this.directMessageList, userId);
+      const channelid = await sendDirectMessage(this.directMessageList, userId);
+      this.$router.push(`/channels/@me/${channelid}`);
     },
   },
 };

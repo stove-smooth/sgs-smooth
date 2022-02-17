@@ -65,6 +65,19 @@ const user = {
       }
       return state.refreshtoken;
     },
+    getSocketUrl: (state) => {
+      if (!state.socketurl) {
+        try {
+          const token = localStorage.getItem("socketurl");
+          if (token) {
+            state.socketurl = JSON.parse(token);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      return state.socketurl;
+    },
   },
   mutations: {
     setUserId(state, userId) {
@@ -89,6 +102,10 @@ const user = {
       state.refreshtoken = refreshToken;
       localStorage.setItem("refreshtoken", JSON.stringify(refreshToken));
     },
+    setSocketUrl(state, socketurl) {
+      state.socketurl = socketurl;
+      localStorage.setItem("socketurl", JSON.stringify(socketurl));
+    },
     setUserImage(state, userImage) {
       state.userimage = userImage;
     },
@@ -111,10 +128,12 @@ const user = {
   actions: {
     async LOGIN({ commit }, userData) {
       const response = await loginUser(userData);
+      console.log("response", response);
       commit("setUserId", response.data.result.id);
       commit("setEmail", response.data.result.email);
       commit("setAccessToken", response.data.result.accessToken);
       commit("setRefreshToken", response.data.result.refreshToken);
+      commit("setSocketUrl", response.data.result.url);
       return response.data.result.code;
     },
     LOGOUT({ commit }) {
