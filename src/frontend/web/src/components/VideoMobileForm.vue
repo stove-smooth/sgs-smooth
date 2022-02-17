@@ -18,7 +18,7 @@
         <voice-participants :participant="voiceMember"></voice-participants>
       </div>
     </div>
-    <div class="voice-bottom-control-section">
+    <div class="voice-bottom-mobile-control-section">
       <div class="voice-bottom-control-container">
         <div
           class="voice-control-button justify-content-center align-items-center clickable"
@@ -132,4 +132,19 @@ export default {
   },
 };
 </script>
-<style></style>
+<style>
+.voice-bottom-mobile-control-section {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  justify-content: center;
+  line-height: 0;
+  height: 80px;
+  margin-bottom: 24px;
+}
+</style>
