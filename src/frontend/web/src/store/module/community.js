@@ -56,9 +56,6 @@ const community = {
     setCommunityList(state, communityList) {
       state.communityList = communityList;
     },
-    setUnreadDMList(state, unreadDMList) {
-      state.unreadDMList = unreadDMList;
-    },
     setCommunityInfo(state, communityInfo) {
       state.communityInfo = communityInfo;
     },
@@ -129,13 +126,11 @@ const community = {
   actions: {
     async FETCH_COMMUNITYLIST({ commit }) {
       const result = await fetchCommunityList();
-
-      commit("setUnreadDMList", result.data.result.rooms);
-      commit("setCommunityList", result.data.result.communities);
+      await commit("setCommunityList", result.data.result);
     },
     async FETCH_COMMUNITYINFO({ commit }, serverid) {
       const result = await fetchCommunityInfo(serverid);
-      commit("setCommunityInfo", result.data.result);
+      await commit("setCommunityInfo", result.data.result);
     },
     async FETCH_COMMUNITYMEMBERLIST({ commit }, serverid) {
       const result = await fetchCommunityMemberList(serverid);

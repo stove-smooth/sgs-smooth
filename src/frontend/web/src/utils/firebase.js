@@ -39,10 +39,8 @@ message.onMessage(({ notification }) => {
   const options = {
     body: body,
     icon: "/smooth_discord.jfif",
-    /* icon: "/mococo.png", //s3처럼 따로 url 안쓰면 edge는 안보임 */
-    // icon: "/favicon.ico",
     title: title,
-    click_action: click_action,
+    data: `localhost:3000${click_action}`,
   };
   new Notification(title, options);
 });

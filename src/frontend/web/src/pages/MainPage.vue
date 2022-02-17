@@ -3,7 +3,12 @@
     <template v-if="this.stompSocketConnected">
       <div class="wrapper2">
         <div class="wrapper">
-          <div class="container" :key="$route.params.serverid">
+          <div
+            class="container"
+            :key="
+              $route.params.serverid ? $route.params.serverid : $route.params.id
+            "
+          >
             <navigation-bar v-if="navbar"></navigation-bar>
             <router-view></router-view>
           </div>
