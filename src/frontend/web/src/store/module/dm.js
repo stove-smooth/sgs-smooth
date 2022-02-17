@@ -11,7 +11,11 @@ const dm = {
     createDirectMessageGroupModal: false,
     directMessageMemberList: null,
   },
-
+  getters: {
+    getDirectMessageList: (state) => {
+      return state.directMessageList;
+    },
+  },
   mutations: {
     setDirectMessageReplyId(state, directMessageReplyId) {
       state.directMessageReplyId = directMessageReplyId;

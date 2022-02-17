@@ -43,6 +43,11 @@ const community = {
     //현재 위치한 채널 타입
     currentChannelType: null,
   },
+  getters: {
+    getCommunityList: (state) => {
+      return state.communityList;
+    },
+  },
   mutations: {
     setCreateCommunity(state, createCommunity) {
       state.createCommunity = createCommunity;

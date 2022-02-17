@@ -415,6 +415,16 @@ export default {
     this.stompSocketClient.send("/kafka/join-channel", JSON.stringify(msg), {});
     //최신 50개 메시지 기록 읽음
     await this.readChannelMessage();
+    //전 구독 초기화
+    if (this.stompSocketClient) {
+      const subscriptions = this.stompSocketClient.subscriptions;
+      Object.keys(subscriptions).forEach((subscription) => {
+        this.stompSocketClient.unsubscribe(subscription);
+      });
+      this.stompSocketClient.disconnect();
+      console.log("구독을 해제하였습니다.");
+    }
+
     //실시간 메시지 구독
     this.stompSocketClient.subscribe(
       "/topic/group/" + this.$route.params.channelid,

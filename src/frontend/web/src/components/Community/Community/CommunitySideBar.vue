@@ -201,6 +201,15 @@ export default {
     };
   },
   created() {
+    //전 구독 초기화
+    if (this.stompSocketClient) {
+      const subscriptions = this.stompSocketClient.subscriptions;
+      Object.keys(subscriptions).forEach((subscription) => {
+        this.stompSocketClient.unsubscribe(subscription);
+      });
+      this.stompSocketClient.disconnect();
+      console.log("구독을 해제하였습니다.");
+    }
     this.stompSocketClient.subscribe(
       `/topic/community/${this.$route.params.serverid}`,
       (res) => {
