@@ -15,7 +15,10 @@
         v-for="voiceMember in voiceMembers"
         :key="voiceMember.name"
       >
-        <voice-participants :participant="voiceMember"></voice-participants>
+        <voice-participants
+          :participant="voiceMember"
+          :key="voiceMember.videoStatus"
+        ></voice-participants>
       </div>
     </div>
     <div class="voice-bottom-control-section">
@@ -69,6 +72,8 @@ export default {
         userId: this.getUserId,
         roomId: `c-${this.$route.params.channelid}`,
         communityId: this.$route.params.serverid,
+        video: this.video,
+        audio: !this.mute,
       };
       let voiceRoomInfo = {
         myName: this.getUserId,
@@ -90,6 +95,8 @@ export default {
         userId: this.getUserId,
         roomId: `r-${this.$route.params.id}`,
         communityId: 0,
+        video: this.video,
+        audio: !this.mute,
       };
       let voiceRoomInfo = {
         myName: this.getUserId,
@@ -142,19 +149,19 @@ export default {
     },
     toggleVideo() {
       //다른 참여자의 비디오 상태를 알기 위한 로직
-      /* if (this.video) {
+      if (this.video) {
         this.sendMessage({
           id: "videoStateFrom",
           userId: this.getUserId,
-          video: "0",
+          video: "false",
         });
       } else {
         this.sendMessage({
           id: "videoStateFrom",
           userId: this.getUserId,
-          video: "1",
+          video: "true",
         });
-      } */
+      }
       this.myParticipantObject.rtcPeer.videoEnabled = !this.video;
       this.setVideo();
     },

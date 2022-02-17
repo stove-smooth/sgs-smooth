@@ -68,6 +68,8 @@ export default {
         userId: this.userId,
         roomId: `c-${this.$route.params.channelid}`,
         communityId: this.$route.params.serverid,
+        video: this.video,
+        audio: !this.mute,
       };
       let voiceRoomInfo = {
         myName: this.userId,
@@ -85,6 +87,8 @@ export default {
         userId: this.userId,
         roomId: `r-${this.$route.params.channelid}`,
         communityId: this.$route.params.serverid,
+        video: this.video,
+        audio: !this.mute,
       };
       let voiceRoomInfo = {
         myName: this.userId,

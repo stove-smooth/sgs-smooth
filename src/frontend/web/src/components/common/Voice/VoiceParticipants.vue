@@ -1,13 +1,21 @@
 <template>
   <div :id="containerId" class="video-unit-container">
-    <div :id="videoWrapperId" class="display-flex" style="width: 100%"></div>
-    <span class="text-align-center">{{ nickname }}</span>
+    <div
+      v-show="participant.videoStatus"
+      :id="videoWrapperId"
+      class="display-flex"
+      style="width: 100%"
+    ></div>
+    <div v-show="!participant.videoStatus" class="no-video-container">
+      <img class="no-video-img" src="../../../assets/default_stove.png" />
+    </div>
+    <span class="text-align-center">{{ this.participant.videoStatus }}</span>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapState } from "vuex";
-import { fetchMemberInfo } from "@/api";
+//import { fetchMemberInfo } from "@/api";
 export default {
   props: {
     participant: {
@@ -38,23 +46,29 @@ export default {
     },
   },
   methods: {
-    async participantNickName() {
-      if (this.currentVoiceRoomType == "mobile") {
-        const result = await fetchMemberInfo(this.participant.name);
-        if (result.data.code == 1000) {
-          this.nickname = result.data.result.name;
-        }
-      } else {
+    //async participantNickName() {
+    //if (this.currentVoiceRoomType == "mobile") {
+    /* const result = await fetchMemberInfo(this.participant.name);
+      if (result.data.code == 1000) {
+        this.nickname = result.data.result.name;
+      } */
+    ///}
+    /* else {
         let communityMembers = this.communityOnlineMemberList.concat(
           this.communityOfflineMemberList
+        );
+        console.log(
+          "너 계산하는거 맞니???",
+          communityMembers,
+          this.participant.name
         );
         for (let i = 0; i < communityMembers.length; i++) {
           if (communityMembers[i].id == this.participant.name) {
             this.nickname = communityMembers[i].communityName;
           }
         }
-      }
-    },
+      } */
+    //},
     getAudioLevel() {
       if (this.participant.name !== this.getUserId) {
         this.participant.rtcPeer.peerConnection.getStats(null).then((stats) => {
@@ -84,8 +98,9 @@ export default {
     },
   },
   async mounted() {
+    console.log("participant", this.participant);
     await document.getElementById(this.videoWrapperId).appendChild(this.video);
-    this.participantNickName();
+    //this.participantNickName();
     this.auto_reload_func = setInterval(this.getAudioLevel, 500);
   },
   destroyed() {

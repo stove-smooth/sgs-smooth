@@ -41,6 +41,7 @@ const voice = {
       if (state.participants === null) {
         state.participants = {};
       }
+      console.log("addParticipant", name, participant);
       Vue.set(state.participants, name, participant);
     },
     disposeParticipant(state, participantName) {
@@ -76,6 +77,7 @@ const voice = {
       context.state.ws.onmessage = function (message) {
         let parsedMessage = JSON.parse(message.data);
         //alert("Received message" + message.data);
+        console.log("온 메시지ㅣㅣㅣㅣㅣ", message.data);
         context.dispatch("onServerMessage", parsedMessage);
       };
     },
@@ -122,9 +124,19 @@ const voice = {
     //case -1 내가 참가했을때
     onExistingParticipants(context, msg) {
       console.log(
-        context.state.myName + " registered in room " + context.state.roomName
+        context.state.myName +
+          " registered in room " +
+          context.state.roomName +
+          "video" +
+          context.state.video +
+          "mute" +
+          context.state.mute
       );
-      let participant = new Participant(context.state.myName);
+      let participant = new Participant(
+        context.state.myName,
+        context.state.video,
+        context.state.mute
+      );
 
       var video = participant.getVideoElement();
 
@@ -144,16 +156,22 @@ const voice = {
           this.generateOffer(participant.offerToReceiveVideo.bind(participant));
         }
       );
-      console.log("내가 참가" + JSON.stringify(participant));
+      let members = JSON.stringify(msg);
+      console.log(
+        "내가 참가" + JSON.stringify(participant) + "*******************" + msg,
+        members
+      );
       const myName = context.state.myName;
       context.commit("addParticipant", { name: myName, participant });
+
       msg.members.forEach(function (sender) {
         context.dispatch("receiveVideo", sender);
       });
     },
     //case -2 내가 속한 방에서 새 참가자가 들어왔을때
     onNewParticipant(context, request) {
-      context.dispatch("receiveVideo", request.userId);
+      console.log("newparticipant왔어용ㅇ@@@@@@@@@@@", request);
+      context.dispatch("receiveVideo", request.member);
     },
     //case -3 참가자가 방에서 나갔을때
     onParticipantLeft(context, request) {
@@ -163,6 +181,11 @@ const voice = {
     },
     //case -4 SDP 정보 전송하여 응답 받음.
     receiveVideoResponse(context, result) {
+      console.log(
+        "sdpcase444444444444444444444444444444",
+        result,
+        context.state.participants
+      );
       context.state.participants[result.userId].rtcPeer.processAnswer(
         result.sdpAnswer,
         function (error) {
@@ -173,9 +196,9 @@ const voice = {
     //case -6 video state를 받는다.
     videoStateTranslated(context, result) {
       if (result.video == 1) {
-        context.state.participants[result.userId].rtcPeer.videoEnabled = true;
+        context.state.participants[result.userId].videoStatus = true;
       } else {
-        context.state.participants[result.userId].rtcPeer.videoEnabled = false;
+        context.state.participants[result.userId].videoStatus = false;
       }
     },
     // participant.dispose에서 오는 요청
@@ -184,7 +207,12 @@ const voice = {
     },
     //다른 참가자 video 받기
     receiveVideo(context, sender) {
-      var participant = new Participant(sender);
+      console.log("receive다른사람 ", sender);
+      var participant = new Participant(
+        sender.userId,
+        sender.video,
+        sender.audio
+      );
       var video = participant.getVideoElement();
 
       var options = {
@@ -206,7 +234,7 @@ const voice = {
       if (context.state.deafen) {
         video.muted = true;
       }
-      context.commit("addParticipant", { name: sender, participant });
+      context.commit("addParticipant", { name: sender.userId, participant });
     },
     setVoiceInfo(context, voiceInfo) {
       //console.log("voice방 정보 저장");
@@ -214,6 +242,7 @@ const voice = {
     },
     sendMessage(context, message) {
       let jsonMessage = JSON.stringify(message);
+      console.log("json", jsonMessage);
       context.state.ws.send(jsonMessage);
     },
     async leaveRoom(context) {

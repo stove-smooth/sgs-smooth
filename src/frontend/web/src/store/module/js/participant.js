@@ -1,7 +1,8 @@
 import store from "@/store/index";
-export default function Participant(name) {
+export default function Participant(name, videoStatus, audioStatus) {
   this.name = name;
-
+  this.videoStatus = videoStatus;
+  this.audioStatus = audioStatus;
   Object.defineProperty(this, "rtcPeer", { writable: true });
 
   var video = document.createElement("video");
