@@ -34,8 +34,11 @@ function getToken() {
 //포그라운드 메시지
 message.onMessage(({ notification }) => {
   const { title, body, click_action } = notification;
-  console.log("[PUSH] onMessage: ", `${title} ${body} ${click_action}`);
+  console.log("notification", notification);
+  //console.log("[PUSH] onMessage: ", `${title} ${body} ${click_action}`);
   // alert(`${title} ${body}`);
+  //let url = click_action.split("/");
+  //console.log("url", url);
   const options = {
     body: body,
     icon: "/smooth_discord.jfif",

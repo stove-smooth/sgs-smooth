@@ -47,10 +47,19 @@ export default {
   },
   async created() {
     await this.fetchCommunityInfo();
+    if (sessionStorage.getItem("webRtc") == "true") {
+      const wsInfo = {
+        url: process.env.VUE_APP_WEBRTC_URL,
+        type: "community",
+      };
+      await this.wsInit(wsInfo); //ws 전역 등록.
+    }
   },
   methods: {
+    ...mapActions("voice", ["wsInit"]),
     ...mapActions("community", ["FETCH_COMMUNITYINFO"]),
     ...mapMutations("community", ["setCurrentChannelType"]),
+
     async fetchCommunityInfo() {
       await this.FETCH_COMMUNITYINFO(this.$route.params.serverid);
     },

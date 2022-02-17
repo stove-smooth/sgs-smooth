@@ -131,6 +131,7 @@ export default {
   },
   computed: {
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
+    ...mapState("voice", ["ws"]),
     ...mapGetters("user", [
       "getEmail",
       "getUserId",

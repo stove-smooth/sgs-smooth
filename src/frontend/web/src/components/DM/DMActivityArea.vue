@@ -443,7 +443,6 @@ export default {
           console.log("타이핑에 관한 구독이 등장.", receivedForm);
         }
         //초대장 관련
-        console.log("receivedForm", receivedForm);
         if (
           receivedForm.message &&
           receivedForm.message.startsWith("<~inviting~>")

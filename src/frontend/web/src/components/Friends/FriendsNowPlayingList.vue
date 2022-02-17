@@ -3,7 +3,10 @@
     <div
       class="frineds-now-playing-container thin-scrollbar now-playing-scroller"
     >
-      <h3 class="header-title">현재 활동 중</h3>
+      <h3 class="header-title">
+        <template v-if="this.friendsOnline.length > 0">현재 활동 중</template
+        ><template v-else>현재 활동 중인 친구가 없어요</template>
+      </h3>
       <div v-for="friend in this.friendsOnline" :key="friend.id">
         <div class="now-playing-card" tabindex="0" role="button">
           <div>

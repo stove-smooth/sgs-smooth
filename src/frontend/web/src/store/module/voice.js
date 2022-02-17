@@ -23,10 +23,13 @@ const voice = {
       state.ws = new SockJS(url, null, {
         transports: ["websocket", "xhr-streaming", "xhr-polling"],
       });
+      //console.log("wswsws", JSON.stringify(state.ws));
+      //sessionStorage.setItem("webRtc", JSON.stringify(state.ws));
       return false;
     },
     setWsOpen(state, wsOpen) {
       //console.log("setWsOpen", wsOpen);
+      sessionStorage.setItem("webRtc", wsOpen);
       state.wsOpen = wsOpen;
     },
     setVoiceInfo(state, voiceInfo) {
