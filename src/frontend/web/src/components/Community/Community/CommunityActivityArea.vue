@@ -403,6 +403,8 @@ export default {
       "communityMessageReplyId",
       "messageEditId",
       "messageReadyToDelete",
+      "communityOnlineMemberList",
+      "communityOfflineMemberList",
     ]),
     ...mapGetters("user", ["getUserId"]),
   },

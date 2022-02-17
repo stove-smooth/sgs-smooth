@@ -76,13 +76,17 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 export default {
+  async created() {
+    await this.FETCH_COMMUNITYLIST();
+  },
   computed: {
     ...mapState("friends", ["friendsOnline"]),
     ...mapState("community", ["communityList"]),
   },
   methods: {
+    ...mapActions("community", ["FETCH_COMMUNITYLIST"]),
     computeCommunityImage(friend) {
       if (friend.onlineState.startsWith("com")) {
         console.log("서버에 있을때", this.communityList);

@@ -396,7 +396,11 @@ export default {
     ...mapState("user", ["nickname", "userimage"]),
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
     ...mapState("community", ["messagePlusMenu", "messageEditId"]),
-    ...mapState("dm", ["directMessageReplyId", "directMessageReadyToDelete"]),
+    ...mapState("dm", [
+      "directMessageReplyId",
+      "directMessageReadyToDelete",
+      "directMessageMemberList",
+    ]),
     ...mapGetters("user", ["getUserId"]),
   },
   async created() {
@@ -441,8 +445,6 @@ export default {
             }
           }
           receivedForm.isOther = isOther;
-        } else {
-          console.log("타이핑에 관한 구독이 등장.", receivedForm);
         }
         //초대장 관련
         if (
@@ -505,6 +507,33 @@ export default {
         //타이핑 구독 수신. 마지막으로 타이핑친 사람의 이름은 3초뒤에 사라진다.
         if (receivedForm.type == "typing") {
           this.messageTyper = receivedForm.name;
+        }
+        //같은 방 유저가 disconnect일경우.
+        if (receivedForm.type == "disconnect") {
+          for (
+            let i = 0;
+            i < this.directMessageMemberList.members.length;
+            i++
+          ) {
+            if (
+              this.directMessageMemberList.members[i].id == receivedForm.userId
+            ) {
+              this.directMessageMemberList.members[i].state = "offline";
+            }
+          }
+        }
+        if (receivedForm.type == "connect") {
+          for (
+            let i = 0;
+            i < this.directMessageMemberList.members.length;
+            i++
+          ) {
+            if (
+              this.directMessageMemberList.members[i].id == receivedForm.userId
+            ) {
+              this.directMessageMemberList.members[i].state = "online";
+            }
+          }
         }
       }
     );

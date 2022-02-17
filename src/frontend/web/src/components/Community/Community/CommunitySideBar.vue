@@ -209,6 +209,33 @@ export default {
           JSON.parse(res.body)
         );
         this.voiceChannelMember = JSON.parse(res.body);
+
+        //같은 방 유저가 disconnect일경우.
+        if (this.voiceChannelMember.type == "disconnect") {
+          for (let i = 0; i < this.communityOnlineMemberList.length; i++) {
+            if (
+              this.communityOnlineMemberList[i].id ==
+              this.voiceChannelMember.userId
+            ) {
+              let communityMember = this.communityOnlineMemberList.splice(i, 1);
+              this.communityOfflineMemberList.push(communityMember[0]);
+            }
+          }
+        }
+        if (this.voiceChannelMember.type == "connect") {
+          for (let i = 0; i < this.communityOfflineMemberList.length; i++) {
+            if (
+              this.communityOfflineMemberList[i].id ==
+              this.voiceChannelMember.userId
+            ) {
+              let communityMember = this.communityOfflineMemberList.splice(
+                i,
+                1
+              );
+              this.communityOnlineMemberList.push(communityMember[0]);
+            }
+          }
+        }
       }
     );
 
@@ -485,7 +512,6 @@ export default {
           return memberInfo;
         }
       }
-      console.log("memberid", id);
     },
   },
 };
