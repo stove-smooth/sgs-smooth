@@ -147,6 +147,7 @@ export default {
     ...mapMutations("voice", ["setMute", "setVideo", "setCurrentVoiceRoom"]),
     toggleMic() {
       if (this.mute) {
+        //음소거 되어있을경우. 음소거 안되게 만들어야함.
         this.sendMessage({
           id: "audioStateFrom",
           userId: this.getUserId,
@@ -159,7 +160,7 @@ export default {
           audio: "false",
         });
       }
-      this.myParticipantObject.rtcPeer.audioEnabled = !this.mute;
+      this.myParticipantObject.rtcPeer.audioEnabled = this.mute;
       this.setMute();
     },
     toggleVideo() {

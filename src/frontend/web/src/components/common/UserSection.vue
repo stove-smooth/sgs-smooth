@@ -144,7 +144,7 @@ export default {
       //음성 연결에 참여했을 경우, 내 mic를 조절한다.
       //음성 연결에 참여하지 않았을 경우, mic상태만 변경한다.
       if (this.wsOpen) {
-        this.myParticipantObject.rtcPeer.audioEnabled = !this.mute;
+        this.myParticipantObject.rtcPeer.audioEnabled = this.mute;
       }
       this.setMute();
     },

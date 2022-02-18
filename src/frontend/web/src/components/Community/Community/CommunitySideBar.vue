@@ -150,7 +150,8 @@
                   class="voice-participants-list"
                   v-if="
                     el.type === 'VOICE' &&
-                    voiceChannelMember[el.id] != 'undefined'
+                    voiceChannelMember != null &&
+                    voiceChannelMember[el.id] != undefined
                   "
                 >
                   <div
@@ -191,59 +192,17 @@ export default {
   components: {
     draggable,
   },
+  props: ["voiceChannelMember"],
   data() {
     return {
       selected: this.$route.params.channelid,
       hovered: "",
       categoryhovered: "",
       new: 0,
-      voiceChannelMember: {},
     };
   },
   created() {
-    this.stompSocketClient.subscribe(
-      `/topic/community/${this.$route.params.serverid}`,
-      (res) => {
-        console.log(
-          "@@@@@@@@@@@시그널링 서버 상태 구독입니다",
-          JSON.parse(res.body)
-        );
-        if (
-          JSON.parse(res.body).type != "disconnect" &&
-          JSON.parse(res.body).type != "connect"
-        ) {
-          this.voiceChannelMember = JSON.parse(res.body);
-        }
-        //같은 방 유저가 disconnect일경우.
-        if (this.voiceChannelMember.type == "disconnect") {
-          for (let i = 0; i < this.communityOnlineMemberList.length; i++) {
-            if (
-              this.communityOnlineMemberList[i].id ==
-              this.voiceChannelMember.userId
-            ) {
-              let communityMember = this.communityOnlineMemberList.splice(i, 1);
-              this.communityOfflineMemberList.push(communityMember[0]);
-            }
-          }
-        }
-        if (this.voiceChannelMember.type == "connect") {
-          for (let i = 0; i < this.communityOfflineMemberList.length; i++) {
-            if (
-              this.communityOfflineMemberList[i].id ==
-              this.voiceChannelMember.userId
-            ) {
-              let communityMember = this.communityOfflineMemberList.splice(
-                i,
-                1
-              );
-              this.communityOnlineMemberList.push(communityMember[0]);
-            }
-          }
-        }
-      }
-    );
-
-    const msg = {
+    /* const msg = {
       user_id: this.getUserId,
       community_id: this.$route.params.serverid,
       type: "before-enter",
@@ -252,7 +211,8 @@ export default {
       "/kafka/community-signaling",
       JSON.stringify(msg),
       {}
-    );
+    ); */
+    console.log("voicechannelmember", this.voiceChannelMember);
   },
   computed: {
     ...mapState("community", [
@@ -293,47 +253,6 @@ export default {
       "setChannelSettingModal",
     ]),
     ...mapMutations("voice", ["setVideo", "setCurrentVoiceRoom"]),
-    /* compareVoiceMemberState(receivedVoiceMember) {
-      for (let i = 0; i < this.getVoiceRoom.length; i++) {
-        let latestMemberList = receivedVoiceMember[this.getVoiceRoom[i]];
-        let oldMemberList = this.voiceChannelMember[this.getVoiceRoom[i]];
-
-        if (latestMemberList != undefined) {
-          if (oldMemberList == undefined) {
-            this.voiceChannelMember[this.getVoiceRoom[i]] = latestMemberList;
-            //console.log("정렬", latestMemberList.sort());
-          } else {
-            //console.log("정렬", latestMemberList.sort());
-            //들어온 멤버목록과 기존의 멤버목록이 다를때만 수정작업을 거친다.
-            let sortedLatestMemberList = latestMemberList.sort();
-            let sortedOldMemberList = oldMemberList.sort();
-            if (
-              JSON.stringify(sortedLatestMemberList) !=
-              JSON.stringify(sortedOldMemberList)
-            ) {
-              //old [1,3]
-              //new [2,3,4]
-              let removeMember = [];
-              let addMember = [];
-              for (let j = 0; j < oldMemberList.length; j++) {
-                //전 멤버중에 최신 멤버에서 포함하지 않는 자가 있다면 삭제한다.
-                if (!latestMemberList.includes(oldMemberList[j])) {
-                  removeMember.push(oldMemberList[j]);
-                }
-              }
-              for (let k = 0; k < latestMemberList.length; k++) {
-                if (!oldMemberList.includes(latestMemberList[k])) {
-                  addMember.push(latestMemberList[k]);
-                }
-              }
-
-              oldMemberList.push(...addMember);
-            }
-          }
-        }
-      }
-      //this.voiceChannelMember = JSON.parse(res.body);
-    }, */
     /***drag and drop을 통해 바뀐 채널/카테고리 정보를 서버에 보내기 위한 로직 */
     log: async function (evt) {
       if (evt.moved) {

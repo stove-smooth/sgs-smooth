@@ -58,11 +58,12 @@ export default {
         this.setCommunityOnlineMemberList(null);
         this.setCommunityOfflineMemberList(null);
         this.setCommunityInfo(null);
-        let array = this.communityList.filter(
-          (element) => element.id !== communityId
-        );
-        this.setCommunityList(array);
 
+        for (let i = 0; i < this.communityList.communities.length; i++) {
+          if (this.communityList.communities[i].id == communityId) {
+            this.communityList.communities.splice(i, 1);
+          }
+        }
         this.$router.replace("/channels/@me");
       } catch (err) {
         console.log(err, "에러", err.response, communityId);

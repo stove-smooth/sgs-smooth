@@ -34,7 +34,11 @@
 
         <div
           aria-label="room"
-          v-if="communityList && communityList.rooms.length > 0"
+          v-if="
+            communityList &&
+            communityList.rooms &&
+            communityList.rooms.length > 0
+          "
         >
           <div v-for="unreadDm in communityList.rooms" :key="unreadDm.id">
             <div

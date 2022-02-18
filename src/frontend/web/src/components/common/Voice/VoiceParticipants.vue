@@ -11,7 +11,10 @@
     </div>
     <div class="display-flex">
       <span class="text-align-center">{{ this.participant.videoStatus }}</span>
-      <div>{{ this.participant.audioStatus }}</div>
+      <div v-if="this.participant.audioStatus">
+        <svg class="mute"></svg>
+      </div>
+      <div v-else><svg class="mute-on"></svg></div>
     </div>
   </div>
 </template>
@@ -47,6 +50,13 @@ export default {
     videoWrapperId() {
       return "video-" + this.participant.name + "-wrapper";
     },
+  },
+  created() {
+    console.log(
+      "참여자ㅏㅏㅏㅏ",
+      this.participant.name,
+      this.participant.audioStatus
+    );
   },
   methods: {
     //async participantNickName() {
@@ -114,8 +124,8 @@ export default {
 
 <style>
 .video-unit-container {
-  /* width: 85%;
-  height: 85%; */
+  width: 85%;
+  height: 85%;
   display: flex;
   flex-direction: column;
   color: white;

@@ -96,11 +96,33 @@
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
 export default {
+  props: ["memberState"],
   mounted() {
     window.addEventListener("click", this.onClick);
   },
   async created() {
     await this.FETCH_COMMUNITYMEMBERLIST(this.$route.params.serverid);
+    console.log("communityMemberList", this.memberState);
+    if (this.memberState != undefined) {
+      if (this.memberState.type == "disconnect") {
+        for (let i = 0; i < this.communityOnlineMemberList.length; i++) {
+          if (this.communityOnlineMemberList[i].id == this.memberState.userId) {
+            let communityMember = this.communityOnlineMemberList.splice(i, 1);
+            this.communityOfflineMemberList.push(communityMember[0]);
+          }
+        }
+      }
+      if (this.memberState.type == "connect") {
+        for (let i = 0; i < this.communityOfflineMemberList.length; i++) {
+          if (
+            this.communityOfflineMemberList[i].id == this.memberState.userId
+          ) {
+            let communityMember = this.communityOfflineMemberList.splice(i, 1);
+            this.communityOnlineMemberList.push(communityMember[0]);
+          }
+        }
+      }
+    }
   },
   computed: {
     ...mapState("community", [

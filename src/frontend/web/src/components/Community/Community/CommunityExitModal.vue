@@ -56,10 +56,11 @@ export default {
       try {
         await exitCommunity(communityId, this.getUserId);
         this.setCommunityReadyToExit(false);
-        let array = this.communityList.filter(
-          (element) => element.id !== communityId
-        );
-        this.setCommunityList(array);
+        for (let i = 0; i < this.communityList.communities.length; i++) {
+          if (this.communityList.communities[i].id == communityId) {
+            this.communityList.communities.splice(i, 1);
+          }
+        }
         this.$router.replace("/channels/@me");
       } catch (err) {
         if (err.response.data.code === 1400) {

@@ -135,7 +135,7 @@ export default {
           audio: "false",
         });
       }
-      this.myParticipantObject.rtcPeer.audioEnabled = !this.mute;
+      this.myParticipantObject.rtcPeer.audioEnabled = this.mute;
       this.setMute();
     },
     toggleVideo() {

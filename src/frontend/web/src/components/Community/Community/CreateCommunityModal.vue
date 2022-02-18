@@ -183,7 +183,7 @@ export default {
         result = await createNewCommunity(frm);
         newChannelId = result.data.result.id;
       }
-      this.communityList.unshift(result.data.result);
+      this.communityList.communities.unshift(result.data.result);
       this.setCommunityList(this.communityList);
       this.$router.push(`/channels/${newChannelId}`);
       this.setCreateCommunity(false);

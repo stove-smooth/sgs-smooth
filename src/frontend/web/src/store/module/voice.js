@@ -41,18 +41,18 @@ const voice = {
       if (state.participants === null) {
         state.participants = {};
       }
-      console.log("addParticipant", name, participant);
+      //console.log("addParticipant", name, participant);
       Vue.set(state.participants, name, participant);
     },
     disposeParticipant(state, participantName) {
       Vue.delete(state.participants, participantName);
     },
     setMute(state) {
-      console.log("setMute");
+      //console.log("setMute");
       state.mute = !state.mute;
     },
     setDeafen(state) {
-      console.log("setDeafen");
+      //console.log("setDeafen");
       state.deafen = !state.deafen;
     },
     setVideo(state) {
@@ -127,19 +127,10 @@ const voice = {
     /**case */
     //case -1 내가 참가했을때
     onExistingParticipants(context, msg) {
-      console.log(
-        context.state.myName +
-          " registered in room " +
-          context.state.roomName +
-          "video" +
-          context.state.video +
-          "mute" +
-          context.state.mute
-      );
       let participant = new Participant(
         context.state.myName,
         context.state.video,
-        context.state.mute
+        !context.state.mute
       );
 
       var video = participant.getVideoElement();
@@ -160,11 +151,6 @@ const voice = {
           this.generateOffer(participant.offerToReceiveVideo.bind(participant));
         }
       );
-      let members = JSON.stringify(msg);
-      console.log(
-        "내가 참가" + JSON.stringify(participant) + "*******************" + msg,
-        members
-      );
       const myName = context.state.myName;
       context.commit("addParticipant", { name: myName, participant });
 
@@ -174,12 +160,10 @@ const voice = {
     },
     //case -2 내가 속한 방에서 새 참가자가 들어왔을때
     onNewParticipant(context, request) {
-      console.log("newparticipant왔어용ㅇ@@@@@@@@@@@", request);
       context.dispatch("receiveVideo", request.member);
     },
     //case -3 참가자가 방에서 나갔을때
     onParticipantLeft(context, request) {
-      console.log("Participant " + request.userId + " left");
       var participant = context.state.participants[request.userId];
       participant.dispose();
     },
@@ -214,7 +198,6 @@ const voice = {
     },
     //다른 참가자 video 받기
     receiveVideo(context, sender) {
-      console.log("receive다른사람 ", sender);
       var participant = new Participant(
         sender.userId,
         sender.video,
@@ -253,7 +236,7 @@ const voice = {
       context.state.ws.send(jsonMessage);
     },
     async leaveRoom(context) {
-      console.log("leaveRoom");
+      //console.log("leaveRoom");
       for (var key in context.state.participants) {
         context.state.participants[key].dispose();
       }

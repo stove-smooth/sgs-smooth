@@ -307,12 +307,14 @@ export default {
       this.menuSelected = menu;
     },
     isProfileAvatar() {
-      for (var i = 0; i < this.communityList.length; i++) {
-        if (this.communityList[i].id == this.$route.params.serverid) {
-          if (this.communityList[i].icon == null) {
+      for (var i = 0; i < this.communityList.communities.length; i++) {
+        if (
+          this.communityList.communities[i].id == this.$route.params.serverid
+        ) {
+          if (this.communityList.communities[i].icon == null) {
             return false;
           } else {
-            this.icon = this.communityList[i].icon;
+            this.icon = this.communityList.communities[i].icon;
             return true;
           }
         }

@@ -79,9 +79,12 @@ export default {
   async created() {
     await this.FETCH_FRIENDSLIST();
     let icon;
-    for (var i = 0; i < this.communityList.length; i++) {
-      if (this.communityList[i].id == this.communityInviteModal.serverId) {
-        icon = this.communityList[i].icon;
+    for (var i = 0; i < this.communityList.communities.length; i++) {
+      if (
+        this.communityList.communities[i].id ==
+        this.communityInviteModal.serverId
+      ) {
+        icon = this.communityList.communities[i].icon;
         break;
       }
     }
