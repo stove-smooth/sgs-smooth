@@ -1,6 +1,6 @@
 import axios from "axios";
 import Vue from "vue";
-
+import "@/utils/firebase";
 import App from "./App.vue";
 import { router } from "./routes";
 import { loadGuard } from "./routes/guard.js";

@@ -402,6 +402,7 @@ export default {
       "directMessageMemberList",
     ]),
     ...mapGetters("user", ["getUserId"]),
+    ...mapState("dm", ["directMessageList"]),
   },
   async created() {
     //들어온 채널의 상태를 보냄.
@@ -604,13 +605,23 @@ export default {
         //답장/일반메시지/사진메시지를 구분한다.
         if (this.directMessageReplyId) {
           this.reply();
-          return;
         }
         if (this.images.length > 0) {
           this.sendPicture();
         }
         if (this.text) {
           this.send();
+        }
+        if (this.directMessageList[0].id != this.$route.params.id) {
+          if (this.directMessageList) {
+            for (let i = 0; i < this.directMessageList.length; i++) {
+              if (this.directMessageList[i].id == this.$route.params.id) {
+                let dmUpdated = this.directMessageList.splice(i, 1);
+                this.directMessageList.unshift(dmUpdated[0]);
+                return;
+              }
+            }
+          }
         }
       }
     },

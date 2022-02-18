@@ -45,7 +45,13 @@ export default {
       channel_id: "home",
       type: "state",
     };
-    this.stompSocketClient.send("/kafka/join-channel", JSON.stringify(msg), {});
+    if (this.stompSocketClient) {
+      this.stompSocketClient.send(
+        "/kafka/join-channel",
+        JSON.stringify(msg),
+        {}
+      );
+    }
     await this.FETCH_FRIENDSLIST();
     await this.fetchFriendsStates();
   },
