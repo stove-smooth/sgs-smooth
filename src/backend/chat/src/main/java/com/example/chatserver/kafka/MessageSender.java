@@ -5,6 +5,8 @@ import com.example.chatserver.client.NotificationClient;
 import com.example.chatserver.config.TcpClientGateway;
 import com.example.chatserver.domain.ChannelMessage;
 import com.example.chatserver.domain.DirectMessage;
+import com.example.chatserver.dto.request.ChannelNotiRequest;
+import com.example.chatserver.dto.request.DirectNotiRequest;
 import com.example.chatserver.dto.request.LoginSessionRequest;
 import com.example.chatserver.dto.request.StateRequest;
 import com.example.chatserver.dto.response.CommunityFeignResponse;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -57,30 +60,34 @@ public class MessageSender {
             // 커뮤니티에 속해 있는 유저 id값 반환
             CommunityFeignResponse userIds = communityClient.getUserIdsFromDM(directChat.getChannelId());
             redisTemplateForIds.opsForValue().set("R"+ directChat.getChannelId(),userIds.getResult(),TIME, TimeUnit.MILLISECONDS);
+            List<Long> members = userIds.getResult().getMembers();
+            members.remove(directChat.getUserId());
             LoginSessionRequest loginSessionRequest = LoginSessionRequest.builder()
                     .type("direct")
                     .community_id("r-" + directChat.getChannelId())
-                    .ids(userIds.getResult().getMembers()).build();
+                    .ids(members).build();
             send = tcpClientGateway.send(loginSessionRequest.toString());
 
 
         } else {
             CommunityFeignResponse.UserIdResponse userIdResponse = objectMapper.convertValue(Community_key, new TypeReference<>() {});
+            List<Long> members = userIdResponse.getMembers();
+            members.remove(directChat.getUserId());
             LoginSessionRequest loginSessionRequest = LoginSessionRequest.builder()
                     .type("community")
                     .community_id("c-" + directChat.getChannelId())
-                    .ids(userIdResponse.getMembers()).build();
+                    .ids(members).build();
             send = tcpClientGateway.send(loginSessionRequest.toString());
         }
-//        DirectNotiRequest request = DirectNotiRequest.builder()
-//                .userId(directChat.getUserId())
-//                .username(directChat.getName())
-//                .type("text")
-//                .roomName("DM")
-//                .content(directChat.getContent())
-//                .roomId(directChat.getChannelId())
-//                .target(send).build();
-//        notificationClient.directNoti(request);
+        DirectNotiRequest request = DirectNotiRequest.builder()
+                .userId(directChat.getUserId())
+                .username(directChat.getName())
+                .type("text")
+                .roomName("DM")
+                .content(directChat.getContent())
+                .roomId(directChat.getChannelId())
+                .target(send).build();
+        notificationClient.directNoti(request);
 
         DirectMessage save = directChatRepository.save(directChat);
         kafkaTemplateForDirectMessage.send(topic, save);
@@ -93,32 +100,36 @@ public class MessageSender {
             // 커뮤니티에 속해 있는 유저 id값 반환
             CommunityFeignResponse userIds = communityClient.getUserIds(channelMessage.getCommunityId());
             redisTemplateForIds.opsForValue().set("CH"+ channelMessage.getCommunityId(),userIds.getResult(),TIME,TimeUnit.MILLISECONDS);
+            List<Long> members = userIds.getResult().getMembers();
+            members.remove(channelMessage.getUserId());
             LoginSessionRequest loginSessionRequest = LoginSessionRequest.builder()
                     .type("community")
                     .community_id("c-" + channelMessage.getChannelId())
-                    .ids(userIds.getResult().getMembers()).build();
+                    .ids(members).build();
             send = tcpClientGateway.send(loginSessionRequest.toString());
 
         } else {
             CommunityFeignResponse.UserIdResponse userIdResponse = objectMapper.convertValue(Community_key, new TypeReference<>() {
             });
+            List<Long> members = userIdResponse.getMembers();
+            members.remove(channelMessage.getUserId());
             LoginSessionRequest loginSessionRequest = LoginSessionRequest.builder()
                     .type("community")
                     .community_id("c-" + channelMessage.getChannelId())
-                    .ids(userIdResponse.getMembers()).build();
+                    .ids(members).build();
             send = tcpClientGateway.send(loginSessionRequest.toString());
         }
 
-//        ChannelNotiRequest request = ChannelNotiRequest.builder()
-//                .userId(channelMessage.getUserId())
-//                .username(channelMessage.getName())
-//                .type("text")
-//                .content(channelMessage.getContent())
-//                .channelName("CHANNEL")
-//                .communityId(channelMessage.getCommunityId())
-//                .channelId(channelMessage.getChannelId())
-//                .target(send).build();
-//        notificationClient.channelNoti(request);
+        ChannelNotiRequest request = ChannelNotiRequest.builder()
+                .userId(channelMessage.getUserId())
+                .username(channelMessage.getName())
+                .type("text")
+                .content(channelMessage.getContent())
+                .channelName("CHANNEL")
+                .communityId(channelMessage.getCommunityId())
+                .channelId(channelMessage.getChannelId())
+                .target(send).build();
+        notificationClient.channelNoti(request);
 
         ChannelMessage save = channelChatRepository.save(channelMessage);
         kafkaTemplateForChannelMessage.send(topic,save);

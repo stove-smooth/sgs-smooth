@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @Component
@@ -181,7 +180,8 @@ public class MessageListener {
                         .communityId(stateRequest.getCommunityId())
                         .channelId(stateRequest.getChannelId())
                         .ids(stateRequest.getIds()).build();
-                template.convertAndSend("/topic/community/" + signalingRequest.getCommunityId(), signalingRequest.toString());
+                String json = objectMapper.writeValueAsString(signalingRequest);
+                template.convertAndSend("/topic/community/" + signalingRequest.getCommunityId(), json);
                 break;
             }
             case "exit-room": {
@@ -189,7 +189,8 @@ public class MessageListener {
                         .type(stateRequest.getTypeForExit())
                         .channelId(stateRequest.getChannelId())
                         .ids(stateRequest.getIds()).build();
-                template.convertAndSend("/topic/direct/" + signalingRequest.getChannelId(), signalingRequest.toString());
+                String json = objectMapper.writeValueAsString(signalingRequest);
+                template.convertAndSend("/topic/direct/" + signalingRequest.getChannelId(), json);
                 break;
             }
             case "connect":

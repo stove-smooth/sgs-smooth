@@ -51,16 +51,14 @@ public class TcpService {
                 String status = "STATUS" + user_Id;
 
                 String state = String.valueOf(redisTemplate.opsForValue().get("USER" + user_Id));
-                if (!state.equals("null")) {
-                    String list = String.valueOf(redisTemplate.opsForValue().get(state));
-                    if (!list.equals("null")) {
-                        if (!list.equals("[]")) {
-                            HashSet hashSet = objectMapper.readValue(list, HashSet.class);
-                            log.info(String.valueOf(hashSet));
-                            hashSet.remove(user_Id);
-                            log.info(String.valueOf(hashSet));
-                            redisTemplate.opsForValue().set(state, objectMapper.writeValueAsString(hashSet));
-                        }
+                String list = String.valueOf(redisTemplate.opsForValue().get(state));
+                if (!list.equals("null")) {
+                    if (!list.equals("[]")) {
+                        HashSet hashSet = objectMapper.readValue(list, HashSet.class);
+                        log.info(String.valueOf(hashSet));
+                        hashSet.remove(user_Id);
+                        log.info(String.valueOf(hashSet));
+                        redisTemplate.opsForValue().set(state, objectMapper.writeValueAsString(hashSet));
                     }
                 }
                 redisTemplate.delete(session_id);
@@ -73,7 +71,6 @@ public class TcpService {
             case "state": {
                 String user_id = "USER" + request.getUser_id();
                 String lastRoom = String.valueOf(redisTemplate.opsForValue().get(user_id));
-                log.info("지난 방:" + lastRoom);
                 String lastRoomList = String.valueOf(redisTemplate.opsForValue().get(lastRoom));
                 log.info("지난 방 인원들:" + lastRoomList);
                 // 지난 방에서 내 기록 삭제
@@ -116,7 +113,6 @@ public class TcpService {
             case "before-enter": {
                 Map<String,List<String>> result = new HashMap<>();
                 String lastRoom = String.valueOf(redisTemplate.opsForValue().get("USER" + request.getUser_id()));
-                log.info(lastRoom);
                 String lastRoomList = String.valueOf(redisTemplate.opsForValue().get(lastRoom));
                 if (!lastRoom.equals("null")) {
                     if (!lastRoom.equals("[]")) {
@@ -128,7 +124,6 @@ public class TcpService {
                 List<String> keys = redisTemplate.keys("*").stream()
                         .filter(k -> String.valueOf(k).startsWith("com" + request.getCommunity_id())).collect(Collectors.toList());
                 for (String i : keys) {
-                    log.info("before-enter방이름:" + i);
                     String value = String.valueOf(redisTemplate.opsForValue().get(i));
                     if (value.equals("null") || value.equals("[]")) {
                         ArrayList arrayList = new ArrayList();
@@ -209,10 +204,11 @@ public class TcpService {
                     log.info("signaling유저리스트커뮤있을때:" + value);
                     ArrayList arrayList = objectMapper.readValue(value, ArrayList.class);
                     SignalingRequest signalingRequest = SignalingRequest.builder()
-                            .type("disconnect")
+                            .type("out")
                             .communityId(request.getCommunity_id())
+                            .channelId(request.getChannel_id())
                             .ids(arrayList).build();
-                    log.info(signalingRequest.getCommunityId());
+                    log.info(signalingRequest.toString());
                     chatClient.getSignalingListForCommunity(signalingRequest);
                 } else {
 
@@ -230,7 +226,7 @@ public class TcpService {
                     log.info("signaling유저리스트커무없을때:" + value);
                     ArrayList arrayList = objectMapper.readValue(value, ArrayList.class);
                     SignalingRequest signalingRequest = SignalingRequest.builder()
-                            .type("disconnect")
+                            .type("out")
                             .channelId(lastRoom.split("-")[1])
                             .ids(arrayList).build();
                     chatClient.getSignalingListForDirect(signalingRequest);

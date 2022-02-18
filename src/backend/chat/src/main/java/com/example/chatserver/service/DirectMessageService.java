@@ -152,15 +152,15 @@ public class DirectMessageService {
     }
 
     public void findUserList(Long room_id, List<Long> ids) {
-        Object Room_key = redisTemplateForIds.opsForValue().get("DM" + room_id);
+        Object Room_key = redisTemplateForIds.opsForValue().get("R" + room_id);
         if (Room_key == null) {
             // 커뮤니티에 속해 있는 유저 id값 반환
             CommunityFeignResponse userIds = communityClient.getUserIdsFromDM(room_id);
-            redisTemplateForIds.opsForValue().set("DM"+ room_id,userIds.getResult(),TIME, TimeUnit.MILLISECONDS);
+            redisTemplateForIds.opsForValue().set("R"+ room_id,userIds.getResult(),TIME, TimeUnit.MILLISECONDS);
         } else {
             CommunityFeignResponse.UserIdResponse userIdResponse = new CommunityFeignResponse.UserIdResponse();
             userIdResponse.setMembers(ids);
-            redisTemplateForIds.opsForValue().set("DM" + room_id, userIdResponse, TIME, TimeUnit.MILLISECONDS);
+            redisTemplateForIds.opsForValue().set("R" + room_id, userIdResponse, TIME, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -198,6 +198,7 @@ public class DirectMessageService {
                     // 메세지를 다 읽었으면
                     if (size == 0) {
                         int Msize = messages.size();
+                        log.info(String.valueOf(messages.get(Msize-1).getLocalDateTime()));
                         MessageCountResponse temp = MessageCountResponse.builder()
                                 .roomId(roomId)
                                 .count(0)
@@ -206,11 +207,13 @@ public class DirectMessageService {
                     }
                     // 안 읽은 메세지가 있다면
                     else {
+                        int Msize = messages.size();
+                        log.info(String.valueOf(messages.get(Msize-1).getLocalDateTime()));
                         MessageCountResponse temp = MessageCountResponse.builder()
                                 .roomId(roomId)
                                 .count(size)
-                                .localDateTime(messages.get(size - 1).getLocalDateTime().format(DateTimeFormatter.ofPattern("yyyyMMddhhmmssSSS"))).build();
-                        sortMe.put(Long.valueOf(messages.get(size - 1).getLocalDateTime().format(DateTimeFormatter.ofPattern("yyyyMMddhhmmssSSS"))),temp);
+                                .localDateTime(messages.get(Msize - 1).getLocalDateTime().format(DateTimeFormatter.ofPattern("yyyyMMddhhmmssSSS"))).build();
+                        sortMe.put(Long.valueOf(messages.get(Msize - 1).getLocalDateTime().format(DateTimeFormatter.ofPattern("yyyyMMddhhmmssSSS"))),temp);
                     }
                 }
             }
