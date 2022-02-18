@@ -32,7 +32,10 @@
           </div>
         </div>
 
-        <div aria-label="room">
+        <div
+          aria-label="room"
+          v-if="communityList && communityList.rooms.length > 0"
+        >
           <div v-for="unreadDm in communityList.rooms" :key="unreadDm.id">
             <div
               class="listItem"
@@ -78,7 +81,10 @@
         <div class="listItem">
           <div class="guild-seperator"></div>
         </div>
-        <div aria-label="서버">
+        <div
+          aria-label="서버"
+          v-if="communityList && communityList.communities.length > 0"
+        >
           <!--서버 개수만큼 만들기.-->
           <draggable
             :list="communityList.communities"

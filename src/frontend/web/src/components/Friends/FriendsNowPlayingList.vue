@@ -7,118 +7,29 @@
         <template v-if="this.friendsOnline.length > 0">현재 활동 중</template
         ><template v-else>현재 활동 중인 친구가 없어요</template>
       </h3>
-      <div v-for="friend in this.friendsOnline" :key="friend.id">
-        <div class="now-playing-card" tabindex="0" role="button">
-          <div>
-            <header class="now-playing-card-header">
-              <div class="profile-margin profile-wrapper">
-                <img class="avatar" :src="friend.profileImage" alt=" " />
-                <template aria-label="status-invisible">
-                  <div class="status-ring">
-                    <div class="status-online"></div>
-                  </div>
-                </template>
-              </div>
-              <div>
-                <div class="large-white-description primary-text-content">
-                  {{ friend.name }}
-                </div>
-                <div
-                  v-if="friend.onlineState.startsWith('com')"
-                  class="primary-text-content status-description"
-                >
-                  음성 채널 참여 중
-                </div>
-                <div class="primary-text-content status-description" v-else>
-                  온라인
-                </div>
-              </div>
-            </header>
-            <div class="now-playing-card-body">
-              <section class="now-playing-server-container">
-                <div class="now-playing-server">
-                  <div tabindex="-1" role="button">
-                    <div
-                      class="profile-wrapper justify-content-center align-items-center"
-                    >
-                      <template v-if="computeCommunityImage(friend) != 'lobby'">
-                        <img
-                          class="profile-wrapper"
-                          alt="image"
-                          :src="computeCommunityImage(friend)"
-                        />
-                        <div class="voice-section-wrapper">
-                          <svg class="small-voice-channel"></svg>
-                        </div>
-                      </template>
-                      <template
-                        v-else
-                        v-bind:style="{ width: '22px', height: '22px' }"
-                        ><svg class="place-home"></svg>
-                      </template>
-                    </div>
-                  </div>
-                  <div tabindex="0" role="button">
-                    <div class="clickable" aria-label="voice-section-details">
-                      <div class="large-white-description primary-text-content">
-                        {{ computeCommunityName(friend) }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            </div>
-          </div>
+      <template v-if="this.communityList != null">
+        <div v-for="friend in this.friendsOnline" :key="friend.id">
+          <friends-playing-form :friend="friend"></friends-playing-form>
         </div>
-      </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapActions } from "vuex";
+import FriendsPlayingForm from "./FriendsPlayingForm.vue";
 export default {
-  async created() {
+  components: { FriendsPlayingForm },
+  /* async created() {
     await this.FETCH_COMMUNITYLIST();
-  },
+  }, */
   computed: {
-    ...mapState("friends", ["friendsOnline"]),
     ...mapState("community", ["communityList"]),
+    ...mapState("friends", ["friendsOnline"]),
   },
   methods: {
     ...mapActions("community", ["FETCH_COMMUNITYLIST"]),
-    computeCommunityImage(friend) {
-      if (friend.onlineState.startsWith("com")) {
-        console.log("서버에 있을때", this.communityList);
-        let server = friend.onlineState.split(",");
-        let serverId = server[0].split("m");
-        console.log("server", serverId); //serverId[1]
-        for (let i = 0; i < this.communityList.length; i++) {
-          if (this.communityList[i].id == serverId[1]) {
-            console.log("ddddd", this.communityList[i].icon);
-            return this.communityList[i].icon;
-          }
-        }
-      } else {
-        return "lobby";
-      }
-    },
-    computeCommunityName(friend) {
-      if (friend.onlineState.startsWith("com")) {
-        console.log("서버에 있을때", friend.onlineState, this.communityList);
-        let server = friend.onlineState.split(",");
-        let serverId = server[0].split("m");
-        console.log("server", serverId); //serverId[1]
-        for (let i = 0; i < this.communityList.length; i++) {
-          if (this.communityList[i].id == serverId[1]) {
-            console.log("ddddd", this.communityList[i].icon);
-            return this.communityList[i].name;
-          }
-        }
-      } else {
-        return "lobby";
-      }
-    },
   },
 };
 </script>

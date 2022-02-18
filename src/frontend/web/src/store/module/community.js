@@ -13,7 +13,7 @@ const community = {
     communityReadyToDelete: false,
     communityReadyToExit: false,
     communityReadyToBanish: false,
-    communityList: [],
+    communityList: null,
     communityInfo: null,
     communityOnlineMemberList: [],
     communityOfflineMemberList: [],

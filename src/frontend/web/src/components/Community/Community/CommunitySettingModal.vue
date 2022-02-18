@@ -288,9 +288,6 @@ export default {
       icon: null,
     };
   },
-  created() {
-    console.log(this.$route.params.serverid);
-  },
   computed: {
     ...mapState("community", [
       "communitySettingModal",
