@@ -293,7 +293,7 @@ export default {
       "setChannelSettingModal",
     ]),
     ...mapMutations("voice", ["setVideo", "setCurrentVoiceRoom"]),
-    compareVoiceMemberState(receivedVoiceMember) {
+    /* compareVoiceMemberState(receivedVoiceMember) {
       for (let i = 0; i < this.getVoiceRoom.length; i++) {
         let latestMemberList = receivedVoiceMember[this.getVoiceRoom[i]];
         let oldMemberList = this.voiceChannelMember[this.getVoiceRoom[i]];
@@ -333,7 +333,7 @@ export default {
         }
       }
       //this.voiceChannelMember = JSON.parse(res.body);
-    },
+    }, */
     /***drag and drop을 통해 바뀐 채널/카테고리 정보를 서버에 보내기 위한 로직 */
     log: async function (evt) {
       if (evt.moved) {

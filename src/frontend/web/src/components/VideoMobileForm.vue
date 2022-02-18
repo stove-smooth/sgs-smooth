@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from "vuex";
+import { mapActions, mapMutations, mapState, mapGetters } from "vuex";
 import VoiceParticipants from "./common/Voice/VoiceParticipants.vue";
 export default {
   components: { VoiceParticipants },
@@ -101,6 +101,7 @@ export default {
   },
   computed: {
     ...mapState("voice", ["participants", "mute", "video", "myName", "deafen"]),
+    ...mapGetters("user", ["getUserId"]),
     voiceMembers() {
       //참여자 감지
       if (this.participants) {
@@ -121,10 +122,36 @@ export default {
     ...mapActions("voice", ["setVoiceInfo", "sendMessage", "leaveRoom"]),
     ...mapMutations("voice", ["setMute", "setVideo"]),
     toggleMic() {
-      this.setMute();
+      if (this.mute) {
+        this.sendMessage({
+          id: "audioStateFrom",
+          userId: this.getUserId,
+          audio: "true",
+        });
+      } else {
+        this.sendMessage({
+          id: "audioStateFrom",
+          userId: this.getUserId,
+          audio: "false",
+        });
+      }
       this.myParticipantObject.rtcPeer.audioEnabled = !this.mute;
+      this.setMute();
     },
     toggleVideo() {
+      if (this.video) {
+        this.sendMessage({
+          id: "videoStateFrom",
+          userId: this.getUserId,
+          video: "false",
+        });
+      } else {
+        this.sendMessage({
+          id: "videoStateFrom",
+          userId: this.getUserId,
+          video: "true",
+        });
+      }
       this.myParticipantObject.rtcPeer.videoEnabled = !this.video;
       this.setVideo();
     },

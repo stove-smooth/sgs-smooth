@@ -115,6 +115,10 @@ const voice = {
           context.dispatch("videoStateTranslated", message);
           break;
         }
+        case "audioStateAnswer": {
+          context.dispatch("audioStateTranslated", message);
+          break;
+        }
         default: {
           console.error("Unrecognized message" + message);
         }
@@ -181,11 +185,6 @@ const voice = {
     },
     //case -4 SDP 정보 전송하여 응답 받음.
     receiveVideoResponse(context, result) {
-      console.log(
-        "sdpcase444444444444444444444444444444",
-        result,
-        context.state.participants
-      );
       context.state.participants[result.userId].rtcPeer.processAnswer(
         result.sdpAnswer,
         function (error) {
@@ -195,10 +194,18 @@ const voice = {
     },
     //case -6 video state를 받는다.
     videoStateTranslated(context, result) {
-      if (result.video == 1) {
+      if (result.video == true) {
         context.state.participants[result.userId].videoStatus = true;
       } else {
         context.state.participants[result.userId].videoStatus = false;
+      }
+    },
+    //case -7 audio state를 받는다.
+    audioStateTranslated(context, result) {
+      if (result.audio == true) {
+        context.state.participants[result.userId].audioStatus = true;
+      } else {
+        context.state.participants[result.userId].audioStatus = false;
       }
     },
     // participant.dispose에서 오는 요청

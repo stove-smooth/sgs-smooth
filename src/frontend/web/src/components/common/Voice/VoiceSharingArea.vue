@@ -15,10 +15,12 @@
         v-for="voiceMember in voiceMembers"
         :key="voiceMember.name"
       >
-        <voice-participants
-          :participant="voiceMember"
-          :key="voiceMember.videoStatus"
-        ></voice-participants>
+        <div :key="voiceMember.videoStatus">
+          <voice-participants
+            :participant="voiceMember"
+            :key="voiceMember.audioStatus"
+          ></voice-participants>
+        </div>
       </div>
     </div>
     <div class="voice-bottom-control-section">
@@ -144,8 +146,21 @@ export default {
     ...mapActions("voice", ["setVoiceInfo", "sendMessage", "leaveRoom"]),
     ...mapMutations("voice", ["setMute", "setVideo", "setCurrentVoiceRoom"]),
     toggleMic() {
-      this.setMute();
+      if (this.mute) {
+        this.sendMessage({
+          id: "audioStateFrom",
+          userId: this.getUserId,
+          audio: "true",
+        });
+      } else {
+        this.sendMessage({
+          id: "audioStateFrom",
+          userId: this.getUserId,
+          audio: "false",
+        });
+      }
       this.myParticipantObject.rtcPeer.audioEnabled = !this.mute;
+      this.setMute();
     },
     toggleVideo() {
       //다른 참여자의 비디오 상태를 알기 위한 로직

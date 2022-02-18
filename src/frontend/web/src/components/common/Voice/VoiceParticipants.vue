@@ -9,7 +9,10 @@
     <div v-show="!participant.videoStatus" class="no-video-container">
       <img class="no-video-img" src="../../../assets/default_stove.png" />
     </div>
-    <span class="text-align-center">{{ this.participant.videoStatus }}</span>
+    <div class="display-flex">
+      <span class="text-align-center">{{ this.participant.videoStatus }}</span>
+      <div>{{ this.participant.audioStatus }}</div>
+    </div>
   </div>
 </template>
 
