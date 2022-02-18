@@ -9,8 +9,10 @@
 - Java 11
 - Springboot 2.6.2
 - WebSocket, SockJS
+- Spring Integration TCP/UDP
 - Kurento Media Server 6.16
 - Kurento Client
+- Redis
 
 ## 제공 기능
 |기능|설명|
