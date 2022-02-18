@@ -25,14 +25,24 @@ public class NotificationController {
     @PostMapping("/direct")
     public CommonResponse sendDirectMessage(@Valid @RequestBody DirectMessageRequest request) {
         log.info("POST /notification-server/direct / {}", request.getTarget());
-        notificationService.send(request);
+        try {
+            notificationService.send(request);
+        } catch (Exception e) {
+            log.error("NOTIFICATION ERROR - DM");
+            e.printStackTrace();
+        }
         return responseService.getSuccessResponse();
     }
 
     @PostMapping("/channel")
     public CommonResponse sendChannelMessage(@Valid @RequestBody ChannelMessageRequest request) {
         log.info("POST /notification-server/channel / {}", request.getTarget());
-        notificationService.send(request);
+        try {
+            notificationService.send(request);
+        } catch (Exception e) {
+            log.error("NOTIFICATION ERROR - CHANNEL");
+            e.printStackTrace();
+        }
         return responseService.getSuccessResponse();
     }
 
