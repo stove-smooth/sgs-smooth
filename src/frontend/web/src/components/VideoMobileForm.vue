@@ -15,7 +15,15 @@
         v-for="voiceMember in voiceMembers"
         :key="voiceMember.name"
       >
-        <voice-participants :participant="voiceMember"></voice-participants>
+        <div
+          class="align-items-center justify-content-center"
+          :key="voiceMember.videoStatus"
+        >
+          <voice-participants
+            :participant="voiceMember"
+            :key="voiceMember.audioStatus"
+          ></voice-participants>
+        </div>
       </div>
     </div>
     <div class="voice-bottom-mobile-control-section">
@@ -47,7 +55,7 @@
 
 <script>
 import { mapActions, mapMutations, mapState, mapGetters } from "vuex";
-import VoiceParticipants from "./common/Voice/VoiceParticipants.vue";
+import VoiceParticipants from "../components/common/Voice/VoiceParticipants.vue";
 export default {
   components: { VoiceParticipants },
   data() {

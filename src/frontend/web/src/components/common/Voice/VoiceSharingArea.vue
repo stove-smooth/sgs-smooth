@@ -15,7 +15,10 @@
         v-for="voiceMember in voiceMembers"
         :key="voiceMember.name"
       >
-        <div :key="voiceMember.videoStatus">
+        <div
+          class="align-items-center justify-content-center"
+          :key="voiceMember.videoStatus"
+        >
           <voice-participants
             :participant="voiceMember"
             :key="voiceMember.audioStatus"

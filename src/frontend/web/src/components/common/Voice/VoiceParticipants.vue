@@ -10,7 +10,9 @@
       <img class="no-video-img" src="../../../assets/default_stove.png" />
     </div>
     <div class="display-flex">
-      <span class="text-align-center">{{ this.participant.videoStatus }}</span>
+      <span class="text-align-center margin-right-8px">{{
+        this.nickname
+      }}</span>
       <div v-if="this.participant.audioStatus">
         <svg class="mute"></svg>
       </div>
@@ -21,7 +23,7 @@
 
 <script>
 import { mapGetters, mapState } from "vuex";
-//import { fetchMemberInfo } from "@/api";
+import { fetchMemberInfo } from "@/api";
 export default {
   props: {
     participant: {
@@ -52,36 +54,15 @@ export default {
     },
   },
   created() {
-    console.log(
-      "참여자ㅏㅏㅏㅏ",
-      this.participant.name,
-      this.participant.audioStatus
-    );
+    this.participantNickName();
   },
   methods: {
-    //async participantNickName() {
-    //if (this.currentVoiceRoomType == "mobile") {
-    /* const result = await fetchMemberInfo(this.participant.name);
+    async participantNickName() {
+      const result = await fetchMemberInfo(this.participant.name);
       if (result.data.code == 1000) {
         this.nickname = result.data.result.name;
-      } */
-    ///}
-    /* else {
-        let communityMembers = this.communityOnlineMemberList.concat(
-          this.communityOfflineMemberList
-        );
-        console.log(
-          "너 계산하는거 맞니???",
-          communityMembers,
-          this.participant.name
-        );
-        for (let i = 0; i < communityMembers.length; i++) {
-          if (communityMembers[i].id == this.participant.name) {
-            this.nickname = communityMembers[i].communityName;
-          }
-        }
-      } */
-    //},
+      }
+    },
     getAudioLevel() {
       if (this.participant.name !== this.getUserId) {
         this.participant.rtcPeer.peerConnection.getStats(null).then((stats) => {
@@ -89,8 +70,12 @@ export default {
             if (report.type === "inbound-rtp" && report.kind === "audio") {
               if (report.audioLevel > 0.01) {
                 this.video.classList.add("saying");
+                let noVideo = document.querySelector(".no-video-img");
+                noVideo.classList.add("saying");
               } else {
                 this.video.classList.remove("saying");
+                let noVideo = document.querySelector(".no-video-img");
+                noVideo.classList.remove("saying");
               }
             }
           });
@@ -101,8 +86,12 @@ export default {
             if (report.type === "media-source" && report.kind === "audio") {
               if (report.audioLevel > 0.01) {
                 this.video.classList.add("saying");
+                let noVideo = document.querySelector(".no-video-img");
+                noVideo.classList.add("saying");
               } else {
                 this.video.classList.remove("saying");
+                let noVideo = document.querySelector(".no-video-img");
+                noVideo.classList.remove("saying");
               }
             }
           });
@@ -113,7 +102,6 @@ export default {
   async mounted() {
     console.log("participant", this.participant);
     await document.getElementById(this.videoWrapperId).appendChild(this.video);
-    //this.participantNickName();
     this.auto_reload_func = setInterval(this.getAudioLevel, 500);
   },
   destroyed() {
@@ -124,8 +112,8 @@ export default {
 
 <style>
 .video-unit-container {
-  width: 85%;
-  height: 85%;
+  width: 80%;
+  height: 80%;
   display: flex;
   flex-direction: column;
   color: white;
