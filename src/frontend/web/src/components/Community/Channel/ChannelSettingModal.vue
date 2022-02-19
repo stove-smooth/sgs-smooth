@@ -44,7 +44,13 @@
           <div class="server-name-input-container">
             <div class="justify-content-space-between">
               <h5 class="label-id black-color">채널 이름</h5>
-              <button class="small-button">수정</button>
+              <button
+                class="small-button"
+                @click="updateChannelName(channelSettingModal)"
+                type="button"
+              >
+                수정
+              </button>
             </div>
             <div class="friends-state-text">
               <input
@@ -65,6 +71,7 @@
 <script>
 import SettingModal from "@/components/common/SettingModal.vue";
 import { mapState, mapMutations } from "vuex";
+import { updateChannelName } from "@/api";
 export default {
   components: {
     SettingModal,
@@ -77,6 +84,14 @@ export default {
       "setChannelSettingModal",
       "setChannelReadyToDelete",
     ]),
+    updateChannelName(channelSettingModal) {
+      const channelInfo = {
+        id: channelSettingModal.id,
+        name: channelSettingModal.name,
+      };
+      updateChannelName(channelInfo);
+      window.location.reload();
+    },
   },
 };
 </script>

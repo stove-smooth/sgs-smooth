@@ -896,8 +896,8 @@ export default {
 <style>
 /**스켈레톤이미지 */
 .loading-img {
-  width: 105px;
-  height: 105px;
+  width: 355px;
+  height: 355px;
   background-color: #e0e0e0;
 }
 .loading-hidden {

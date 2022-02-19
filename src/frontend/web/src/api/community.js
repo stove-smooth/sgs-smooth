@@ -22,8 +22,8 @@ async function createNewCommunity(userData) {
     console.log(err.response);
   }
 }
-function updateCommunityName(communityInfo){
-  return instance.patch("community-server/community/name",communityInfo);
+function updateCommunityName(communityInfo) {
+  return instance.patch("community-server/community/name", communityInfo);
 }
 function fetchCommunityList() {
   return instance.get("community-server/community");
@@ -37,11 +37,17 @@ function fetchCommunityMemberList(communityId) {
 function createNewCategory(categoryData) {
   return instance.post("community-server/category", categoryData);
 }
+function updateCategoryName(categoryInfo) {
+  return instance.patch("community-server/category/name", categoryInfo);
+}
 function deleteCategory(categoryId) {
   return instance.delete("community-server/category/" + categoryId);
 }
 function createNewChannel(channelData) {
   return instance.post("community-server/channel", channelData);
+}
+function updateChannelName(channelInfo) {
+  return instance.patch("community-server/channel/name", channelInfo);
 }
 function moveCategory(categoryData) {
   return instance.patch("community-server/category/location", categoryData);
@@ -129,5 +135,7 @@ export {
   readChatMessage,
   moveCommunity,
   sendImageDirectChatting,
-  updateCommunityName
+  updateCommunityName,
+  updateChannelName,
+  updateCategoryName,
 };

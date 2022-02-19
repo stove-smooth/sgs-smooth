@@ -31,7 +31,7 @@
                 @click="inviteFriendToCommunity(friend, index)"
                 v-if="friend.isInvited == false"
               >
-                <div class="positive-border-color primary-text-content">
+                <div class="positive-border-color white-space-wrap">
                   초대하기
                 </div>
               </button>
@@ -218,6 +218,9 @@ export default {
   font-size: 16px;
   line-height: 20px;
   color: #fff;
+}
+.white-space-wrap {
+  white-space: nowrap;
 }
 #inviteUrl {
   color: white;
