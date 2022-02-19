@@ -61,6 +61,7 @@ export default {
     ...mapState("dm", ["directMessageList"]),
     ...mapGetters("user", ["getUserId"]),
     ...mapState("voice", ["wsOpen"]),
+    ...mapState("community", ["communityList"]),
   },
   methods: {
     ...mapMutations("dm", ["setDirectMessageList"]),
@@ -73,6 +74,13 @@ export default {
       this.upHere = "";
     },
     routePrivateDM(index) {
+      if (this.communityList.rooms.length > 0) {
+        for (let i = 0; i < this.communityList.rooms.length; i++) {
+          if (this.communityList.rooms[i].id == index) {
+            this.communityList.rooms.splice(i, 1);
+          }
+        }
+      }
       if (this.wsOpen) {
         this.sendMessage({ id: "leaveRoom" });
         this.leaveRoom();

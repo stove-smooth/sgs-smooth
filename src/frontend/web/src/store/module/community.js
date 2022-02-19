@@ -147,6 +147,7 @@ const community = {
           result.data.result.members[i].role === "OWNER" &&
           result.data.result.members[i].id == userId
         ) {
+          console.log("homehome");
           await commit("setCommunityOwner", true);
         } else {
           await commit("setCommunityOwner", false);

@@ -148,9 +148,10 @@ import {
   registerUser,
   sendAuthCode,
   verifyAuthCode,
-  changeUserImage,
+  //changeUserImage,
 } from "../api/index.js";
-import { selectProfile, dataUrlToFile } from "../utils/common.js";
+import { getToken } from "@/utils/firebase";
+//import { selectProfile, dataUrlToFile } from "../utils/common.js";
 import { validateEmail, validateName } from "../utils/validation.js";
 export default {
   data() {
@@ -215,14 +216,15 @@ export default {
         name: this.username,
       };
       await registerUser(userData);
-      const code = await this.LOGIN(userData);
-      const classify = code % 4;
-      const result = selectProfile(classify);
-      const primaryProfile = require("../assets/" + result + ".png");
-      const profileFile = await dataUrlToFile(primaryProfile);
-      var frm = new FormData();
-      frm.append("image", profileFile);
-      await changeUserImage(frm);
+      let fcmToken = await getToken();
+
+      const userInfo = {
+        email: this.id,
+        password: this.pwd,
+        type: "web",
+        deviceToken: fcmToken,
+      };
+      await this.LOGIN(userInfo);
       this.$router.push("/channels/@me");
     },
     async verifyEmail() {

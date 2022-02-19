@@ -22,6 +22,9 @@ async function createNewCommunity(userData) {
     console.log(err.response);
   }
 }
+function updateCommunityName(communityInfo){
+  return instance.patch("community-server/community/name",communityInfo);
+}
 function fetchCommunityList() {
   return instance.get("community-server/community");
 }
@@ -126,4 +129,5 @@ export {
   readChatMessage,
   moveCommunity,
   sendImageDirectChatting,
+  updateCommunityName
 };

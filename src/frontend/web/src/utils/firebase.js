@@ -53,7 +53,7 @@ message.onMessage(async (payload) => {
     body: notification.body,
     icon: "/smooth_discord.jfif",
     title: notification.title,
-    data: `localhost:3000${notification.click_action}`,
+    data: `https://yoloyolo.org/channels/@me`,
   };
   if (data.communityId == 0) {
     const dmlist = store.getters["dm/getDirectMessageList"]; //dmlist
@@ -81,25 +81,29 @@ message.onMessage(async (payload) => {
       }
     }
     //navigationbar rooms 목록에 없는 경우 생겨야 함.
-    const result = await fetchDirectMessageMemberList(data.channelId);
-
-    let newAddlist = {
-      count: 1,
-      icon: result.data.result.icon,
-      id: result.data.result.id,
-      name: result.data.result.name,
-    };
-    communityList.rooms.unshift(newAddlist);
-
     //dm 도 최상단으로 갑니다.
     if (dmlist) {
       for (let i = 0; i < dmlist.length; i++) {
         if (dmlist[i].id == data.channelId) {
           let dmUpdated = dmlist.splice(i, 1);
           dmlist.unshift(dmUpdated[0]);
-          return;
         }
       }
+    }
+    let path = window.location.pathname.split("/");
+
+    if (path[3] == data.channelId) {
+      //아무것도하지않음.
+    } else {
+      const result = await fetchDirectMessageMemberList(data.channelId);
+
+      let newAddlist = {
+        count: 1,
+        icon: result.data.result.icon,
+        id: result.data.result.id,
+        name: result.data.result.name,
+      };
+      communityList.rooms.unshift(newAddlist);
     }
   }
   new Notification(notification.title, options);

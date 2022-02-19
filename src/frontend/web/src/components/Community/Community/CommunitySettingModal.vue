@@ -152,9 +152,16 @@
           <form>
             <div class="server-name-input-container">
               <div class="flex-direction-row">
-                <h5 class="label-id black-color">서버 이름</h5>
-                <div class="margin-left-8px align-items-center">
-                  <div class="small-button">수정</div>
+                <div class="justify-content-space-between">
+                  <h5 class="label-id black-color">서버 이름</h5>
+                  <div class="margin-left-8px align-items-center">
+                    <div
+                      class="small-button"
+                      @click="updateCommunityName(communitySettingModal)"
+                    >
+                      수정
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -277,6 +284,7 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 import SettingModal from "@/components/common/SettingModal.vue";
+import { updateCommunityName } from "../../../api/index";
 export default {
   components: {
     SettingModal,
@@ -319,6 +327,13 @@ export default {
           }
         }
       }
+    },
+    async updateCommunityName(communitySettingInfo) {
+      const communityInfo = {
+        id: communitySettingInfo.serverId,
+        name: communitySettingInfo.serverName,
+      };
+      await updateCommunityName(communityInfo);
     },
   },
 };
