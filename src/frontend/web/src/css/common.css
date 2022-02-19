@@ -88,12 +88,6 @@
 .primary-member-layout:hover {
   background-color: rgb(79 84 92 / 32%);
 }
-/* .primary-member-layout:active {
-  background-color: rgb(79 84 92 / 32%);
-}
-.primary-member-layout:visited {
-  background-color: rgb(79 84 92 / 32%);
-} */
 
 /**프로필 상태 */
 .status-ring {

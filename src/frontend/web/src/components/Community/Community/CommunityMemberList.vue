@@ -102,7 +102,6 @@ export default {
   },
   async created() {
     await this.FETCH_COMMUNITYMEMBERLIST(this.$route.params.serverid);
-    console.log("communityMemberList", this.memberState);
     if (this.memberState != undefined) {
       if (this.memberState.type == "disconnect") {
         for (let i = 0; i < this.communityOnlineMemberList.length; i++) {

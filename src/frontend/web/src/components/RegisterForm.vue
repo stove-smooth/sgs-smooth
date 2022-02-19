@@ -214,8 +214,7 @@ export default {
         password: this.pwd,
         name: this.username,
       };
-      const result2 = await registerUser(userData);
-      console.log("result", result2);
+      await registerUser(userData);
       const code = await this.LOGIN(userData);
       const classify = code % 4;
       const result = selectProfile(classify);
@@ -223,8 +222,7 @@ export default {
       const profileFile = await dataUrlToFile(primaryProfile);
       var frm = new FormData();
       frm.append("image", profileFile);
-      const setProfile = await changeUserImage(frm);
-      console.log("회원가입시 프로필", setProfile);
+      await changeUserImage(frm);
       this.$router.push("/channels/@me");
     },
     async verifyEmail() {

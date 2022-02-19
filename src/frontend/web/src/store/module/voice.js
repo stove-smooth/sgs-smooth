@@ -23,12 +23,9 @@ const voice = {
       state.ws = new SockJS(url, null, {
         transports: ["websocket", "xhr-streaming", "xhr-polling"],
       });
-      //console.log("wswsws", JSON.stringify(state.ws));
-      //sessionStorage.setItem("webRtc", JSON.stringify(state.ws));
       return false;
     },
     setWsOpen(state, wsOpen) {
-      //console.log("setWsOpen", wsOpen);
       sessionStorage.setItem("webRtc", wsOpen);
       state.wsOpen = wsOpen;
     },
@@ -37,22 +34,18 @@ const voice = {
       state.roomName = voiceInfo.roomName;
     },
     addParticipant(state, { name, participant }) {
-      //console.log("나는 누구든 참여자가 늘어납니다.", name, participant);
       if (state.participants === null) {
         state.participants = {};
       }
-      //console.log("addParticipant", name, participant);
       Vue.set(state.participants, name, participant);
     },
     disposeParticipant(state, participantName) {
       Vue.delete(state.participants, participantName);
     },
     setMute(state) {
-      //console.log("setMute");
       state.mute = !state.mute;
     },
     setDeafen(state) {
-      //console.log("setDeafen");
       state.deafen = !state.deafen;
     },
     setVideo(state) {
@@ -67,7 +60,6 @@ const voice = {
   },
   actions: {
     wsInit(context, info) {
-      console.log("init", info);
       context.commit("setWsInit", info.url);
       context.commit("setCurrentVoiceRoomType", info.type);
       context.state.ws.onopen = function () {
@@ -76,8 +68,6 @@ const voice = {
       };
       context.state.ws.onmessage = function (message) {
         let parsedMessage = JSON.parse(message.data);
-        //alert("Received message" + message.data);
-        console.log("온 메시지ㅣㅣㅣㅣㅣ", message.data);
         context.dispatch("onServerMessage", parsedMessage);
       };
     },
@@ -219,7 +209,6 @@ const voice = {
           this.generateOffer(participant.offerToReceiveVideo.bind(participant));
         }
       );
-      //console.log("다른 참가자 video를 받습니다.", participant);
       //처음 입장시 내 헤드셋이 꺼져있다면 다른 참가자들의 마이크가 음소거된다.
       if (context.state.deafen) {
         video.muted = true;
@@ -227,16 +216,13 @@ const voice = {
       context.commit("addParticipant", { name: sender.userId, participant });
     },
     setVoiceInfo(context, voiceInfo) {
-      //console.log("voice방 정보 저장");
       context.commit("setVoiceInfo", voiceInfo);
     },
     sendMessage(context, message) {
       let jsonMessage = JSON.stringify(message);
-      console.log("json", jsonMessage);
       context.state.ws.send(jsonMessage);
     },
     async leaveRoom(context) {
-      //console.log("leaveRoom");
       for (var key in context.state.participants) {
         context.state.participants[key].dispose();
       }

@@ -100,7 +100,6 @@ export default {
     },
   },
   async mounted() {
-    console.log("participant", this.participant);
     await document.getElementById(this.videoWrapperId).appendChild(this.video);
     this.auto_reload_func = setInterval(this.getAudioLevel, 500);
   },

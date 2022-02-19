@@ -169,7 +169,6 @@
                         </div>
                         <div class="voice-participants-username-wrapper">
                           {{ voiceMemberInfo(item).name }}
-                          <!-- {{ item }} -->
                         </div>
                       </div>
                     </div>
@@ -200,19 +199,6 @@ export default {
       categoryhovered: "",
       new: 0,
     };
-  },
-  created() {
-    /* const msg = {
-      user_id: this.getUserId,
-      community_id: this.$route.params.serverid,
-      type: "before-enter",
-    };
-    this.stompSocketClient.send(
-      "/kafka/community-signaling",
-      JSON.stringify(msg),
-      {}
-    ); */
-    console.log("voicechannelmember", this.voiceChannelMember);
   },
   computed: {
     ...mapState("community", [
@@ -362,7 +348,6 @@ export default {
       this.categoryhovered = "";
     },
     createChannel(categoryName, categoryId) {
-      console.log(categoryName, categoryId);
       const categoryData = {
         categoryName: categoryName,
         categoryId: categoryId,
@@ -403,9 +388,21 @@ export default {
       //채널을 바꾸는 것.
       if (type == "VOICE") {
         if (this.wsOpen) {
-          this.sendMessage({ id: "leaveRoom" });
-          this.leaveRoom();
-          this.setCurrentVoiceRoom(null);
+          const result = await this.$swal.fire({
+            title:
+              "다른 음성 채널에 계신 것 같아요. 정말 채널을 전환하시겠어요?",
+            showDenyButton: true,
+            showCancelButton: false,
+            confirmButtonText: "네",
+            denyButtonText: "아니요",
+          });
+          if (result.isConfirmed) {
+            this.sendMessage({ id: "leaveRoom" });
+            this.leaveRoom();
+            this.setCurrentVoiceRoom(null);
+          } else if (result.isDenied) {
+            return;
+          }
         }
         const wsInfo = {
           url: process.env.VUE_APP_WEBRTC_URL,

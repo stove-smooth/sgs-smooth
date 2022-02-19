@@ -142,9 +142,7 @@ export default {
         type: this.isChatType,
         public: true,
       };
-      console.log("createNewChannel", newChannelData);
       const result = await createNewChannel(newChannelData);
-      console.log("channelresult", result);
       for (let i = 0; i < this.communityInfo.categories.length; i++) {
         if (
           this.communityInfo.categories[i].id == result.data.result.categoryId
@@ -161,7 +159,6 @@ export default {
           await this.setCommunityInfo(this.communityInfo);
           this.setCreateChannel(false);
           if (result.data.result.type != "VOICE") {
-            console.log(this.$route.params.serverid, result.data.result.id);
             this.$router.push(
               "/channels/" +
                 this.$route.params.serverid +

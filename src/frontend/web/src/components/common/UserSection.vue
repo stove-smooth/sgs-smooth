@@ -41,7 +41,7 @@
               <img class="avatar" :src="userimage" alt=" " />
               <template aria-label="status-invisible">
                 <div class="status-ring">
-                  <div class="status-offline"></div>
+                  <div class="status-online"></div>
                 </div>
               </template>
             </div>
@@ -115,7 +115,6 @@ export default {
     },
     leaveVoiceConnection() {
       this.sendMessage({ id: "leaveRoom" });
-      console.log("leaveRoom");
       this.leaveRoom();
       this.setCurrentVoiceRoom(null);
       if (this.currentChannelType != "TEXT") {

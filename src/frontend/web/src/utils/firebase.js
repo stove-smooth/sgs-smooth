@@ -20,9 +20,7 @@ function getToken() {
       .requestPermission()
       .then(() => {
         console.log("Notification permission granted.");
-        return message
-          .deleteToken()
-          .catch(() => console.log("제거할 FCM TOKEN이 없습니다"));
+        return message.deleteToken();
       })
       .then((isDelete) => {
         console.log("FCMTokeon Deleted", isDelete);
@@ -35,7 +33,6 @@ function getToken() {
 }
 //포그라운드 메시지
 message.onMessage(async (payload) => {
-  console.log("notification", payload);
   const { data, notification } = payload;
 
   const options = {

@@ -417,7 +417,6 @@ export default {
     this.stompSocket = this.stompSocketClient.subscribe(
       "/topic/direct/" + this.$route.params.id,
       async (res) => {
-        console.log("구독으로 받은 메시지 입니다.", res.body);
         /**메세지의 종류: 일반 채팅, 이미지 채팅, 수정, 삭제, 답장, 타이핑 상태  */
         //한국시간에 맞게 시간 커스텀
         const receivedForm = JSON.parse(res.body);
@@ -427,7 +426,6 @@ export default {
           receivedForm.type != "connect" &&
           receivedForm.type != "disconnect"
         ) {
-          console.log("날짜가 있는 메시지인 경우");
           const translatedTime = convertFromStringToDate(receivedForm.time);
           receivedForm.date = translatedTime[0];
           receivedForm.time = translatedTime[1];
@@ -491,7 +489,6 @@ export default {
         }
         //수정 구독 메시지 수신시,현재 로드된 메시지 중 수정한 메시지가 있다면 수정을 해준다.
         if (receivedForm.type == "modify") {
-          console.log("수정해야함");
           for (let i = 0; i < this.receiveList.length; i++) {
             if (this.receiveList[i].id == receivedForm.id) {
               this.receiveList[i].message = receivedForm.message;

@@ -188,7 +188,6 @@ export default {
     leaveVoiceConnection() {
       if (this.$route.params.channelid) {
         this.sendMessage({ id: "leaveRoom" });
-        console.log("leaveRoom");
         this.leaveRoom();
         this.setCurrentVoiceRoom(null);
         if (this.currentChannelType != "TEXT") {
@@ -215,7 +214,6 @@ export default {
         }
       } else {
         this.sendMessage({ id: "leaveRoom" });
-        console.log("leaveRoom");
         this.leaveRoom();
         this.setCurrentVoiceRoom(null);
       }

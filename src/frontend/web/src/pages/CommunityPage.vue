@@ -84,11 +84,15 @@ export default {
     this.stompSocketClient.subscribe(
       `/topic/community/${this.$route.params.serverid}`,
       (res) => {
-        console.log("시그널링 서버 상태 구독입니다", res.body);
         console.log(
           "@@@@@@@@@@@시그널링 서버 상태 구독입니다",
           JSON.parse(res.body)
         );
+        if (JSON.parse(res.body).type == "out") {
+          let channelId = JSON.parse(res.body).channelId.split("-");
+          this.voiceChannelMember[channelId[1]] = JSON.parse(res.body).ids;
+          return;
+        }
         if (
           JSON.parse(res.body).type != "disconnect" &&
           JSON.parse(res.body).type != "connect"

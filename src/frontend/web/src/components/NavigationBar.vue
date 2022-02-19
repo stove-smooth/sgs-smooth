@@ -181,6 +181,8 @@ export default {
     ...mapActions("community", ["FETCH_COMMUNITYLIST"]),
     ...mapMutations("community", ["setCreateCommunity", "setCommunityList"]),
     ...mapMutations("utils", ["setNavigationSelected"]),
+    ...mapMutations("voice", ["setCurrentVoiceRoom"]),
+    ...mapActions("voice", ["sendMessage", "leaveRoom"]),
     hover(index) {
       this.hovered = index;
     },
@@ -192,6 +194,11 @@ export default {
     },
     enter(index) {
       //서버를 바꾸는 것.
+      if (this.wsOpen) {
+        this.sendMessage({ id: "leaveRoom" });
+        this.leaveRoom();
+        this.setCurrentVoiceRoom(null);
+      }
       if (this.stompSocketClient) {
         const subscriptions = this.stompSocketClient.subscriptions;
         Object.keys(subscriptions).forEach((subscription) => {
@@ -205,13 +212,17 @@ export default {
     },
     enterRoom(index) {
       //안읽은 DM으로 입장.
+      if (this.wsOpen) {
+        this.sendMessage({ id: "leaveRoom" });
+        this.leaveRoom();
+        this.setCurrentVoiceRoom(null);
+      }
+
       if (this.stompSocketClient) {
         const subscriptions = this.stompSocketClient.subscriptions;
         Object.keys(subscriptions).forEach((subscription) => {
           this.stompSocketClient.unsubscribe(subscription);
         });
-
-        console.log("안읽은 DM구독을 해제하였습니다.");
       }
       this.$router.push("/channels/@me/" + index);
       //읽음 처리..
@@ -242,6 +253,7 @@ export default {
     ...mapState("friends", ["friendsWaitNumber"]),
     ...mapState("community", ["communityList"]),
     ...mapState("utils", ["navigationSelected", "stompSocketClient"]),
+    ...mapState("voice", ["wsOpen"]),
   },
   async created() {
     const currentUrl = window.location.pathname;
