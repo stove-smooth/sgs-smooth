@@ -63,7 +63,7 @@ public class ChannelService {
         Set<Long> set = new HashSet<>(ids);
         ids = new ArrayList<>(set);
 
-        // TODO auth 터졌을 때 예외 처리
+        // auth 터졌을 때 예외 처리 하기
         UserInfoListFeignResponse response = userClient.getUserInfoList(token, ids);
         return response.getResult();
     }

@@ -96,7 +96,7 @@ public class RoomService {
         // 중복 id 제거
         Set<Long> set = new HashSet<>(ids);
         ids = new ArrayList<>(set);
-        // TODO auth 터졌을 때 예외 처리
+        // auth 터졌을 때 예외 처리
         UserInfoListFeignResponse response = userClient.getUserInfoList(token, ids);
         return response.getResult();
     }

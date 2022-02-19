@@ -73,8 +73,8 @@ public class CommunityService {
                 request.getName(), iconImage, request.isPublic(), textCategory, voiceCategory);
 
         // 생성한 유저 정보 불러오기
-        // TODO auth 터졌을 때 예외 처리
-        // TODO feign config로 처리하기 controller, servive, userclient
+        // auth 터졌을 때 예외 처리
+        // feign config로 처리하기 controller, servive, userclient
         UserInfoFeignResponse userInfoFeignResponse = userClient.getUserInfo(token);
         String nickname = userInfoFeignResponse.getResult().getName();
         String profileImage = userInfoFeignResponse.getResult().getProfileImage();
@@ -202,7 +202,7 @@ public class CommunityService {
         Set<Long> set = new HashSet<>(ids);
         ids = new ArrayList<>(set);
 
-        // TODO auth 터졌을 때 예외 처리
+        // auth 터졌을 때 예외 처리
         UserInfoListFeignResponse response = userClient.getUserInfoList(token, ids);
         return response.getResult();
     }
@@ -263,8 +263,8 @@ public class CommunityService {
         CommunityMember firstNode = getFirstNode(userId);
         
         // 유저 정보 조회
-        // TODO auth 터졌을 때 예외 처리
-        // TODO feign config로 처리하기 controller, servive, userclient
+        // auth 터졌을 때 예외 처리
+        // feign config로 처리하기 controller, servive, userclient
         UserInfoFeignResponse userInfoFeignResponse = userClient.getUserInfo(token);
         String nickname = userInfoFeignResponse.getResult().getName();
         String profileImage = userInfoFeignResponse.getResult().getProfileImage();
