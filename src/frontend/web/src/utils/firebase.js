@@ -15,22 +15,36 @@ firebase.initializeApp(firebaseConfig);
 const message = firebase.messaging();
 
 function getToken() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     message
-      .requestPermission()
-      .then(() => {
-        console.log("Notification permission granted.");
-        return message.deleteToken();
+      .getToken()
+      .then((currentToken) => {
+        if (currentToken) {
+          console.log("current token : " + currentToken);
+          resolve(currentToken);
+        } else {
+          console.log("currentToken이없음");
+        }
       })
-      .then((isDelete) => {
-        console.log("FCMTokeon Deleted", isDelete);
-        resolve(message.getToken());
-      })
-      .catch((err) => {
-        reject(err);
+      .catch((e) => {
+        console.log(e);
       });
   });
 }
+//     .requestPermission()
+//     .then(() => {
+//       console.log("Notification permission granted.");
+//       return message.deleteToken();
+//     })
+//     .then((isDelete) => {
+//       console.log("FCMTokeon Deleted", isDelete);
+//       resolve(message.getToken());
+//     })
+//     .catch((err) => {
+//       reject(err);
+//     });
+// });
+
 //포그라운드 메시지
 message.onMessage(async (payload) => {
   const { data, notification } = payload;

@@ -121,6 +121,7 @@ export default {
     async submitForm() {
       try {
         let fcmToken = await getToken();
+        console.log("fcmtoken", fcmToken);
         const userData = {
           email: this.id,
           password: this.pwd,
