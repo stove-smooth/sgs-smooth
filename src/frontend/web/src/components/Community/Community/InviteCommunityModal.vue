@@ -135,7 +135,9 @@ export default {
       const copyText = document.getElementById("inviteUrl");
       copyText.select();
       document.execCommand("copy");
-      alert(copyText.value + "을 복사했습니다.");
+      this.$swal.fire({
+        title: copyText.value + "을 복사했습니다.",
+      });
     },
     async inviteFriendToCommunity(friend, index) {
       const dmMembers = {

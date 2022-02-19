@@ -33,8 +33,6 @@
       <community-delete-modal />
       <channel-delete-modal />
       <community-exit-modal />
-      <fix-message-modal />
-      <fixed-messages-modal />
       <community-members-plus-action />
       <community-banish-modal />
       <create-direct-message-group-modal />
@@ -67,8 +65,6 @@ import ChannelSettingModal from "../components/Community/Channel/ChannelSettingM
 import CommunityDeleteModal from "../components/Community/Community/CommunityDeleteModal.vue";
 import ChannelDeleteModal from "../components/Community/Channel/ChannelDeleteModal.vue";
 import CommunityExitModal from "../components/Community/Community/CommunityExitModal.vue";
-import FixMessageModal from "../components/common/Message/FixMessageModal.vue";
-import FixedMessagesModal from "../components/common/Message/FixedMessagesModal.vue";
 import CommunityMembersPlusAction from "../components/Community/Community/CommunityMembersPlusAction.vue";
 import CommunityBanishModal from "../components/Community/Community/CommunityBanishModal.vue";
 import CreateDirectMessageGroupModal from "../components/DM/CreateDirectMessageGroupModal.vue";
@@ -95,8 +91,6 @@ export default {
     CommunityDeleteModal,
     ChannelDeleteModal,
     CommunityExitModal,
-    FixMessageModal,
-    FixedMessagesModal,
     CommunityMembersPlusAction,
     CommunityBanishModal,
     CreateDirectMessageGroupModal,

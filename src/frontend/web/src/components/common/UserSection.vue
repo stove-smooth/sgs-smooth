@@ -47,12 +47,7 @@
             </div>
           </div>
         </div>
-        <div
-          class="nametag"
-          aria-label="사용자명을 복사하려면 클릭하세요"
-          role="button"
-          tabindex="0"
-        >
+        <div class="nametag" role="button" tabindex="0">
           <div class="myname-container">
             <div class="myname">{{ nickname }}</div>
           </div>

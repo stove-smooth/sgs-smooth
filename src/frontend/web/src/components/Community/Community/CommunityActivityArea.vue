@@ -1394,13 +1394,13 @@ export default {
 .message-reply-content {
   display: flex;
   flex-direction: row;
-  color: #72767d;
+  color: var(--discord-primary);
 }
 .reply-accessories {
   width: 5px;
   height: 1px;
-  border-left: 1mm solid #72767d;
-  border-top: 1mm solid #72767d;
+  border-left: 1mm solid var(--discord-primary);
+  border-top: 1mm solid var(--discord-primary);
   margin-right: 7px;
 }
 .message-replying {

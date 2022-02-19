@@ -42,13 +42,17 @@
       <template slot="setting-content">
         <form>
           <div class="server-name-input-container">
-            <h5 class="label-id black-color">카테고리 이름</h5>
+            <div class="justify-content-space-between">
+              <h5 class="label-id black-color">카테고리 이름</h5>
+              <button class="small-button">수정</button>
+            </div>
             <div class="friends-state-text">
               <input
                 width="100%"
                 type="text"
                 maxlength="100"
                 class="channel-name-input"
+                v-model="categorySettingModal.categoryName"
               />
             </div>
           </div>

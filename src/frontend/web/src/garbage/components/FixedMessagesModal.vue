@@ -34,8 +34,6 @@
             </div>
           </ol>
         </template>
-        <!-- <template slot="footer">
-        </template> -->
       </modal>
     </div>
   </div>
@@ -43,7 +41,7 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
-import Modal from "../Modal.vue";
+import Modal from "../../components/common/Modal.vue";
 export default {
   components: { Modal },
   computed: {
