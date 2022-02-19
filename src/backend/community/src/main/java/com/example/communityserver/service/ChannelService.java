@@ -13,10 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.example.communityserver.dto.response.MemberResponse.fromEntity;
 import static com.example.communityserver.exception.CustomExceptionStatus.*;
 
 @Service
@@ -24,14 +22,11 @@ import static com.example.communityserver.exception.CustomExceptionStatus.*;
 @Transactional(readOnly = true)
 public class ChannelService {
 
-    // private final RedisTemplate redisTemplate;
-
     private final CategoryRepository categoryRepository;
     private final ChannelRepository channelRepository;
+    private final UserClient userClient;
 
     public static final String CHANNEL_DEFAULT_NAME = "일반";
-
-    private final UserClient userClient;
 
     public ChannelDetailResponse getChannelDetail(Long userId, Long channelId, String token) {
         Channel channel = channelRepository.findById(channelId)
@@ -49,12 +44,12 @@ public class ChannelService {
         if (channel.isPublic()) {
             ids = community.getMembers().stream()
                     .filter(m -> m.getStatus().equals(CommunityMemberStatus.NORMAL))
-                    .map(m -> m.getUserId())
+                    .map(CommunityMember::getUserId)
                     .collect(Collectors.toList());
         } else {
             ids = channel.getMembers().stream()
-                    .filter(m -> m.isStatus())
-                    .map(m -> m.getUserId())
+                    .filter(ChannelMember::isStatus)
+                    .map(ChannelMember::getUserId)
                     .collect(Collectors.toList());
         }
         HashMap<Long, UserResponse> userMap = getUserMap(ids, token);
@@ -68,7 +63,7 @@ public class ChannelService {
         Set<Long> set = new HashSet<>(ids);
         ids = new ArrayList<>(set);
 
-        // Todo auth 터졌을 때 예외 처리
+        // TODO auth 터졌을 때 예외 처리
         UserInfoListFeignResponse response = userClient.getUserInfoList(token, ids);
         return response.getResult();
     }
@@ -123,11 +118,11 @@ public class ChannelService {
     private void validateMemberId(Category category, List<Long> members) {
         if (!Objects.isNull(members)) {
             List<Long> categoryMemberUserIds = category.getMembers().stream()
-                    .filter(categoryMember -> categoryMember.isStatus())
+                    .filter(CategoryMember::isStatus)
                     .map(CategoryMember::getUserId)
                     .collect(Collectors.toList());
 
-            for (Long memberId: members) {
+            for (Long memberId : members) {
                 if (!categoryMemberUserIds.contains(memberId))
                     throw new CustomException(NON_VALID_USER_ID_IN_COMMUNITY);
             }
@@ -244,7 +239,7 @@ public class ChannelService {
         if (channel.isPublic())
             throw new CustomException(ALREADY_PUBLIC_STATE);
 
-        for (Long memberId: request.getMembers()) {
+        for (Long memberId : request.getMembers()) {
             isMemberInCommunity(community, memberId);
             if (isContains(channel, memberId))
                 throw new CustomException(ALREADY_INVITED);
@@ -254,7 +249,7 @@ public class ChannelService {
 
     private boolean isContains(Channel channel, Long memberId) {
         return channel.getMembers().stream()
-                .filter(member -> member.isStatus())
+                .filter(ChannelMember::isStatus)
                 .map(ChannelMember::getUserId)
                 .collect(Collectors.toList())
                 .contains(memberId);
@@ -288,7 +283,7 @@ public class ChannelService {
 
         ChannelMember member = channel.getMembers().stream()
                 .filter(m -> m.getUserId().equals(memberId))
-                .filter(m -> m.isStatus())
+                .filter(ChannelMember::isStatus)
                 .findAny().orElseThrow(() -> new CustomException(EMPTY_MEMBER));
 
         member.delete();
@@ -352,7 +347,7 @@ public class ChannelService {
         if (!request.getNext().equals(0L)) {
             tobe = channels.stream()
                     .filter(c -> c.getId().equals(request.getNext())
-                        && c.getStatus().equals(ChannelStatus.NORMAL))
+                            && c.getStatus().equals(ChannelStatus.NORMAL))
                     .findAny().orElseThrow(() -> new CustomException(NON_VALID_NEXT_NODE));
 
             if (!Objects.isNull(tobe.getNextNode())) {
@@ -410,36 +405,5 @@ public class ChannelService {
                 }
             }
         }
-    }
-
-    public AddressResponse getConnectAddress(Long userId, Long channelId) {
-        channelRepository.findById(channelId)
-                .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
-                .filter(c -> c.getType().equals(ChannelType.VOICE))
-                .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
-
-        String address = getInstance(channelId);
-
-        return new AddressResponse("https://sig.yoloyolo.org/rtc");
-    }
-
-    private String getInstance(Long channelId) {
-//        List<String> keys = (List<String>) redisTemplate.keys("*").stream()
-//                .filter(k -> String.valueOf(k).contains("server"))
-//                .collect(Collectors.toList());
-//
-//        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-//        String leastUsedInstance = keys.get(0);
-//        int min = -1;
-//        for (String key: keys) {
-//            if (setOperations.members(key).contains("c" + channelId))
-//                return key.split("-")[1];
-//            if (min < setOperations.members(key).size()) {
-//                leastUsedInstance = key;
-//                min = setOperations.members(key).size();
-//            }
-//        }
-//        return leastUsedInstance.split("-")[1];
-        return null;
     }
 }

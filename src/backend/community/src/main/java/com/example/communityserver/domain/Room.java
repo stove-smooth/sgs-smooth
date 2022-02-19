@@ -49,7 +49,10 @@ public class Room extends BaseTimeEntity {
         room.setIconImage(iconImage);
         for (RoomMember member: members)
             room.addMember(member);
-        room.setIsGroup(members.size() > 2 ? true : false);
+        boolean isGroup = false;
+        if (members.size() > 2)
+            isGroup = true;
+        room.setIsGroup(isGroup);
         room.setStatus(CommonStatus.NORMAL);
         return room;
     }

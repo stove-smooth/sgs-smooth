@@ -5,6 +5,7 @@ import com.example.communityserver.dto.response.*;
 import com.example.communityserver.service.ResponseService;
 import com.example.communityserver.service.RoomService;
 import com.example.communityserver.util.DataCorrectionUtil;
+import com.example.communityserver.util.SignalingAddressBalancing;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ public class RoomController {
     private final RoomService roomService;
     private final ResponseService responseService;
     private final DataCorrectionUtil dataCorrectionUtil;
+    private final SignalingAddressBalancing balancing;
 
     /**
      * 채팅방 리스트 가져오기
@@ -171,7 +173,7 @@ public class RoomController {
             @PathVariable Long roomId
     ) {
         log.info("GET /community-server/room/{}/address", roomId);
-        AddressResponse response = roomService.getConnectAddress(roomId);
+        AddressResponse response = balancing.getConnectAddress(roomId, false);
         return responseService.getDataResponse(response);
     }
 

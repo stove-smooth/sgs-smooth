@@ -12,13 +12,13 @@ public interface ChatClient {
 
     @PutMapping("/community-user-list/{community_id}")
     void updateCommunityMember(
-            @PathVariable(value = "community_id") Long community_id,
+            @PathVariable(value = "community_id") Long communityId,
             @RequestBody List<Long> ids
     );
 
     @PutMapping("/room-user-list/{room_id}")
     void updateRoomMember(
-            @PathVariable(value = "room_id") Long room_id,
+            @PathVariable(value = "room_id") Long roomId,
             @RequestBody List<Long> ids
     );
 

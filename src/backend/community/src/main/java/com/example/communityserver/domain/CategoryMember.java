@@ -1,6 +1,5 @@
 package com.example.communityserver.domain;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

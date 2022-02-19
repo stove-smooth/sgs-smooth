@@ -5,7 +5,7 @@ import com.example.communityserver.domain.type.UserState;
 import com.example.communityserver.util.UserStateUtil;
 import lombok.*;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Getter
@@ -21,7 +21,7 @@ public class RoomMemberResponse {
     private boolean owner;
     private String state;
 
-    public static RoomMemberResponse fromEntity(RoomMember roomMember, HashMap<Long, UserResponse> userMap) {
+    public static RoomMemberResponse fromEntity(RoomMember roomMember, Map<Long, UserResponse> userMap) {
         RoomMemberResponse response = new RoomMemberResponse();
         Long userId = roomMember.getUserId();
         UserResponse userResponse = userMap.get(userId);
