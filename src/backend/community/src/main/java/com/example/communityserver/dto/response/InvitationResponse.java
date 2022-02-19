@@ -1,7 +1,6 @@
 package com.example.communityserver.dto.response;
 
 import com.example.communityserver.domain.CommunityInvitation;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

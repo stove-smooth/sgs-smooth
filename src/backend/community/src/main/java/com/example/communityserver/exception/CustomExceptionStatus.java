@@ -34,7 +34,9 @@ public enum CustomExceptionStatus {
     NON_VALID_ROOM(false, 4018, "유효하지 않은 채팅방입니다."),
     CANT_EXCHANGE_PERSONAL_ROOM(false, 4019, "개인 채팅방은 수정할 수 없습니다."),
     CANT_INVITE_SELF(false, 4020, "스스로를 채팅방에 초대할 수 없습니다."),
-    MEMBER_REQUIRED(false, 4021, "초대하는 사용자의 수가 부족합니다.");
+    MEMBER_REQUIRED(false, 4021, "초대하는 사용자의 수가 부족합니다."),
+    FILE_DELETE_ERROR(false, 4022, "파일 삭제 중 에러가 발생했습니다."),
+    EMPTY_REGISTERED_SERVER(false, 4023, "등록된 서버가 없습니다.");
 
     private final boolean isSuccess;
     private final int code;

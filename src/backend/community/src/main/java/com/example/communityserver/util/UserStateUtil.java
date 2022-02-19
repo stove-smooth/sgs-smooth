@@ -17,7 +17,7 @@ public class UserStateUtil {
     public static ConcurrentMap<Long, String> status = new ConcurrentHashMap<>();
 
     // 무결성을 위해 사용자 상태 정보 풀 쿼리 진행할 주기 : 6시간
-    private final static int FULL_QUERY_INTERVAL = 1000 * 60 * 60 * 6;
+    private final int FULL_QUERY_INTERVAL = 1000 * 60 * 60 * 6;
 
     private final PresenceClient presenceClient;
 
