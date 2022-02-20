@@ -62,7 +62,7 @@
 
 <script>
 import Vue from "vue";
-import { mapState, mapMutations, mapActions } from "vuex";
+import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
 import Modal from "@/components/common/Modal.vue";
 import { createInvitation, createDirectMessage } from "@/api/index.js";
 export default {
@@ -124,6 +124,8 @@ export default {
     ]),
     ...mapState("friends", ["friendsAccept"]),
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
+    ...mapGetters("user", ["getUserId"]),
+    ...mapState("user", ["nickname", "userimage"]),
   },
   methods: {
     ...mapActions("friends", ["FETCH_FRIENDSLIST"]),
@@ -147,9 +149,9 @@ export default {
       const msg = {
         content: `<~inviting~>${this.invitationUrl}`,
         channelId: result.data.result.id,
-        userId: friend.userId,
-        name: friend.name,
-        profileImage: friend.profileImage,
+        userId: this.getUserId,
+        name: this.nickname,
+        profileImage: this.userimage,
       };
       this.stompSocketClient.send(
         "/kafka/send-direct-message",
