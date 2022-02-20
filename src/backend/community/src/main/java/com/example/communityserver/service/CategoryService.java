@@ -94,7 +94,7 @@ public class CategoryService {
     private void isAuthorizedMember(Category category, Long userId) {
         if (!category.isPublic()) {
             boolean isAuthorized = category.getMembers().stream()
-                    .filter(member -> member.isStatus())
+                    .filter(CategoryMember::isStatus)
                     .map(CategoryMember::getUserId)
                     .collect(Collectors.toList())
                     .contains(userId);
@@ -177,7 +177,7 @@ public class CategoryService {
 
     private void isContains(Category category, Long memberId) {
         boolean isContains = category.getMembers().stream()
-                .filter(member -> member.isStatus())
+                .filter(CategoryMember::isStatus)
                 .map(CategoryMember::getUserId)
                 .collect(Collectors.toList())
                 .contains(memberId);
@@ -199,7 +199,7 @@ public class CategoryService {
 
         CategoryMember deleteMember = category.getMembers().stream()
                 .filter(member -> member.getUserId().equals(memberId))
-                .filter(member -> member.isStatus())
+                .filter(CategoryMember::isStatus)
                 .findAny().orElseThrow(() -> new CustomException(EMPTY_MEMBER));
 
         deleteMember.delete();

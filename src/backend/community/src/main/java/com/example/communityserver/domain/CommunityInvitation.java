@@ -33,15 +33,4 @@ public class CommunityInvitation extends BaseTimeEntity {
         this.community = community;
         community.getInvitations().add(this);
     }
-
-    //== 생성 메서드 ==//
-//    public static CommunityInvitation createCommunityInvitation(
-//            Community community,
-//            Long userId
-//    ) {
-//        CommunityInvitation invitation = new CommunityInvitation();
-//        invitation.setCommunity(community);
-//        invitation.setUserId(userId);
-//        return invitation;
-//    }
 }

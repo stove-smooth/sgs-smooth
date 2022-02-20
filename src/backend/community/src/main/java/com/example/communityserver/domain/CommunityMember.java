@@ -2,7 +2,6 @@ package com.example.communityserver.domain;
 
 import com.example.communityserver.domain.type.CommunityMemberStatus;
 import com.example.communityserver.domain.type.CommunityRole;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;

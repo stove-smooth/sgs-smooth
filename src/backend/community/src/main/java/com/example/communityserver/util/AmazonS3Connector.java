@@ -20,8 +20,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
-import static com.example.communityserver.exception.CustomExceptionStatus.FILE_CONVERT_ERROR;
-import static com.example.communityserver.exception.CustomExceptionStatus.FILE_EXTENSION_ERROR;
+import static com.example.communityserver.exception.CustomExceptionStatus.*;
 
 @RequiredArgsConstructor
 @Component
@@ -29,7 +28,8 @@ public class AmazonS3Connector {
 
     private final AmazonS3Client amazonS3Client;
     private final Tika tika = new Tika();
-    private final static String IMAGE_DIR = "discord/images/";
+    private final String SEP = "/";
+    private final String IMAGE_DIR = "discord/images/";
 
     @Value("${cloud.aws.s3.bucket}")
     public String bucket;
@@ -37,7 +37,7 @@ public class AmazonS3Connector {
     @Value("${cloud.aws.cloudfront.url}")
     public String cloudfrontUrl;
 
-    private final static Map<Integer, String> GROUP_IMAGE_MAP = new HashMap<>(){{
+    private final Map<Integer, String> GROUP_IMAGE_MAP = new HashMap<>(){{
         put(0, "discord/default/group_blue.png");
         put(1, "discord/default/group_green.png");
         put(2, "discord/default/group_orange.png");
@@ -45,16 +45,17 @@ public class AmazonS3Connector {
         put(4, "discord/default/group_yellow.png");
     }};
 
-    public String uploadImage(
-            Long id,
-            MultipartFile multipartFile
-    ) {
+    public String uploadImage(Long id, MultipartFile multipartFile) {
         File file = convertToFile(multipartFile);
 
-        String fileName = IMAGE_DIR + id + "/" + UUID.randomUUID() + extension(multipartFile);
+        String fileName = IMAGE_DIR + id + SEP + UUID.randomUUID() + extension(multipartFile);
 
         amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, file));
-        file.delete();
+        try {
+            file.delete();
+        } catch (Exception e) {
+            throw new CustomException(FILE_DELETE_ERROR);
+        }
 
         return cloudfrontUrl + fileName;
     }

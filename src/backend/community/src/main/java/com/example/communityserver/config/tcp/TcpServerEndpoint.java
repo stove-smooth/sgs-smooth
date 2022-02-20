@@ -1,7 +1,6 @@
 package com.example.communityserver.config.tcp;
 
 import com.example.communityserver.service.MessageService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.integration.annotation.MessageEndpoint;
 import org.springframework.integration.annotation.ServiceActivator;

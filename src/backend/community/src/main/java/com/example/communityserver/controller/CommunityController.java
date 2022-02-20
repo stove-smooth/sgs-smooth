@@ -24,8 +24,8 @@ public class CommunityController {
     private final ResponseService responseService;
     private final DataCorrectionUtil dataCorrectionUtil;
 
-    public final static String ID = "id";
-    public final static String AUTHORIZATION = "AUTHORIZATION";
+    public static final String ID = "id";
+    public static final String AUTHORIZATION = "AUTHORIZATION";
 
     /**
      * 사용자가 소속된 커뮤니티 리스트 조회

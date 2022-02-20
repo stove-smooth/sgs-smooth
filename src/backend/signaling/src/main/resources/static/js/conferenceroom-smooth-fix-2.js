@@ -1,9 +1,9 @@
 const communityId = "0";
 const token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYWs3MzgwMUBuYXZlci5jb20iLCJyb2xlIjoiUk9MRV9VU0VSIiwiaWQiOjYsImlhdCI6MTY0MzI2OTU4NywiZXhwIjoxNjUxOTA5NTg3fQ.uTvrk45DfbhIWRk0Vt7HchvdE1XPujni-ZU1saMZKMU";
 // Local
-//var ws = new SockJS('/rtc', null, {
+// var ws = new SockJS('/rtc', null, {
 //    transports: ["websocket", "xhr-streaming", "xhr-polling"]
-//});
+// });
 // Prod
 var ws = new SockJS('https://sig.yoloyolo.org/rtc', null, {
     transports: ["websocket", "xhr-streaming", "xhr-polling"]
@@ -62,13 +62,15 @@ function register() {
         token : token,
         userId : name,
         communityId : communityId,
-        roomId : room
+        roomId : room,
+        video: false,
+        audio: true
     }
     sendMessage(message);
 }
 
 function onNewParticipant(request) {
-    receiveVideo(request.userId);
+    receiveVideo(request.member);
 }
 
 function receiveVideoResponse(result) {
@@ -143,8 +145,12 @@ function leaveRoom() {
 }
 
 function receiveVideo(sender) {
-    var participant = new Participant(sender);
-    participants[sender] = participant;
+    let userId = sender.userId;
+    let videoStatus = sender.video;
+    let audioStatus = sender.audio;
+
+    var participant = new Participant(userId, videoStatus, audioStatus);
+    participants[userId] = participant;
     var video = participant.getVideoElement();
 
     var options = {

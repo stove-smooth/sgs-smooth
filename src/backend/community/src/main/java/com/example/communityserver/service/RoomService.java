@@ -4,8 +4,6 @@ import com.example.communityserver.client.ChatClient;
 import com.example.communityserver.client.UserClient;
 import com.example.communityserver.domain.*;
 import com.example.communityserver.domain.type.CommonStatus;
-import com.example.communityserver.domain.type.CommunityMemberStatus;
-import com.example.communityserver.domain.type.UserState;
 import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.exception.CustomException;
@@ -17,8 +15,6 @@ import com.example.communityserver.util.Base62;
 import com.example.communityserver.util.UserStateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +37,6 @@ public class RoomService {
     private final RoomMemberRepository roomMemberRepository;
     private final RoomInvitationRepository roomInvitationRepository;
 
-    private final RedisTemplate redisTemplate;
     private final AmazonS3Connector amazonS3Connector;
     private final Base62 base62;
 
@@ -58,7 +53,7 @@ public class RoomService {
         // 최신 메세지 순으로 정렬 요청하기
         List<Long> roomIds = rooms.stream().map(Room::getId).collect(Collectors.toList());
         List<MessageCountResponse> sortedRoomsWithCount = chatClient.getMyMessages(new MessageCountRequest(userId, roomIds));
-        List<Long> sortedRoomIds = sortedRoomsWithCount.stream().map(e -> e.getRoomId()).collect(Collectors.toList());
+        List<Long> sortedRoomIds = sortedRoomsWithCount.stream().map(MessageCountResponse::getRoomId).collect(Collectors.toList());
 
         // auth service에 요청보낼 user id 리스트
         List<Long> ids = new ArrayList<>();
@@ -101,7 +96,7 @@ public class RoomService {
         // 중복 id 제거
         Set<Long> set = new HashSet<>(ids);
         ids = new ArrayList<>(set);
-        // Todo auth 터졌을 때 예외 처리
+        // auth 터졌을 때 예외 처리
         UserInfoListFeignResponse response = userClient.getUserInfoList(token, ids);
         return response.getResult();
     }
@@ -128,14 +123,16 @@ public class RoomService {
 
     private void updateUserInfo(RoomDetailResponse roomDetailResponse, HashMap<Long, UserResponse> userMap, Long userId) {
         if (!roomDetailResponse.isGroup()) {
-            UserResponse otherUser = userMap.get(
-                    roomDetailResponse.getMembers().stream()
-                            .filter(rm -> !rm.getId().equals(userId))
-                            .map(RoomMemberResponse::getId)
-                            .findFirst().get());
-            if (!Objects.isNull(otherUser)) {
-                roomDetailResponse.setName(otherUser.getName());
-                roomDetailResponse.setIcon(otherUser.getImage());
+            Optional<Long> otherUserId = roomDetailResponse.getMembers().stream()
+                    .filter(rm -> !rm.getId().equals(userId))
+                    .map(RoomMemberResponse::getId)
+                    .findFirst();
+            if (otherUserId.isPresent()) {
+                UserResponse otherUser = userMap.get(otherUserId.get());
+                if (!Objects.isNull(otherUser)) {
+                    roomDetailResponse.setName(otherUser.getName());
+                    roomDetailResponse.setIcon(otherUser.getImage());
+                }
             }
         }
     }
@@ -176,20 +173,19 @@ public class RoomService {
             }
         }
 
-        // TODO string 계속 더하는 건 좋지 않으니 stringbuilder로 가져가는 것도 고민하기
-        String name = "";
+        StringBuilder name = new StringBuilder();
         for (int i=0; i<ids.size(); i++) {
             Long id = ids.get(i);
-            boolean isOwner = id.equals(userId) ? true : false;
+            boolean isOwner = id.equals(userId);
             String otherUsername = userMap.get(id).getName();
             members.add(RoomMember.createRoomMember(id, isOwner));
-            name += otherUsername;
+            name.append(otherUsername);
             if (i != ids.size()-1)
-                name += ", ";
+                name.append(", ");
         }
 
         String iconImage = amazonS3Connector.getRandomImage();
-        Room newRoom = Room.createRoom(name, members, iconImage);
+        Room newRoom = Room.createRoom(name.toString(), members, iconImage);
         roomRepository.save(newRoom);
 
         return getRoomDetail(newRoom, userMap, userId);
@@ -351,9 +347,8 @@ public class RoomService {
         boolean isOwner = isOwner(room, userId);
 
         // 추방하기
-        if (!userId.equals(memberId)) {
-            if (!isOwner)
-                throw new CustomException(NON_AUTHORIZATION);
+        if (!userId.equals(memberId) && !isOwner) {
+            throw new CustomException(NON_AUTHORIZATION);
         }
 
         RoomMember member = room.getMembers().stream()
@@ -380,41 +375,11 @@ public class RoomService {
 
     private boolean isOwner(Room room, Long userId) {
         Long ownerId = room.getMembers().stream()
-                .filter(rm -> rm.isOwner())
+                .filter(RoomMember::isOwner)
                 .findFirst().orElseThrow(() -> new CustomException(NON_EXIST_OWNER))
                 .getUserId();
 
         return ownerId.equals(userId);
-    }
-
-    // 채팅방에 따라 연결해야될 시그널링 서버 어드레스 조회
-    public AddressResponse getConnectAddress(Long roomId) {
-       roomRepository.findById(roomId)
-                .filter(r -> r.getStatus().equals(CommonStatus.NORMAL))
-                .orElseThrow(() -> new CustomException(NON_VALID_ROOM));
-
-        String address = getInstance(roomId);
-
-        return new AddressResponse(address);
-    }
-
-    private String getInstance(Long roomId) {
-        List<String> keys = (List<String>) redisTemplate.keys("*").stream()
-                .filter(k -> String.valueOf(k).contains("server"))
-                .collect(Collectors.toList());
-
-        SetOperations<String, String> setOperations = redisTemplate.opsForSet();
-        String leastUsedInstance = keys.get(0);
-        int min = -1;
-        for (String key: keys) {
-            if (setOperations.members(key).contains("r" + roomId))
-                return key.split("-")[1];
-            if (min < setOperations.members(key).size()) {
-                leastUsedInstance = key;
-                min = setOperations.members(key).size();
-            }
-        }
-        return leastUsedInstance.split("-")[1];
     }
 
     // 채팅방에 속한 회원 아이디 리스트 조회
