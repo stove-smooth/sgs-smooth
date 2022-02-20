@@ -164,7 +164,6 @@ export default {
     },
     //친구 추가 기능을 보여주기 위해 마우스 좌표를 저장한다.
     clickPlusAction(event, userInfo) {
-      console.log(event.clientX, event.clientY, userInfo);
       const x = event.clientX;
       const y = event.clientY;
       this.setClientX(x);

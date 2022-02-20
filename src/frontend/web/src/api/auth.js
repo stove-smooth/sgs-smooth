@@ -53,7 +53,7 @@ function blockFriend(userId) {
   return instance.patch("auth-server/auth/ban-friend?id=" + userId);
 }
 function fetchMemberInfo(id) {
-  return instance.get(`auth-server/name?id=${id}`);
+  return instance.get("auth-server/auth/name/" + id);
 }
 function fetchFriendsState(friendIds) {
   return instance.post(`presence-server/friends-state`, friendIds);

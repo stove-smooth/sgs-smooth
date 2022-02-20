@@ -26,7 +26,7 @@ const voice = {
       return false;
     },
     setWsOpen(state, wsOpen) {
-      //console.log("setWsOpen", wsOpen);
+      sessionStorage.setItem("webRtc", wsOpen);
       state.wsOpen = wsOpen;
     },
     setVoiceInfo(state, voiceInfo) {
@@ -34,7 +34,6 @@ const voice = {
       state.roomName = voiceInfo.roomName;
     },
     addParticipant(state, { name, participant }) {
-      //console.log("나는 누구든 참여자가 늘어납니다.", name, participant);
       if (state.participants === null) {
         state.participants = {};
       }
@@ -44,11 +43,9 @@ const voice = {
       Vue.delete(state.participants, participantName);
     },
     setMute(state) {
-      console.log("setMute");
       state.mute = !state.mute;
     },
     setDeafen(state) {
-      console.log("setDeafen");
       state.deafen = !state.deafen;
     },
     setVideo(state) {
@@ -63,7 +60,6 @@ const voice = {
   },
   actions: {
     wsInit(context, info) {
-      console.log("init", info);
       context.commit("setWsInit", info.url);
       context.commit("setCurrentVoiceRoomType", info.type);
       context.state.ws.onopen = function () {
@@ -72,7 +68,6 @@ const voice = {
       };
       context.state.ws.onmessage = function (message) {
         let parsedMessage = JSON.parse(message.data);
-        //alert("Received message" + message.data);
         context.dispatch("onServerMessage", parsedMessage);
       };
     },
@@ -110,6 +105,10 @@ const voice = {
           context.dispatch("videoStateTranslated", message);
           break;
         }
+        case "audioStateAnswer": {
+          context.dispatch("audioStateTranslated", message);
+          break;
+        }
         default: {
           console.error("Unrecognized message" + message);
         }
@@ -118,10 +117,11 @@ const voice = {
     /**case */
     //case -1 내가 참가했을때
     onExistingParticipants(context, msg) {
-      console.log(
-        context.state.myName + " registered in room " + context.state.roomName
+      let participant = new Participant(
+        context.state.myName,
+        context.state.video,
+        !context.state.mute
       );
-      let participant = new Participant(context.state.myName);
 
       var video = participant.getVideoElement();
 
@@ -141,20 +141,19 @@ const voice = {
           this.generateOffer(participant.offerToReceiveVideo.bind(participant));
         }
       );
-      console.log("내가 참가" + JSON.stringify(participant));
       const myName = context.state.myName;
       context.commit("addParticipant", { name: myName, participant });
+
       msg.members.forEach(function (sender) {
         context.dispatch("receiveVideo", sender);
       });
     },
     //case -2 내가 속한 방에서 새 참가자가 들어왔을때
     onNewParticipant(context, request) {
-      context.dispatch("receiveVideo", request.userId);
+      context.dispatch("receiveVideo", request.member);
     },
     //case -3 참가자가 방에서 나갔을때
     onParticipantLeft(context, request) {
-      console.log("Participant " + request.userId + " left");
       var participant = context.state.participants[request.userId];
       participant.dispose();
     },
@@ -169,10 +168,18 @@ const voice = {
     },
     //case -6 video state를 받는다.
     videoStateTranslated(context, result) {
-      if (result.video == 1) {
-        context.state.participants[result.userId].rtcPeer.videoEnabled = true;
+      if (result.video == true) {
+        context.state.participants[result.userId].videoStatus = true;
       } else {
-        context.state.participants[result.userId].rtcPeer.videoEnabled = false;
+        context.state.participants[result.userId].videoStatus = false;
+      }
+    },
+    //case -7 audio state를 받는다.
+    audioStateTranslated(context, result) {
+      if (result.audio == true) {
+        context.state.participants[result.userId].audioStatus = true;
+      } else {
+        context.state.participants[result.userId].audioStatus = false;
       }
     },
     // participant.dispose에서 오는 요청
@@ -181,7 +188,11 @@ const voice = {
     },
     //다른 참가자 video 받기
     receiveVideo(context, sender) {
-      var participant = new Participant(sender);
+      var participant = new Participant(
+        sender.userId,
+        sender.video,
+        sender.audio
+      );
       var video = participant.getVideoElement();
 
       var options = {
@@ -198,15 +209,13 @@ const voice = {
           this.generateOffer(participant.offerToReceiveVideo.bind(participant));
         }
       );
-      //console.log("다른 참가자 video를 받습니다.", participant);
       //처음 입장시 내 헤드셋이 꺼져있다면 다른 참가자들의 마이크가 음소거된다.
       if (context.state.deafen) {
         video.muted = true;
       }
-      context.commit("addParticipant", { name: sender, participant });
+      context.commit("addParticipant", { name: sender.userId, participant });
     },
     setVoiceInfo(context, voiceInfo) {
-      //console.log("voice방 정보 저장");
       context.commit("setVoiceInfo", voiceInfo);
     },
     sendMessage(context, message) {
@@ -214,7 +223,6 @@ const voice = {
       context.state.ws.send(jsonMessage);
     },
     async leaveRoom(context) {
-      console.log("leaveRoom");
       for (var key in context.state.participants) {
         context.state.participants[key].dispose();
       }

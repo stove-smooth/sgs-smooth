@@ -46,7 +46,6 @@ export default {
     ...mapActions("voice", ["wsInit", "sendMessage", "leaveRoom"]),
     //dm 참가자들과 통화 시작.
     async startCalling() {
-      console.log(this.$route.params.id);
       if (this.wsOpen) {
         this.sendMessage({ id: "leaveRoom" });
         this.leaveRoom();

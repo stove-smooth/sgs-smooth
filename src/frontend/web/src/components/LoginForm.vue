@@ -121,7 +121,7 @@ export default {
     async submitForm() {
       try {
         let fcmToken = await getToken();
-        console.log("token", fcmToken);
+        console.log("fcmtoken", fcmToken);
         const userData = {
           email: this.id,
           password: this.pwd,
@@ -143,7 +143,6 @@ export default {
           this.$router.push("/channels/@me");
         }
       } catch (err) {
-        console.log("로그인 실패에러", err.response);
         this.logMessage = "로그인에 실패하셨습니다.";
       }
     },

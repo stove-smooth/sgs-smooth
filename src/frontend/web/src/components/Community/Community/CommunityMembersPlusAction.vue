@@ -81,7 +81,6 @@ export default {
       }
     },
     async startCalling(userId) {
-      console.log(userId);
       const channelid = await sendDirectMessage(this.directMessageList, userId);
 
       if (this.wsOpen) {

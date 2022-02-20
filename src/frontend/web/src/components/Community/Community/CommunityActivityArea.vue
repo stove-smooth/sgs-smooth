@@ -389,6 +389,7 @@ export default {
       messageTyper: "",
       setTimeId: "",
       imageLoading: false,
+      stompSocket: "",
     };
   },
   mounted() {
@@ -402,6 +403,8 @@ export default {
       "communityMessageReplyId",
       "messageEditId",
       "messageReadyToDelete",
+      "communityOnlineMemberList",
+      "communityOfflineMemberList",
     ]),
     ...mapGetters("user", ["getUserId"]),
   },
@@ -415,11 +418,11 @@ export default {
     this.stompSocketClient.send("/kafka/join-channel", JSON.stringify(msg), {});
     //최신 50개 메시지 기록 읽음
     await this.readChannelMessage();
+
     //실시간 메시지 구독
-    this.stompSocketClient.subscribe(
+    this.stompSocket = this.stompSocketClient.subscribe(
       "/topic/group/" + this.$route.params.channelid,
       async (res) => {
-        console.log("구독으로 받은 메시지 입니다.", res.body);
         /**메세지의 종류: 일반 채팅, 이미지 채팅, 수정, 삭제, 답장, 타이핑 상태  */
         //한국시간에 맞게 시간 커스텀
         const receivedForm = JSON.parse(res.body);
@@ -429,7 +432,6 @@ export default {
           receivedForm.type != "connect" &&
           receivedForm.type != "disconnect"
         ) {
-          console.log("날짜가 있는 메시지인 경우");
           const translatedTime = convertFromStringToDate(receivedForm.time);
           receivedForm.date = translatedTime[0];
           receivedForm.time = translatedTime[1];
@@ -500,6 +502,7 @@ export default {
       }
     );
   },
+
   watch: {
     /**메세지 타이핑 상태를 서버에 알리기 위한 로직
      * text가 변경될 경우 , 10초에 텀을 두고 상태를 확인하고 서버에 다시 알릴지 결정한다.
@@ -884,14 +887,17 @@ export default {
       }
     },
   },
+  destroyed() {
+    this.stompSocket.unsubscribe();
+  },
 };
 </script>
 
 <style>
 /**스켈레톤이미지 */
 .loading-img {
-  width: 105px;
-  height: 105px;
+  width: 355px;
+  height: 355px;
   background-color: #e0e0e0;
 }
 .loading-hidden {
@@ -1388,13 +1394,13 @@ export default {
 .message-reply-content {
   display: flex;
   flex-direction: row;
-  color: #72767d;
+  color: var(--discord-primary);
 }
 .reply-accessories {
   width: 5px;
   height: 1px;
-  border-left: 1mm solid #72767d;
-  border-top: 1mm solid #72767d;
+  border-left: 1mm solid var(--discord-primary);
+  border-top: 1mm solid var(--discord-primary);
   margin-right: 7px;
 }
 .message-replying {

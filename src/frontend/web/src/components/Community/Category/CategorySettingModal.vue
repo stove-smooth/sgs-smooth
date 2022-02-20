@@ -42,13 +42,23 @@
       <template slot="setting-content">
         <form>
           <div class="server-name-input-container">
-            <h5 class="label-id black-color">카테고리 이름</h5>
+            <div class="justify-content-space-between">
+              <h5 class="label-id black-color">카테고리 이름</h5>
+              <button
+                class="small-button"
+                @click="updateCategoryName(categorySettingModal)"
+                type="button"
+              >
+                수정
+              </button>
+            </div>
             <div class="friends-state-text">
               <input
                 width="100%"
                 type="text"
                 maxlength="100"
                 class="channel-name-input"
+                v-model="categorySettingModal.categoryName"
               />
             </div>
           </div>
@@ -61,6 +71,7 @@
 <script>
 import SettingModal from "@/components/common/SettingModal.vue";
 import { mapState, mapMutations } from "vuex";
+import { updateCategoryName } from "@/api";
 export default {
   components: {
     SettingModal,
@@ -73,6 +84,15 @@ export default {
       "setCategorySettingModal",
       "setCategoryReadyToDelete",
     ]),
+    updateCategoryName(categorySettingModal) {
+      console.log("caategory", categorySettingModal);
+      const categoryInfo = {
+        id: categorySettingModal.categoryId,
+        name: categorySettingModal.categoryName,
+      };
+      updateCategoryName(categoryInfo);
+      window.location.reload();
+    },
   },
 };
 </script>

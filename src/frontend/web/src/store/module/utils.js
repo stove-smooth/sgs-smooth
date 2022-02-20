@@ -12,11 +12,6 @@ const utils = {
     //navigationBar의 선택된 커뮤니티를 알기 위한 변수
     navigationSelected: "@me",
   },
-  getters: {
-    getStompSocketClient: (state) => {
-      return state.stompSocketClient;
-    },
-  },
   mutations: {
     setClientX(state, clientX) {
       state.clientX = clientX;

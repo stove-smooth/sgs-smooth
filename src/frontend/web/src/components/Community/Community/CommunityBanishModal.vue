@@ -63,7 +63,6 @@ export default {
         let array = this.communityOnlineMemberList.filter(
           (element) => element.id !== this.communityReadyToBanish.id
         );
-        console.log(array, this.communityReadyToBanish);
         this.setCommunityOnlineMemberList(array);
         let array2 = this.communityOfflineMemberList.filter(
           (element) => element.id !== this.communityReadyToBanish.id

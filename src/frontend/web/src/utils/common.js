@@ -31,10 +31,10 @@ function processFile2(tempImage) {
       let canvas = document.createElement("canvas");
       let canvasContext = canvas.getContext("2d");
 
-      canvas.width = 100;
-      canvas.height = 100;
+      canvas.width = 350;
+      canvas.height = 350;
 
-      canvasContext.drawImage(this, 0, 0, 100, 100);
+      canvasContext.drawImage(this, 0, 0, 350, 350);
 
       dataURI = canvas.toDataURL("image/jpeg");
       thumbnail = dataURI;

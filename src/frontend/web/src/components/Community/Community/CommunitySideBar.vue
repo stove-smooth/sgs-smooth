@@ -125,14 +125,6 @@
                       class="create-children-wrapper"
                       v-show="hovered === el.id || selected == el.id"
                     >
-                      <!-- <div
-                        class="create-children-button"
-                        aria-label="초대 코드 만들기"
-                        tabindex="0"
-                        role="button"
-                      >
-                        <svg class="invite-people-to-server"></svg>
-                      </div> -->
                       <div
                         class="create-children-button"
                         aria-label="채널 편집"
@@ -150,7 +142,8 @@
                   class="voice-participants-list"
                   v-if="
                     el.type === 'VOICE' &&
-                    voiceChannelMember[el.id] != 'undefined'
+                    voiceChannelMember != null &&
+                    voiceChannelMember[el.id] != undefined
                   "
                 >
                   <div
@@ -168,7 +161,6 @@
                         </div>
                         <div class="voice-participants-username-wrapper">
                           {{ voiceMemberInfo(item).name }}
-                          <!-- {{ item }} -->
                         </div>
                       </div>
                     </div>
@@ -191,38 +183,14 @@ export default {
   components: {
     draggable,
   },
+  props: ["voiceChannelMember"],
   data() {
     return {
       selected: this.$route.params.channelid,
       hovered: "",
       categoryhovered: "",
       new: 0,
-      voiceChannelMember: {},
     };
-  },
-  created() {
-    this.stompSocketClient.subscribe(
-      `/topic/community/${this.$route.params.serverid}`,
-      (res) => {
-        console.log(
-          "@@@@@@@@@@@시그널링 서버 상태 구독입니다",
-          JSON.parse(res.body)
-        );
-        this.voiceChannelMember = JSON.parse(res.body);
-        //this.compareVoiceMemberState(JSON.parse(res.body));
-      }
-    );
-
-    const msg = {
-      user_id: this.getUserId,
-      community_id: this.$route.params.serverid,
-      type: "before-enter",
-    };
-    this.stompSocketClient.send(
-      "/kafka/community-signaling",
-      JSON.stringify(msg),
-      {}
-    );
   },
   computed: {
     ...mapState("community", [
@@ -263,60 +231,6 @@ export default {
       "setChannelSettingModal",
     ]),
     ...mapMutations("voice", ["setVideo", "setCurrentVoiceRoom"]),
-    compareVoiceMemberState(receivedVoiceMember) {
-      for (let i = 0; i < this.getVoiceRoom.length; i++) {
-        let latestMemberList = receivedVoiceMember[this.getVoiceRoom[i]];
-        let oldMemberList = this.voiceChannelMember[this.getVoiceRoom[i]];
-
-        if (latestMemberList != undefined) {
-          if (oldMemberList == undefined) {
-            this.voiceChannelMember[this.getVoiceRoom[i]] = latestMemberList;
-            //console.log("정렬", latestMemberList.sort());
-          } else {
-            //console.log("정렬", latestMemberList.sort());
-            //들어온 멤버목록과 기존의 멤버목록이 다를때만 수정작업을 거친다.
-            let sortedLatestMemberList = latestMemberList.sort();
-            let sortedOldMemberList = oldMemberList.sort();
-            if (
-              JSON.stringify(sortedLatestMemberList) !=
-              JSON.stringify(sortedOldMemberList)
-            ) {
-              //old [1,3]
-              //new [2,3,4]
-              let removeMember = [];
-              let addMember = [];
-              for (let j = 0; j < oldMemberList.length; j++) {
-                //전 멤버중에 최신 멤버에서 포함하지 않는 자가 있다면 삭제한다.
-                if (!latestMemberList.includes(oldMemberList[j])) {
-                  //oldMemberList.splice(j, 1);
-                  //return;
-                  removeMember.push(oldMemberList[j]);
-                }
-              }
-              for (let k = 0; k < latestMemberList.length; k++) {
-                if (!oldMemberList.includes(latestMemberList[k])) {
-                  //oldMemberList.push(...latestMemberList[k]);
-                  //return;
-                  addMember.push(latestMemberList[k]);
-                }
-              }
-              /* console.log(
-                "삭제할멤버",
-                removeMember,
-                "추가할멤버",
-                addMember,
-                "최신 멤버리스트",
-                latestMemberList,
-                "예전 멤버리스트",
-                oldMemberList
-              ); */
-              oldMemberList.push(...addMember);
-            }
-          }
-        }
-      }
-      //this.voiceChannelMember = JSON.parse(res.body);
-    },
     /***drag and drop을 통해 바뀐 채널/카테고리 정보를 서버에 보내기 위한 로직 */
     log: async function (evt) {
       if (evt.moved) {
@@ -426,7 +340,6 @@ export default {
       this.categoryhovered = "";
     },
     createChannel(categoryName, categoryId) {
-      console.log(categoryName, categoryId);
       const categoryData = {
         categoryName: categoryName,
         categoryId: categoryId,
@@ -464,11 +377,24 @@ export default {
       }
     },
     async routeChannel(id, type) {
+      //채널을 바꾸는 것.
       if (type == "VOICE") {
         if (this.wsOpen) {
-          this.sendMessage({ id: "leaveRoom" });
-          this.leaveRoom();
-          this.setCurrentVoiceRoom(null);
+          const result = await this.$swal.fire({
+            title:
+              "다른 음성 채널에 계신 것 같아요. 정말 채널을 전환하시겠어요?",
+            showDenyButton: true,
+            showCancelButton: false,
+            confirmButtonText: "네",
+            denyButtonText: "아니요",
+          });
+          if (result.isConfirmed) {
+            this.sendMessage({ id: "leaveRoom" });
+            this.leaveRoom();
+            this.setCurrentVoiceRoom(null);
+          } else if (result.isDenied) {
+            return;
+          }
         }
         const wsInfo = {
           url: process.env.VUE_APP_WEBRTC_URL,
@@ -498,7 +424,6 @@ export default {
           return memberInfo;
         }
       }
-      console.log("memberid", id);
     },
   },
 };

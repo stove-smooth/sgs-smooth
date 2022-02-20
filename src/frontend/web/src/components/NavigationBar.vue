@@ -32,7 +32,14 @@
           </div>
         </div>
 
-        <div aria-label="room">
+        <div
+          aria-label="room"
+          v-if="
+            communityList &&
+            communityList.rooms &&
+            communityList.rooms.length > 0
+          "
+        >
           <div v-for="unreadDm in communityList.rooms" :key="unreadDm.id">
             <div
               class="listItem"
@@ -78,7 +85,10 @@
         <div class="listItem">
           <div class="guild-seperator"></div>
         </div>
-        <div aria-label="서버">
+        <div
+          aria-label="서버"
+          v-if="communityList && communityList.communities.length > 0"
+        >
           <!--서버 개수만큼 만들기.-->
           <draggable
             :list="communityList.communities"
@@ -171,6 +181,8 @@ export default {
     ...mapActions("community", ["FETCH_COMMUNITYLIST"]),
     ...mapMutations("community", ["setCreateCommunity", "setCommunityList"]),
     ...mapMutations("utils", ["setNavigationSelected"]),
+    ...mapMutations("voice", ["setCurrentVoiceRoom"]),
+    ...mapActions("voice", ["sendMessage", "leaveRoom"]),
     hover(index) {
       this.hovered = index;
     },
@@ -181,12 +193,37 @@ export default {
       this.setNavigationSelected("");
     },
     enter(index) {
+      //서버를 바꾸는 것.
+      if (this.wsOpen) {
+        this.sendMessage({ id: "leaveRoom" });
+        this.leaveRoom();
+        this.setCurrentVoiceRoom(null);
+      }
+      if (this.stompSocketClient) {
+        const subscriptions = this.stompSocketClient.subscriptions;
+        Object.keys(subscriptions).forEach((subscription) => {
+          this.stompSocketClient.unsubscribe(subscription);
+        });
+      }
       if (this.$route.path !== "/channels/" + index) {
         this.$router.push("/channels/" + index);
       }
       this.setNavigationSelected(index);
     },
     enterRoom(index) {
+      //안읽은 DM으로 입장.
+      if (this.wsOpen) {
+        this.sendMessage({ id: "leaveRoom" });
+        this.leaveRoom();
+        this.setCurrentVoiceRoom(null);
+      }
+
+      if (this.stompSocketClient) {
+        const subscriptions = this.stompSocketClient.subscriptions;
+        Object.keys(subscriptions).forEach((subscription) => {
+          this.stompSocketClient.unsubscribe(subscription);
+        });
+      }
       this.$router.push("/channels/@me/" + index);
       //읽음 처리..
       let array = this.communityList.rooms.filter(
@@ -215,7 +252,8 @@ export default {
   computed: {
     ...mapState("friends", ["friendsWaitNumber"]),
     ...mapState("community", ["communityList"]),
-    ...mapState("utils", ["navigationSelected"]),
+    ...mapState("utils", ["navigationSelected", "stompSocketClient"]),
+    ...mapState("voice", ["wsOpen"]),
   },
   async created() {
     const currentUrl = window.location.pathname;

@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations } from "vuex";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 import { exitDirectMessage } from "../../api/index";
 export default {
   data() {
@@ -60,9 +60,13 @@ export default {
   computed: {
     ...mapState("dm", ["directMessageList"]),
     ...mapGetters("user", ["getUserId"]),
+    ...mapState("voice", ["wsOpen"]),
+    ...mapState("community", ["communityList"]),
   },
   methods: {
     ...mapMutations("dm", ["setDirectMessageList"]),
+    ...mapActions("voice", ["sendMessage", "leaveRoom"]),
+    ...mapMutations("voice", ["setCurrentVoiceRoom"]),
     hold(index) {
       this.upHere = index;
     },
@@ -70,6 +74,18 @@ export default {
       this.upHere = "";
     },
     routePrivateDM(index) {
+      if (this.communityList.rooms.length > 0) {
+        for (let i = 0; i < this.communityList.rooms.length; i++) {
+          if (this.communityList.rooms[i].id == index) {
+            this.communityList.rooms.splice(i, 1);
+          }
+        }
+      }
+      if (this.wsOpen) {
+        this.sendMessage({ id: "leaveRoom" });
+        this.leaveRoom();
+        this.setCurrentVoiceRoom(null);
+      }
       if (this.$route.path !== "/channels/@me/" + index) {
         this.$router.push("/channels/@me/" + index);
       }

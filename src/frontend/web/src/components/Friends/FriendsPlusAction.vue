@@ -16,10 +16,6 @@
         >
           <div class="plus-action-label">통화 시작하기</div>
         </div>
-        <!-- <div class="plus-action-label-container" @mouseover="hover('invite')">
-          <div class="plus-action-label">서버에 초대하기</div>
-          <svg class="small-right-arrow"></svg>
-        </div> -->
         <div
           class="plus-action-label-container hover-white"
           @click="setFriendsReadyToDelete(friendsPlusMenu)"
@@ -36,26 +32,6 @@
         </div>
       </div>
     </div>
-    <!-- <div
-      class="plus-action-invite-server-container"
-      v-show="readytoinvite === 'invite'"
-      @mouseleave="hover('')"
-    >
-      <div class="plus-action-wrapper">
-        <div class="plus-action-label-container">
-          <div class="plus-action-label">서버1</div>
-        </div>
-        <div class="plus-action-label-container">
-          <div class="plus-action-label">서버2</div>
-        </div>
-        <div class="plus-action-label-container">
-          <div class="plus-action-label">서버3</div>
-        </div>
-        <div class="plus-action-label-container">
-          <div class="plus-action-label">서버4</div>
-        </div>
-      </div>
-    </div> -->
   </div>
 </template>
 
@@ -130,11 +106,6 @@ export default {
 </script>
 
 <style>
-.plus-action-invite-server-container {
-  position: absolute;
-  top: var(--plus--ypoint);
-  left: var(--plus--xpoint);
-}
 .plus-action-container {
   position: absolute;
   top: var(--ypoint);

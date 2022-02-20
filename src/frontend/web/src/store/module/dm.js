@@ -11,7 +11,11 @@ const dm = {
     createDirectMessageGroupModal: false,
     directMessageMemberList: null,
   },
-
+  getters: {
+    getDirectMessageList: (state) => {
+      return state.directMessageList;
+    },
+  },
   mutations: {
     setDirectMessageReplyId(state, directMessageReplyId) {
       state.directMessageReplyId = directMessageReplyId;
@@ -33,7 +37,6 @@ const dm = {
     async fetchDirectMessageList({ commit }) {
       try {
         let result = await fetchDirectMessageList();
-        console.log("directr", result);
         commit("setDirectMessageList", result.data.result.rooms);
       } catch (err) {
         console.log(err.response);

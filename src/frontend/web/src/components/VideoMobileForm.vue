@@ -15,10 +15,18 @@
         v-for="voiceMember in voiceMembers"
         :key="voiceMember.name"
       >
-        <voice-participants :participant="voiceMember"></voice-participants>
+        <div
+          class="align-items-center justify-content-center"
+          :key="voiceMember.videoStatus"
+        >
+          <voice-participants
+            :participant="voiceMember"
+            :key="voiceMember.audioStatus"
+          ></voice-participants>
+        </div>
       </div>
     </div>
-    <div class="voice-bottom-control-section">
+    <div class="voice-bottom-mobile-control-section">
       <div class="voice-bottom-control-container">
         <div
           class="voice-control-button justify-content-center align-items-center clickable"
@@ -46,8 +54,8 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from "vuex";
-import VoiceParticipants from "./common/Voice/VoiceParticipants.vue";
+import { mapActions, mapMutations, mapState, mapGetters } from "vuex";
+import VoiceParticipants from "../components/common/Voice/VoiceParticipants.vue";
 export default {
   components: { VoiceParticipants },
   data() {
@@ -68,6 +76,8 @@ export default {
         userId: this.userId,
         roomId: `c-${this.$route.params.channelid}`,
         communityId: this.$route.params.serverid,
+        video: this.video,
+        audio: !this.mute,
       };
       let voiceRoomInfo = {
         myName: this.userId,
@@ -85,6 +95,8 @@ export default {
         userId: this.userId,
         roomId: `r-${this.$route.params.channelid}`,
         communityId: this.$route.params.serverid,
+        video: this.video,
+        audio: !this.mute,
       };
       let voiceRoomInfo = {
         myName: this.userId,
@@ -97,6 +109,7 @@ export default {
   },
   computed: {
     ...mapState("voice", ["participants", "mute", "video", "myName", "deafen"]),
+    ...mapGetters("user", ["getUserId"]),
     voiceMembers() {
       //참여자 감지
       if (this.participants) {
@@ -117,10 +130,36 @@ export default {
     ...mapActions("voice", ["setVoiceInfo", "sendMessage", "leaveRoom"]),
     ...mapMutations("voice", ["setMute", "setVideo"]),
     toggleMic() {
+      if (this.mute) {
+        this.sendMessage({
+          id: "audioStateFrom",
+          userId: this.getUserId,
+          audio: "true",
+        });
+      } else {
+        this.sendMessage({
+          id: "audioStateFrom",
+          userId: this.getUserId,
+          audio: "false",
+        });
+      }
+      this.myParticipantObject.rtcPeer.audioEnabled = this.mute;
       this.setMute();
-      this.myParticipantObject.rtcPeer.audioEnabled = !this.mute;
     },
     toggleVideo() {
+      if (this.video) {
+        this.sendMessage({
+          id: "videoStateFrom",
+          userId: this.getUserId,
+          video: "false",
+        });
+      } else {
+        this.sendMessage({
+          id: "videoStateFrom",
+          userId: this.getUserId,
+          video: "true",
+        });
+      }
       this.myParticipantObject.rtcPeer.videoEnabled = !this.video;
       this.setVideo();
     },
@@ -132,4 +171,19 @@ export default {
   },
 };
 </script>
-<style></style>
+<style>
+.voice-bottom-mobile-control-section {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  justify-content: center;
+  line-height: 0;
+  height: 80px;
+  margin-bottom: 24px;
+}
+</style>

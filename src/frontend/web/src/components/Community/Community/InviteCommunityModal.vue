@@ -31,7 +31,7 @@
                 @click="inviteFriendToCommunity(friend, index)"
                 v-if="friend.isInvited == false"
               >
-                <div class="positive-border-color primary-text-content">
+                <div class="positive-border-color white-space-wrap">
                   초대하기
                 </div>
               </button>
@@ -62,7 +62,7 @@
 
 <script>
 import Vue from "vue";
-import { mapState, mapMutations, mapActions } from "vuex";
+import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
 import Modal from "@/components/common/Modal.vue";
 import { createInvitation, createDirectMessage } from "@/api/index.js";
 export default {
@@ -79,9 +79,12 @@ export default {
   async created() {
     await this.FETCH_FRIENDSLIST();
     let icon;
-    for (var i = 0; i < this.communityList.length; i++) {
-      if (this.communityList[i].id == this.communityInviteModal.serverId) {
-        icon = this.communityList[i].icon;
+    for (var i = 0; i < this.communityList.communities.length; i++) {
+      if (
+        this.communityList.communities[i].id ==
+        this.communityInviteModal.serverId
+      ) {
+        icon = this.communityList.communities[i].icon;
         break;
       }
     }
@@ -121,6 +124,8 @@ export default {
     ]),
     ...mapState("friends", ["friendsAccept"]),
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
+    ...mapGetters("user", ["getUserId"]),
+    ...mapState("user", ["nickname", "userimage"]),
   },
   methods: {
     ...mapActions("friends", ["FETCH_FRIENDSLIST"]),
@@ -132,7 +137,9 @@ export default {
       const copyText = document.getElementById("inviteUrl");
       copyText.select();
       document.execCommand("copy");
-      alert(copyText.value + "을 복사했습니다.");
+      this.$swal.fire({
+        title: copyText.value + "을 복사했습니다.",
+      });
     },
     async inviteFriendToCommunity(friend, index) {
       const dmMembers = {
@@ -142,9 +149,9 @@ export default {
       const msg = {
         content: `<~inviting~>${this.invitationUrl}`,
         channelId: result.data.result.id,
-        userId: friend.userId,
-        name: friend.name,
-        profileImage: friend.profileImage,
+        userId: this.getUserId,
+        name: this.nickname,
+        profileImage: this.userimage,
       };
       this.stompSocketClient.send(
         "/kafka/send-direct-message",
@@ -213,6 +220,9 @@ export default {
   font-size: 16px;
   line-height: 20px;
   color: #fff;
+}
+.white-space-wrap {
+  white-space: nowrap;
 }
 #inviteUrl {
   color: white;

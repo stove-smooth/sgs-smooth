@@ -386,6 +386,7 @@ export default {
       messageTyper: "",
       setTimeId: "",
       imageLoading: false,
+      stompSocket: "",
     };
   },
   mounted() {
@@ -395,11 +396,17 @@ export default {
     ...mapState("user", ["nickname", "userimage"]),
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
     ...mapState("community", ["messagePlusMenu", "messageEditId"]),
-    ...mapState("dm", ["directMessageReplyId", "directMessageReadyToDelete"]),
+    ...mapState("dm", [
+      "directMessageReplyId",
+      "directMessageReadyToDelete",
+      "directMessageMemberList",
+    ]),
     ...mapGetters("user", ["getUserId"]),
+    ...mapState("dm", ["directMessageList"]),
   },
   async created() {
     //들어온 채널의 상태를 보냄.
+
     const msg = {
       user_id: this.getUserId,
       channel_id: `r-${this.$route.params.id}`,
@@ -407,10 +414,9 @@ export default {
     };
     this.stompSocketClient.send("/kafka/join-channel", JSON.stringify(msg), {});
     await this.readChannelMessage();
-    this.stompSocketClient.subscribe(
+    this.stompSocket = this.stompSocketClient.subscribe(
       "/topic/direct/" + this.$route.params.id,
       async (res) => {
-        console.log("구독으로 받은 메시지 입니다.", res.body);
         /**메세지의 종류: 일반 채팅, 이미지 채팅, 수정, 삭제, 답장, 타이핑 상태  */
         //한국시간에 맞게 시간 커스텀
         const receivedForm = JSON.parse(res.body);
@@ -420,7 +426,6 @@ export default {
           receivedForm.type != "connect" &&
           receivedForm.type != "disconnect"
         ) {
-          console.log("날짜가 있는 메시지인 경우");
           const translatedTime = convertFromStringToDate(receivedForm.time);
           receivedForm.date = translatedTime[0];
           receivedForm.time = translatedTime[1];
@@ -439,11 +444,8 @@ export default {
             }
           }
           receivedForm.isOther = isOther;
-        } else {
-          console.log("타이핑에 관한 구독이 등장.", receivedForm);
         }
         //초대장 관련
-        console.log("receivedForm", receivedForm);
         if (
           receivedForm.message &&
           receivedForm.message.startsWith("<~inviting~>")
@@ -487,7 +489,6 @@ export default {
         }
         //수정 구독 메시지 수신시,현재 로드된 메시지 중 수정한 메시지가 있다면 수정을 해준다.
         if (receivedForm.type == "modify") {
-          console.log("수정해야함");
           for (let i = 0; i < this.receiveList.length; i++) {
             if (this.receiveList[i].id == receivedForm.id) {
               this.receiveList[i].message = receivedForm.message;
@@ -504,6 +505,33 @@ export default {
         //타이핑 구독 수신. 마지막으로 타이핑친 사람의 이름은 3초뒤에 사라진다.
         if (receivedForm.type == "typing") {
           this.messageTyper = receivedForm.name;
+        }
+        //같은 방 유저가 disconnect일경우.
+        if (receivedForm.type == "disconnect") {
+          for (
+            let i = 0;
+            i < this.directMessageMemberList.members.length;
+            i++
+          ) {
+            if (
+              this.directMessageMemberList.members[i].id == receivedForm.userId
+            ) {
+              this.directMessageMemberList.members[i].state = "offline";
+            }
+          }
+        }
+        if (receivedForm.type == "connect") {
+          for (
+            let i = 0;
+            i < this.directMessageMemberList.members.length;
+            i++
+          ) {
+            if (
+              this.directMessageMemberList.members[i].id == receivedForm.userId
+            ) {
+              this.directMessageMemberList.members[i].state = "online";
+            }
+          }
         }
       }
     );
@@ -574,13 +602,23 @@ export default {
         //답장/일반메시지/사진메시지를 구분한다.
         if (this.directMessageReplyId) {
           this.reply();
-          return;
         }
         if (this.images.length > 0) {
           this.sendPicture();
         }
         if (this.text) {
           this.send();
+        }
+        if (this.directMessageList[0].id != this.$route.params.id) {
+          if (this.directMessageList) {
+            for (let i = 0; i < this.directMessageList.length; i++) {
+              if (this.directMessageList[i].id == this.$route.params.id) {
+                let dmUpdated = this.directMessageList.splice(i, 1);
+                this.directMessageList.unshift(dmUpdated[0]);
+                return;
+              }
+            }
+          }
         }
       }
     },
@@ -791,7 +829,7 @@ export default {
       var regURL =
         /(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#/%=~_|$?!:,.]*\)|[A-Z0-9+&@#/%=~_|$])/gim;
       return text.replace(regURL, function (url) {
-        return `<a href="${url}" target='_blank'>${url}</a>`;
+        return `<a class="sky-blue-color" href="${url}" target='_blank'>${url}</a>`;
       });
     },
     scrollToBottom() {
@@ -920,6 +958,9 @@ export default {
       }
     },
   },
+  destroyed() {
+    this.stompSocket.unsubscribe();
+  },
 };
 </script>
 
@@ -943,5 +984,8 @@ export default {
   -webkit-box-flex: 0;
   flex: 0 0 auto;
   z-index: 1;
+}
+.sky-blue-color {
+  color: #00aff4;
 }
 </style>

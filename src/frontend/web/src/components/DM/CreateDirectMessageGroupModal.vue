@@ -5,7 +5,6 @@
       <modal @exit="closeModal">
         <template slot="header">
           <h3 class="action-title margin-left-8px">친구 선택하기</h3>
-          <!-- <search-bar></search-bar> -->
         </template>
         <template slot="content">
           <div class="invite-scroller thin-scrollbar">
@@ -88,8 +87,5 @@ export default {
 .createGroupDMButtonWrapper {
   padding: 4px;
   display: flex;
-}
-.position-relative {
-  position: relative;
 }
 </style>

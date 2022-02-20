@@ -4,6 +4,8 @@ import store from "../store/index";
 
 const instance = axiosInstance();
 
+/* 커뮤니티 */
+//커뮤니티 crud
 async function createNewCommunity(userData) {
   try {
     const accesstoken = await store.getters["user/getAccessToken"];
@@ -22,6 +24,12 @@ async function createNewCommunity(userData) {
     console.log(err.response);
   }
 }
+function updateCommunityName(communityInfo) {
+  return instance.patch("community-server/community/name", communityInfo);
+}
+function deleteCommunity(communityId) {
+  return instance.delete(`community-server/community/${communityId}`);
+}
 function fetchCommunityList() {
   return instance.get("community-server/community");
 }
@@ -31,23 +39,43 @@ function fetchCommunityInfo(communityId) {
 function fetchCommunityMemberList(communityId) {
   return instance.get(`community-server/community/${communityId}/member`);
 }
+function exitCommunity(communityId, userId) {
+  return instance.delete(
+    `community-server/community/${communityId}/member?id=` + userId
+  );
+}
+//커뮤니티 초대
+function createInvitation(invitationData) {
+  return instance.post("community-server/community/invitation", invitationData);
+}
+function joinCommunity(communityHashCode) {
+  return instance.post(`community-server/community/member`, communityHashCode);
+}
+/* 카테고리 */
 function createNewCategory(categoryData) {
   return instance.post("community-server/category", categoryData);
+}
+function updateCategoryName(categoryInfo) {
+  return instance.patch("community-server/category/name", categoryInfo);
 }
 function deleteCategory(categoryId) {
   return instance.delete("community-server/category/" + categoryId);
 }
+/* 채널 */
 function createNewChannel(channelData) {
   return instance.post("community-server/channel", channelData);
 }
-function moveCategory(categoryData) {
-  return instance.patch("community-server/category/location", categoryData);
+function updateChannelName(channelInfo) {
+  return instance.patch("community-server/channel/name", channelInfo);
 }
-function moveChannel(channelData) {
-  return instance.patch("community-server/channel/location", channelData);
+function deleteChannel(channelId) {
+  return instance.delete(`community-server/channel/${channelId}`);
 }
-function moveCommunity(communityData) {
-  return instance.patch("community-server/community/location", communityData);
+/* 채팅 */
+function readChatMessage(channelId, pageId) {
+  return instance.get(
+    `chat-server/community?ch_id=${channelId}&page=${pageId}`
+  );
 }
 async function sendImageChatting(userData) {
   try {
@@ -85,27 +113,15 @@ async function sendImageDirectChatting(userData) {
     console.log(err.response);
   }
 }
-function deleteCommunity(communityId) {
-  return instance.delete(`community-server/community/${communityId}`);
+/* drag and drop */
+function moveCategory(categoryData) {
+  return instance.patch("community-server/category/location", categoryData);
 }
-function createInvitation(invitationData) {
-  return instance.post("community-server/community/invitation", invitationData);
+function moveChannel(channelData) {
+  return instance.patch("community-server/channel/location", channelData);
 }
-function deleteChannel(channelId) {
-  return instance.delete(`community-server/channel/${channelId}`);
-}
-function exitCommunity(communityId, userId) {
-  return instance.delete(
-    `community-server/community/${communityId}/member?id=` + userId
-  );
-}
-function joinCommunity(communityHashCode) {
-  return instance.post(`community-server/community/member`, communityHashCode);
-}
-function readChatMessage(channelId, pageId) {
-  return instance.get(
-    `chat-server/community?ch_id=${channelId}&page=${pageId}`
-  );
+function moveCommunity(communityData) {
+  return instance.patch("community-server/community/location", communityData);
 }
 export {
   createNewCommunity,
@@ -126,4 +142,7 @@ export {
   readChatMessage,
   moveCommunity,
   sendImageDirectChatting,
+  updateCommunityName,
+  updateChannelName,
+  updateCategoryName,
 };

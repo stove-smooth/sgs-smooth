@@ -152,9 +152,16 @@
           <form>
             <div class="server-name-input-container">
               <div class="flex-direction-row">
-                <h5 class="label-id black-color">서버 이름</h5>
-                <div class="margin-left-8px align-items-center">
-                  <div class="small-button">수정</div>
+                <div class="justify-content-space-between">
+                  <h5 class="label-id black-color">서버 이름</h5>
+                  <div class="margin-left-8px align-items-center">
+                    <div
+                      class="small-button"
+                      @click="updateCommunityName(communitySettingModal)"
+                    >
+                      수정
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -277,6 +284,7 @@
 <script>
 import { mapState, mapMutations } from "vuex";
 import SettingModal from "@/components/common/SettingModal.vue";
+import { updateCommunityName } from "../../../api/index";
 export default {
   components: {
     SettingModal,
@@ -287,9 +295,6 @@ export default {
       menuSelected: "일반",
       icon: null,
     };
-  },
-  created() {
-    console.log(this.$route.params.serverid);
   },
   computed: {
     ...mapState("community", [
@@ -310,16 +315,25 @@ export default {
       this.menuSelected = menu;
     },
     isProfileAvatar() {
-      for (var i = 0; i < this.communityList.length; i++) {
-        if (this.communityList[i].id == this.$route.params.serverid) {
-          if (this.communityList[i].icon == null) {
+      for (var i = 0; i < this.communityList.communities.length; i++) {
+        if (
+          this.communityList.communities[i].id == this.$route.params.serverid
+        ) {
+          if (this.communityList.communities[i].icon == null) {
             return false;
           } else {
-            this.icon = this.communityList[i].icon;
+            this.icon = this.communityList.communities[i].icon;
             return true;
           }
         }
       }
+    },
+    async updateCommunityName(communitySettingInfo) {
+      const communityInfo = {
+        id: communitySettingInfo.serverId,
+        name: communitySettingInfo.serverName,
+      };
+      await updateCommunityName(communityInfo);
     },
   },
 };

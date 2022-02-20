@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 import UserSection from "../components/common/UserSection.vue";
 import DmActivityArea from "../components/DM/DMActivityArea.vue";
 import DmMemberList from "../components/DM/DMMemberList.vue";
@@ -37,6 +37,18 @@ export default {
     DmMenuBar,
     DmMemberList,
     VoiceSharingArea,
+  },
+  async created() {
+    if (sessionStorage.getItem("webRtc") == "true") {
+      const wsInfo = {
+        url: process.env.VUE_APP_WEBRTC_URL,
+        type: "room",
+      };
+      await this.wsInit(wsInfo); //ws 전역 등록.
+    }
+  },
+  methods: {
+    ...mapActions("voice", ["wsInit"]),
   },
   computed: {
     ...mapState("voice", ["wsOpen", "currentVoiceRoomType"]),

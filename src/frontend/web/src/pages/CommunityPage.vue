@@ -2,7 +2,7 @@
   <div class="base-container">
     <div class="content-mypage" :key="$route.params.channelid">
       <div class="sidebar">
-        <community-side-bar />
+        <community-side-bar :voiceChannelMember="voiceChannelMember" />
         <user-section />
       </div>
       <div class="server-activity-container">
@@ -10,7 +10,12 @@
           <community-chatting-menu-bar />
           <div class="server-activity-container1">
             <community-activity-area />
-            <community-member-list />
+            <div :key="memberState.type">
+              <community-member-list
+                :key="memberState.userId"
+                :memberState="memberState"
+              />
+            </div>
           </div>
         </template>
         <template v-else>
@@ -19,7 +24,12 @@
               <community-chatting-menu-bar />
               <div class="server-activity-container1">
                 <voice-sharing-area />
-                <community-member-list />
+                <div :key="memberState.type">
+                  <community-member-list
+                    :key="memberState.userId"
+                    :memberState="memberState"
+                  />
+                </div>
               </div></div
           ></template>
         </template>
@@ -29,7 +39,7 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapMutations } from "vuex";
+import { mapActions, mapState, mapMutations, mapGetters } from "vuex";
 import CommunitySideBar from "../components/Community/Community/CommunitySideBar.vue";
 import UserSection from "../components/common/UserSection.vue";
 import CommunityChattingMenuBar from "../components/Community/Community/CommunityChattingMenuBar.vue";
@@ -45,12 +55,70 @@ export default {
     CommunityMemberList,
     VoiceSharingArea,
   },
+  data() {
+    return {
+      voiceChannelMember: {},
+      memberState: {},
+    };
+  },
+  computed: {
+    ...mapState("community", [
+      "communityInfo",
+      "communityOnlineMemberList",
+      "communityOfflineMemberList",
+    ]),
+    ...mapState("voice", ["wsOpen", "currentVoiceRoomType"]),
+    ...mapState("utils", ["stompSocketClient"]),
+    ...mapGetters("user", ["getUserId"]),
+  },
   async created() {
     await this.fetchCommunityInfo();
+    if (sessionStorage.getItem("webRtc") == "true") {
+      const wsInfo = {
+        url: process.env.VUE_APP_WEBRTC_URL,
+        type: "community",
+      };
+      await this.wsInit(wsInfo); //ws 전역 등록.
+    }
+
+    this.stompSocketClient.subscribe(
+      `/topic/community/${this.$route.params.serverid}`,
+      (res) => {
+        console.log(
+          "@@@@@@@@@@@시그널링 서버 상태 구독입니다",
+          JSON.parse(res.body)
+        );
+        if (JSON.parse(res.body).type == "out") {
+          let channelId = JSON.parse(res.body).channelId.split("-");
+          this.voiceChannelMember[channelId[1]] = JSON.parse(res.body).ids;
+          return;
+        }
+        if (
+          JSON.parse(res.body).type != "disconnect" &&
+          JSON.parse(res.body).type != "connect"
+        ) {
+          this.voiceChannelMember = JSON.parse(res.body);
+        } else {
+          this.memberState = JSON.parse(res.body);
+        }
+      }
+    );
+    const msg = {
+      user_id: this.getUserId,
+      community_id: this.$route.params.serverid,
+      type: "before-enter",
+    };
+    this.stompSocketClient.send(
+      "/kafka/community-signaling",
+      JSON.stringify(msg),
+      {}
+    );
   },
   methods: {
+    ...mapActions("voice", ["wsInit"]),
     ...mapActions("community", ["FETCH_COMMUNITYINFO"]),
     ...mapMutations("community", ["setCurrentChannelType"]),
+
     async fetchCommunityInfo() {
       await this.FETCH_COMMUNITYINFO(this.$route.params.serverid);
     },
@@ -74,11 +142,6 @@ export default {
         }
       }
     },
-  },
-  computed: {
-    ...mapState("community", ["communityInfo"]),
-    ...mapState("voice", ["wsOpen", "currentVoiceRoomType"]),
-    ...mapState("utils", ["stompSocketClient"]),
   },
 };
 </script>

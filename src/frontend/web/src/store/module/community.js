@@ -13,7 +13,7 @@ const community = {
     communityReadyToDelete: false,
     communityReadyToExit: false,
     communityReadyToBanish: false,
-    communityList: [],
+    communityList: null,
     communityInfo: null,
     communityOnlineMemberList: [],
     communityOfflineMemberList: [],
@@ -42,6 +42,11 @@ const community = {
 
     //현재 위치한 채널 타입
     currentChannelType: null,
+  },
+  getters: {
+    getCommunityList: (state) => {
+      return state.communityList;
+    },
   },
   mutations: {
     setCreateCommunity(state, createCommunity) {
@@ -142,6 +147,7 @@ const community = {
           result.data.result.members[i].role === "OWNER" &&
           result.data.result.members[i].id == userId
         ) {
+          console.log("homehome");
           await commit("setCommunityOwner", true);
         } else {
           await commit("setCommunityOwner", false);

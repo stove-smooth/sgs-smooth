@@ -144,13 +144,8 @@
 
 <script>
 import { mapActions } from "vuex";
-import {
-  registerUser,
-  sendAuthCode,
-  verifyAuthCode,
-  changeUserImage,
-} from "../api/index.js";
-import { selectProfile, dataUrlToFile } from "../utils/common.js";
+import { registerUser, sendAuthCode, verifyAuthCode } from "../api/index.js";
+import { getToken } from "@/utils/firebase";
 import { validateEmail, validateName } from "../utils/validation.js";
 export default {
   data() {
@@ -214,17 +209,16 @@ export default {
         password: this.pwd,
         name: this.username,
       };
-      const result2 = await registerUser(userData);
-      console.log("result", result2);
-      const code = await this.LOGIN(userData);
-      const classify = code % 4;
-      const result = selectProfile(classify);
-      const primaryProfile = require("../assets/" + result + ".png");
-      const profileFile = await dataUrlToFile(primaryProfile);
-      var frm = new FormData();
-      frm.append("image", profileFile);
-      const setProfile = await changeUserImage(frm);
-      console.log("회원가입시 프로필", setProfile);
+      await registerUser(userData);
+      let fcmToken = await getToken();
+
+      const userInfo = {
+        email: this.id,
+        password: this.pwd,
+        type: "web",
+        deviceToken: fcmToken,
+      };
+      await this.LOGIN(userInfo);
       this.$router.push("/channels/@me");
     },
     async verifyEmail() {
