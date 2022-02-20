@@ -144,14 +144,8 @@
 
 <script>
 import { mapActions } from "vuex";
-import {
-  registerUser,
-  sendAuthCode,
-  verifyAuthCode,
-  //changeUserImage,
-} from "../api/index.js";
+import { registerUser, sendAuthCode, verifyAuthCode } from "../api/index.js";
 import { getToken } from "@/utils/firebase";
-//import { selectProfile, dataUrlToFile } from "../utils/common.js";
 import { validateEmail, validateName } from "../utils/validation.js";
 export default {
   data() {

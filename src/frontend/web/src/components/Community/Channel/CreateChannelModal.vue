@@ -15,7 +15,7 @@
             class="select-channel-type-button"
             @click="selectChatType('TEXT')"
           >
-            <div v-bind:style="{ width: '24px', padding: '10px' }">
+            <div class="channel-type-wrapper">
               <svg
                 v-if="isChatType === 'TEXT'"
                 class="radio_button_checked"
@@ -23,16 +23,8 @@
               <svg v-else class="radio_button_unchecked"></svg>
             </div>
             <svg class="big-hashtag-icon"></svg>
-            <div
-              class="flex-direction-column"
-              v-bind:style="{ paddingLeft: '10px' }"
-            >
-              <div
-                class="action-title"
-                v-bind:style="{ alignSelf: 'flex-start' }"
-              >
-                채팅 채널
-              </div>
+            <div class="flex-direction-column padding-left-10px">
+              <div class="action-title align-self-flex-start">채팅 채널</div>
               <div class="small-title-text">
                 이미지, 스티커, 의견, 농담을 올려보세요.
               </div>
@@ -42,7 +34,7 @@
             class="select-channel-type-button"
             @click="selectChatType('VOICE')"
           >
-            <div v-bind:style="{ width: '24px', padding: '10px' }">
+            <div class="channel-type-wrapper">
               <svg
                 v-if="isChatType === 'VOICE'"
                 class="radio_button_checked"
@@ -50,16 +42,8 @@
               <svg v-else class="radio_button_unchecked"></svg>
             </div>
             <svg class="big-voice-channel"></svg>
-            <div
-              class="flex-direction-column"
-              v-bind:style="{ paddingLeft: '10px' }"
-            >
-              <div
-                class="action-title"
-                v-bind:style="{ alignSelf: 'flex-start' }"
-              >
-                음성 채널
-              </div>
+            <div class="flex-direction-column padding-left-10px">
+              <div class="action-title align-self-flex-start">음성 채널</div>
               <div class="small-title-text">
                 이미지, 스티커, 의견, 농담을 올려보세요.
               </div>
@@ -68,10 +52,7 @@
           <form>
             <div class="server-name-input-container">
               <h5 class="label-id black-color">채널 이름</h5>
-              <div
-                class="friends-state-text"
-                v-bind:style="{ position: 'relative' }"
-              >
+              <div class="friends-state-text position-relative">
                 <svg
                   v-if="isChatType === 'TEXT'"
                   class="hashtag-icon channel-input-prefix"
@@ -228,7 +209,6 @@ export default {
   left: 8px;
   color: #dcddde;
 }
-
 .lock {
   width: 16px;
   height: 16px;
@@ -236,5 +216,12 @@ export default {
 }
 .margin-top-eightpx {
   margin-top: 8px;
+}
+.align-self-flex-start {
+  align-self: flex-start;
+}
+.channel-type-wrapper {
+  width: 24px;
+  padding: 10px;
 }
 </style>

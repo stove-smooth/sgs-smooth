@@ -21,9 +21,6 @@ import { mapState, mapActions } from "vuex";
 import FriendsPlayingForm from "./FriendsPlayingForm.vue";
 export default {
   components: { FriendsPlayingForm },
-  /* async created() {
-    await this.FETCH_COMMUNITYLIST();
-  }, */
   computed: {
     ...mapState("community", ["communityList"]),
     ...mapState("friends", ["friendsOnline"]),

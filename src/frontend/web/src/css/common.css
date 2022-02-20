@@ -163,6 +163,9 @@
 .text-align-center {
   text-align: center;
 }
+.position-relative {
+  position: relative;
+}
 .primary-text-content {
   white-space: nowrap;
   overflow: hidden;
@@ -308,6 +311,9 @@
 }
 .no-margin-bottom {
   margin-bottom: 0px;
+}
+.padding-left-10px {
+  padding-left: 10px;
 }
 .font-size-14px {
   font-size: 14px;

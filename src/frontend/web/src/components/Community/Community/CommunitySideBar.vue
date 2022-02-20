@@ -125,14 +125,6 @@
                       class="create-children-wrapper"
                       v-show="hovered === el.id || selected == el.id"
                     >
-                      <!-- <div
-                        class="create-children-button"
-                        aria-label="초대 코드 만들기"
-                        tabindex="0"
-                        role="button"
-                      >
-                        <svg class="invite-people-to-server"></svg>
-                      </div> -->
                       <div
                         class="create-children-button"
                         aria-label="채널 편집"

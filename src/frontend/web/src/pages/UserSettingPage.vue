@@ -52,21 +52,6 @@
                       </div>
                     </div>
                   </div>
-                  <div class="profile-info">
-                    <!-- <div class="primary-divider" />
-                    <div class="margin-bottom-16px">
-                      <div class="justify-content-space-between">
-                        <div class="subtext white-color">내 소개</div>
-                        <button class="small-button">수정</button>
-                      </div>
-                      <input
-                        type="text"
-                        class="input-default"
-                        placeholder="useraboutme"
-                        v-model="useraboutme"
-                      />
-                    </div> -->
-                  </div>
                   <div class="justify-content-center">
                     <button class="grey-large-button">
                       <a href="javascript:;" @click="logoutUser">로그아웃</a>
@@ -245,10 +230,5 @@ export default {
   align-items: flex-end;
   font-weight: 500;
   display: flex;
-}
-
-.profile-info {
-  padding: 0 16px 16px;
-  box-sizing: border-box;
 }
 </style>
