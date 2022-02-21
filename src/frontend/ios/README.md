@@ -1,4 +1,4 @@
-<img width="150" alt="image" src="https://user-images.githubusercontent.com/26545623/153772497-99d25d73-bc61-4fa4-9ca7-d2607b21d6f9.png">
+<img width = "450" alt="image" src="https://user-images.githubusercontent.com/26545623/154948545-89788213-92a6-4f1c-92c9-af64c9fb10dd.png">
 
 # smooth-iOS
 
@@ -89,23 +89,29 @@ smooth-ios
 |:---:|:---:|
 <img src = "https://user-images.githubusercontent.com/26545623/153777444-9f75364f-5c1b-466f-83cf-1613eaf30586.gif?raw=true" width = 200> |<img src = "https://user-images.githubusercontent.com/26545623/153777883-5c5862ab-5fe6-4e4e-bd96-ffa370047d13.gif" width = 200>|
 
-| 서버 생성 | 서버 설정 | 서버 초대 |
-|:---:|:---:|:---:|
-|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|
+| 서버 생성 | 서버 설정 | 서버 초대 |서버 참가하기|
+|:---:|:---:|:---:|:---:|
+|<img src = "https://user-images.githubusercontent.com/26545623/154947656-d1edcf6f-9d22-4fcd-bbe3-36400b5fd820.gif" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/154945168-7291c582-7341-4fb2-9ecf-1e1a66cdfbe7.png" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/154947502-fe88783a-6d18-453c-b206-88f02d9a2b0b.PNG" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/154946410-c2b5be11-9b6e-4837-8908-f6ef14429398.gif" width = 200>|
 
 
 | 채널 생성 | 채널 배치 |
 |:---:|:---:|
-|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|
+|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/154942165-62184d23-c93f-4003-9ad1-3eca980ab40e.gif" width = 200>|
 
 
-| 텍스트 전송 | 파일 전송 | 채팅방 불러오기 | 메시지 삭제 |
-|:---:|:---:|:---:|:---:|
-|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|
+
+| 텍스트 / 파일 전송 / 채팅방 불러오기 / 메시지 삭제 | WebRTC WebView (구현중) |
+|:---:|:---:|
+|<img src = "https://user-images.githubusercontent.com/26545623/154943653-5d8cd2cc-a380-4fd7-90d7-06706507da20.gif" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/154946925-bb71ab14-f5c0-47f7-a850-b6d1c192cd76.gif" width = 200>|
+
 
 | 친구 추가 | 친구 목록 | 친구 차단/삭제 |
 |:---:|:---:|:---:|
-|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|
+|<img src = "https://user-images.githubusercontent.com/26545623/154944696-74485833-25d3-46ae-b3df-a69cf7d2161a.gif" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/153777706-c4ad4a05-02bb-467b-bc9d-03a767ae8795.png" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/154944194-5689ced0-38f1-40c1-bf08-0802be6bae23.gif" width = 200>|
+
+| 앱 내 알림 | 백그라운드 알림 |
+|:---:|:---:|
+|<img src = "https://user-images.githubusercontent.com/26545623/154945980-6775cd5b-6508-4906-9f95-3eb3e0453590.gif" width = 200>|<img src = "https://user-images.githubusercontent.com/26545623/154946020-ff37797a-a348-4fcc-8912-682f651348ec.gif" width = 200>|
 
 
 <br><br>
