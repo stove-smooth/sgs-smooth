@@ -137,6 +137,10 @@ public class MessageSender {
 
     public void sendToEtcDirectChat(String topic, DirectMessage directChat) {
         switch (directChat.getType()) {
+            case "typing": {
+                kafkaTemplateForDirectMessage.send(topic,directChat);
+                break;
+            }
             case "reply": {
                 directChat.setLocalDateTime(LocalDateTime.now());
                 DirectMessage result = directChatRepository.save(directChat);
@@ -169,6 +173,10 @@ public class MessageSender {
     }
     public void sendToEtcChannelChat(String topic, ChannelMessage channelMessage) {
         switch (channelMessage.getType()) {
+            case "typing": {
+                kafkaTemplateForChannelMessage.send(topic,channelMessage);
+                break;
+            }
             case "reply": {
                 channelMessage.setLocalDateTime(LocalDateTime.now());
                 ChannelMessage result = channelChatRepository.save(channelMessage);

@@ -104,7 +104,7 @@ public class TcpService {
             case "community": {
                 List<Long> check = new ArrayList<>();
                 for (Long i : request.getIds()) {
-                    if (!String.valueOf(redisTemplate.opsForValue().get("USER" + i)).equals(request.getChannel_id())) {
+                    if (!String.valueOf(redisTemplate.opsForValue().get("USER" + i)).equals(request.getChannel_id()) || String.valueOf(redisTemplate.opsForValue().get("USER" + i)).equals("null")) {
                         check.add(i);
                     }
                 }

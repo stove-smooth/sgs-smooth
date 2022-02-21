@@ -28,12 +28,12 @@ public class MessageListener {
     private final String topicForFileUpload = "file-topic";
     private final String topicForSignaling = "state-topic";
 
-    private final String directGroup = "direct-server-group1";
-    private final String directETCGroup = "direct-etc-server-group1";
-    private final String channelGroup = "channel-server-group1";
-    private final String channelETCGroup = "channel-etc-server-group1";
-    private final String fileGroup = "file-server-group1";
-    private final String stateGroup = "state-group1";
+    private final String directGroup = "direct-server-group3";
+    private final String directETCGroup = "direct-etc-server-group3";
+    private final String channelGroup = "channel-server-group3";
+    private final String channelETCGroup = "channel-etc-server-group3";
+    private final String fileGroup = "file-server-group3";
+    private final String stateGroup = "state-group3";
 
     private final ObjectMapper objectMapper;
     private final SimpMessagingTemplate template;
@@ -201,6 +201,8 @@ public class MessageListener {
                 msg.put("userId",stateRequest.getUserId());
                 String json = objectMapper.writeValueAsString(msg);
                 for (String i : stateRequest.getIds()) {
+                    log.info("타입 " + stateRequest.getType());
+                    log.info("끊킴 " +  i);
                     template.convertAndSend("/topic/" + i, json);
                 }
                 break;
