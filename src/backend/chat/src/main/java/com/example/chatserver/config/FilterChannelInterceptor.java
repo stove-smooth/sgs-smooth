@@ -75,7 +75,7 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
                         .ids(roomList).build();
                 messageSender.signaling(stateTopic,stateRequest);
                 break;
-                // todo disconnect 여러가지 테스트 (전원끄기, 랜선뽑기 등)
+
             case DISCONNECT:
                 String sessionId = accessor.getSessionId();
                 LoginSessionRequest logoutSessionRequest = LoginSessionRequest.builder()

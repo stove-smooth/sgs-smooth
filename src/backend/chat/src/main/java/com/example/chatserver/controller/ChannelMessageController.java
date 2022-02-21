@@ -78,6 +78,7 @@ public class ChannelMessageController {
     // 방 이동 시 상태관리
     @MessageMapping("/join-channel")
     public void sendState(@Payload LoginSessionRequest loginSessionRequest) {
+        log.info(loginSessionRequest.toString());
         String lastRoom = tcpClientGateway.send(loginSessionRequest.toString());
         String last = lastRoom.split(",")[0];
         String now = lastRoom.split(",")[1];

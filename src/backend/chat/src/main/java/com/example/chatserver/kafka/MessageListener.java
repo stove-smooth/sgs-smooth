@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @Component
@@ -29,12 +28,12 @@ public class MessageListener {
     private final String topicForFileUpload = "file-topic";
     private final String topicForSignaling = "state-topic";
 
-    private final String directGroup = "direct-server-group1";
-    private final String directETCGroup = "direct-etc-server-group1";
-    private final String channelGroup = "channel-server-group1";
-    private final String channelETCGroup = "channel-etc-server-group1";
-    private final String fileGroup = "file-server-group1";
-    private final String stateGroup = "state-group1";
+    private final String directGroup = "direct-server-group3";
+    private final String directETCGroup = "direct-etc-server-group3";
+    private final String channelGroup = "channel-server-group3";
+    private final String channelETCGroup = "channel-etc-server-group3";
+    private final String fileGroup = "file-server-group3";
+    private final String stateGroup = "state-group3";
 
     private final ObjectMapper objectMapper;
     private final SimpMessagingTemplate template;
@@ -181,7 +180,8 @@ public class MessageListener {
                         .communityId(stateRequest.getCommunityId())
                         .channelId(stateRequest.getChannelId())
                         .ids(stateRequest.getIds()).build();
-                template.convertAndSend("/topic/community/" + signalingRequest.getCommunityId(), signalingRequest.toString());
+                String json = objectMapper.writeValueAsString(signalingRequest);
+                template.convertAndSend("/topic/community/" + signalingRequest.getCommunityId(), json);
                 break;
             }
             case "exit-room": {
@@ -189,7 +189,8 @@ public class MessageListener {
                         .type(stateRequest.getTypeForExit())
                         .channelId(stateRequest.getChannelId())
                         .ids(stateRequest.getIds()).build();
-                template.convertAndSend("/topic/direct/" + signalingRequest.getChannelId(), signalingRequest.toString());
+                String json = objectMapper.writeValueAsString(signalingRequest);
+                template.convertAndSend("/topic/direct/" + signalingRequest.getChannelId(), json);
                 break;
             }
             case "connect":
@@ -200,6 +201,8 @@ public class MessageListener {
                 msg.put("userId",stateRequest.getUserId());
                 String json = objectMapper.writeValueAsString(msg);
                 for (String i : stateRequest.getIds()) {
+                    log.info("타입 " + stateRequest.getType());
+                    log.info("끊킴 " +  i);
                     template.convertAndSend("/topic/" + i, json);
                 }
                 break;
