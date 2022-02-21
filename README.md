@@ -1,15 +1,15 @@
 # Discord Clone - Smooth 
 
 <a href="https://yoloyolo.org">
-  <img src="./docs/logo/logo.png" width=100% />
+  <img src="./src/frontend/ios/docs/assets/smooth-main.png" width=100% />
 </a>
 
 ---
 
 ## 1. 서비스 소개
 - [디스코드 클론코딩](https://github.com/stove-smooth/sgs-smooth/wiki#%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8)
-- [세부 화면 보기](./docs/screen/detailPage.md)
-
+- [Web 세부 화면 보기](./docs/screen/detailPage.md)
+- [iOS 세부 화면 보기](./src/frontend/ios/docs/시연%20영상.md)
 ---
 
 ## 2. 기술 스택
@@ -53,10 +53,10 @@
 
 ### Backend
 #### [박병찬](https://github.com/qkrqudcks7)
-- [API Gateway](./src/infrastructure/gateway/)
-- [유저 서버](./src/backend/auth/)
 - [채팅 서버](./src/backend/chat/)
 - [상태관리 서버](./src/backend/presence/)
+- [API Gateway](./src/infrastructure/gateway/)
+- [유저 서버](./src/backend/auth/)
 
 #### [김희동](https://github.com/ruthetum)
 - [커뮤니티 서버](./src/backend/community/)
