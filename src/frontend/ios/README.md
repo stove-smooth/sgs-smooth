@@ -48,6 +48,10 @@
 - `PanModal` : modal창을 쉽게 구현하기 위해 사용
 - `Toast-Swift` : toast 팝업 
 - `MessageKit` : message UI
+
+### firebase
+- `Firebase/Core`, `Firebase/Messaging` : 파이어베이스 메시징 구현을 위해 사용
+
 <br><br>
 
 ### 기술스택
@@ -65,6 +69,8 @@
         - State(UI 상태 값) : Driver/Subject
     - `output` : view에 넘겨 줄 데이터들 
         - 필요한 구독 시점에 따라 : (Publish/Relay) Subject  
+5. `Coordinator` 패턴 : 화면 전환 로직을 `ViewController`에서부터 분리 
+
 <br><br>
 
 ### 디렉토리 구조
