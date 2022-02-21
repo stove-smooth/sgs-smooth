@@ -120,6 +120,12 @@
 - 코드 중복을 5% 미만으로 줄이고자 노력함
 
 ---
+
+## ERD
+
+![image](../../../docs/assets/community-server-domain.jpg)
+
+---
 ## 관련 자료
 - [마이크로서비스 간 메세징 처리](https://github.com/stove-smooth/messaging)
 >- spring integration reference guide : https://docs.spring.io/spring-integration/reference/html/
