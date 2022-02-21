@@ -31,7 +31,7 @@ class MainCoordinator: NSObject, Coordinator {
         self.childCoordinators = []
     }
     
-    func start() {
+    func start(communityId: Int?, channelId: Int?) {
         window.rootViewController = navigationController
         
         let token = UserDefaultsUtil.getUserToken()
@@ -40,7 +40,7 @@ class MainCoordinator: NSObject, Coordinator {
             // 로그인이 안되어 있는 경우
             self.goToSplast()
         } else {
-            self.goToMain()
+            self.goToMain(communityId: communityId, channelId: channelId)
         }
         
         window.makeKeyAndVisible()
@@ -52,14 +52,13 @@ class MainCoordinator: NSObject, Coordinator {
         coordinator.start()
     }
     
-    func goToMain() {
+    func goToMain(communityId: Int?, channelId:  Int?) {
         self.chatWebSocketService?.setup()
         self.chatWebSocketService?.register()
 
         let coordinator = HomeCoordinator(navigationController: navigationController)
         childCoordinators.append(coordinator)
         
-        coordinator.start()
+        coordinator.start(communityId: communityId, channelId: channelId)
     }
-    
 }

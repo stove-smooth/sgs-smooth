@@ -99,8 +99,8 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
             return .requestPlain
         case .getServerById:
             return .requestPlain
-        case .getMemberFromServer(let memberId):
-            return .requestParameters(parameters: ["id": memberId], encoding: URLEncoding.queryString)
+        case .getMemberFromServer:
+            return .requestPlain
         case .getInvitByServer:
             return .requestPlain
         case .getDirectRoom:

@@ -20,4 +20,5 @@ struct UserInfo: Codable {
     let name: String
     let code: String
     let profileImage: String?
+    let bio: String?
 }

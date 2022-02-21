@@ -19,8 +19,24 @@ extension ChattingViewController {
             action: #selector(didTapMenuButton)
         )
         
+        if(self.viewModel.model.channel.1 != "채팅 없음") {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(
+                image: UIImage(named: "people")?.resizeImage(size: CGSize(width: 25, height: 25)),
+                style: .done,
+                target: self,
+                action: #selector(didTapInfoButton)
+            )
+        }
+        
+        var imageName = "Channel"
+        if (self.viewModel.model.communityId == nil) {
+            imageName = "\(imageName)+direct"
+        } else {
+            let type = self.viewModel.input.isWebRTC.value ? "voice" : "text"
+            imageName = "\(imageName)+\(type)"
+        }
         let titleImgView = UIImageView().then {
-            $0.image = UIImage(named: "Channel+text")?.resizeImage(size: CGSize(width: 20, height: 20))
+            $0.image = UIImage(named: "\(imageName)")?.resizeImage(size: CGSize(width: 20, height: 20))
         }
         let titleLabel = UILabel().then{
             $0.textColor = .white
@@ -31,7 +47,9 @@ extension ChattingViewController {
         let titleView = UIStackView().then {
             $0.distribution = .fill
             $0.axis = .horizontal
+            $0.spacing = 10
         }
+        
         let spacer = UIView()
         let constraint = spacer.widthAnchor.constraint(greaterThanOrEqualToConstant: CGFloat.greatestFiniteMagnitude)
         constraint.isActive = true
@@ -40,6 +58,8 @@ extension ChattingViewController {
         [titleImgView, titleLabel, spacer].forEach { titleView.addArrangedSubview($0)}
         
         navigationItem.titleView = titleView
+        
+        
     }
     
     // MARK: - Collection

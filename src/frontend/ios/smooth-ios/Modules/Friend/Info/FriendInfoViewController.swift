@@ -23,12 +23,12 @@ class FriendInfoViewController: BaseViewController, PanModalPresentable {
         .action(title: "취소", style: .cancel)
     ]
     
-    init(friendId: Int, state: FriendState) {
+    init(userId: Int, state: FriendState) {
         self.friendState = state
         self.viewModel = FriendInfoViewModel(
             friendService: FriendService(),
             userService: UserService(),
-            friendId: friendId
+            userId: userId
         )
         
         super.init(nibName: nil, bundle: nil)
@@ -38,8 +38,8 @@ class FriendInfoViewController: BaseViewController, PanModalPresentable {
         fatalError("init(coder:) has not been implemented")
     }
     
-    static func instance(friendId: Int, state: FriendState) -> FriendInfoViewController {
-        return FriendInfoViewController(friendId: friendId, state: state).then {
+    static func instance(userId: Int, state: FriendState) -> FriendInfoViewController {
+        return FriendInfoViewController(userId: userId, state: state).then {
             $0.modalPresentationStyle = .overCurrentContext
         }
     }
@@ -71,7 +71,7 @@ class FriendInfoViewController: BaseViewController, PanModalPresentable {
     
     override func bindViewModel() {
         
-        self.viewModel.output.friend
+        self.viewModel.output.friendInfo
             .asDriver(onErrorJustReturn: Friend())
             .drive(onNext: self.infoView.bind(friend:))
             .disposed(by: disposeBag)

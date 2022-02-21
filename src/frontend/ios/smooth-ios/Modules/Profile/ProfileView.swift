@@ -7,32 +7,6 @@
 
 import UIKit
 
-//class ProfileView: BaseView {
-//
-//    let backButton = UIButton().then {
-//      $0.setImage(UIImage(named: "ic_back_white"), for: .normal)
-//    }
-//
-//    let titleLabel = UILabel().then {
-//      $0.text = "webRTC WebView"
-//    }
-//
-//    let webView = WKWebView().then {
-//        $0.configuration.defaultWebpagePreferences.allowsContentJavaScript = true
-//    }
-//
-//    override func setup() {
-//        [ webView ].forEach { self.addSubview($0) }
-//    }
-//
-//    override func bindConstraints() {
-//        self.webView.snp.makeConstraints {
-//            $0.edges.equalToSuperview()
-//        }
-//    }
-//}
-
-
 class ProfileView: BaseView {
     
     let containerView = UIView().then {
