@@ -10,7 +10,7 @@ import RxSwift
 enum DestinationStatus {
     case home
     case direct(Int) // direct room id
-    case community((Int, Int)) // community, channel id
+    case community((Int, Int, Bool)) // community, channel id,
 }
 
 enum MenuState {
@@ -26,6 +26,7 @@ class HomeViewModel: BaseViewModel {
     let chatWebSocketService: ChatWebSocketServiceProtocol
     
     struct Input {
+        let viewDidLoad = PublishSubject<Void>()
         let moving = PublishSubject<DestinationStatus>()
     }
     
@@ -34,7 +35,8 @@ class HomeViewModel: BaseViewModel {
     }
     
     struct Model {
-        var menuState: MenuState = .closed
+        var menuState: MenuState = .opened
+        var isStart = true
     }
     
     init(
@@ -46,6 +48,14 @@ class HomeViewModel: BaseViewModel {
     }
     
     override func bind() {
+        self.input.viewDidLoad
+            .bind(onNext: {
+                if (self.model.isStart) {
+                    self.output.menuState.onNext(self.model.menuState)
+                    self.model.isStart = false 
+                }
+            }).disposed(by: disposeBag)
+        
         self.input.moving
             .bind(onNext: { destination in
                 self.chatWebSocketService.joinChannel(destination)

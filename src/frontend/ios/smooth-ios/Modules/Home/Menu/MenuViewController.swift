@@ -102,17 +102,22 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         Observable.zip(
             self.menuView.channelView.tableView.rx.itemSelected,
             self.menuView.channelView.tableView.rx.modelSelected(Channel.self)
-        ).bind{ [weak self] (indexPath, channel) in
-            guard let self = self else { return }
+        ).bind{ (indexPath, channel) in
             self.viewModel.output.selectedChannel.accept(indexPath)
             
             switch channel.type {
-            case .text :
-                let server = self.viewModel.model.servers[1][self.viewModel.model.selectedServerIndex.row]
+            case .text:
+                let serverId = self.viewModel.model.servers[self.viewModel.model.selectedServerIndex.section-1][self.viewModel.model.selectedServerIndex.row].id
                 
-                self.delegate?.swipe(channel.name, destinationStatus:  .community((server.id, channel.id)))
+                self.delegate?.swipe(channel.name, destinationStatus:  .community((serverId, channel.id, false)))
             case .voice:
-#warning("웹알티씨 연결하기")
+                // webRTC webView
+                let serverId = self.viewModel.model.servers[self.viewModel.model.selectedServerIndex.section-1][self.viewModel.model.selectedServerIndex.row].id
+                self.delegate?.swipe(
+                    channel.name,
+                    destinationStatus: .community((serverId, channel.id, true))
+                )
+                break
             }
         }.disposed(by: disposeBag)
         
@@ -134,7 +139,14 @@ class MenuViewController: BaseViewController, CoordinatorContext {
         
         self.viewModel.output.selectedServer
             .asDriver(onErrorJustReturn: IndexPath(row: 0, section: 0))
-            .drive(self.menuView.rx.selectedServer)
+            .drive(onNext: { indexPath in
+                self.menuView.rx.selectedServer.onNext(indexPath)
+                
+                if (indexPath.section == 1) {
+                    let room = self.viewModel.model.servers[0][indexPath.row]
+                    self.delegate?.swipe(room.name, destinationStatus: .direct(room.id))
+                } 
+            })
             .disposed(by: disposeBag)
         
         self.viewModel.output.selectedRoom

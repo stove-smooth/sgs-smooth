@@ -88,7 +88,7 @@ class MenuViewModel: BaseViewModel {
                     self.output.selectedServer.accept(self.model.selectedServerIndex)
                     
                     self.fetchChannel(server: server)
-                    self.fetchMemebr(server: server)
+//                    self.fetchMemebr(server: server)
                     
                 case .add: // MARK: 서버 추가 버튼
                     self.model.selectedServerIndex = IndexPath(row: 0, section: 2)
@@ -107,9 +107,10 @@ class MenuViewModel: BaseViewModel {
             }
             self.model.servers = [community.rooms] + [community.communities]
             
-            self.fetchChannel(server: self.model.servers[1][0])
-            self.fetchMemebr(server: self.model.servers[1][0])
-            
+            if (!community.communities.isEmpty) {
+                self.fetchChannel(server: self.model.servers[1][0])
+                self.fetchMemebr(server: self.model.servers[1][0])
+            }
             self.output.community.accept(community)
             self.input.tapServer.onNext((IndexPath(row: 0, section: 0), .home)) // 서버 홈으로 초기화
             

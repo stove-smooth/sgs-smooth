@@ -10,9 +10,10 @@ import RxSwift
 import MessageKit
 import InputBarAccessoryView
 import Toast_Swift
+import AVFoundation
 
 protocol ChattingViewControllerDelegate: AnyObject {
-    func didTapMenuButton(channelId: Int?, communityId: Int?)
+    func didTapMenuButton(channelId: Int?, communityId: Int?, isWebRTC: Bool)
 }
 
 class ChattingViewController: MessagesViewController {
@@ -22,6 +23,7 @@ class ChattingViewController: MessagesViewController {
     weak var delegate: ChattingViewControllerDelegate?
     
     private let emptyView = ChannelEmptyView()
+    private let webRTCView = WebRTCView()
     private let editInputAccessoryView = EditInputBarAccessoryView()
     
     internal let viewModel: ChattingViewModel
@@ -71,7 +73,7 @@ class ChattingViewController: MessagesViewController {
     }()
     
     @objc func didTapMenuButton() {
-        delegate?.didTapMenuButton(channelId: self.viewModel.model.channel.0, communityId: self.viewModel.model.communityId)
+        delegate?.didTapMenuButton(channelId: self.viewModel.model.channel.0, communityId: self.viewModel.model.communityId, isWebRTC: self.viewModel.input.isWebRTC.value)
     }
     
     @objc func didTapInfoButton() {
@@ -105,6 +107,18 @@ class ChattingViewController: MessagesViewController {
     private func bindViewModel() {
         // MARK: - Model Binding
         // input
+        self.viewModel.output.done
+            .asDriver(onErrorJustReturn: ())
+            .drive(onNext: {
+                self.view.addSubview(self.webRTCView)
+                self.webRTCView.snp.makeConstraints {
+                    $0.edges.equalToSuperview()
+                }
+                
+                self.webRTCView.webView.allowsBackForwardNavigationGestures = true
+                self.webRTCView.webView.load(URLRequest(url: URL(string: self.viewModel.model.url)!))
+            }).disposed(by: disposeBag)
+        
         self.messageInputBar.inputTextView.rx.text
             .asDriver()
             .debounce(.seconds(3))
@@ -112,49 +126,58 @@ class ChattingViewController: MessagesViewController {
                 self.viewModel.input.inputMessage.onNext(value)
             })
             .disposed(by: disposeBag)
-            
+        
         // output
         self.viewModel.output.channel
             .bind(onNext: { (channelId, channelName) in
-                self.viewModel.input.fetch.onNext((channelId, nil))
-                self.viewModel.model.channel = (channelId, channelName)
+                self.viewModel.input.fetch.onNext((channelId, self.viewModel.model.page))
                 
                 self.configureNavigationController(channelId: channelId, channelName: channelName)
-                self.messagesCollectionView.reloadData()
-                self.messagesCollectionView.scrollToLastItem()
+                
                 //                self.messageInputBar.inputTextView.placeholder = "#\(channel.name)에 메시지 보내기"
             }).disposed(by: disposeBag)
-            
+        
         self.viewModel.output.messages
             .asDriver(onErrorJustReturn: ([], nil))
             .drive { (messages, type) in
                 switch type {
                 case .message, .delete, .modify:
-                    
                     if (messages.count > 0) {
                         self.messageList = messages
-                    } else {
-                        self.viewModel.showErrorMessage.accept("메시지 불러오기 완료")
                     }
                     
                     self.messagesCollectionView.reloadDataAndKeepOffset()
-                    self.refreshControl.endRefreshing()
-                    
                     if(self.viewModel.model.page == 0) {
                         self.messagesCollectionView.scrollToLastItem()
                     }
                 case .reply: break
                 case .typing: break
-                case .none:
+                case .none: // 일반 호출인 경우
                     self.messageList.insert(contentsOf: messages, at: 0)
-                    self.messagesCollectionView.reloadDataAndKeepOffset()
+                    
                     self.refreshControl.endRefreshing()
+                    self.messagesCollectionView.reloadData()
+                    
                     if(self.viewModel.model.page == 0) {
-                        self.messagesCollectionView.scrollToLastItem()
+                        
+                        
+                        if (self.viewModel.model
+                                .messages.isEmpty &&
+                            self.viewModel.input.isWebRTC.value == false) {
+                            self.webRTCView.removeFromSuperview()
+                        } else {
+                            self.viewModel.output.showEmpty.accept(false)
+                        }
+                        
+                        if(self.messageList.count == 0) {
+                            self.viewModel.output.showEmpty.accept(true)
+                        }
                     }
+                    self.messagesCollectionView.reloadDataAndKeepOffset()
+                    self.messagesCollectionView.scrollToLastItem()
                 }
+                
             }.disposed(by: disposeBag)
-
         
         // MARK: - Toast Popup
         self.viewModel.showErrorMessage
@@ -196,13 +219,21 @@ class ChattingViewController: MessagesViewController {
 
 // MARK: - HomeVC Delegate
 extension ChattingViewController: HomeViewControllerDelegate {
-    func loadChatting(_ chatName: String, channelId: Int, communityId: Int?) {
-        self.messageList = []
-        self.viewModel.output.messages.accept(([], nil))
-        self.viewModel.model.page = 0
+    func loadChatting(_ chatName: String, channelId: Int, communityId: Int?, isWebRTC: Bool) {
         
         self.viewModel.model.communityId = communityId
-        self.viewModel.output.channel.accept((channelId, chatName))
+        self.messageList = []
+        self.viewModel.model.messages = []
+        self.viewModel.model.page = 0
+        self.viewModel.model.channel = (channelId, chatName)
+        
+        if (isWebRTC == false) {
+            self.viewModel.output.channel.accept((channelId, chatName))
+        }
+        
+        self.viewModel.input.isWebRTC.accept(isWebRTC)
+        //        self.viewModel.output.messages.accept(([], nil))
+        
     }
 }
 
@@ -211,7 +242,12 @@ extension ChattingViewController {
     
     // MARK: 메시지 불러오기
     @objc func loadMoreMessages() {
-        self.viewModel.input.fetch.onNext((self.viewModel.model.channel.0, self.viewModel.model.page))
+        if (self.viewModel.model.isNext) {
+            self.viewModel.input.fetch.onNext((self.viewModel.model.channel.0, self.viewModel.model.page))
+        } else {
+            self.refreshControl.endRefreshing()
+            self.viewModel.showErrorMessage.accept("더 이상 불러올 메시지가 없습니다.")
+        }
     }
     
     // MARK: 메시지 보내기
@@ -278,8 +314,6 @@ extension ChattingViewController {
         
         return sameUser && (sameDate < 60)
     }
-    
-
 }
 
 // MARK: - InputBar

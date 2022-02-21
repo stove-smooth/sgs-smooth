@@ -2,22 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
-	<key>NSCameraUsageDescription</key>
-	<string>사진을 찍기 위해 카메라가 사용됩니다.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>사진을 불러오기 위해 앨범이 사용됩니다.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>사진을 불러오기 위해 앨범이 사용 됩니다.</string>
-	<key>UIAppFonts</key>
-	<array>
-		<string>ABCGintoNord-Black-Trial.otf</string>
-		<string>ABCGintoNord-Medium-Trial.otf</string>
-	</array>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>마이크 접근 권한을 요청합니다.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -32,12 +18,44 @@
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>smooth</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>사진을 찍기 위해 카메라가 사용됩니다.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>사진을 불러오기 위해 앨범이 사용 됩니다.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>사진을 불러오기 위해 앨범이 사용됩니다.</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>ABCGintoNord-Black-Trial.otf</string>
+		<string>ABCGintoNord-Medium-Trial.otf</string>
+	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>

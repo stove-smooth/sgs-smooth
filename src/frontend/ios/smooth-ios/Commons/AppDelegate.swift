@@ -27,7 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         application.registerForRemoteNotifications()
         
         coordinator = MainCoordinator(window: window!, deviceToken: "")
-        coordinator?.start()
+        coordinator?.start(communityId: nil, channelId: nil)
         window?.makeKeyAndVisible()
         
         return true
@@ -54,6 +54,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Messaging.messaging().apnsToken = deviceToken
     }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        return true
+    }
 
 }
 
@@ -75,14 +79,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         // 포그라운드 (todos: 로컬 노티 처리)
         
-        let userInfo = notification.request.content.userInfo
-        let receiveData = userInfo["aps"] as! [String:AnyObject]
-        
-        let channelId = receiveData["channelId"] as? String
-        let communityId = receiveData["communityId"] as? String
-        
-        print(channelId!)
-        print(communityId!)
+        completionHandler([UNNotificationPresentationOptions.alert,
+                                   UNNotificationPresentationOptions.sound,
+                                   UNNotificationPresentationOptions.badge])
         
     }
     
@@ -98,9 +97,13 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         // Messaging.messaging().appDidReceiveMessage(userInfo)
 
         // Print full message.
-        print(userInfo)
-        print(response)
-
-        completionHandler()
+        
+        let apn = userInfo["aps"] as AnyObject?
+        
+        let communityId = apn!["communityId"] as? String
+        let channelId = apn!["channelId"] as? String
+        
+        
+        self.coordinator?.start(communityId: Int(communityId!) , channelId: Int(channelId!))
       }
 }

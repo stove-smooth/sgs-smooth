@@ -18,22 +18,14 @@ class HomeCoordinator: NSObject, Coordinator {
         self.navigationController = navigationController
         self.childCoordinators = []
     }
-    
-    func start() {
-        let homeVC = HomeViewController.instance()
+
+    func start(communityId: Int?, channelId: Int?) {
+        
+        let homeVC = HomeViewController.instance(communityId: communityId, channelId: channelId)
         homeVC.coordinator = self
         
         navigationController.setNavigationBarHidden(true, animated: false)
         navigationController.pushViewController(homeVC, animated: false)
-    }
-    
-    func goToContainer() {
-        let vc = ChattingViewController.instance()
-        let homeVC = HomeViewController.instance()
-        
-        vc.coordinator = self
-        
-        vc.didMove(toParent: homeVC)
     }
     
     func goToAddServer() {
@@ -76,7 +68,7 @@ class HomeCoordinator: NSObject, Coordinator {
     }
     
     func showFriendInfoModal(id: Int, state: FriendState) {
-        let friendInfoVC = FriendInfoViewController.instance(friendId: id, state: state)
+        let friendInfoVC = FriendInfoViewController.instance(userId: id, state: state)
         
         navigationController.presentPanModal(friendInfoVC)
     }

@@ -62,6 +62,6 @@ class SplashCoordinator: NSObject, Coordinator {
     func goToMain() {
         let coordinator = HomeCoordinator(navigationController: navigationController)
         childCoordinators.append(coordinator)
-        coordinator.start()
+        coordinator.start(communityId: nil, channelId: nil)
     }
 }

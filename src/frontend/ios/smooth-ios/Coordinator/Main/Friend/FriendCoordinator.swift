@@ -29,7 +29,7 @@ class FriendCoordinator: NSObject, Coordinator {
     func goToMain() {
         let coordinator = HomeCoordinator(navigationController: navigationController)
         childCoordinators.append(coordinator)
-        coordinator.start()
+        coordinator.start(communityId: nil, channelId: nil)
     }
     
     func goToProfile() {
@@ -46,7 +46,7 @@ class FriendCoordinator: NSObject, Coordinator {
     }
     
     func showFriendInfoModal(id: Int, state: FriendState) {
-        let friendInfoVC = FriendInfoViewController.instance(friendId: id, state: state)
+        let friendInfoVC = FriendInfoViewController.instance(userId: id, state: state)
         
         navigationController.presentPanModal(friendInfoVC)
     }

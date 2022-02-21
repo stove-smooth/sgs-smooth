@@ -69,12 +69,14 @@ class ChatWebSocketService: NSObject, ChatWebSocketServiceProtocol {
     
     // MARK: 채팅 서버 연결
     func register() {
-        let chatServerId = userDefaults.getChatURL()
-        let completedWSURL = "\(chatServerId)/my-chat/websocket"
-        
-        url = NSURL(string: completedWSURL)!
-        
-        socketClient.openSocketWithURLRequest(request: NSURLRequest(url: url as URL), delegate: self, connectionHeaders: header)
+        if (!isConnected) {
+            let chatServerId = userDefaults.getChatURL()
+            let completedWSURL = "\(chatServerId)/my-chat/websocket"
+            
+            url = NSURL(string: completedWSURL)!
+            
+            socketClient.openSocketWithURLRequest(request: NSURLRequest(url: url as URL), delegate: self, connectionHeaders: header)
+        }
     }
     
     // MARK: 채널(방) 구독
@@ -219,7 +221,7 @@ class ChatWebSocketService: NSObject, ChatWebSocketServiceProtocol {
             destination = "home"
         case .direct(let channelId):
             destination = "r-\(channelId)"
-        case .community(let communityId, let channelId):
+        case .community((_, let channelId, _)):
             destination = "c-\(channelId)"
         }
         
@@ -279,10 +281,12 @@ extension ChatWebSocketService: StompClientLibDelegate {
         print("JSON BODY : \(String(describing: jsonBody))")
         print("STRING BODY : \(stringBody ?? "nil")")
         
-        let type = jsonBody!["type"] as? String
+        let type = jsonBody?["type"] as? String
         
         if (type != nil) {
-            if (type != "connect" && type != "disconnect") {
+            if (type != "connect" && type != "disconnect"
+                && type != "out" && type != "in"
+            ) {
                 let type = ReceivedMessageType(rawValue: jsonBody!["type"] as! String)
                 
                 switch type {

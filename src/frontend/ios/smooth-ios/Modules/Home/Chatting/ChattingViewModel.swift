@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 import StompClientLib
 import MessageKit
+import AVFoundation
 
 class ChattingViewModel: BaseViewModel {
     let input = Input()
@@ -18,24 +19,24 @@ class ChattingViewModel: BaseViewModel {
     
     let chattingService: ChattingServiceProtocol
     let chatWebSocketService: ChatWebSocketServiceProtocol
+    let userDefaults: UserDefaultsUtil
     
     struct Input {
         let fetch = PublishSubject<(Int?, Int?)>()
         let socketMessage = PublishSubject<(MockMessage, ReceivedMessageType)>()
-        
         let inputMessage = PublishSubject<String?>()
+        let isWebRTC = BehaviorRelay<Bool>(value: false)
     }
     
     struct Output {
         let channel = PublishRelay<(Int, String)>()
-
-        
         let messages = PublishRelay<([MockMessage],ReceivedMessageType?)>()
         let socketMessage = PublishSubject<MockMessage>()
+        let typing = PublishSubject<String>()
         
         let showEmpty = PublishRelay<Bool>()
         let isLoading = PublishRelay<Bool>()
-        let typing = PublishSubject<String>()
+        let done = PublishRelay<Void>()
     }
     
     struct Model {
@@ -44,13 +45,17 @@ class ChattingViewModel: BaseViewModel {
         var members: [Member]?
         
         var communityId: Int?
-        var channel: (Int, String) = (0, "채팅 없음") // 채널id, 채널 이름 
+        var channel: (Int, String) = (0, "채팅 없음") // 채널id, 채널 이름
         
         var isConnected = false
         var edittingMsg: MockMessage?
         // 페이징 처리 기본 값
         var page: Int = 0
         let size: Int = 20 // (고정)
+        var isNext: Bool = true
+        
+        let token: String
+        var url = ""
     }
     
     init(
@@ -58,10 +63,13 @@ class ChattingViewModel: BaseViewModel {
         chattingService: ChattingServiceProtocol,
         chatWebSocketService: ChatWebSocketServiceProtocol
     ) {
-        self.model = Model(messageUser: messageUser)
         self.chattingService = chattingService
         self.chatWebSocketService = chatWebSocketService
+        self.userDefaults = UserDefaultsUtil()
         
+        let token = self.userDefaults.getUserToken()
+        
+        self.model = Model(messageUser: messageUser, token: token)
         super.init()
     }
     
@@ -74,6 +82,71 @@ class ChattingViewModel: BaseViewModel {
         let index = self.model.messages.firstIndex(of: message!)
         
         return index!
+    }
+    
+    func requestCameraPermission(){
+        AVCaptureDevice.requestAccess(for: .video, completionHandler: { (granted: Bool) in
+            if granted {
+                print("Camera: 권한 허용")
+            } else {
+                print("Camera: 권한 거부")
+            }
+        })
+    }
+    
+    func checkCamera() -> Bool {
+        var isEnable = false
+        
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized: // The user has previously granted access to the camera.
+            isEnable = true
+            
+        case .notDetermined: // The user has not yet been asked for camera access.
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                isEnable = granted
+            }
+            
+        case .denied: // The user has previously denied access.
+            isEnable = false
+            
+        case .restricted: // The user can't grant access due to restrictions.
+            isEnable = false
+        }
+        
+        return isEnable
+        
+        /**
+         switch AVCaptureSession.sharedInstance().recordPermission {
+         case .granted:
+         isEnable = true
+         case .denied:
+         // TODO: 권한 다시 확인 요청
+         isEnable = false
+         case .undetermined:
+         AVCaptureSession.sharedInstance().requestRecordPermission { granted in
+         isEnable = granted
+         }
+         }
+         
+         return isEnable
+         */
+    }
+    
+    func checkMicroPhone() -> Bool {
+        var isEnable = false
+        switch AVAudioSession.sharedInstance().recordPermission {
+        case .granted:
+            isEnable = true
+        case .denied:
+            // TODO: 권한 다시 확인 요청
+            isEnable = false
+        case .undetermined:
+            AVAudioSession.sharedInstance().requestRecordPermission { granted in
+                isEnable = granted
+            }
+        }
+        
+        return isEnable
     }
     
     override func bind() {
@@ -89,6 +162,21 @@ class ChattingViewModel: BaseViewModel {
                 }
             })
             .disposed(by: disposeBag)
+        
+        self.input.isWebRTC
+            .bind { isWebRTC in
+                if(isWebRTC) {
+                    let permission = self.checkCamera() && self.checkMicroPhone()
+                    if (permission) {
+                        guard let communityId = self.model.communityId else { return }
+                        self.model.url = "https://m.yoloyolo.org/m/channels/\(communityId)/\(self.model.channel.0)?userId=\(self.model.messageUser.senderId)&token=\(self.model.token)"
+                        
+                        print(self.model.url)
+                        self.output.done.accept(())
+                    }
+                }
+            }.disposed(by: disposeBag)
+        
         
         // MARK: - socket으로 온 메시지 처리
         chatWebSocketService.message
@@ -176,12 +264,17 @@ class ChattingViewModel: BaseViewModel {
                     return
                 }
                 
-                let isLast = self.fetchMessageToModel(response: response)
+                let messages = self.fetchMessageToModel(response: response)
                 
-                if (!isLast) {
-                    self.model.page = page + 1
+                if(!messages.isEmpty) {
+                    // model.message -> 실제 데이터 값
+                    self.model.messages.insert(contentsOf: messages, at: 0)
                 }
-               
+                
+                self.model.isNext = messages.count == size ? true : false // 다음으로 호출 가능한 경우
+                self.model.page = self.model.isNext ? page+1 : page // 현재 페이지(호출 가능한) 업데이트
+                
+                self.output.messages.accept((messages, .none))
             }
         }
     }
@@ -200,16 +293,23 @@ class ChattingViewModel: BaseViewModel {
                     return
                 }
                 
-                let isLast = self.fetchMessageToModel(response: response)
+                let messages = self.fetchMessageToModel(response: response)
                 
-                if (!isLast) {
-                    self.model.page = page + 1
+                if(!messages.isEmpty) {
+                    // model.message -> 실제 데이터 값
+                    self.model.messages.insert(contentsOf: messages, at: 0)
                 }
+                
+                self.model.isNext = messages.count == size ? true : false // 다음으로 호출 가능한 경우
+                self.model.page = self.model.isNext ? page+1 : page // 현재 페이지(호출 가능한) 업데이트
+                
+                self.output.messages.accept((messages, .none))
+                
             }
         }
     }
     
-    private func fetchMessageToModel(response: [Message]) -> Bool {
+    private func fetchMessageToModel(response: [Message]) -> [MockMessage] {
         var fetchMessages: [MockMessage] = []
         
         for msg in response {
@@ -248,17 +348,8 @@ class ChattingViewModel: BaseViewModel {
             
             fetchMessages.append(newMessage!)
         }
-        // self.output.showEmpty.accept(response.count == 0)
         
-        if (self.model.messages.isEmpty && !fetchMessages.isEmpty) {
-            self.model.messages = fetchMessages
-        } else {
-            self.model.messages.insert(contentsOf: fetchMessages, at: 0)
-        }
-        
-        self.output.messages.accept((fetchMessages, .none))
-        
-        return fetchMessages.isEmpty
+        return fetchMessages
     }
     
     // MARK: - chatWebsocket

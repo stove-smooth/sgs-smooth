@@ -28,11 +28,12 @@ extension ChattingViewController {
             )
         }
         
-        var imageName = ""
+        var imageName = "Channel"
         if (self.viewModel.model.communityId == nil) {
-            imageName = "Channel+direct"
+            imageName = "\(imageName)+direct"
         } else {
-            imageName = "Channel+text"
+            let type = self.viewModel.input.isWebRTC.value ? "voice" : "text"
+            imageName = "\(imageName)+\(type)"
         }
         let titleImgView = UIImageView().then {
             $0.image = UIImage(named: "\(imageName)")?.resizeImage(size: CGSize(width: 20, height: 20))

@@ -57,6 +57,7 @@
 		C10308C627BE1F18007B3804 /* MemberCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10308C527BE1F18007B3804 /* MemberCell.swift */; };
 		C10308C827BE2414007B3804 /* MemberSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10308C727BE2414007B3804 /* MemberSection.swift */; };
 		C10308CA27BE428A007B3804 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10308C927BE428A007B3804 /* HomeViewModel.swift */; };
+		C10308CC27BEB094007B3804 /* WebRTCView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10308CB27BEB094007B3804 /* WebRTCView.swift */; };
 		C118D2BE27A6AE39009CB96C /* ServerSettingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C118D2BD27A6AE39009CB96C /* ServerSettingCoordinator.swift */; };
 		C118D2C027A6B232009CB96C /* ServerSettingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C118D2BF27A6B232009CB96C /* ServerSettingCell.swift */; };
 		C118D2C427A6BA5D009CB96C /* ServerSettingHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C118D2C327A6BA5D009CB96C /* ServerSettingHeaderCell.swift */; };
@@ -237,6 +238,7 @@
 		C10308C527BE1F18007B3804 /* MemberCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberCell.swift; sourceTree = "<group>"; };
 		C10308C727BE2414007B3804 /* MemberSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberSection.swift; sourceTree = "<group>"; };
 		C10308C927BE428A007B3804 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
+		C10308CB27BEB094007B3804 /* WebRTCView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCView.swift; sourceTree = "<group>"; };
 		C106847027BD11550026D874 /* smooth-ios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "smooth-ios.entitlements"; sourceTree = "<group>"; };
 		C118D2BD27A6AE39009CB96C /* ServerSettingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSettingCoordinator.swift; sourceTree = "<group>"; };
 		C118D2BF27A6B232009CB96C /* ServerSettingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSettingCell.swift; sourceTree = "<group>"; };
@@ -895,6 +897,7 @@
 				C118D2D327A70F12009CB96C /* Channel-make */,
 				C1AA6AFE27A40332003A32A4 /* Server-Info */,
 				C1C44F1D27A6A02F00A408A4 /* Server-setting */,
+				C10308CB27BEB094007B3804 /* WebRTCView.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -1137,6 +1140,7 @@
 				C176604E279A639E0062D0CB /* FriendInfoView.swift in Sources */,
 				C1D47F262783CA0C00DBA3CA /* NetworkLoggerPlugin.swift in Sources */,
 				C118D2C027A6B232009CB96C /* ServerSettingCell.swift in Sources */,
+				C10308CC27BEB094007B3804 /* WebRTCView.swift in Sources */,
 				C1D47F432785DA4900DBA3CA /* SignupInfoViewModel.swift in Sources */,
 				C1C83AF627B62158008FC4AC /* RegExUtils.swift in Sources */,
 				C118D2E127A78A9F009CB96C /* Category.swift in Sources */,
