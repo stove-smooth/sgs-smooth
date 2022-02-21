@@ -137,6 +137,33 @@
 }
 
 ```
+## 프로젝트 진행중 이슈
+### 1. Server to Server socket connection
+- 프로젝트 특성상 채팅서버, 시그널링 서버가 있으므로 기본적으로 client가 2개의 소켓을 물고있음
+- 상태관리 서버까지 client에 소켓을 연결한다면 client에 최대 3개의 소켓 부하를 주게 됨
+- chat server가 client와 기본적인 connection을 담당하고, 받아온 데이터를 상태관리 서버로 넘기는 방식 선택
+
+> http vs socket
+- session에 따른 유저값
+- 유저 id에 따른 실시간 방 정보 값
+- 시그널링 소켓 연결 값
+
+실시간으로 값이 변경 될 때마다 HTTP call??
+
+> server to server socket connection 필요성 확인
+
+- websocket : tcp 간 connection error나면 재연결이 되지 않음, 비동기 처리 지원하지 않음
+- Rsocket : 비동기 지원, 리액티브 프로그래밍, 러닝 커브가 높음
+- vert.X : 비동기 네트워크, 러닝 커브가 너무 높음
+- spring integration : spring 지원, pojo 지원, 비동기 지원, connection error시 재연결
+
+> spring integraion 채택
+
+- 상태관리 서버: TCP server
+- 채팅 서버: TCP Client
+- 시그널링 서버: TCP Client
+- 커뮤니티 룸 서버: TCP Client
+
 
 ---
 ## 관련 자료
