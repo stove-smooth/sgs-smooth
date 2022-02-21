@@ -1,5 +1,11 @@
 # Discord Clone - Smooth 
 
+<a href="https://yoloyolo.org">
+  <img src="./docs/logo/logo.png" width=100% />
+</a>
+
+---
+
 ## 1. 서비스 소개
 - [디스코드 클론코딩](https://github.com/stove-smooth/sgs-smooth/wiki#%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8)
 ---
