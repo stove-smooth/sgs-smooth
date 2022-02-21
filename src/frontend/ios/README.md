@@ -1,4 +1,4 @@
-<img width = "450" alt="image" src="https://github.com/stove-smooth/sgs-smooth/blob/feature/dr/src/frontend/ios/docs/assets/smooth-main.png">
+<img width = "450" alt="image" src="./docs/assets/smooth-main.png">
 
 # smooth-iOS
 
@@ -82,11 +82,12 @@ smooth-ios
         └── Extension : 퍼스트파티 커스텀한 파일들
 ```
 ### 화면
-- [시연 영상](https://github.com/stove-smooth/sgs-smooth/blob/feature/dr/src/frontend/ios/docs/%EC%8B%9C%EC%97%B0%20%EC%98%81%EC%83%81.md)
+- [시연 영상](./docs/%EC%8B%9C%EC%97%B0%20%EC%98%81%EC%83%81.md)
 
 ### 개발일지
 - [notion](https://doitduri.notion.site/7ea66898d85e4679bfd4773471de6eef?v=f6ea07e4a18145f4af8e5f8568c3a2c4) (개발 몰입기간에는 일지가 많이 빠져있습니다.)
-- 주차별 요약(표로)
+
+[프로젝트 issue taking] 
 
 ----
 ### 실행하기
