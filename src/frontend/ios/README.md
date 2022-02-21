@@ -7,7 +7,7 @@
 - [기술스택](#기술스택)
 - [화면](#화면)
 - [개발일지](#개발일지)
-- [](#실행하기)
+- [실행하기](#실행하기)
 ---
 <br>
 
@@ -54,7 +54,7 @@
 - MVVM+Coordinator
 <img width="600" alt="image" src="https://user-images.githubusercontent.com/26545623/153773438-46ce820a-8686-432c-8162-4cdaa3a69895.png">
 
-- Concep 
+- Concept
 1. 디자인 패턴에 의해 바탕이 되는 흐름들은 `Base`로 미리 정의한다. 
 2. View/ViewController는 ViewModel에 의존하며, 값을 변경하거나 전달 해야할 때 Rx를 사용을 지향한다.
     - 스토리보드 사용을 지양하여, View 코드가 길어지는 경우 파일을 분리하여 작성한다.
@@ -81,13 +81,15 @@ smooth-ios
         ├── UserDefault, Alert ... Utils files
         └── Extension : 퍼스트파티 커스텀한 파일들
 ```
+
 ### 화면
 - [시연 영상](./docs/%EC%8B%9C%EC%97%B0%20%EC%98%81%EC%83%81.md)
 
 ### 개발일지
-- [notion](https://doitduri.notion.site/7ea66898d85e4679bfd4773471de6eef?v=f6ea07e4a18145f4af8e5f8568c3a2c4) (개발 몰입기간에는 일지가 많이 빠져있습니다.)
+- [트러블 슈팅 및 설계 고민](https://doitduri.notion.site/3fad76ab73504746925818876d40f8a8)
+- [notion daily 일지](https://doitduri.notion.site/7ea66898d85e4679bfd4773471de6eef?v=f6ea07e4a18145f4af8e5f8568c3a2c4) (개발 몰입기간에는 일지가 많이 빠져있습니다.)
 
-[프로젝트 issue taking] 
+
 
 ----
 ### 실행하기
