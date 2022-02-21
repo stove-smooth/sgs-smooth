@@ -138,8 +138,6 @@
 
 ```
 
-## 프로젝트 진행 중 이슈
-
 ---
 ## 관련 자료
 - [TCP 고민](https://github.com/stove-smooth/messaging)
