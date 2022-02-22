@@ -51,6 +51,8 @@ class CategoryReorderViewModel: BaseViewModel {
 
             if (!response.isSuccess) {
                 self.showErrorMessage.accept(response.message)
+            } else {
+                self.showToastMessage.accept(response.message)
             }
         }
         self.showLoading.accept(false)

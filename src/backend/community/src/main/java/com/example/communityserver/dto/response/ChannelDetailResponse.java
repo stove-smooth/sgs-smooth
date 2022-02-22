@@ -1,7 +1,6 @@
 package com.example.communityserver.dto.response;
 
 import com.example.communityserver.domain.Channel;
-import com.example.communityserver.domain.ChannelMember;
 import com.example.communityserver.domain.Community;
 import com.example.communityserver.domain.type.ChannelStatus;
 import com.example.communityserver.domain.type.ChannelType;
@@ -13,12 +12,10 @@ import lombok.Setter;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static com.example.communityserver.dto.response.MemberResponse.fromEntity;
 
 @Getter
 @Setter
@@ -51,7 +48,7 @@ public class ChannelDetailResponse {
         return channelResponse;
     }
 
-    public static List<MemberResponse> fromMember(Community community, List<Long> memberIds, HashMap<Long, UserResponse> userMap) {
+    public static List<MemberResponse> fromMember(Community community, List<Long> memberIds, Map<Long, UserResponse> userMap) {
         return community.getMembers().stream()
                 .filter(member -> member.getStatus().equals(CommunityMemberStatus.NORMAL))
                 .filter(member -> memberIds.contains(member.getUserId()))

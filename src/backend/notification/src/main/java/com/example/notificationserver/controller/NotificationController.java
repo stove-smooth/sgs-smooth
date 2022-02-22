@@ -1,16 +1,17 @@
 package com.example.notificationserver.controller;
 
-import com.example.notificationserver.dto.request.RequestPushMessage;
-import com.example.notificationserver.service.FcmService;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
+import com.example.notificationserver.dto.request.ChannelMessageRequest;
+import com.example.notificationserver.dto.request.DirectMessageRequest;
+import com.example.notificationserver.dto.request.Test2Request;
+import com.example.notificationserver.dto.request.TestRequest;
+import com.example.notificationserver.dto.response.CommonResponse;
+import com.example.notificationserver.service.NotificationService;
+import com.example.notificationserver.service.ResponseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -18,22 +19,43 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class NotificationController {
 
-    private final FcmService fcmService;
+    private final ResponseService responseService;
+    private final NotificationService notificationService;
 
-    @Value("${fcm.firebase-multicast-message-size}")
-    private Long multicastMessageSize;
+    @PostMapping("/direct")
+    public CommonResponse sendDirectMessage(@Valid @RequestBody DirectMessageRequest request) {
+        log.info("POST /notification-server/direct / {}", request.getTarget());
+        try {
+            notificationService.send(request);
+        } catch (Exception e) {
+            log.error("NOTIFICATION ERROR - DM");
+            e.printStackTrace();
+        }
+        return responseService.getSuccessResponse();
+    }
 
-    @PostMapping("/pushs/topics/{topic}")
-    public String notificationTopics(@PathVariable("topic") String topic, @RequestBody RequestPushMessage data) throws FirebaseMessagingException {
-        Notification notification = Notification
-                .builder()
-                .setTitle(data.getTitle())
-                .setBody(data.getBody())
-                .setImage(data.getImage()).build();
-        Message.Builder builder = Message.builder();
+    @PostMapping("/channel")
+    public CommonResponse sendChannelMessage(@Valid @RequestBody ChannelMessageRequest request) {
+        log.info("POST /notification-server/channel / {}", request.getTarget());
+        try {
+            notificationService.send(request);
+        } catch (Exception e) {
+            log.error("NOTIFICATION ERROR - CHANNEL");
+            e.printStackTrace();
+        }
+        return responseService.getSuccessResponse();
+    }
 
-        Optional.ofNullable(data.getData()).ifPresent(sit -> builder.putAllData(sit));
-        Message msg = builder.setTopic(topic).setNotification(notification).build();
-        return fcmService.sendMessage(msg);
+    @PostMapping("/web/test")
+    public CommonResponse sendTestMessage(@Valid @RequestBody TestRequest request) {
+        log.info("POST /notification-server/test");
+        notificationService.sendTestMessage(request);
+        return responseService.getSuccessResponse();
+    }
+
+    @PostMapping("/test")
+    public CommonResponse sendTest(@Valid @RequestBody Test2Request request) {
+        notificationService.testSend(request);
+        return responseService.getSuccessResponse();
     }
 }

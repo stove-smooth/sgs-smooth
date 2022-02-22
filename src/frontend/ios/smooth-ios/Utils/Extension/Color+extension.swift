@@ -10,6 +10,7 @@ import UIKit
 
 extension UIColor {
     static let blurple = UIColor(hex: "0x5865f2")
+    static let blurple_disabled = UIColor(hex: "0x5865f2", alpha: 0.3)
     static let lightBlurple = UIColor(hex: "0x949cf7")
     static let blurple_oc = UIColor(hex: "7389da")
     
@@ -82,7 +83,7 @@ extension UIColor {
         
         let randomColorChip = [
             UIColor.blurple, UIColor.orange, UIColor.red,
-            UIColor(hex: "0xfaa61a"), UIColor.green
+            UIColor.streaming, UIColor.green
         ]
         
         return randomColorChip[code]!

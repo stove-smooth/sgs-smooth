@@ -1,8 +1,7 @@
 package com.example.authserver.service;
 
 import com.example.authserver.dto.request.ProfileRequest;
-import com.example.authserver.dto.response.AccountInfoResponse;
-import com.example.authserver.dto.response.NameAndPhotoResponse;
+import com.example.authserver.dto.response.*;
 import com.example.authserver.exception.CustomException;
 import com.example.authserver.exception.CustomExceptionStatus;
 import com.example.authserver.configure.security.authentication.CustomUserDetails;
@@ -11,8 +10,7 @@ import com.example.authserver.domain.*;
 import com.example.authserver.domain.type.RoleType;
 import com.example.authserver.dto.*;
 import com.example.authserver.dto.request.SignInRequest;
-import com.example.authserver.dto.response.MailResponse;
-import com.example.authserver.dto.response.SignInResponse;
+import com.example.authserver.repository.DeviceRepository;
 import com.example.authserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +19,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -43,6 +43,7 @@ public class UserService extends BaseTimeEntity {
     private final JwtTokenProvider jwtTokenProvider;
     private final EmailService emailService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final DeviceRepository deviceRepository;
 
     @Transactional
     public AccountAutoDto signUp(AccountAutoDto dto) {
@@ -50,7 +51,13 @@ public class UserService extends BaseTimeEntity {
 
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
         User account = User.createAccount(dto);
-        accountRepository.save(account);
+        User save = accountRepository.save(account);
+
+        Device device = Device.builder()
+                .user(account)
+                .last_access(LocalDateTime.now()).build();
+        deviceRepository.save(device);
+        dto.setId(save.getId());
 
         return dto;
     }
@@ -66,6 +73,11 @@ public class UserService extends BaseTimeEntity {
         String refreshToken = jwtTokenProvider.CreateRefreshToken(account.getEmail());
         redisTemplate.opsForValue().set(account.getEmail(), refreshToken, refreshTime, TimeUnit.MILLISECONDS);
 
+        Device device = deviceRepository.findByUserId(account.getId());
+        device.setToken(request.getDeviceToken());
+        device.setType(request.getType());
+
+        String url = setURL();
 
         SignInResponse res = SignInResponse.builder()
                 .id(account.getId())
@@ -74,6 +86,9 @@ public class UserService extends BaseTimeEntity {
                 .email(account.getEmail())
                 .accessToken(jwtTokenProvider.createToken(account.getEmail(),account.getRoleType(),account.getId()))
                 .refreshToken(refreshToken)
+                .deviceToken(device.getToken())
+                .type(device.getType())
+                .url(url)
                 .build();
 
         return res;
@@ -88,6 +103,11 @@ public class UserService extends BaseTimeEntity {
 
     @Transactional
     public MailResponse sendEmail(String email) {
+        User exist = accountRepository.findByEmail(email);
+        if (exist != null) {
+            throw new CustomException(CustomExceptionStatus.DUPLICATED_EMAIL);
+        }
+
         if (email == null) {
             throw new CustomException(CustomExceptionStatus.POST_USERS_EMPTY_EMAIL);
         }
@@ -128,7 +148,7 @@ public class UserService extends BaseTimeEntity {
     }
 
     @Transactional
-    public SignInResponse checkRefreshToken(String token, String refreshToken) {
+    public SignInResponse checkRefreshToken(String token, String refreshToken,String url) {
         String email = jwtTokenProvider.getUsername(token);
         String refresh = (String) redisTemplate.opsForValue().get(email);
 
@@ -140,8 +160,14 @@ public class UserService extends BaseTimeEntity {
         }
         User account = accountRepository.findByEmailAndStatus(email, VALID).orElseThrow(() -> new CustomException(CustomExceptionStatus.ACCOUNT_NOT_FOUND));
 
+        String count = String.valueOf(redisTemplate.opsForValue().get(url));
+        redisTemplate.opsForValue().set(url,Integer.parseInt(count) -1,refreshTime, TimeUnit.MILLISECONDS);
+
+        String newUrl = setURL();
         SignInResponse res = SignInResponse.builder()
-                .refreshToken(jwtTokenProvider.createToken(account.getEmail(),account.getRoleType(),account.getId()))
+                .accessToken(jwtTokenProvider.createToken(account.getEmail(),account.getRoleType(),account.getId()))
+                .refreshToken(refreshToken)
+                .url(newUrl)
                 .build();
 
         return res;
@@ -184,8 +210,56 @@ public class UserService extends BaseTimeEntity {
 
         NameAndPhotoResponse result = NameAndPhotoResponse.builder()
                 .name(user.getName())
+                .code(user.getCode())
+                .bio(user.getBio())
                 .profileImage(user.getProfileImage()).build();
 
         return result;
+    }
+
+    @Transactional
+    public Map<Long,DeviceResponse> getDeviceToken(List<Long> id) {
+        Map<Long,DeviceResponse> result = new HashMap<>();
+        List<Device> device = deviceRepository.findByUserId(id);
+        for (Device d : device) {
+            DeviceResponse deviceResponse = DeviceResponse.builder()
+                    .type(d.getType())
+                    .token(d.getToken()).build();
+            result.put(d.getUser().getId(),deviceResponse);
+        }
+
+        return result;
+    }
+
+    public String setURL() {
+        String chat1 = String.valueOf(redisTemplate.opsForValue().get("https://c1.yoloyolo.org"));
+        String chat2 = String.valueOf(redisTemplate.opsForValue().get("https://c2.yoloyolo.org"));
+        String chat3 = String.valueOf(redisTemplate.opsForValue().get("https://c3.yoloyolo.org"));
+
+        if (chat1.equals("null")) {
+            redisTemplate.opsForValue().set("https://c1.yoloyolo.org",0,14,TimeUnit.DAYS);
+        }
+        if (chat2.equals("null")) {
+            redisTemplate.opsForValue().set("https://c2.yoloyolo.org",0,14,TimeUnit.DAYS);
+        }
+        if (chat3.equals("null")) {
+            redisTemplate.opsForValue().set("https://c3.yoloyolo.org",0,14,TimeUnit.DAYS);
+        }
+
+        int c1 = chat1.equals("null") ? 0 : Integer.parseInt(chat1);
+        int c2 = chat1.equals("null") ? 0 : Integer.parseInt(chat2);
+        int c3 = chat1.equals("null") ? 0 : Integer.parseInt(chat3);
+
+        int value = (c2 >= c1) && (c3 >= c1) ? c1 : (c2 >= c3 ? c3 : c2);
+        if (c1 == value) {
+            redisTemplate.opsForValue().set("https://c1.yoloyolo.org",value+1,14,TimeUnit.DAYS);
+            return "https://c1.yoloyolo.org";
+        } else if (c2 == value) {
+            redisTemplate.opsForValue().set("https://c2.yoloyolo.org",value+1,14,TimeUnit.DAYS);
+            return "https://c2.yoloyolo.org";
+        } else {
+            redisTemplate.opsForValue().set("https://c3.yoloyolo.org",value+1,14,TimeUnit.DAYS);
+            return "https://c3.yoloyolo.org";
+        }
     }
 }

@@ -33,7 +33,7 @@ class ServerSettingViewController: BaseViewController {
     
     private func dismiss() {
         self.dismiss(animated: true, completion: nil)
-        self.coordinator?.goToMain()
+//        self.coordinator?.goToMain()
     }
     
     override func loadView() {

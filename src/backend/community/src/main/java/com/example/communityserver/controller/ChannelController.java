@@ -4,6 +4,7 @@ import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.service.ChannelService;
 import com.example.communityserver.service.ResponseService;
+import com.example.communityserver.util.SignalingAddressBalancing;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -21,10 +22,7 @@ public class ChannelController {
 
     private final ChannelService channelService;
     private final ResponseService responseService;
-
-    /**
-     * Todo 채널 내 메세지 읽음 처리 (Optional)
-     */
+    private final SignalingAddressBalancing balancing;
 
     /**
      * 채널 정보 조회하기
@@ -163,20 +161,18 @@ public class ChannelController {
     }
 
     /**
-     * TODO 연결해야 할 시그널링 서버 알려주기
+     * 연결해야 할 시그널링 서버 알려주기
      */
     @GetMapping("/{channelId}/address")
     public DataResponse<AddressResponse> getConnectAddress(
-            @RequestHeader(ID) String userId,
             @PathVariable Long channelId
     ) {
         log.info("GET /community-server/channel/{}/address", channelId);
-        AddressResponse response = channelService.getConnectAddress(Long.parseLong(userId), channelId);
+        AddressResponse response = balancing.getConnectAddress(channelId, true);
         return responseService.getDataResponse(response);
     }
 
     /**
      * 채널 내 메세지 읽음 처리 (Optional)
      */
-
 }

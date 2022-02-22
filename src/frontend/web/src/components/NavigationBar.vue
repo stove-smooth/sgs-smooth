@@ -31,13 +31,74 @@
             </div>
           </div>
         </div>
+
+        <div
+          aria-label="room"
+          v-if="
+            communityList &&
+            communityList.rooms &&
+            communityList.rooms.length > 0
+          "
+        >
+          <div v-for="unreadDm in communityList.rooms" :key="unreadDm.id">
+            <div
+              class="listItem"
+              @mouseover="hover(unreadDm.id)"
+              @mouseleave="hover('')"
+              @click="enterRoom(unreadDm.id)"
+            >
+              <div class="selected-wrapper" v-show="hovered == unreadDm.id">
+                <span class="selected-item"></span>
+              </div>
+              <div draggable="true">
+                <div class="listItem-wrapper">
+                  <div class="server-wrapper" v-if="unreadDm.icon">
+                    <img
+                      :src="unreadDm.icon"
+                      alt="image"
+                      class="server-nav-image"
+                      v-bind:class="{
+                        'selected-border-radius': hovered == unreadDm.id,
+                      }"
+                    />
+                  </div>
+                  <div class="server-wrapper" v-else>
+                    <div
+                      class="server"
+                      v-bind:class="{
+                        'selected-border-radius': hovered == unreadDm.id,
+                      }"
+                    >
+                      {{ unreadDm.name }}
+                    </div>
+                  </div>
+                  <div class="alarm-ring">
+                    <div class="room-lower-badge">
+                      <number-badge :alarms="unreadDm.count"></number-badge>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="listItem">
           <div class="guild-seperator"></div>
         </div>
-        <div aria-label="서버">
+        <div
+          aria-label="서버"
+          v-if="communityList && communityList.communities.length > 0"
+        >
           <!--서버 개수만큼 만들기.-->
-          <draggable :list="communityList" @change="log" group="community">
-            <div v-for="community in communityList" :key="community.id">
+          <draggable
+            :list="communityList.communities"
+            @change="log"
+            group="community"
+          >
+            <div
+              v-for="community in communityList.communities"
+              :key="community.id"
+            >
               <div
                 class="listItem"
                 @mouseover="hover(community.id)"
@@ -86,7 +147,7 @@
           </draggable>
         </div>
         <div class="primary-container">
-          <div class="listItem" @click="setCreateServer(true)">
+          <div class="listItem" @click="setCreateCommunity(true)">
             <div claass="listItem-wrapper">
               <div class="circleIcon-button">
                 <svg class="plus-icon"></svg>
@@ -117,9 +178,11 @@ export default {
     };
   },
   methods: {
-    ...mapActions("server", ["FETCH_COMMUNITYLIST"]),
-    ...mapMutations("server", ["setCreateServer"]),
+    ...mapActions("community", ["FETCH_COMMUNITYLIST"]),
+    ...mapMutations("community", ["setCreateCommunity", "setCommunityList"]),
     ...mapMutations("utils", ["setNavigationSelected"]),
+    ...mapMutations("voice", ["setCurrentVoiceRoom"]),
+    ...mapActions("voice", ["sendMessage", "leaveRoom"]),
     hover(index) {
       this.hovered = index;
     },
@@ -130,16 +193,50 @@ export default {
       this.setNavigationSelected("");
     },
     enter(index) {
+      //서버를 바꾸는 것.
+      if (this.wsOpen) {
+        this.sendMessage({ id: "leaveRoom" });
+        this.leaveRoom();
+        this.setCurrentVoiceRoom(null);
+      }
+      if (this.stompSocketClient) {
+        const subscriptions = this.stompSocketClient.subscriptions;
+        Object.keys(subscriptions).forEach((subscription) => {
+          this.stompSocketClient.unsubscribe(subscription);
+        });
+      }
       if (this.$route.path !== "/channels/" + index) {
         this.$router.push("/channels/" + index);
       }
       this.setNavigationSelected(index);
     },
+    enterRoom(index) {
+      //안읽은 DM으로 입장.
+      if (this.wsOpen) {
+        this.sendMessage({ id: "leaveRoom" });
+        this.leaveRoom();
+        this.setCurrentVoiceRoom(null);
+      }
+
+      if (this.stompSocketClient) {
+        const subscriptions = this.stompSocketClient.subscriptions;
+        Object.keys(subscriptions).forEach((subscription) => {
+          this.stompSocketClient.unsubscribe(subscription);
+        });
+      }
+      this.$router.push("/channels/@me/" + index);
+      //읽음 처리..
+      let array = this.communityList.rooms.filter(
+        (element) => element.id !== index
+      );
+      this.communityList.rooms = array;
+      this.setCommunityList(this.communityList);
+    },
     log: async function (evt) {
       if (evt.moved.newIndex == 0) {
         this.new = 0;
       } else {
-        this.new = this.communityList[evt.moved.newIndex - 1].id;
+        this.new = this.communityList.communities[evt.moved.newIndex - 1].id;
       }
       const communityInfo = {
         id: evt.moved.element.id,
@@ -154,8 +251,9 @@ export default {
   },
   computed: {
     ...mapState("friends", ["friendsWaitNumber"]),
-    ...mapState("server", ["communityList"]),
-    ...mapState("utils", ["navigationSelected"]),
+    ...mapState("community", ["communityList"]),
+    ...mapState("utils", ["navigationSelected", "stompSocketClient"]),
+    ...mapState("voice", ["wsOpen"]),
   },
   async created() {
     const currentUrl = window.location.pathname;
@@ -166,6 +264,7 @@ export default {
   watch: {
     // 라우터의 변경을 감시
     async $route(to) {
+      await this.FETCH_COMMUNITYLIST();
       if (to.path == "/channels/@me") {
         this.setNavigationSelected("@me");
       }
@@ -320,6 +419,15 @@ export default {
   position: absolute;
   right: 0;
   bottom: 0;
+}
+
+.room-lower-badge {
+  opacity: 1;
+  transform: translate(0px, 0px);
+  pointer-events: none;
+  position: absolute;
+  right: 15%;
+  bottom: 15%;
 }
 
 .selected-border-radius {

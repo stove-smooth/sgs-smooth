@@ -9,9 +9,12 @@ import { mapGetters } from "vuex";
 export default {
   mounted() {
     if (!this.getEmail) {
-      if (!this.$route.params.invitePath) {
-        this.$router.replace("/login");
-      } else {
+      //로그인이 안되어 있을경우
+      if (this.$route.params.invitePath) {
+        this.$swal.fire({
+          icon: "warning",
+          title: "먼저 로그인을 해주세요.",
+        });
         this.$router.push({
           name: "LoginPage",
           query: {

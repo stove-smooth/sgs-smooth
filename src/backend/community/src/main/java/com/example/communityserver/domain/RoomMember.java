@@ -39,6 +39,7 @@ public class RoomMember extends BaseTimeEntity {
         RoomMember roomMember = new RoomMember();
         roomMember.setUserId(userId);
         roomMember.setOwner(owner);
+        roomMember.setStatus(CommonStatus.NORMAL);
         return roomMember;
     }
 

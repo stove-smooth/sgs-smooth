@@ -20,5 +20,13 @@ public class FileUploadRequest {
 
     private Long userId;
 
+    private String name;
+
+    private String profileImage;
+
+    private Long communityId;
+
     private Long channelId;
+
+    private String fileType;
 }

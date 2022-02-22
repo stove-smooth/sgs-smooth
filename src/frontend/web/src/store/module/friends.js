@@ -1,8 +1,17 @@
-import { fetchFriends } from "../../api/index.js";
+import { fetchFriends, fetchFriendsState } from "../../api/index.js";
 const friends = {
   namespaced: true,
   state: {
     friendsStateMenu: "online",
+    /*
+    친구는 
+    online:온라인상태의 친구
+    accept:모든 친구
+    wait: 친구 요청온 사람
+    request: 친구가 되기 위해 요청 건 사람
+    ban: 차단한 사람
+    으로 구별된다.
+    **/
     friendsOnline: [],
     friendsAccept: [],
     friendsWait: [],
@@ -13,13 +22,14 @@ const friends = {
     friendsReadyToDelete: null,
     friendsReadyToBlock: null,
     friendsProfileModal: null,
+    friendsState: [],
   },
   mutations: {
     setAllFriends(state, friendsAccept) {
       state.friendsAccept = friendsAccept;
     },
-    setOnlineFriends(state) {
-      state.friendsOnline = "";
+    setOnlineFriends(state, friendsOnline) {
+      state.friendsOnline = friendsOnline;
     },
     setWaitingFriends(state, friendsWait) {
       state.friendsWait = friendsWait;
@@ -46,6 +56,9 @@ const friends = {
     setFriendsProfileModal(state, friendsProfileModal) {
       state.friendsProfileModal = friendsProfileModal;
     },
+    setFriendsState(state, friendsState) {
+      state.friendsState = friendsState;
+    },
   },
   actions: {
     async FETCH_FRIENDSLIST({ commit }) {
@@ -60,6 +73,7 @@ const friends = {
         } else if (result.data.result[i].state == "WAIT") {
           friendsWait.push(result.data.result[i]);
         } else if (result.data.result[i].state == "ACCEPT") {
+          result.data.result[i].onlineState = "offline";
           friendsAccept.push(result.data.result[i]);
         } else if (result.data.result[i].state == "BAN") {
           friendsBan.push(result.data.result[i]);
@@ -69,6 +83,29 @@ const friends = {
       commit("setWaitingFriends", friendsWait);
       commit("setAllFriends", friendsAccept);
       commit("setBanFriends", friendsBan);
+    },
+    async fetchFriendsStates(context) {
+      //친구 아이디 뽑아서 친구들 현재 상태 쭉 가져옴.
+      let friendsIds = [];
+      for (let i = 0; i < context.state.friendsAccept.length; i++) {
+        friendsIds.push(context.state.friendsAccept[i].userId);
+      }
+      const result = await fetchFriendsState(friendsIds);
+      context.commit("setFriendsState", result.data.result);
+      //친구들 상태 offline이면 offline, r/c이면 그에맞게 업데이트해줌.
+      let friendsOnline = [];
+      for (let j = 0; j < context.state.friendsAccept.length; j++) {
+        if (
+          result.data.result[context.state.friendsAccept[j].userId] != "offline"
+        ) {
+          context.state.friendsAccept[j].onlineState =
+            result.data.result[context.state.friendsAccept[j].userId];
+          friendsOnline.push(context.state.friendsAccept[j]);
+        }
+      }
+      //온라인인 친구 따로 뽑아줌.
+      context.commit("setAllFriends", context.state.friendsAccept);
+      context.commit("setOnlineFriends", friendsOnline);
     },
   },
 };

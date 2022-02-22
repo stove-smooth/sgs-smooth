@@ -22,4 +22,10 @@ public class SignInResponse {
     private String accessToken;
 
     private String refreshToken;
+
+    private String deviceToken;
+
+    private String type;
+
+    private String url;
 }

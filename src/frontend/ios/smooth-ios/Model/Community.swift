@@ -8,6 +8,7 @@
 import Foundation
 
 struct Community: Codable {
+    let rooms: [Server]
     let communities: [Server]
 }
 

@@ -75,6 +75,7 @@ public class User extends BaseTimeEntity{
                 .password(dto.getPassword())
                 .name(dto.getName())
                 .code(String.valueOf(randomCode))
+                .profileImage("https://sgs-smooth.s3.ap-northeast-2.amazonaws.com/dicord_green.png")
                 .status(Status.VALID)
                 .state(State.online)
                 .roleType(RoleType.ROLE_USER)

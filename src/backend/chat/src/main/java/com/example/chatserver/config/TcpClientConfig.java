@@ -1,19 +1,24 @@
 package com.example.chatserver.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.Transformers;
 import org.springframework.integration.ip.dsl.Tcp;
+import org.springframework.integration.ip.tcp.TcpOutboundGateway;
 import org.springframework.integration.ip.tcp.connection.AbstractClientConnectionFactory;
 import org.springframework.integration.ip.tcp.connection.CachingClientConnectionFactory;
 import org.springframework.integration.ip.tcp.connection.TcpNioClientConnectionFactory;
 import org.springframework.integration.ip.tcp.serializer.ByteArrayCrLfSerializer;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageHandler;
 
 @Configuration
 @EnableIntegration
@@ -27,6 +32,7 @@ public class TcpClientConfig{
 
     @Value("${tcp.client.connection.poolSize}")
     private int connectionPoolSize;
+
 
     @Bean
     public AbstractClientConnectionFactory clientConnectionFactory() {
@@ -49,20 +55,10 @@ public class TcpClientConfig{
     public MessageChannel outboundChannel() {
         return new DirectChannel();
     }
-//
-//    @Bean
-//    @ServiceActivator(inputChannel = "outboundChannel")
-//    public MessageHandler outboundGateway(AbstractClientConnectionFactory clientConnectionFactory) {
-//        TcpOutboundGateway tcpOutboundGateway = new TcpOutboundGateway();
-//        tcpOutboundGateway.setConnectionFactory(clientConnectionFactory);
-//        return tcpOutboundGateway;
-//    }
 
     public ByteArrayCrLfSerializer codec() {
         ByteArrayCrLfSerializer crLfSerializer = new ByteArrayCrLfSerializer();
         crLfSerializer.setMaxMessageSize(204800000);
         return crLfSerializer;
     }
-
-
 }

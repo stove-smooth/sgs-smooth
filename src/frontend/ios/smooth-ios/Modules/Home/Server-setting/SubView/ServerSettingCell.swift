@@ -22,7 +22,7 @@ class ServerSettingCell: BaseTableViewCell {
     }
     
     override func setup() {
-        backgroundColor = .serverListDarkGray
+        backgroundColor = .backgroundDarkGray
         self.selectionStyle = .none
         
         [

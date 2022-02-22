@@ -15,23 +15,21 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
-import static com.example.communityserver.exception.CustomExceptionStatus.FILE_CONVERT_ERROR;
-import static com.example.communityserver.exception.CustomExceptionStatus.FILE_EXTENSION_ERROR;
+import static com.example.communityserver.exception.CustomExceptionStatus.*;
 
 @RequiredArgsConstructor
 @Component
 public class AmazonS3Connector {
 
-    /**
-     * Todo
-     * 파일 암호화(ex. AES256)
-     */
-
     private final AmazonS3Client amazonS3Client;
     private final Tika tika = new Tika();
-    private final static String IMAGE_DIR = "discord/images/";
+    private final String SEP = "/";
+    private final String IMAGE_DIR = "discord/images/";
 
     @Value("${cloud.aws.s3.bucket}")
     public String bucket;
@@ -39,16 +37,25 @@ public class AmazonS3Connector {
     @Value("${cloud.aws.cloudfront.url}")
     public String cloudfrontUrl;
 
-    public String uploadImage(
-            Long id,
-            MultipartFile multipartFile
-    ) {
+    private final Map<Integer, String> GROUP_IMAGE_MAP = new HashMap<>(){{
+        put(0, "discord/default/group_blue.png");
+        put(1, "discord/default/group_green.png");
+        put(2, "discord/default/group_orange.png");
+        put(3, "discord/default/group_pink.png");
+        put(4, "discord/default/group_yellow.png");
+    }};
+
+    public String uploadImage(Long id, MultipartFile multipartFile) {
         File file = convertToFile(multipartFile);
 
-        String fileName = IMAGE_DIR + id + "/" + UUID.randomUUID() + extension(multipartFile);
+        String fileName = IMAGE_DIR + id + SEP + UUID.randomUUID() + extension(multipartFile);
 
         amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, file));
-        file.delete();
+        try {
+            file.delete();
+        } catch (Exception e) {
+            throw new CustomException(FILE_DELETE_ERROR);
+        }
 
         return cloudfrontUrl + fileName;
     }
@@ -76,5 +83,14 @@ public class AmazonS3Connector {
         } catch (MimeTypeException | IOException e) {
             throw new CustomException(FILE_EXTENSION_ERROR);
         }
+    }
+
+    /**
+     * 그룹 DM 랜덤으로 프로필 사진 설정하기
+     */
+    public String getRandomImage() {
+        Random random = new Random();
+        int num = random.nextInt(5);
+        return cloudfrontUrl + GROUP_IMAGE_MAP.get(num);
     }
 }

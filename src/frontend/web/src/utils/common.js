@@ -1,3 +1,5 @@
+import { createDirectMessage } from "@/api/index.js";
+//유저코드에 따라 기본 프로필을 설정한다.
 function selectProfile(code) {
   if (code == 0) {
     return "discord_blue";
@@ -29,10 +31,10 @@ function processFile2(tempImage) {
       let canvas = document.createElement("canvas");
       let canvasContext = canvas.getContext("2d");
 
-      canvas.width = 100;
-      canvas.height = 100;
+      canvas.width = 350;
+      canvas.height = 350;
 
-      canvasContext.drawImage(this, 0, 0, 100, 100);
+      canvasContext.drawImage(this, 0, 0, 350, 350);
 
       dataURI = canvas.toDataURL("image/jpeg");
       thumbnail = dataURI;
@@ -40,16 +42,74 @@ function processFile2(tempImage) {
     };
   });
 }
+//이미지를 썸네일로 변환한다.
 async function converToThumbnail(image) {
   const result = await processFile(image);
   const thumbnail = await processFile2(result);
   return thumbnail;
 }
-
+//썸네일을 파일로 만든다.
 async function dataUrlToFile(dataUrl) {
   const response = await fetch(dataUrl);
   const blob = await response.blob();
   const time = new Date().getTime();
   return new File([blob], time, { type: "image/*" });
 }
-export { selectProfile, converToThumbnail, dataUrlToFile };
+//채널의 이름을 계산한다.
+function computeChannelName(id, communityInfo) {
+  let channel = "";
+  const categories = communityInfo.categories;
+  for (var category in categories) {
+    if (categories[category].channels != null) {
+      for (let i = 0; i < categories[category].channels.length; i++) {
+        if (categories[category].channels[i].id == id) {
+          channel = categories[category].channels[i].name;
+          return channel;
+        }
+      }
+    }
+  }
+}
+function convertFromStringToDate(responseDate) {
+  var time = {};
+  let dateComponents = responseDate.split("T");
+  dateComponents[0].split("-");
+  let timePieces = dateComponents[1].split(":");
+  let transDate;
+  if (parseInt(timePieces[0]) + 9 < 24) {
+    time.hour = parseInt(timePieces[0]) + 9;
+    let tempDate = new Date(dateComponents[0]);
+    transDate = tempDate.toLocaleDateString();
+  } else {
+    time.hour = parseInt(timePieces[0]) + 9 - 24;
+    var newDate = new Date(dateComponents[0]);
+    newDate.setDate(newDate.getDate() + 1);
+    transDate = newDate.toLocaleDateString();
+  }
+  time.minutes = parseInt(timePieces[1]);
+  return [transDate, time.hour + ":" + time.minutes];
+}
+
+async function sendDirectMessage(directMessageList, userId) {
+  for (let i = 0; i < directMessageList.length; i++) {
+    if (directMessageList[i].group == false) {
+      if (directMessageList[i].members.includes(userId)) {
+        return directMessageList[i].id;
+      }
+    }
+  }
+  const dmMembers = {
+    members: [userId],
+  };
+  const result = await createDirectMessage(dmMembers);
+  return result.data.result.id;
+}
+
+export {
+  selectProfile,
+  converToThumbnail,
+  dataUrlToFile,
+  computeChannelName,
+  convertFromStringToDate,
+  sendDirectMessage,
+};

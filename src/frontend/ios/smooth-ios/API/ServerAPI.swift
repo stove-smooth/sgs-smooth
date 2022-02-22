@@ -11,10 +11,12 @@ import UIKit
 
 enum ServerTarget {
     // MARK: GET
-    case fetchServer
+    case fetchCommunity
     case getServerById(param: Int)
     case getMemberFromServer(param: Int)
     case getInvitByServer(serverId: Int)
+    case getDirectRoom
+    case getDirectRoomById(roomId: Int)
     
     // MARK: POST
     case createServer(param: ServerRequest)
@@ -35,7 +37,7 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
     
     var path: String {
         switch self {
-        case .fetchServer:
+        case .fetchCommunity:
             return "/community-server/community"
         case .getServerById(let serverId):
             return "/community-server/community/\(serverId)"
@@ -43,6 +45,10 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
             return "/community-server/community/\(serverId)/member"
         case .getInvitByServer(let serverId):
             return "/community-server/community/\(serverId)/invitation"
+        case .getDirectRoom:
+            return "/community-server/room"
+        case .getDirectRoomById(let roomId):
+            return "/community-server/room/\(roomId)"
             
         case .createServer:
             return "/community-server/community"
@@ -67,10 +73,12 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
     
     var method: Moya.Method {
         switch self {
-        case .fetchServer: return .get
+        case .fetchCommunity: return .get
         case .getServerById: return .get
         case .getMemberFromServer: return .get
         case .getInvitByServer: return .get
+        case .getDirectRoom: return .get
+        case .getDirectRoomById: return .get
             
         case .createServer: return .post
         case .createInvitation: return .post
@@ -87,13 +95,17 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
     
     var task: Task {
         switch self {
-        case .fetchServer:
+        case .fetchCommunity:
             return .requestPlain
         case .getServerById:
             return .requestPlain
-        case .getMemberFromServer(let memberId):
-            return .requestParameters(parameters: ["id": memberId], encoding: URLEncoding.queryString)
+        case .getMemberFromServer:
+            return .requestPlain
         case .getInvitByServer:
+            return .requestPlain
+        case .getDirectRoom:
+            return .requestPlain
+        case .getDirectRoomById:
             return .requestPlain
             
         case .createServer(let request):
@@ -103,7 +115,7 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
                     MultipartFormData(
                         provider: .data(request.icon!),
                         name: "icon",
-                        fileName: "server-icon",
+                        fileName: "server-icon-\(Data())",
                         mimeType: request.icon!.mimeType
                     )
                 )
@@ -132,7 +144,7 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
                     MultipartFormData(
                         provider: .data(imgData!),
                         name: "icon",
-                        fileName: "new-server-icon",
+                        fileName: "new-server-icon-\(Date())",
                         mimeType: imgData!.mimeType
                     )
                 )
@@ -156,13 +168,17 @@ extension ServerTarget: BaseAPI, AccessTokenAuthorizable {
     
     var authorizationType: AuthorizationType? {
         switch self {
-        case .fetchServer:
+        case .fetchCommunity:
             return .custom("")
         case .getServerById:
             return .custom("")
         case .getMemberFromServer:
             return .custom("")
         case .getInvitByServer:
+            return .custom("")
+        case .getDirectRoom:
+            return .custom("")
+        case .getDirectRoomById:
             return .custom("")
             
         case .createServer:

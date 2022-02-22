@@ -4,11 +4,15 @@ import com.example.communityserver.dto.request.*;
 import com.example.communityserver.dto.response.*;
 import com.example.communityserver.service.CommunityService;
 import com.example.communityserver.service.ResponseService;
+import com.example.communityserver.util.DataCorrectionUtil;
+import com.example.communityserver.util.UserStateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -18,23 +22,21 @@ public class CommunityController {
 
     private final CommunityService communityService;
     private final ResponseService responseService;
+    private final DataCorrectionUtil dataCorrectionUtil;
 
-    public final static String ID = "id";
-    public final static String AUTHORIZATION = "AUTHORIZATION";
-
-    /**
-     * Todo 커뮤니티 내 메세지 읽음 처리 (Optional)
-     */
+    public static final String ID = "id";
+    public static final String AUTHORIZATION = "AUTHORIZATION";
 
     /**
      * 사용자가 소속된 커뮤니티 리스트 조회
      */
     @GetMapping()
-    public DataResponse<CommunityListResponse> getCommunityList(
+    public DataResponse<MainResponse> getCommunityList(
+            @RequestHeader(AUTHORIZATION) String token,
             @RequestHeader(ID) String userId
     ) {
         log.info("GET /community-server/community");
-        CommunityListResponse response = communityService.getCommunityList(Long.parseLong(userId));
+        MainResponse response = communityService.getCommunityList(Long.parseLong(userId), token);
         return responseService.getDataResponse(response);
     }
 
@@ -61,8 +63,13 @@ public class CommunityController {
             @Valid @ModelAttribute CreateCommunityRequest request
     ) {
         log.info("POST /community-server/community");
+
         CommunityResponse response =
                 communityService.createCommunity(Long.parseLong(userId), request, token);
+
+        // 채팅 서버에 변동 정보 전송
+        dataCorrectionUtil.updateCommunityMember(response.getId());
+
         return responseService.getDataResponse(response);
     }
 
@@ -158,7 +165,12 @@ public class CommunityController {
             @Valid @RequestBody JoinRequest request
     ) {
         log.info("POST /community-server/community/member");
+
         CommunityResponse response = communityService.join(Long.parseLong(userId), request, token);
+
+        // 채팅 서버에 변동 정보 전송
+        dataCorrectionUtil.updateCommunityMember(response.getId());
+
         return responseService.getDataResponse(response);
     }
 
@@ -172,7 +184,12 @@ public class CommunityController {
             @RequestParam(name = "id") Long memberId
     ) {
         log.info("DELETE /community-server/community/{}/member", communityId);
+
         communityService.deleteMember(Long.parseLong(userId), communityId, memberId);
+
+        // 채팅 서버에 변동 정보 전송
+        dataCorrectionUtil.updateCommunityMember(communityId);
+
         return responseService.getSuccessResponse();
     }
 
@@ -223,7 +240,26 @@ public class CommunityController {
     public DataResponse<MemberListFeignResponse> getCommunityMember(
             @PathVariable Long communityId
     ) {
-        log.info("GET /community-server/community/{}/member", communityId);
+        log.info("GET /community-server/community/feign/{}/member", communityId);
         return responseService.getDataResponse(communityService.getCommunityMember(communityId));
+    }
+
+    /**
+     * 사용자가 속한 커뮤니티, 룸 리스트 조회
+     */
+    @GetMapping("/feign/room-list/{userId}")
+    public List<String> getIncludeRoomList(
+            @PathVariable Long userId
+    ) {
+        log.info("GET /community-server/community/feign/room-list/{}", userId);
+        return communityService.getIncludeRoomList(userId);
+    }
+
+    /**
+     * 현재 메모리에 저장된 사용자 접속 정보 조회
+     */
+    @GetMapping("/test/member-state")
+    public Map<Long, String> getMemberState() {
+        return UserStateUtil.status;
     }
 }

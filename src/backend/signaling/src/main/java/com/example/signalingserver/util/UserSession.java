@@ -12,27 +12,33 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import static com.example.signalingserver.util.type.Message.iceCandidate;
-import static com.example.signalingserver.util.type.Message.receiveVideoAnswer;
+import static com.example.signalingserver.util.Message.iceCandidate;
+import static com.example.signalingserver.util.Message.receiveVideoAnswer;
 
 @Slf4j
 public class UserSession implements Closeable {
 
     private final String userId;
     private final WebSocketSession session;
+    private boolean video;
+    private boolean audio;
 
     private final MediaPipeline pipeline;
 
     private final String roomId;
+    private final String communityId;
     private final WebRtcEndpoint outgoingMedia;
     private final ConcurrentMap<String, WebRtcEndpoint> incomingMedia = new ConcurrentHashMap<>();
 
-    public UserSession(String userId, String roomId, WebSocketSession session, MediaPipeline pipeline) {
+    public UserSession(String userId, String roomId, WebSocketSession session, MediaPipeline pipeline, String communityId, boolean video, boolean audio) {
 
         this.userId = userId;
         this.session = session;
         this.pipeline = pipeline;
         this.roomId = roomId;
+        this.video = video;
+        this.audio = audio;
+        this.communityId = communityId;
         this.outgoingMedia = new WebRtcEndpoint.Builder(pipeline).build();
         this.outgoingMedia.addIceCandidateFoundListener(new EventListener<IceCandidateFoundEvent>() {
 
@@ -65,6 +71,16 @@ public class UserSession implements Closeable {
     public String getRoomId() {
         return this.roomId;
     }
+
+    public String getCommunityId() { return this.communityId; }
+
+    public boolean getVideo() { return this.video; }
+
+    public void setVideo(boolean video) { this.video = video; }
+
+    public boolean getAudio() { return this.audio; }
+
+    public void setAudio(boolean audio) { this.audio = audio; }
 
     public void receiveVideoFrom(UserSession sender, String sdpOffer) throws IOException {
         final String ipSdpAnswer = this.getEndpointForUser(sender).processOffer(sdpOffer);

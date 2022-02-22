@@ -1,26 +1,34 @@
 import UIKit
 import RxSwift
 import StompClientLib
+import Firebase
+import FirebaseMessaging
+import UserNotifications
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var coordinator: MainCoordinator?
     var window: UIWindow?
-    var socket: ChatWebSocketServiceProtocol?
+    var deviceToken: String?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
-        socket = ChatWebSocketService()
         
+        
+        FirebaseApp.configure()
         RxImagePickerDelegateProxy.register { RxImagePickerDelegateProxy(imagePicker: $0) }
-        socket?.register()
-        socket?.connect(type: "group", channelId: 105)
-        socket?.connect(type: "direct", channelId: nil)
         
+        Messaging.messaging().delegate = self
+        UNUserNotificationCenter.current().delegate = self
         
-        coordinator = MainCoordinator(window: window!)
-        coordinator?.start()
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(options: authOptions,completionHandler: {_, _ in })
+        application.registerForRemoteNotifications()
+        
+        coordinator = MainCoordinator(window: window!, deviceToken: "")
+        coordinator?.start(communityId: nil, channelId: nil)
+        window?.makeKeyAndVisible()
         
         return true
     }
@@ -30,7 +38,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // 백그라운드 상태일 때
     func applicationDidEnterBackground(_ application: UIApplication) {
-        socket?.disconnect()
     }
     
     // 백그라운드 -> 포그라운드
@@ -38,11 +45,65 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // active(실행중)
     func applicationDidBecomeActive(_ application: UIApplication) {
-//        socket?.autoReconnect()
     }
     
     // 앱 종료
     func applicationWillTerminate(_ application: UIApplication) {
-        socket?.disconnect()
     }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
+    }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        return true
+    }
+
+}
+
+extension AppDelegate: MessagingDelegate {
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        guard let fcmToken = fcmToken else {
+            return
+        }
+        
+        self.deviceToken = fcmToken
+        print("Firebase registration token: \(fcmToken)")
+
+        let dataDict:[String: String] = ["token": fcmToken]
+        NotificationCenter.default.post(name: Notification.Name("FCMToken"), object: nil, userInfo: dataDict)
+    }
+}
+
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        // 포그라운드 (todos: 로컬 노티 처리)
+        
+        completionHandler([UNNotificationPresentationOptions.alert,
+                                   UNNotificationPresentationOptions.sound,
+                                   UNNotificationPresentationOptions.badge])
+        
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                  didReceive response: UNNotificationResponse,
+                                  withCompletionHandler completionHandler: @escaping () -> Void) {
+        // 백그라운드 노티 수신 시 클릭하면 실행되는 핸들러
+        // coordinator 처리 해야함
+        
+        let userInfo = response.notification.request.content.userInfo
+    
+        // With swizzling disabled you must let Messaging know about the message, for Analytics
+        // Messaging.messaging().appDidReceiveMessage(userInfo)
+
+        // Print full message.
+        
+        let apn = userInfo["aps"] as AnyObject?
+        
+        let communityId = apn!["communityId"] as? String
+        let channelId = apn!["channelId"] as? String
+        
+        
+        self.coordinator?.start(communityId: Int(communityId!) , channelId: Int(channelId!))
+      }
 }

@@ -9,9 +9,11 @@ import UIKit
 import RxSwift
 import MessageKit
 import InputBarAccessoryView
+import Toast_Swift
+import AVFoundation
 
 protocol ChattingViewControllerDelegate: AnyObject {
-    func didTapMenuButton(channel: Channel?)
+    func didTapMenuButton(channelId: Int?, communityId: Int?, isWebRTC: Bool)
 }
 
 class ChattingViewController: MessagesViewController {
@@ -20,18 +22,30 @@ class ChattingViewController: MessagesViewController {
     weak var coordinator: HomeCoordinator?
     weak var delegate: ChattingViewControllerDelegate?
     
-    private let viewModel: ChattingViewModel
+    private let emptyView = ChannelEmptyView()
+    private let webRTCView = WebRTCView()
+    private let editInputAccessoryView = EditInputBarAccessoryView()
     
-    lazy var messageList: [MockMessage] = []
-    var channel: Channel?
-    var inputBarisHide = false
+    internal let viewModel: ChattingViewModel
+    
+    var messageList: [MockMessage] = []
     
     static func instance() -> ChattingViewController {
         return ChattingViewController()
     }
     
     init() {
-        self.viewModel = ChattingViewModel(chattingService: ChattingService())
+        let appDelegate = UIApplication.shared.delegate as? AppDelegate
+        
+        let user = UserDefaultsUtil().getUserInfo()!
+        let messageUser = MockUser(senderId: "\(user.id)", displayName: user.name, profileImage: user.profileImage)
+        
+        self.viewModel = ChattingViewModel(
+            messageUser: messageUser,
+            chattingService: ChattingService(),
+            chatWebSocketService: appDelegate?.coordinator?.chatWebSocketService as! ChatWebSocketService
+        )
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -39,192 +53,207 @@ class ChattingViewController: MessagesViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        configureNavigationController(channelId: nil, channelName: "채팅 없음")
+        configureMessageCollectionView()
+        configureMessageInputBar()
+        
+        // VC <-> VM
+        bindEvent()
+        bindViewModel()
+    }
+    
+    // MARK: 메시지 불러오기
     private(set) lazy var refreshControl: UIRefreshControl = {
         let control = UIRefreshControl()
         control.addTarget(self, action: #selector(loadMoreMessages), for: .valueChanged)
         return control
     }()
     
-    override func viewWillAppear(_ animated: Bool) {
-        self.tabBarController?.tabBar.isHidden = true
-        
-        super.viewWillAppear(animated)
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        configureNavigationController(channel: nil)
-        configureMessageCollectionView()
-        configureMessageInputBar()
-        loadFirstMessages()
-        
-        bindViewModel()
-    }
-    
-    func configureNavigationController(channel: Channel?) {
-        navigationController?.navigationBar.tintColor = .white
-        navigationItem.leftBarButtonItem = UIBarButtonItem(
-            image: UIImage(named: "Menu")?.resizeImage(size: CGSize(width: 25, height: 25)),
-            style: .done,
-            target: self,
-            action: #selector(didTapMenuButton)
-        )
-        
-        let titleImgView = UIImageView().then {
-            $0.image = UIImage(named: "Channel+text")?.resizeImage(size: CGSize(width: 20, height: 20))
-        }
-        let titleLabel = UILabel().then{
-            $0.textColor = .white
-        }
-        
-        if channel != nil {
-            titleImgView.image = UIImage(named: "Channel+\(channel!.type.rawValue.lowercased())")?.resizeImage(size: CGSize(width: 20, height: 20))
-            titleLabel.text = channel!.name
-        } else {
-            titleLabel.text = "채팅 없음"
-        }
-        
-        let titleView = UIStackView().then {
-            $0.distribution = .fill
-            $0.axis = .horizontal
-        }
-        let spacer = UIView()
-        let constraint = spacer.widthAnchor.constraint(greaterThanOrEqualToConstant: CGFloat.greatestFiniteMagnitude)
-        constraint.isActive = true
-        constraint.priority = .defaultLow
-        
-        [titleImgView, titleLabel, spacer].forEach { titleView.addArrangedSubview($0)}
-        
-        navigationItem.titleView = titleView
-    }
-    
     @objc func didTapMenuButton() {
-        delegate?.didTapMenuButton(channel: nil)
+        delegate?.didTapMenuButton(channelId: self.viewModel.model.channel.0, communityId: self.viewModel.model.communityId, isWebRTC: self.viewModel.input.isWebRTC.value)
     }
     
-    func configureMessageCollectionView() {
-        messagesCollectionView.messagesLayoutDelegate = self
-        messagesCollectionView.messagesDisplayDelegate = self
-        messagesCollectionView.messagesDataSource = self
-        messagesCollectionView.messageCellDelegate = self
+    @objc func didTapInfoButton() {
+        let isGroup = self.viewModel.model.communityId != nil
+        var id: Int
+        if (self.viewModel.model.communityId != nil) {
+            id = self.viewModel.model.communityId!
+        } else {
+            id = self.viewModel.model.channel.0 // channelId
+        }
         
-        messagesCollectionView.refreshControl = refreshControl
-        messagesCollectionView.backgroundColor = .messageBarDarkGray
-        
-        maintainPositionOnKeyboardFrameChanged = true
-        scrollsToLastItemOnKeyboardBeginsEditing = true
-        
-        setMessageCollectionLayout()
+        self.coordinator?.goToInfo(isGroup: isGroup, id: id)
     }
     
-    func setMessageCollectionLayout() {
-        let layout = messagesCollectionView.collectionViewLayout as? MessagesCollectionViewFlowLayout
+    func bindEvent() {
+        self.viewModel.showToastMessage
+            .asDriver(onErrorJustReturn: "")
+            .drive(onNext: { message in
+                self.showToast(message: message, isWarning: false)
+            })
+            .disposed(by: disposeBag)
         
-        layout?.sectionInset = UIEdgeInsets(top: 1, left: 8, bottom: 1, right: 8)
-        
-        layout?.setMessageOutgoingAvatarSize(CGSize(width: 30, height: 30))
-        layout?.setMessageOutgoingMessageTopLabelAlignment(LabelAlignment(textAlignment: .left, textInsets: UIEdgeInsets(top: 0, left: 50, bottom: 0, right: 0)))
-        layout?.setMessageOutgoingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .left, textInsets: UIEdgeInsets(top: 0, left: 30, bottom: 0, right: 0)))
-        
-        layout?.setMessageIncomingMessageTopLabelAlignment(LabelAlignment(textAlignment: .left, textInsets: UIEdgeInsets(top: 0, left: 50, bottom: 15, right: 0)))
-        layout?.setMessageIncomingAvatarSize(CGSize(width: 30, height: 30))
-        layout?.setMessageIncomingMessagePadding(UIEdgeInsets(top: -20, left: 0, bottom: 0, right: 0))
-        
-        layout?.setMessageOutgoingAvatarPosition(.init(vertical: .cellTop))
-        layout?.setMessageIncomingAvatarPosition(.init(vertical: .cellTop))
-        
-        layout?.setMessageIncomingMessagePadding(UIEdgeInsets(top: -20, left: 0, bottom: 0, right: 0))
-    }
-    
-    func configureMessageInputBar() {
-        messageInputBar = CameraInputBarAccessoryView()
-        messageInputBar.delegate = self
-        
-        messageInputBar.sendButton.setTitleColor(
-            UIColor.blurple!.withAlphaComponent(0.3),
-            for: .highlighted)
-        
-        configureInputBarItems()
-    }
-    
-    func configureInputBarItems() {
-        messageInputBar.inputTextView.placeholder = "메시지를 입력해주세요"
-        messageInputBar.setRightStackViewWidthConstant(to: 36, animated: false)
-        messageInputBar.sendButton.imageView?.backgroundColor = UIColor(red: 88/255, green: 101/255, blue: 242/255, alpha: 0.3)
-        messageInputBar.sendButton.contentEdgeInsets = UIEdgeInsets.all(2)
-        messageInputBar.sendButton.setSize(CGSize(width: 36, height: 36), animated: false)
-        messageInputBar.sendButton.image = UIImage(named: "Paperplane")
-        messageInputBar.sendButton.imageView?.layer.cornerRadius = 16
-        
-        // This just adds some more flare
-        messageInputBar.sendButton
-            .onEnabled { item in
-                UIView.animate(withDuration: 0.3, animations: {
-                    item.imageView?.backgroundColor = .blurple
-                })
-            }.onDisabled { item in
-                UIView.animate(withDuration: 0.3, animations: {
-                    item.imageView?.backgroundColor = UIColor(red: 88/255, green: 101/255, blue: 242/255, alpha: 0.3)
-                })
-            }
-    }
-    
-    func configureInputBarPadding() {
-        
-        // Entire InputBar padding
-        messageInputBar.padding.bottom = 8
-        
-        // or MiddleContentView padding
-        messageInputBar.middleContentViewPadding.right = -38
-        
-        // or InputTextView padding
-        messageInputBar.inputTextView.textContainerInset.bottom = 8
-        
-    }
-    
-    private func bindViewModel() {
-        self.viewModel.output.channel
-            .bind(onNext: { channel in
-                self.viewModel.input.fetch.onNext(channel)
-                self.channel = channel
-                self.configureNavigationController(channel: channel)
-                self.messageInputBar.inputTextView.placeholder = "#\(channel.name)에 메시지 보내기"
+        self.viewModel.showErrorMessage
+            .asDriver(onErrorJustReturn: "")
+            .drive(onNext: { message in
+                self.showToast(message: message, isWarning: true)
             })
             .disposed(by: disposeBag)
     }
     
-    
-    // MARK: - load message
-    func loadFirstMessages() {
-        DispatchQueue.global(qos: .userInitiated).async {
-            let count = UserDefaults.standard.mockMessagesCount()
-            SampleData.shared.getMessages(count: count) { messages in
-                DispatchQueue.main.async {
-                    self.messageList = messages
+    private func bindViewModel() {
+        // MARK: - Model Binding
+        // input
+        self.viewModel.output.done
+            .asDriver(onErrorJustReturn: ())
+            .drive(onNext: {
+                self.view.addSubview(self.webRTCView)
+                self.webRTCView.snp.makeConstraints {
+                    $0.edges.equalToSuperview()
+                }
+                
+                self.webRTCView.webView.allowsBackForwardNavigationGestures = true
+                self.webRTCView.webView.load(URLRequest(url: URL(string: self.viewModel.model.url)!))
+            }).disposed(by: disposeBag)
+        
+        self.messageInputBar.inputTextView.rx.text
+            .asDriver()
+            .debounce(.seconds(3))
+            .drive(onNext: { value in
+                self.viewModel.input.inputMessage.onNext(value)
+            })
+            .disposed(by: disposeBag)
+        
+        // output
+        self.viewModel.output.channel
+            .bind(onNext: { (channelId, channelName) in
+                self.viewModel.input.fetch.onNext((channelId, self.viewModel.model.page))
+                
+                self.configureNavigationController(channelId: channelId, channelName: channelName)
+                
+                //                self.messageInputBar.inputTextView.placeholder = "#\(channel.name)에 메시지 보내기"
+            }).disposed(by: disposeBag)
+        
+        self.viewModel.output.messages
+            .asDriver(onErrorJustReturn: ([], nil))
+            .drive { (messages, type) in
+                switch type {
+                case .message, .delete, .modify:
+                    if (messages.count > 0) {
+                        self.messageList = messages
+                    }
+                    
+                    self.messagesCollectionView.reloadDataAndKeepOffset()
+                    if(self.viewModel.model.page == 0) {
+                        self.messagesCollectionView.scrollToLastItem()
+                    }
+                case .reply: break
+                case .typing: break
+                case .none: // 일반 호출인 경우
+                    self.messageList.insert(contentsOf: messages, at: 0)
+                    
+                    self.refreshControl.endRefreshing()
                     self.messagesCollectionView.reloadData()
+                    
+                    if(self.viewModel.model.page == 0) {
+                        
+                        
+                        if (self.viewModel.model
+                                .messages.isEmpty &&
+                            self.viewModel.input.isWebRTC.value == false) {
+                            self.webRTCView.removeFromSuperview()
+                        } else {
+                            self.viewModel.output.showEmpty.accept(false)
+                        }
+                        
+                        if(self.messageList.count == 0) {
+                            self.viewModel.output.showEmpty.accept(true)
+                        }
+                    }
+                    self.messagesCollectionView.reloadDataAndKeepOffset()
                     self.messagesCollectionView.scrollToLastItem()
                 }
-            }
-        }
-    }
-    
-    @objc func loadMoreMessages() {
-        DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 1) {
-            SampleData.shared.getMessages(count: 20) { messages in
-                DispatchQueue.main.async {
-                    self.messageList.insert(contentsOf: messages, at: 0)
-                    self.messagesCollectionView.reloadDataAndKeepOffset()
-                    self.refreshControl.endRefreshing()
+                
+            }.disposed(by: disposeBag)
+        
+        // MARK: - Toast Popup
+        self.viewModel.showErrorMessage
+            .asDriver(onErrorJustReturn: "")
+            .drive(onNext: { message in
+                self.showToast(message: message, isWarning: true)
+            })
+            .disposed(by: disposeBag)
+        
+        self.viewModel.output.showEmpty
+            .asDriver(onErrorJustReturn: false)
+            .drive(onNext: { [self] isEmpty in
+                if (isEmpty) {
+                    view.addSubview(emptyView)
+                    emptyView.snp.makeConstraints {
+                        $0.edges.equalToSuperview()
+                    }
+                } else {
+                    emptyView.removeFromSuperview()
                 }
-            }
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    func showToast(message: String, isWarning: Bool) {
+        var style = ToastStyle()
+        style.backgroundColor = .serverListDarkGray!
+        style.cornerRadius = 15
+        
+        let emoji = isWarning ? "⛔️ " : "✅ "
+        
+        self.view.makeToast(
+            emoji+message,
+            position: .top,
+            style: style
+        )
+    }
+}
+
+// MARK: - HomeVC Delegate
+extension ChattingViewController: HomeViewControllerDelegate {
+    func loadChatting(_ chatName: String, channelId: Int, communityId: Int?, isWebRTC: Bool) {
+        
+        self.viewModel.model.communityId = communityId
+        self.messageList = []
+        self.viewModel.model.messages = []
+        self.viewModel.model.page = 0
+        self.viewModel.model.channel = (channelId, chatName)
+        
+        if (isWebRTC == false) {
+            self.viewModel.output.channel.accept((channelId, chatName))
+        }
+        
+        self.viewModel.input.isWebRTC.accept(isWebRTC)
+        //        self.viewModel.output.messages.accept(([], nil))
+        
+    }
+}
+
+// MARK: - Message
+extension ChattingViewController {
+    
+    // MARK: 메시지 불러오기
+    @objc func loadMoreMessages() {
+        if (self.viewModel.model.isNext) {
+            self.viewModel.input.fetch.onNext((self.viewModel.model.channel.0, self.viewModel.model.page))
+        } else {
+            self.refreshControl.endRefreshing()
+            self.viewModel.showErrorMessage.accept("더 이상 불러올 메시지가 없습니다.")
         }
     }
     
-    // MARK: - Helpers
-    
+    // MARK: 메시지 보내기
     func insertMessage(_ message: MockMessage) {
         messageList.append(message)
+        
         // Reload last section to update header/footer labels and insert a new one
         messagesCollectionView.performBatchUpdates({
             messagesCollectionView.insertSections([messageList.count - 1])
@@ -239,7 +268,7 @@ class ChattingViewController: MessagesViewController {
     }
     
     func deleteMessage(_ indexPath: IndexPath) {
-        print("\(indexPath) \(messageList.count)")
+        self.viewModel.input.socketMessage.onNext((messageList[indexPath.section], .delete))
         
         messagesCollectionView.performBatchUpdates({
             messageList.remove(at: indexPath.section)
@@ -252,13 +281,15 @@ class ChattingViewController: MessagesViewController {
             }
         }, completion: {[weak self] _ in
             if self?.isLastSectionVisible() == true {
-                self?.messagesCollectionView.scrollToLastItem(animated: true)
+                self?.messagesCollectionView
+                    .scrollToLastItem(animated: true)
+            } else {
+                self?.messagesCollectionView.scrollToItem(at: indexPath, at: .centeredVertically, animated: true)
             }
         })
     }
     
     func isLastSectionVisible() -> Bool {
-        
         guard !messageList.isEmpty else { return false }
         
         let lastIndexPath = IndexPath(item: 0, section: messageList.count - 1)
@@ -268,47 +299,37 @@ class ChattingViewController: MessagesViewController {
     
     func isNextMessageSameSender(at indexPath: IndexPath) -> Bool {
         guard indexPath.section + 1 < messageList.count else { return false }
-        return messageList[indexPath.section].user == messageList[indexPath.section + 1].user
+        
+        let sameUser =  messageList[indexPath.section].user == messageList[indexPath.section + 1].user
+        let sameDate = Int(messageList[indexPath.section].sentDate.timeIntervalSince(messageList[indexPath.section+1].sentDate))
+        
+        return sameUser && (sameDate < 60)
     }
     
     func isPreviousMessageSameSender(at indexPath: IndexPath) -> Bool {
         guard indexPath.section - 1 >= 0 else { return false }
-        return messageList[indexPath.section].user == messageList[indexPath.section - 1].user
+        
+        let sameUser =  messageList[indexPath.section].user == messageList[indexPath.section - 1].user
+        let sameDate = Int(messageList[indexPath.section].sentDate.timeIntervalSince(messageList[indexPath.section-1].sentDate))
+        
+        return sameUser && (sameDate < 60)
     }
 }
 
-extension ChattingViewController: HomeViewControllerDelegate {
-    func loadChatting(channel: Channel) {
-        self.viewModel.output.channel.accept(channel)
-    }
-}
-
-
-// MARK: - MessagesLayoutDelegate
-extension ChattingViewController: MessagesLayoutDelegate {
-    
-    func messageTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        if isFromCurrentSender(message: message) {
-            return !isPreviousMessageSameSender(at: indexPath) ? 20 : 0
-        } else {
-            return !isPreviousMessageSameSender(at: indexPath) ? 37.5 : 0
-        }
-    }
-    
-    func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return (!isNextMessageSameSender(at: indexPath) && isFromCurrentSender(message: message)) ? 16 : 0
-    }
-    
-    func footerViewSize(for section: Int, in messagesCollectionView: MessagesCollectionView) -> CGSize {
-        return CGSize(width: 0, height: 8)
-    }
-    
-}
-
-extension ChattingViewController: InputBarAccessoryViewDelegate {
+// MARK: - InputBar
+extension ChattingViewController: InputBarAccessoryViewDelegate, CameraInputBarAccessoryViewDelegate {
     @objc
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
         processInputBar(messageInputBar)
+    }
+    
+    func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith attachments: [AttachmentManager.Attachment]) {
+        for item in attachments {
+            if  case .image(let image) = item {
+                self.insertMessages([image])
+            }
+        }
+        inputBar.invalidatePlugins()
     }
     
     func processInputBar(_ inputBar: InputBarAccessoryView) {
@@ -322,17 +343,31 @@ extension ChattingViewController: InputBarAccessoryViewDelegate {
             print("Autocompleted: `", substring, "` with context: ", context ?? [])
         }
         
+        
+        func modifyInputBar(indexPath: IndexPath) {
+            let message = messageList[indexPath.section]
+            
+            var content: String = ""
+            switch message.kind {
+            case .text(let text):
+                content = text
+            default: break
+            }
+            
+            inputBar.inputTextView.text = content
+        }
+        
         let components = inputBar.inputTextView.components
         inputBar.inputTextView.text = String()
         inputBar.invalidatePlugins()
         // Send button activity animation
         inputBar.sendButton.startAnimating()
-        inputBar.inputTextView.placeholder = "Sending..."
+        inputBar.inputTextView.placeholder = "메시지 보내는 중..."
         // Resign first responder for iPad split view
         inputBar.inputTextView.resignFirstResponder()
+        
         DispatchQueue.global(qos: .default).async {
-            // fake send request task
-            sleep(1)
+            sleep(UInt32(0.2)) // fake send request task
             DispatchQueue.main.async { [weak self] in
                 inputBar.sendButton.stopAnimating()
                 inputBar.inputTextView.placeholder = "메시지 보내기"
@@ -344,107 +379,25 @@ extension ChattingViewController: InputBarAccessoryViewDelegate {
     
     private func insertMessages(_ data: [Any]) {
         for component in data {
-            let user = SampleData.shared.currentSender
+            // MARK: 텍스트
             if let str = component as? String {
-                let message = MockMessage(text: str, user: user, messageId: UUID().uuidString, date: Date())
+                let message = MockMessage(
+                    kind: .text(str),
+                    user: self.viewModel.model.messageUser,
+                    messageId: UUID().uuidString,
+                    date: Date()
+                )
+                
+                self.viewModel.input.socketMessage.onNext((message, .message))
                 insertMessage(message)
-            } else if let img = component as? UIImage {
-                let message = MockMessage(image: img, user: user, messageId: UUID().uuidString, date: Date())
+            }
+            // MARK: 이미지
+            else if let img = component as? UIImage {
+                let message = MockMessage(image: img, user: self.viewModel.model.messageUser, messageId: UUID().uuidString, date: Date())
+                
+                self.viewModel.input.socketMessage.onNext((message, .message))
                 insertMessage(message)
             }
         }
-    }
-}
-
-
-extension ChattingViewController: MessagesDisplayDelegate {
-    func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
-        return .white!
-    }
-    
-    
-    func detectorAttributes(for detector: DetectorType, and message: MessageType, at indexPath: IndexPath) -> [NSAttributedString.Key: Any] {
-        switch detector {
-        case .hashtag, .mention:
-            if isFromCurrentSender(message: message) {
-                return [.foregroundColor: UIColor.white!]
-            } else {
-                return [.foregroundColor: UIColor.blurple!]
-            }
-        default: return MessageLabel.defaultAttributes
-        }
-    }
-    
-    func enabledDetectors(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> [DetectorType] {
-        return [.url, .address, .phoneNumber, .date, .transitInformation, .mention, .hashtag]
-    }
-    
-    // MARK: - All Messages
-    
-    func backgroundColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
-        return .clear
-    }
-    
-    func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
-        let avatar = SampleData.shared.getAvatarFor(sender: message.sender)
-        avatarView.set(avatar: avatar)
-        avatarView.isHidden = isPreviousMessageSameSender(at: indexPath)
-    }
-    
-    func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
-        if case MessageKind.photo(let media) = message.kind, let imageURL = media.url {
-            imageView.kf.setImage(with: imageURL)
-        } else {
-            imageView.kf.cancelDownloadTask()
-        }
-    }
-    
-}
-
-extension ChattingViewController: MessagesDataSource {
-    func currentSender() -> SenderType {
-        return MockUser(senderId: "-1", displayName: "test")
-    }
-    
-    func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
-        return messageList.count
-    }
-    
-    func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
-        return messageList[indexPath.section]
-    }
-    
-    func messageTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
-        if !isPreviousMessageSameSender(at: indexPath) {
-            let name = message.sender.displayName
-            return NSAttributedString(string: name, attributes: [
-                NSAttributedString.Key.foregroundColor: UIColor.white!
-            ])
-        }
-        return nil
-    }
-}
-
-// MARK: - MessageCellDelegate
-extension ChattingViewController: MessageCellDelegate {
-    func didTapAvatar(in cell: MessageCollectionViewCell) {
-        guard let indexPath = messagesCollectionView.indexPath(for: cell) else { return }
-        
-        messagesCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: [])
-        
-        #warning("message mockup으로 유저 데이터 얻기 & 내 프로필 선택 시 내 정보 보여주기")
-        // let friend = messageList[indexPath.section]
-        
-        let friend = Friend(id: 2, name: "밍디", code: "1374", profileImage: Optional("https://sgs-smooth.s3.ap-northeast-2.amazonaws.com/1643090865999"), state: .accept)
-         self.coordinator?.showFriendInfoModal(friend: friend)
-    }
-    
-
-    func didTapMessage(in cell: MessageCollectionViewCell) {
-        guard let indexPath = messagesCollectionView.indexPath(for: cell) else { return }
-        
-        messagesCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredVertically)
-    
-        self.deleteMessage(indexPath)
     }
 }

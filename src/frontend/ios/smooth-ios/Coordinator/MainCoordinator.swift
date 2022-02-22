@@ -13,84 +13,52 @@ class MainCoordinator: NSObject, Coordinator {
     
     var childCoordinators = [Coordinator]()
     var navigationController: UINavigationController
+    let chatWebSocketService: ChatWebSocketServiceProtocol?
     
-    let window: UIWindow
+    private let window: UIWindow
+    private let deviceToken: String
     
-    init(window: UIWindow) {
+    init(window: UIWindow, deviceToken: String) {
         self.window = window
+        self.deviceToken = deviceToken
         
-        let navigationController = UINavigationController()
-        navigationController.navigationBar.tintColor = .white
-        navigationController.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white!]
+        self.chatWebSocketService = ChatWebSocketService()
         
-        navigationController.navigationBar.barTintColor = UIColor.backgroundDarkGray
-        navigationController.navigationBar.shadowImage = UIImage()
-        navigationController.navigationBar.isTranslucent = false
-        
+        let navigationController = UINavigationController().setup
         navigationController.setNavigationBarHidden(true, animated: true)
         
         self.navigationController = navigationController
         self.childCoordinators = []
     }
     
-    func start() {
+    func start(communityId: Int?, channelId: Int?) {
         window.rootViewController = navigationController
         
         let token = UserDefaultsUtil.getUserToken()
         
         if token == nil {
             // 로그인이 안되어 있는 경우
-            let vc = SplashViewConroller.instance()
-            vc.coordinator = self
-            navigationController.pushViewController(vc, animated: true)
+            self.goToSplast()
         } else {
-            self.goToMain()
+            self.goToMain(communityId: communityId, channelId: channelId)
         }
         
         window.makeKeyAndVisible()
     }
     
-    func goToSigIn() {
-        let vc = SignInViewController.instance()
-        vc.coordinator = self
-        navigationController.removeFromParent()
-        navigationController.pushViewController(vc, animated: true)
-    }
-    
-    func goToMain() {
-        coordinatorDidFinish()
-    
-        let coordinator = MainTabBarCoordinator(navigationController: navigationController)
+    func goToSplast() {
+        let coordinator = SplashCoordinator(navigationController: navigationController)
+        childCoordinators.append(coordinator)
         coordinator.start()
     }
     
-    func goToSignUp() {
-        let vc = SignUpViewController.instance()
-        vc.coordinator = self
-        navigationController.removeFromParent()
-        navigationController.pushViewController(vc, animated: true)
+    func goToMain(communityId: Int?, channelId:  Int?) {
+        self.chatWebSocketService?.setup()
+        self.chatWebSocketService?.register()
+
+        let coordinator = HomeCoordinator(navigationController: navigationController)
+        childCoordinators.append(coordinator)
+        
+        coordinator.start(communityId: communityId, channelId: channelId)
     }
-    
-    func goToSignUpInfo() {
-        let vc = SignUpInfoViewController.instance()
-        vc.coordinator = self
-        navigationController.pushViewController(vc, animated: true)
-    }
-    
-    func goToVerifyCode() {
-        let vc = VerifyCodeViewController.instance()
-        vc.coordinator = self
-        navigationController.removeFromParent()
-        navigationController.pushViewController(vc, animated: true)
-    }
-    
-    func childDidFinish(_ child: Coordinator?) {
-        for (index, coordinator) in childCoordinators.enumerated() {
-            if coordinator === child {
-                childCoordinators.remove(at: index)
-                break
-            }
-        }
-    }
-    
 }

@@ -1,9 +1,12 @@
 package com.example.communityserver.dto.response;
 
 import com.example.communityserver.domain.RoomMember;
+import com.example.communityserver.domain.type.UserState;
+import com.example.communityserver.util.UserStateUtil;
 import lombok.*;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -18,7 +21,7 @@ public class RoomMemberResponse {
     private boolean owner;
     private String state;
 
-    public static RoomMemberResponse fromEntity(RoomMember roomMember, HashMap<Long, UserResponse> userMap) {
+    public static RoomMemberResponse fromEntity(RoomMember roomMember, Map<Long, UserResponse> userMap) {
         RoomMemberResponse response = new RoomMemberResponse();
         Long userId = roomMember.getUserId();
         UserResponse userResponse = userMap.get(userId);
@@ -27,7 +30,10 @@ public class RoomMemberResponse {
         response.setImage(userResponse.getImage());
         response.setCode(userResponse.getCode());
         response.setOwner(roomMember.isOwner());
-        response.setState(userResponse.getState());
+        if (!Objects.isNull(UserStateUtil.status.get(userId)))
+            response.setState(UserStateUtil.status.get(userId));
+        else
+            response.setState(UserState.OFFLINE);
         return response;
     }
 }

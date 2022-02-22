@@ -1,7 +1,7 @@
 <template>
   <div>
     <section class="my-section">
-      <div class="primary-container">
+      <div class="primary-container" v-if="wsOpen">
         <div class="media-connected-container">
           <div class="display-flex">
             <div class="media-connected-title-inner">
@@ -9,9 +9,14 @@
                 <svg class="ping"></svg>
                 <div class="rtc-connection-description">영상 연결됨</div>
               </div>
-              <div class="subtext">라운지/스무th</div>
+              <div class="subtext" v-if="currentVoiceRoom">
+                {{ currentVoiceRoom.name }}
+              </div>
             </div>
-            <div class="device-controll-wrapper">
+            <div
+              class="device-controll-wrapper"
+              @click="leaveVoiceConnection()"
+            >
               <button
                 class="device-controll-button"
                 aria-label="연결끊기"
@@ -20,20 +25,6 @@
                 <svg class="no-connect"></svg>
               </button>
             </div>
-          </div>
-          <div class="media-action-button">
-            <button aria-label="영상" type="button" class="camera-share-button">
-              <div class="primary-text-content">
-                <svg class="video-camera"></svg>
-                영상
-              </div>
-            </button>
-            <button aria-label="화면" type="button" class="camera-share-button">
-              <div class="primary-text-content">
-                <svg class="video-camera"></svg>
-                영상
-              </div>
-            </button>
           </div>
         </div>
       </div>
@@ -50,18 +41,13 @@
               <img class="avatar" :src="userimage" alt=" " />
               <template aria-label="status-invisible">
                 <div class="status-ring">
-                  <div class="status-offline"></div>
+                  <div class="status-online"></div>
                 </div>
               </template>
             </div>
           </div>
         </div>
-        <div
-          class="nametag"
-          aria-label="사용자명을 복사하려면 클릭하세요"
-          role="button"
-          tabindex="0"
-        >
+        <div class="nametag" role="button" tabindex="0">
           <div class="myname-container">
             <div class="myname">{{ nickname }}</div>
           </div>
@@ -73,8 +59,10 @@
             aria-label="마이크"
             role="switch"
             type="button"
+            @click="toggleMic"
           >
-            <svg class="mute"></svg>
+            <svg v-if="mute" class="mute-on"></svg>
+            <svg v-else class="mute"></svg>
           </button>
         </div>
         <div class="mydevice-controller">
@@ -83,8 +71,10 @@
             aria-label="헤드셋"
             role="switch"
             type="button"
+            @click="toggleHeadPhone"
           >
-            <svg class="deafen"></svg>
+            <svg v-if="deafen" class="deafen-on"></svg>
+            <svg v-else class="deafen"></svg>
           </button>
         </div>
         <div class="mydevice-controller">
@@ -104,16 +94,85 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 export default {
   methods: {
+    ...mapMutations("voice", [
+      "setMute",
+      "setDeafen",
+      "setVideo",
+      "setCurrentVoiceRoom",
+    ]),
     ...mapActions("user", ["FETCH_USERINFO"]),
+    ...mapActions("voice", ["sendMessage", "leaveRoom"]),
     openSettings() {
       this.$router.push("/settings");
     },
+    leaveVoiceConnection() {
+      this.sendMessage({ id: "leaveRoom" });
+      this.leaveRoom();
+      this.setCurrentVoiceRoom(null);
+      if (this.currentChannelType != "TEXT") {
+        //첫번째 채널 혹은 welcomepage로 이동.
+        const categories = this.communityInfo.categories;
+        for (var category in categories) {
+          if (categories[category].channels != null) {
+            for (var channels in categories[category].channels) {
+              if (categories[category].channels[channels].type === "TEXT") {
+                const firstchannel = categories[category].channels[channels].id;
+                this.$router.push(
+                  "/channels/" +
+                    this.$route.params.serverid +
+                    "/" +
+                    firstchannel
+                );
+                return;
+              }
+            }
+          }
+        }
+        this.$router.push("/channels/" + this.$route.params.serverid);
+      }
+    },
+    toggleMic() {
+      //음성 연결에 참여했을 경우, 내 mic를 조절한다.
+      //음성 연결에 참여하지 않았을 경우, mic상태만 변경한다.
+      if (this.wsOpen) {
+        this.myParticipantObject.rtcPeer.audioEnabled = this.mute;
+      }
+      this.setMute();
+    },
+    toggleHeadPhone() {
+      //음성 연결에 참여했을 경우, 다른 참가자들의 비디오를 음소거한다. 혹은 음소거를 해제한다.
+      //음성 연결에 참여하지 않았을 경우, 상태만 변경한다.
+      if (this.wsOpen) {
+        Object.keys(this.participants).forEach((key) => {
+          let videoElement = this.participants[key].getVideoElement();
+          if (key != this.getUserId) {
+            videoElement.muted = !this.deafen;
+          }
+        });
+      }
+
+      this.setDeafen();
+    },
   },
   computed: {
+    ...mapGetters("user", ["getUserId"]),
     ...mapState("user", ["code", "nickname", "userimage"]),
+    ...mapState("community", ["currentChannelType", "communityInfo"]),
+    ...mapState("voice", [
+      "wsOpen",
+      "mute",
+      "deafen",
+      //"video",
+      "myName",
+      "participants",
+      "currentVoiceRoom",
+    ]),
+    myParticipantObject() {
+      return this.participants[this.myName];
+    },
   },
   async created() {
     await this.FETCH_USERINFO();
@@ -194,6 +253,9 @@ export default {
   align-items: center;
   position: relative;
   background-color: #58f287;
+}
+.camera-share-off {
+  background-color: #2f3136;
 }
 .my-section {
   -webkit-box-flex: 0;
@@ -286,21 +348,28 @@ export default {
   width: 12px;
   height: 17px;
 }
+.mute-on {
+  display: flex;
+  background-image: url("../../assets/mute-on.svg");
+  width: 20px;
+  height: 20px;
+}
 .deafen {
   display: flex;
   background-image: url("../../assets/deafen.svg");
   width: 16px;
   height: 16px;
 }
+.deafen-on {
+  display: flex;
+  background-image: url("../../assets/deafen_on.svg");
+  width: 20px;
+  height: 20px;
+}
 .settings {
   display: flex;
   background-image: url("../../assets/settings.svg");
   width: 16px;
   height: 16px;
-}
-.video-camera {
-  background-image: url("../../assets/video-camera.svg");
-  width: 20px;
-  height: 20px;
 }
 </style>

@@ -17,6 +17,7 @@ public class RoomDetailResponse {
     private int count;
     private List<RoomMemberResponse> members;
     private String name;
+    private String icon;
 
     public static RoomDetailResponse fromEntity(Room room) {
         RoomDetailResponse response = new RoomDetailResponse();
@@ -26,6 +27,8 @@ public class RoomDetailResponse {
                 room.getMembers().stream()
                         .filter(rm -> rm.getStatus().equals(CommonStatus.NORMAL))
                         .collect(Collectors.toList()).size());
+        response.setName(room.getName());
+        response.setIcon(room.getIconImage());
         return response;
     }
 }

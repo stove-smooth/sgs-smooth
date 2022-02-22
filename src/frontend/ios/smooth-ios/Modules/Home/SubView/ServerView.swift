@@ -35,10 +35,17 @@ class ServerView: BaseView, UIScrollViewDelegate {
                     guard let cell = tableView.dequeueReusableCell(withIdentifier: ServerButtonCell.identifier, for: indexPath) as? ServerButtonCell else { return UITableViewCell() }
                     cell.bind(type: .home)
                     return cell
+                    
+                case .direct(let server):
+                    guard let cell = tableView.dequeueReusableCell(withIdentifier: ServerCell.identifier, for: indexPath) as? ServerCell else { return UITableViewCell() }
+                    cell.bind(server: server)
+                    return cell
+                    
                 case .normal(let server):
                     guard let cell = tableView.dequeueReusableCell(withIdentifier: ServerCell.identifier, for: indexPath) as? ServerCell else { return UITableViewCell() }
                     cell.bind(server: server)
                     return cell
+                    
                 case .add:
                     guard let cell = tableView.dequeueReusableCell(withIdentifier: ServerButtonCell.identifier, for: indexPath) as? ServerButtonCell else { return UITableViewCell() }
                     cell.bind(type: .add)
@@ -59,24 +66,23 @@ class ServerView: BaseView, UIScrollViewDelegate {
         }
     }
     
-    func bind(serverList: [Server]) {
+    func bind(communityList: Community) {
         self.disposeBag = DisposeBag()
         tableView.rx.setDelegate(self).disposed(by: disposeBag)
         
-        let cellSection = serverList.map { ServerCellType.normal($0) }
+        
+        let serverCellSection = communityList.communities.map { ServerCellType.normal($0) }
+        let directCellSection = communityList.rooms.map { ServerCellType.direct($0) }
         
         let sections: [ServerSection] = [
-            ServerSection(header: "direct", items: [ServerCellType.home]),
-            ServerSection(header: "community", items: cellSection),
+            ServerSection(header: "home", items: [ServerCellType.home]),
+            ServerSection(header: "direct", items: directCellSection),
+            ServerSection(header: "community", items: serverCellSection),
             ServerSection(header: "add", items: [ServerCellType.add])
         ]
-       
+        
         Observable.just(sections)
             .bind(to: tableView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
-        
-        /*1번째 서버가 디폴트로 선택하기*/
-        let indexPath = IndexPath(row: 0, section: 0)
-        tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
     }
 }

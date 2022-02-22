@@ -61,7 +61,7 @@
                 >
                   <div class="contents">로그인</div>
                 </button>
-                <p>{{ logMessage }}</p>
+                <p class="red-color">{{ logMessage }}</p>
                 <div class="need-account-button">
                   <span class="need-account"> 계정이 필요한가요? </span>
                   <button class="small-register-link">
@@ -80,7 +80,8 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { getToken } from "@/utils/firebase";
+import { mapActions, mapMutations, mapState } from "vuex";
 import { validateEmail } from "../utils/validation.js";
 import { joinCommunity } from "../api/index.js";
 export default {
@@ -102,6 +103,7 @@ export default {
     },
   },
   computed: {
+    ...mapState("utils", ["webPushToken"]),
     ispwdValid() {
       if (this.pwd.length >= 8 && this.pwd.length <= 15) {
         return true;
@@ -115,15 +117,21 @@ export default {
   },
   methods: {
     ...mapActions("user", ["LOGIN"]),
+    ...mapMutations("utils", ["setWebPushToken"]),
     async submitForm() {
       try {
+        let fcmToken = await getToken();
+        console.log("fcmtoken", fcmToken);
         const userData = {
           email: this.id,
           password: this.pwd,
+          type: "web",
+          deviceToken: fcmToken,
         };
         await this.LOGIN(userData);
+        //만약 초대링크로 들어온 경우면, community로 이동시켜줌.
         if (this.path != "" && this.communityId != "") {
-          console.log(this.path, this.communityId);
+          //커뮤니티 초대링크라면 커뮤니티로 이동시킨다.
           if (this.path == "c") {
             const communityHashCode = {
               code: this.communityId,
@@ -135,7 +143,6 @@ export default {
           this.$router.push("/channels/@me");
         }
       } catch (err) {
-        console.log("로그인 실패에러", err.response);
         this.logMessage = "로그인에 실패하셨습니다.";
       }
     },

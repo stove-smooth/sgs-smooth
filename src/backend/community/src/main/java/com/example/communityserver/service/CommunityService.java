@@ -1,5 +1,6 @@
 package com.example.communityserver.service;
 
+import com.example.communityserver.client.ChatClient;
 import com.example.communityserver.client.UserClient;
 import com.example.communityserver.domain.*;
 import com.example.communityserver.domain.type.CommonStatus;
@@ -12,9 +13,11 @@ import com.example.communityserver.exception.CustomException;
 import com.example.communityserver.repository.CommunityInvitationRepository;
 import com.example.communityserver.repository.CommunityMemberRepository;
 import com.example.communityserver.repository.CommunityRepository;
+import com.example.communityserver.repository.RoomMemberRepository;
 import com.example.communityserver.util.AmazonS3Connector;
 import com.example.communityserver.util.Base62;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +32,7 @@ import static com.example.communityserver.dto.response.MemberResponse.fromEntity
 import static com.example.communityserver.exception.CustomExceptionStatus.*;
 import static com.example.communityserver.service.ChannelService.CHANNEL_DEFAULT_NAME;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -36,16 +40,20 @@ public class CommunityService {
 
     @Value("${smooth.url}")
     private String HOST_ADDRESS;
-    private String COMMUNITY_INVITATION_PREFIX = "/c/";
+    private static final String COMMUNITY_INVITATION_PREFIX = "/c/";
+    private static final String COMMUNITY = "community/";
+    private static final String DIRECT = "direct/";
 
     private final CommunityRepository communityRepository;
     private final CommunityMemberRepository communityMemberRepository;
     private final CommunityInvitationRepository communityInvitationRepository;
+    private final RoomMemberRepository roomMemberRepository;
 
     private final AmazonS3Connector amazonS3Connector;
     private final Base62 base62;
 
     private final UserClient userClient;
+    private final ChatClient chatClient;
 
     @Transactional
     public CommunityResponse createCommunity(
@@ -57,7 +65,6 @@ public class CommunityService {
         if (!Objects.isNull(request.getIcon()))
             iconImage = amazonS3Connector.uploadImage(userId, request.getIcon());
 
-
         // 기본 생성되는 카테고리
         Category voiceCategory = makeDefaultCategory(ChannelType.VOICE, null);
         Category textCategory = makeDefaultCategory(ChannelType.TEXT, voiceCategory);
@@ -66,8 +73,8 @@ public class CommunityService {
                 request.getName(), iconImage, request.isPublic(), textCategory, voiceCategory);
 
         // 생성한 유저 정보 불러오기
-        // Todo auth 터졌을 때 예외 처리
-        // Todo feign config로 처리하기 controller, servive, userclient
+        // auth 터졌을 때 예외 처리
+        // feign config로 처리하기 controller, servive, userclient
         UserInfoFeignResponse userInfoFeignResponse = userClient.getUserInfo(token);
         String nickname = userInfoFeignResponse.getResult().getName();
         String profileImage = userInfoFeignResponse.getResult().getProfileImage();
@@ -149,7 +156,7 @@ public class CommunityService {
 
         // 이미 생성한 초대장 있는지 확인
         CommunityInvitation communityInvitation = community.getInvitations().stream()
-                .filter(i -> i.isActivate())
+                .filter(CommunityInvitation::isActivate)
                 .filter(invitation -> invitation.getUserId().equals(userId))
                 .findAny().orElse(null);
 
@@ -176,15 +183,15 @@ public class CommunityService {
 
         // 초대장을 생성한 멤버들의 아이디 조회
         List<Long> ids = community.getInvitations().stream()
-                .filter(i -> i.isActivate())
-                .map(invitation -> invitation.getUserId())
+                .filter(CommunityInvitation::isActivate)
+                .map(CommunityInvitation::getUserId)
                 .collect(Collectors.toList());
         
         // 아이디로 유저 정보 조회
         HashMap<Long, UserResponse> userInfoMap = getUserMap(ids, token);
 
         List<InvitationResponse> invitations = community.getInvitations().stream()
-                .filter(i -> i.isActivate())
+                .filter(CommunityInvitation::isActivate)
                 .map(invitation -> new InvitationResponse(invitation, userInfoMap.get(invitation.getUserId())))
                 .collect(Collectors.toList());
 
@@ -195,7 +202,7 @@ public class CommunityService {
         Set<Long> set = new HashSet<>(ids);
         ids = new ArrayList<>(set);
 
-        // Todo auth 터졌을 때 예외 처리
+        // auth 터졌을 때 예외 처리
         UserInfoListFeignResponse response = userClient.getUserInfoList(token, ids);
         return response.getResult();
     }
@@ -204,7 +211,7 @@ public class CommunityService {
     public void deleteInvitation(Long userId, Long invitationId) {
 
         CommunityInvitation invitation = communityInvitationRepository.findById(invitationId)
-                .filter(i -> i.isActivate())
+                .filter(CommunityInvitation::isActivate)
                 .orElseThrow(() -> new CustomException(NON_VALID_INVITATION));
 
         isOwner(invitation.getCommunity(), userId);
@@ -239,9 +246,10 @@ public class CommunityService {
     @Transactional
     public CommunityResponse join(Long userId, JoinRequest request, String token) {
 
-        CommunityInvitation invitation = communityInvitationRepository.findByCode(request.getCode())
-                .filter(i -> i.isActivate())
-                .orElseThrow(() -> new CustomException(NON_VALID_INVITATION));
+        CommunityInvitation invitation = communityInvitationRepository.findByCode(request.getCode()).stream()
+                .filter(CommunityInvitation::isActivate)
+                .filter(i -> i.getCode().equals(request.getCode()))
+                .findAny().orElseThrow(() -> new CustomException(NON_VALID_INVITATION));
 
         Community community = invitation.getCommunity();
 
@@ -255,8 +263,8 @@ public class CommunityService {
         CommunityMember firstNode = getFirstNode(userId);
         
         // 유저 정보 조회
-        // Todo auth 터졌을 때 예외 처리
-        // Todo feign config로 처리하기 controller, servive, userclient
+        // auth 터졌을 때 예외 처리
+        // feign config로 처리하기 controller, servive, userclient
         UserInfoFeignResponse userInfoFeignResponse = userClient.getUserInfo(token);
         String nickname = userInfoFeignResponse.getResult().getName();
         String profileImage = userInfoFeignResponse.getResult().getProfileImage();
@@ -301,7 +309,7 @@ public class CommunityService {
             }
             otherMember.setRole(CommunityRole.OWNER);
         } else {
-            if (userId != memberId)
+            if (!userId.equals(memberId))
                 throw new CustomException(NON_AUTHORIZATION);
         }
 
@@ -315,7 +323,7 @@ public class CommunityService {
 
     public void suspendMember(Long userId, Long communityId, Long memberId) {
 
-        if (userId == memberId)
+        if (userId.equals(memberId))
             throw new CustomException(CANT_SUSPEND_YOURSELF);
 
         Community community = communityRepository.findById(communityId)
@@ -342,28 +350,90 @@ public class CommunityService {
         return CommunityDetailResponse.fromEntity(community);
     }
 
-    public CommunityListResponse getCommunityList(Long userId) {
+    public MainResponse getCommunityList(Long userId, String token) {
         CommunityMember firstNode = getFirstNode(userId);
 
+        // 소속 커뮤니티 조회
         List<Community> communities = new ArrayList<>();
-        if (Objects.isNull(firstNode))
-            return new CommunityListResponse(communities.stream()
-                            .map(CommunityResponse::fromEntity)
-                            .collect(Collectors.toList()));
-
-        communities.add(firstNode.getCommunity());
-        CommunityMember nextNode = firstNode.getNextNode();
-        while (!Objects.isNull(nextNode)) {
-            communities.add(nextNode.getCommunity());
-            nextNode = nextNode.getNextNode();
+        List<CommunityResponse> communityResponses;
+        if (Objects.isNull(firstNode)) {
+            communityResponses = communities.stream()
+                    .map(CommunityResponse::fromEntity)
+                    .collect(Collectors.toList());
+        } else {
+            communities.add(firstNode.getCommunity());
+            CommunityMember nextNode = firstNode.getNextNode();
+            while (!Objects.isNull(nextNode)) {
+                communities.add(nextNode.getCommunity());
+                nextNode = nextNode.getNextNode();
+            }
+            communityResponses = communities.stream()
+                    .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
+                    .map(CommunityResponse::fromEntity)
+                    .collect(Collectors.toList());
         }
 
-        List<CommunityResponse> responses = communities.stream()
-                .filter(c -> c.getStatus().equals(CommonStatus.NORMAL))
-                .map(CommunityResponse::fromEntity)
+        List<Room> rooms = roomMemberRepository.findByUserId(userId).stream()
+                .filter(rm -> rm.getStatus().equals(CommonStatus.NORMAL))
+                .map(RoomMember::getRoom)
                 .collect(Collectors.toList());
 
-        return new CommunityListResponse(responses);
+        // auth service에 요청보낼 user id 리스트
+        List<Long> ids = new ArrayList<>();
+        rooms.forEach(room -> {
+            // 1:1 메세지의 경우 상대방 user id 추출 후 리스트에 추가
+            if (!room.getIsGroup()) {
+                Long otherUserId = getOtherAccountIdInRoom(room, userId);
+                ids.add(otherUserId);
+            }
+        });
+        // 유저 정보 요청
+        HashMap<Long, UserResponse> userMap = getUserMap(ids, token);
+
+        List<Long> roomIds = rooms.stream().map(Room::getId).collect(Collectors.toList());
+        List<UnreceivedMessageRoomResponse> roomResponses = new ArrayList<>();
+
+        try {
+            List<MessageCountResponse> sortedRoomsWithCount = chatClient.getMyMessages(new MessageCountRequest(userId, roomIds)).stream()
+                    .filter(e -> e.getCount() > 0)
+                    .collect(Collectors.toList());
+
+            // 최신 메세지 순으로 DTO 생성
+            HashMap<Long, Room> roomHashMap = new HashMap<>();
+            for (Room room: rooms) {
+                roomHashMap.put(room.getId(), room);
+            }
+
+            for (MessageCountResponse roomWithCount: sortedRoomsWithCount) {
+                Room r = roomHashMap.get(roomWithCount.getRoomId());
+                int count = roomWithCount.getCount();
+                UnreceivedMessageRoomResponse unreceivedMessageRoomResponse = UnreceivedMessageRoomResponse.fromEntity(r, count);
+
+                if (!r.getIsGroup()) {
+                    Long otherUserId = r.getMembers().stream()
+                            .filter(rm -> !rm.getUserId().equals(userId))
+                            .map(RoomMember::getUserId)
+                            .findAny().orElse(null);
+                    if (!Objects.isNull(otherUserId)) {
+                        UserResponse otherUser = userMap.get(otherUserId);
+                        unreceivedMessageRoomResponse.setIcon(otherUser.getImage());
+                    }
+                }
+                roomResponses.add(unreceivedMessageRoomResponse);
+            }
+        } catch (Exception e) {
+            log.error("CHAT SERVER ERROR");
+            e.printStackTrace();
+        }
+
+        return new MainResponse(roomResponses, communityResponses);
+    }
+
+    private Long getOtherAccountIdInRoom(Room room, Long userId) {
+        return room.getMembers().stream()
+                .filter(rm -> !rm.getUserId().equals(userId))
+                .findAny().orElseThrow(() -> new CustomException(EMPTY_USER_IN_ROOM))
+                .getUserId();
     }
 
     public CommunityMember getFirstNode(Long userId) {
@@ -424,5 +494,23 @@ public class CommunityService {
                 .collect(Collectors.toList());
 
         return new MemberListFeignResponse(ids);
+    }
+
+    public List<String> getIncludeRoomList(Long userId) {
+        List<String> communities = communityMemberRepository.findByUserId(userId).stream()
+                .filter(cm -> cm.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .map(CommunityMember::getCommunity)
+                .map(c -> COMMUNITY + c.getId())
+                .collect(Collectors.toList());
+        List<String> rooms = roomMemberRepository.findByUserId(userId).stream()
+                .filter(rm -> rm.getStatus().equals(CommonStatus.NORMAL))
+                .map(RoomMember::getRoom)
+                .map(r -> DIRECT + r.getId())
+                .collect(Collectors.toList());
+
+        List<String> list = new ArrayList<>();
+        list.addAll(communities);
+        list.addAll(rooms);
+        return list;
     }
 }

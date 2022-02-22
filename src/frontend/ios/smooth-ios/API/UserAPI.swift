@@ -9,11 +9,17 @@ import Foundation
 import Moya
 
 enum UserTarget {
-    case signIn(param: SignInRequest)
-    case signUp(param: SignUpRequest)
-    case sendMail(param: SendMailRequest)
-    case verifyCode(param: VerifyCodeRequest)
+    // MARK: POST
+    case signIn(email: String, password: String, deviceToken: String)
+    case signUp(email: String, password: String, name: String)
+    case sendMail(email: String)
+    case updateUserProfile(imageData: Data?)
+    // MARK: GET
+    case verifyCode(key: String)
     case fetchUserInfo
+    case fetchUserInfoById(userId: Int)
+    // MARK: PATCH
+    case updateUserBio(bio: String)
 }
 
 extension UserTarget: BaseAPI, AccessTokenAuthorizable {
@@ -24,12 +30,18 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
             return "/auth-server/sign-in"
         case .signUp:
             return "/auth-server/sign-up"
+        case .updateUserProfile:
+            return "/auth-server/auth/profile"
         case .sendMail:
             return "/auth-server/send-mail"
         case .verifyCode:
             return "/auth-server/check-email"
         case .fetchUserInfo:
             return "/auth-server/auth/info"
+        case .fetchUserInfoById(let userId):
+            return "/auth-server/auth/name/\(userId)"
+        case .updateUserBio:
+            return "/auth-server/auth/profile"
         }
     }
     
@@ -38,23 +50,46 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
         case .signIn: return .post
         case .signUp: return .post
         case .sendMail: return .post
+        case .updateUserProfile: return .post
         case .verifyCode: return .get
         case .fetchUserInfo: return .get
+        case .fetchUserInfoById: return .get
+        case .updateUserBio: return .patch
         }
     }
     
     var task: Task {
         switch self {
-        case .signIn(let user):
-            return .requestCustomJSONEncodable(user, encoder: JSONEncoder())
-        case .signUp(let user):
-            return .requestCustomJSONEncodable(user, encoder: JSONEncoder())
-        case .sendMail(let request):
-            return .requestParameters(parameters: ["email": request.email], encoding: URLEncoding.queryString)
-        case .verifyCode(let request):
-            return .requestParameters(parameters: ["key": request.key], encoding: URLEncoding.queryString)
+        case .signIn(let email, let password, let deviceToken):
+            return .requestParameters(parameters: ["email": email, "password": password, "type": "ios", "deviceToken": deviceToken], encoding: JSONEncoding.default)
+        case .signUp(let email, let password, let name):
+            return .requestParameters(parameters: ["email": email, "password": password, "name": name], encoding: JSONEncoding.default)
+        case .sendMail(let email):
+            return .requestParameters(parameters: ["email": email], encoding: URLEncoding.queryString)
+        case .updateUserProfile(let imgData):
+            var multipartFromData: [MultipartFormData] = []
+                        
+            if (imgData != nil) {
+                multipartFromData.append(
+                    MultipartFormData(
+                        provider: .data(imgData!),
+                        name: "image",
+                        fileName: "new-user-profile-\(Date())",
+                        mimeType: imgData!.mimeType
+                    )
+                )
+            }
+           return .uploadMultipart(multipartFromData)
+        case .verifyCode(let key):
+            return .requestParameters(parameters: ["key": key], encoding: URLEncoding.queryString)
         case .fetchUserInfo:
             return .requestPlain
+        case .fetchUserInfoById:
+            return .requestPlain
+        case .updateUserBio(let bio):
+            return .requestParameters(
+                parameters: ["bio": bio],
+                encoding: JSONEncoding.default)
         }
     }
     
@@ -62,7 +97,13 @@ extension UserTarget: BaseAPI, AccessTokenAuthorizable {
         switch  self {
         case .signIn, .signUp, .sendMail, .verifyCode:
             return nil
+        case .fetchUserInfoById:
+            return .custom("")
         case .fetchUserInfo:
+            return .custom("")
+        case .updateUserProfile:
+            return .custom("")
+        case .updateUserBio:
             return .custom("")
         }
     }

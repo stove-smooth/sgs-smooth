@@ -11,10 +11,12 @@ import RxSwift
 
 protocol ServerServiceProtocol {
     // MARK: GET
-    func fetchServer(_ completion: @escaping ([Server]?, MoyaError?) -> Void)
+    func fetchCommunity(_ completion: @escaping (Community?, MoyaError?) -> Void)
     func getServerById(_ request: Int, _ completion: @escaping (CommunityInfo?, MoyaError?) -> Void)
     func getMemberFromServer(_ serverId: Int, _ completion: @escaping ([Member]?, MoyaError?) -> Void)
     func getInvitByServer(_ serverId: Int, _ completion: @escaping ([Invitation]?, MoyaError?) -> Void)
+    func getDirectRoom(_ completion: @escaping ([Room]?, MoyaError?) -> Void)
+    func getDirectRoomById(_ roomId: Int, _ completion: @escaping (RoomInfo?, MoyaError?) -> Void)
     
     // MARK: POST
     func createServer(_ request: ServerRequest, _ completion: @escaping (Server?, MoyaError?) -> Void)
@@ -35,14 +37,14 @@ protocol ServerServiceProtocol {
 struct ServerService: Networkable, ServerServiceProtocol {
     typealias Target = ServerTarget
     
-    func fetchServer(_ completion: @escaping ([Server]?, MoyaError?) -> Void) {
-        makeProvider().request(.fetchServer) { result in
+    func fetchCommunity(_ completion: @escaping (Community?, MoyaError?) -> Void) {
+        makeProvider().request(.fetchCommunity) { result in
             switch BaseResponse<Community>.processResponse(result) {
             case .success(let response):
                 guard let response = response else {
                     return
                 }
-                return completion(response.communities, nil)
+                return completion(response, nil)
             
             case .failure(let error):
                 return completion(nil, error)
@@ -91,6 +93,38 @@ struct ServerService: Networkable, ServerServiceProtocol {
                 }
                 
                 return completion(response.invitations, nil)
+            
+            case .failure(let error):
+                return completion(nil, error)
+            }
+        }
+    }
+    
+    func getDirectRoom(_ completion: @escaping ([Room]?, MoyaError?) -> Void) {
+        makeProvider().request(.getDirectRoom) { result in
+            switch BaseResponse<RoomList>.processResponse(result) {
+            case .success(let response):
+                guard let response = response else {
+                    return
+                }
+                
+                return completion(response.rooms, nil)
+            
+            case .failure(let error):
+                return completion(nil, error)
+            }
+        }
+    }
+    
+    func getDirectRoomById(_ roomId: Int, _ completion: @escaping (RoomInfo?, MoyaError?) -> Void) {
+        makeProvider().request(.getDirectRoomById(roomId: roomId)) { result in
+            switch BaseResponse<RoomInfo>.processResponse(result) {
+            case .success(let response):
+                guard let response = response else {
+                    return
+                }
+                
+                return completion(response, nil)
             
             case .failure(let error):
                 return completion(nil, error)

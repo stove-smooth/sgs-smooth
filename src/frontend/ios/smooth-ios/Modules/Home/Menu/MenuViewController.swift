@@ -11,21 +11,19 @@ import RxCocoa
 import RxDataSources
 
 protocol MenuViewControllerDelegate: AnyObject {
-    func swipe(channel: Channel?)
+    func swipe(_ chatName: String, destinationStatus: DestinationStatus)
 }
 
 class MenuViewController: BaseViewController, CoordinatorContext {
     weak var coordinator: HomeCoordinator?
+    
     weak var delegate: MenuViewControllerDelegate?
     
     private lazy var menuView = MenuView(frame: self.view.frame)
     private let viewModel: MenuViewModel
     
     init() {
-        self.viewModel = MenuViewModel(
-            serverService: ServerService(),
-            userDefaults: UserDefaultsUtil()
-        )
+        self.viewModel = MenuViewModel(serverService: ServerService(), userDefaults: UserDefaultsUtil())
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -40,19 +38,9 @@ class MenuViewController: BaseViewController, CoordinatorContext {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        self.tabBarController?.tabBar.isHidden = false
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
         
         self.viewModel.input.fetch.onNext(())
-        
-        let selectedServerIndex = self.viewModel.model.selectedServerIndex
-        // 선택한 서버가 있는 경우
-        if selectedServerIndex == nil {
-            self.viewModel.input.tapServer.onNext(IndexPath(row: 0, section: 0))
-        } else {
-            self.viewModel.input.tapServer.onNext(IndexPath(row: 0, section: selectedServerIndex!))
-        }
-        
     }
     
     override func viewDidLoad() {
@@ -72,20 +60,14 @@ class MenuViewController: BaseViewController, CoordinatorContext {
     
     override func bindViewModel() {
         // MARK: input
-        self.menuView.serverView.tableView.rx.itemSelected
-            .map { $0 }
-            .bind(to: self.viewModel.input.tapServer)
-            .disposed(by: disposeBag)
-        
-        self.menuView.channelView.serverInfoButton
-            .rx.tap
+        self.menuView.channelView.serverInfoButton.rx.tap
             .asDriver()
             .drive(onNext: {
-                guard let index = self.viewModel.model.selectedServerIndex else { return }
+                let indexPath = self.viewModel.model.selectedServerIndex
                 
                 self.showServerInfoModal(
-                    server: self.viewModel.model.servers![index],
-                    member: self.viewModel.model.me!
+                    server: self.viewModel.model.servers[indexPath.section-1][indexPath.row],
+                    member: self.viewModel.model.user!
                 )
             })
             .disposed(by: disposeBag)
@@ -98,41 +80,94 @@ class MenuViewController: BaseViewController, CoordinatorContext {
             .disposed(by: disposeBag)
         
         Observable.zip(
+            self.menuView.directView.tableView.rx.itemSelected,
+            self.menuView.directView.tableView.rx.modelSelected(Room.self)
+        ).subscribe(onNext: { [weak self] (indexPath, room) in
+            self?.menuView.directView.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+            
+            self?.delegate?.swipe(room.name,
+                                  destinationStatus: .direct(room.id))
+        })
+            .disposed(by: disposeBag)
+        
+        Observable.zip(
+            self.menuView.serverView.tableView.rx.itemSelected,
+            self.menuView.serverView.tableView.rx.modelSelected(ServerCellType.self)
+        ).subscribe(onNext: { [weak self] (indexPath, cellType) in
+            
+            self?.menuView.serverView.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+            self?.viewModel.input.tapServer.onNext((indexPath, cellType))
+        }).disposed(by: disposeBag)
+        
+        Observable.zip(
             self.menuView.channelView.tableView.rx.itemSelected,
             self.menuView.channelView.tableView.rx.modelSelected(Channel.self)
-        ).bind{ [weak self] (indexPath, channel) in
-            self?.menuView.channelView.tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
-            print("selected \(channel)")
+        ).bind{ (indexPath, channel) in
+            self.viewModel.output.selectedChannel.accept(indexPath)
             
             switch channel.type {
-            case .text :
-                self?.delegate?.swipe(channel: channel)
+            case .text:
+                let serverId = self.viewModel.model.servers[self.viewModel.model.selectedServerIndex.section-1][self.viewModel.model.selectedServerIndex.row].id
+                
+                self.delegate?.swipe(channel.name, destinationStatus:  .community((serverId, channel.id, false)))
             case .voice:
-                #warning("웹알티씨 연결하기")
+                // webRTC webView
+                let serverId = self.viewModel.model.servers[self.viewModel.model.selectedServerIndex.section-1][self.viewModel.model.selectedServerIndex.row].id
+                self.delegate?.swipe(
+                    channel.name,
+                    destinationStatus: .community((serverId, channel.id, true))
+                )
+                break
             }
         }.disposed(by: disposeBag)
         
         // MARK: output
-        self.viewModel.output.servers
-            .asDriver(onErrorJustReturn: [])
-            .drive(self.menuView.rx.server)
+        self.viewModel.output.community
+            .asDriver(onErrorJustReturn: Community.init(rooms: [], communities: []))
+            .drive(self.menuView.rx.community)
             .disposed(by: disposeBag)
         
-        self.viewModel.output.communityInfo
-            .asDriver(onErrorJustReturn: CommunityInfo())
-            .drive(self.menuView.rx.communityInfo)
+        Observable.combineLatest(self.viewModel.output.communityInfo, self.viewModel.output.selectedChannel)
+            .observe(on: MainScheduler.instance)
+            .bind(to: self.menuView.rx.communityInfo)
             .disposed(by: disposeBag)
         
-        self.viewModel.output.directs
-            .asDriver(onErrorJustReturn: [])
-            .drive(self.menuView.rx.direct)
+        self.viewModel.output.rooms
+            .asDriver(onErrorJustReturn: nil)
+            .drive(self.menuView.rx.rooms)
             .disposed(by: disposeBag)
         
+        self.viewModel.output.selectedServer
+            .asDriver(onErrorJustReturn: IndexPath(row: 0, section: 0))
+            .drive(onNext: { indexPath in
+                self.menuView.rx.selectedServer.onNext(indexPath)
+                
+                if (indexPath.section == 1) {
+                    let room = self.viewModel.model.servers[0][indexPath.row]
+                    self.delegate?.swipe(room.name, destinationStatus: .direct(room.id))
+                } 
+            })
+            .disposed(by: disposeBag)
+        
+        self.viewModel.output.selectedRoom
+            .asDriver(onErrorJustReturn: nil)
+            .drive(onNext: { roomInfo in
+                guard let roomInfo = roomInfo else { return }
+                self.delegate?.swipe(roomInfo.name, destinationStatus: .direct(roomInfo.id))
+            }).disposed(by: disposeBag)
+        
+        self.viewModel.output.selectedChannel
+            .bind(onNext: { indexPath in
+                if (indexPath == nil) {
+                    self.delegate?.swipe("채팅 없음", destinationStatus: .home)
+                }
+            }).disposed(by: disposeBag)
+        
+        // MARK: coordinator
         self.viewModel.output.goToAddServer
             .observe(on: MainScheduler.instance)
             .bind(onNext: self.goToAddServer)
             .disposed(by: disposeBag)
-        
     }
     
     func goToAddServer() {
@@ -151,4 +186,3 @@ extension MenuViewController: UITableViewDelegate {
         header.textLabel?.textColor = .white
     }
 }
-

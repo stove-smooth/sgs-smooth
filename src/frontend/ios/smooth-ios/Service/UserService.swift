@@ -9,34 +9,41 @@ import Foundation
 import Moya
 
 protocol UserServiceProtocol {
-    func signIn(_ request: SignInRequest, _ completion: @escaping (SignInResponse?, Error?) -> Void )
-    func signUp(_ request: SignUpRequest, _ completion: @escaping (SignUpResponse?, Error?) -> Void )
-    func sendMail(_ request: SendMailRequest, _ completion: @escaping (SendMailResponse?, Error?) -> Void)
-    func checkEmail(_ request: VerifyCodeRequest, _ completion: @escaping (VerifyCodeResponse?, Error?) -> Void)
-    func fetchUserInfo(_ completion: @escaping (User?, Error?) -> Void)
+    // MARK: POST
+    func signIn(email: String, password: String, deviceToken: String, _ completion: @escaping (SignIn?, MoyaError?) -> Void)
+    func signUp(email: String, password: String, name: String, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
+    func sendMail(_ email: String, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
+    func updateUserProfile(_ imageData: Data?, _  completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
+    
+    // MARK: GET
+    func checkEmail(_ key: String, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
+    func fetchUserInfo(_ completion: @escaping (User?, MoyaError?) -> Void)
+    func fetchUserInfoById(userId: Int, _ completion: @escaping (UserInfo?, MoyaError?) -> Void)
+    
+    // MARK: PATCH
+    func updateUserBio(_ bio: String, completion: @escaping (DefaultResponse?, MoyaError?) -> Void)
 }
 
 struct UserService: Networkable, UserServiceProtocol {
     typealias Target = UserTarget
     
-    func signIn(_ request: SignInRequest, _ completion: @escaping (SignInResponse?, Error?) -> Void ) {
-        makeProvider().request(.signIn(param: request)) { result in
-            switch BaseResponse<SignInResponse>.processJSONResponse(result) {
+    func signIn(email: String, password: String, deviceToken: String, _ completion: @escaping (SignIn?, MoyaError?) -> Void) {
+        makeProvider().request(.signIn(email: email, password: password, deviceToken: deviceToken)) { result in
+            switch BaseResponse<SignIn>.processResponse(result) {
             case .success(let response):
                 guard let response = response else {
                     return
                 }
                 return completion(response, nil)
             case .failure(let error):
-                print("🆘 error! \(error)")
                 return completion(nil, error)
             }
         }
     }
     
-    func signUp(_ request: SignUpRequest, _ completion: @escaping (SignUpResponse?, Error?) -> Void ) {
-        makeProvider().request(.signUp(param: request)) { result in
-            switch BaseResponse<SignUpResponse>.processJSONResponse(result) {
+    func signUp(email: String, password: String, name: String, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void) {
+        makeProvider().request(.signUp(email: email, password: password, name: name)) { result in
+            switch BaseResponse<DefaultResponse>.processJSONResponse(result) {
             case .success(let response):
                 return completion(response, nil)
             case .failure(let error):
@@ -46,9 +53,9 @@ struct UserService: Networkable, UserServiceProtocol {
     }
     
     
-    func sendMail(_ request: SendMailRequest, _ completion: @escaping (SendMailResponse?, Error?) -> Void) {
-        makeProvider().request(.sendMail(param: request)) { result in
-            switch BaseResponse<SendMailResponse>.processJSONResponse(result) {
+    func sendMail(_ email: String, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void) {
+        makeProvider().request(.sendMail(email: email)) { result in
+            switch BaseResponse<DefaultResponse>.processJSONResponse(result) {
             case .success(let response):
                 return completion(response, nil)
             case .failure(let error):
@@ -57,9 +64,26 @@ struct UserService: Networkable, UserServiceProtocol {
         }
     }
     
-    func checkEmail(_ request: VerifyCodeRequest, _ completion: @escaping (VerifyCodeResponse?, Error?) -> Void) {
-        makeProvider().request(.verifyCode(param: request)) { result in
-            switch BaseResponse<VerifyCodeResponse>.processJSONResponse(result) {
+    func updateUserProfile(_ imageData: Data?, _  completion: @escaping (DefaultResponse?, MoyaError?) -> Void) {
+        makeProvider().request(.updateUserProfile(imageData: imageData)) {
+            result in
+            switch BaseResponse<DefaultResponse>.processJSONResponse(result) {
+            case .success(let response):
+                guard let response = response else {
+                    return
+                }
+                
+                return completion(response, nil)
+            
+            case .failure(let error):
+                return completion(nil, error)
+            }
+        }
+    }
+    
+    func checkEmail(_ key: String, _ completion: @escaping (DefaultResponse?, MoyaError?) -> Void) {
+        makeProvider().request(.verifyCode(key: key)) { result in
+            switch BaseResponse<DefaultResponse>.processJSONResponse(result) {
             case .success(let response):
                 return completion(response, nil)
             case .failure(let error):
@@ -68,7 +92,7 @@ struct UserService: Networkable, UserServiceProtocol {
         }
     }
     
-    func fetchUserInfo(_ completion: @escaping (User?, Error?) -> Void) {
+    func fetchUserInfo(_ completion: @escaping (User?, MoyaError?) -> Void) {
         makeProvider().request(.fetchUserInfo) { result in
             switch BaseResponse<User>.processResponse(result) {
             case .success(let response):
@@ -82,5 +106,38 @@ struct UserService: Networkable, UserServiceProtocol {
             }
         }
     }
+    
+    func fetchUserInfoById(userId: Int, _ completion: @escaping (UserInfo?, MoyaError?) -> Void) {
+        makeProvider().request(.fetchUserInfoById(userId: userId)) {
+            result in
+            switch BaseResponse<UserInfo>.processResponse(result) {
+            case .success(let response):
+                guard let response = response else {
+                    return
+                }
+                
+                return completion(response, nil)
+            
+            case .failure(let error):
+                return completion(nil, error)
+            }
+        }
+    }
+    
+    func updateUserBio(_ bio: String, completion: @escaping (DefaultResponse?, MoyaError?) -> Void) {
+        makeProvider().request(.updateUserBio(bio: bio)) {
+            result in
+            switch BaseResponse<DefaultResponse>.processJSONResponse(result) {
+            case .success(let response):
+                guard let response = response else {
+                    return
+                }
+                
+                return completion(response, nil)
+            
+            case .failure(let error):
+                return completion(nil, error)
+            }
+        }
+    }
 }
-

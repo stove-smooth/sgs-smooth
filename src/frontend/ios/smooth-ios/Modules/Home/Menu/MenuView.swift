@@ -26,45 +26,67 @@ class MenuView: BaseView {
         serverView.snp.makeConstraints {
             $0.width.equalTo(80)
             $0.left.equalToSuperview()
-            $0.top.bottom.equalTo(safeAreaLayoutGuide)
+            $0.top.equalTo(safeAreaLayoutGuide)
+            $0.bottom.equalToSuperview().offset(-80)
         }
         
         channelView.snp.makeConstraints {
             $0.left.equalTo(serverView.snp.right)
             $0.trailing.equalToSuperview().offset(-60)
-            $0.top.bottom.equalTo(safeAreaLayoutGuide)
+            $0.top.equalTo(safeAreaLayoutGuide)
+            $0.bottom.equalToSuperview().offset(-80)
         }
         
         directView.snp.makeConstraints {
             $0.left.equalTo(serverView.snp.right)
             $0.trailing.equalToSuperview().offset(-60)
-            $0.top.bottom.equalTo(safeAreaLayoutGuide)
+            $0.top.equalTo(safeAreaLayoutGuide)
+            $0.bottom.equalToSuperview().offset(-80)
         }
     }
 }
 
 
 extension Reactive where Base: MenuView {
-    var server: Binder<[Server]> {
-        return Binder(self.base) { view, serverList in
-            view.serverView.bind(serverList: serverList)
+    var community: Binder<Community> {
+        return Binder(self.base) { view, communityList in
+            view.serverView.bind(communityList: communityList)
         }
     }
     
-    var communityInfo: Binder<CommunityInfo> {
+    var selectedServer: Binder<IndexPath> {
+        return Binder(self.base) { view, selectedServer in
+            view.serverView.tableView.selectRow(at: IndexPath(row: selectedServer.row, section: selectedServer.section), animated: false, scrollPosition: .none)
+        }
+    }
+    
+    var communityInfo: Binder<(CommunityInfo, IndexPath?)> {
         return Binder(self.base) { view, communityInfo in
             view.channelView.isHidden = false
             view.directView.isHidden = true
-            view.channelView.bind(communityInfo: communityInfo)
+            view.channelView.bind(communityInfo: communityInfo.0, selectedChannel: communityInfo.1)
         }
     }
     
-    var direct: Binder<[String]> {
+    var selectedChannel: Binder<IndexPath?> {
+        return Binder(self.base) { view, selectedChannel in
+            view.channelView.tableView.selectRow(at: selectedChannel, animated: true, scrollPosition: .none)
+        }
+    }
+    
+    var rooms: Binder<[Room]?> {
         return Binder(self.base) { view, directList in
             view.channelView.isHidden = true
             view.directView.isHidden = false
             
-            view.directView.bind(directList: directList)
+            if (directList != nil) {
+                view.directView.showLoading(isShow: false)
+                view.directView.showEmpty(isShow: directList!.isEmpty)
+                view.directView.bind(directList: directList!)
+            } else {
+                view.directView.showLoading(isShow: true)
+            }
+            
         }
     }
 }

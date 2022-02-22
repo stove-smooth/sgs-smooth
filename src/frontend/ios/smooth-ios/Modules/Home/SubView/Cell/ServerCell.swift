@@ -32,6 +32,19 @@ class ServerCell: BaseTableViewCell {
         $0.textColor = .white
     }
     
+    let alertBadge = UIView().then {
+        $0.backgroundColor = .red
+        $0.layer.borderColor = UIColor.serverListDarkGray?.cgColor
+        $0.layer.borderWidth = 3
+        $0.layer.cornerRadius = 25/2
+        $0.layer.zPosition = 1
+    }
+    
+    let count = UILabel().then {
+        $0.textColor = .white
+        $0.font = UIFont.systemFont(ofSize: 12, weight: .bold)
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         
@@ -46,10 +59,12 @@ class ServerCell: BaseTableViewCell {
         self.selectionStyle = .none
         
         [
-            serverImg, selectedView
+            serverImg, selectedView, alertBadge
         ].forEach {self.contentView.addSubview($0)}
         
         serverImg.addSubview(textView)
+        
+        alertBadge.addSubview(count)
     }
     
     override func bindConstraints() {
@@ -68,10 +83,20 @@ class ServerCell: BaseTableViewCell {
             $0.centerX.centerY.equalToSuperview()
             $0.edges.equalToSuperview()
         }
+        
+        alertBadge.snp.makeConstraints {
+            $0.bottom.equalToSuperview().offset(-10)
+            $0.right.equalToSuperview().offset(-10)
+            $0.width.height.equalTo(25)
+        }
+        
+        count.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
+//        super.setSelected(selected, animated: animated)
         
         if selected {
             // 원형 -> 둥근 사각형으로
@@ -121,5 +146,15 @@ class ServerCell: BaseTableViewCell {
         }
 
         contentView.addSubview(serverImg)
+        
+        if (server.count != nil) {
+            count.text = "\(server.count!)"
+            count.isHidden = false
+            alertBadge.isHidden = false
+            serverImg.bringSubviewToFront(alertBadge)
+        } else {
+            count.isHidden = true
+            alertBadge.isHidden = true
+        }
     }
 }

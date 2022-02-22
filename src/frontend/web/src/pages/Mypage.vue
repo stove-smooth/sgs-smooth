@@ -2,19 +2,19 @@
   <div class="layer">
     <div class="content-mypage">
       <div class="sidebar">
-        <friends-side-bar></friends-side-bar>
-        <user-section></user-section>
+        <friends-side-bar />
+        <user-section />
       </div>
       <div class="friends-state-container">
-        <friends-state-menu-bar></friends-state-menu-bar>
+        <friends-state-menu-bar />
         <div class="friends-state-container2">
           <template v-if="friendsStateMenu === 'addfriends'">
-            <friends-new-add></friends-new-add>
+            <friends-new-add />
           </template>
           <template v-else>
-            <friends-state-list></friends-state-list>
+            <friends-state-list />
           </template>
-          <friends-now-playing-list></friends-now-playing-list>
+          <friends-now-playing-list />
         </div>
       </div>
     </div>
@@ -22,15 +22,14 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from "vuex";
+import { mapGetters, mapState, mapActions } from "vuex";
 
-import FriendsSideBar from "../components/FriendsSideBar.vue";
-import FriendsStateList from "../components/FriendsStateList.vue";
-import FriendsStateMenuBar from "../components/FriendsStateMenuBar.vue";
+import FriendsSideBar from "../components/Friends/FriendsSideBar.vue";
+import FriendsStateList from "../components/Friends/FriendsStateList.vue";
+import FriendsStateMenuBar from "../components/Friends/FriendsStateMenuBar.vue";
 import UserSection from "../components/common/UserSection.vue";
-import FriendsNowPlayingList from "../components/FriendsNowPlayingList.vue";
-import FriendsNewAdd from "../components/FriendsNewAdd.vue";
-
+import FriendsNowPlayingList from "../components/Friends/FriendsNowPlayingList.vue";
+import FriendsNewAdd from "../components/Friends/FriendsNewAdd.vue";
 export default {
   components: {
     FriendsSideBar,
@@ -40,10 +39,29 @@ export default {
     FriendsNowPlayingList,
     FriendsNewAdd,
   },
+  async created() {
+    const msg = {
+      user_id: this.getUserId,
+      channel_id: "home",
+      type: "state",
+    };
+    if (this.stompSocketClient) {
+      this.stompSocketClient.send(
+        "/kafka/join-channel",
+        JSON.stringify(msg),
+        {}
+      );
+    }
+    await this.FETCH_FRIENDSLIST();
+    await this.fetchFriendsStates();
+  },
   computed: {
     ...mapState("friends", ["friendsStateMenu"]),
     ...mapState("utils", ["stompSocketClient", "stompSocketConnected"]),
     ...mapGetters("user", ["getEmail", "getUserId", "getAccessToken"]),
+  },
+  methods: {
+    ...mapActions("friends", ["FETCH_FRIENDSLIST", "fetchFriendsStates"]),
   },
 };
 </script>

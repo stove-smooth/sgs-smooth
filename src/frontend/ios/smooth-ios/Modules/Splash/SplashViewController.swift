@@ -3,7 +3,7 @@ import RxSwift
 
 class SplashViewConroller: BaseViewController {
     
-    weak var coordinator: MainCoordinator?
+    weak var coordinator: SplashCoordinator?
     
     private let splashView = SplashView()
     private let viewModel = SplashViewModel()

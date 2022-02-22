@@ -10,11 +10,17 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 
+extension FriendListViewController: FriendRequestDelegate {
+    func onClose() {
+        self.viewModel.fetchFriend()
+    }
+}
+
 class FriendListViewController: BaseViewController, CoordinatorContext {
     weak var coordinator: FriendCoordinator?
     var navigationViewController: UINavigationController?
     
-    private lazy var friendListView = FriendListView(frame: self.view.frame)
+    private let friendListView = FriendListView()
     private let viewModel: FriendListViewModel
     
     var dataSource: friendDataSource!
@@ -32,8 +38,12 @@ class FriendListViewController: BaseViewController, CoordinatorContext {
         return FriendListViewController()
     }
     
+    override func loadView() {
+        self.view = self.friendListView
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
-        self.navigationViewController?.navigationBar.isHidden = true
+        tabBarController?.tabBar.isHidden = false
         self.viewModel.fetchFriend()
         super.viewWillAppear(animated)
     }
@@ -88,6 +98,29 @@ class FriendListViewController: BaseViewController, CoordinatorContext {
         )
     }
     
+    override func bindEvent() {
+        self.friendListView.tabBarView.homeButton.rx.tap
+            .asDriver()
+            .drive(onNext: {
+                self.coordinator?.goToMain()
+            })
+            .disposed(by: disposeBag)
+        
+        self.friendListView.tabBarView.friendButton.rx.tap
+            .asDriver()
+            .drive(onNext: {
+                self.coordinator?.start()
+            })
+            .disposed(by: disposeBag)
+        
+        self.friendListView.tabBarView.profileButton.rx.tap
+            .asDriver()
+            .drive(onNext: {
+                self.coordinator?.goToProfile()
+            })
+            .disposed(by: disposeBag)
+    }
+    
     override func bindViewModel() {
         viewModel.output.sections
             .bind(to: friendListView.tableView.rx.items(dataSource: self.dataSource!))
@@ -100,7 +133,7 @@ class FriendListViewController: BaseViewController, CoordinatorContext {
                     break
                 case .normal(let friend):
                     print(friend)
-                    self.coordinator?.showFriendInfoModal(friend: friend)
+                    self.coordinator?.showFriendInfoModal(id: friend.userId, state: friend.state)
                 }
             })
             .disposed(by: disposeBag)
@@ -137,12 +170,5 @@ extension FriendListViewController: UITableViewDelegate {
         view.tintColor = .clear
         let header:UITableViewHeaderFooterView = view as! UITableViewHeaderFooterView
         header.textLabel?.textColor = .white
-    }
-}
-
-
-extension FriendListViewController: FriendRequestDelegate {
-    func onClose() {
-        self.viewModel.fetchFriend()
     }
 }
