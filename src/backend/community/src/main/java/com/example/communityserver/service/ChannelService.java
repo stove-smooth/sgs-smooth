@@ -59,6 +59,38 @@ public class ChannelService {
         return response;
     }
 
+    public ChannelDetailResponse getChannelDetailV2(Long userId, Long channelId, String token) {
+        Channel channel = channelRepository.findById(channelId)
+                .filter(c -> c.getStatus().equals(ChannelStatus.NORMAL))
+                .orElseThrow(() -> new CustomException(NON_VALID_CHANNEL));
+
+        Community community = !Objects.isNull(channel.getCategory()) ?
+                channel.getCategory().getCommunity() :
+                channel.getParent().getCategory().getCommunity();
+        isAuthorizedMember(community, userId);
+
+        ChannelDetailResponse response = ChannelDetailResponse.fromEntity(channel);
+
+        List<Long> ids = null;
+        if (channel.isPublic()) {
+            ids = community.getMembers().stream()
+                    .filter(m -> m.getStatus().equals(CommunityMemberStatus.NORMAL))
+                    .map(CommunityMember::getUserId)
+                    .collect(Collectors.toList());
+        } else {
+            ids = channel.getMembers().stream()
+                    .filter(ChannelMember::isStatus)
+                    .map(ChannelMember::getUserId)
+                    .collect(Collectors.toList());
+        }
+        HashMap<Long, UserResponse> userMap = getUserMap(ids, token);
+        HashMap<Long, UserResponse> userMap2 = getUserMap(ids, token);
+
+        response.setMembers(ChannelDetailResponse.fromMemberV2(community, ids, userMap, userMap2));
+
+        return response;
+    }
+
     private HashMap<Long, UserResponse> getUserMap(List<Long> ids, String token) {
         Set<Long> set = new HashSet<>(ids);
         ids = new ArrayList<>(set);

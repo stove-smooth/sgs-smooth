@@ -55,4 +55,12 @@ public class ChannelDetailResponse {
                 .map(member -> MemberResponse.fromEntity(member, userMap.get(member.getUserId())))
                 .collect(Collectors.toList());
     }
+
+    public static List<MemberResponse> fromMemberV2(Community community, List<Long> memberIds, Map<Long, UserResponse> userMap, Map<Long, UserResponse> userMap2) {
+        return community.getMembers().stream()
+                .filter(member -> member.getStatus().equals(CommunityMemberStatus.NORMAL))
+                .filter(member -> memberIds.contains(member.getUserId()))
+                .map(member -> MemberResponse.fromEntityV2(member, userMap.get(member.getUserId()), userMap2.get(member.getUserId()).getState()))
+                .collect(Collectors.toList());
+    }
 }

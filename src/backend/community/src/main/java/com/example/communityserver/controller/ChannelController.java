@@ -39,6 +39,18 @@ public class ChannelController {
         return responseService.getDataResponse(response);
     }
 
+    @GetMapping("/{channelId}/v2")
+    public DataResponse<ChannelDetailResponse> getChannelDetailV2(
+            @RequestHeader(AUTHORIZATION) String token,
+            @RequestHeader(ID) String userId,
+            @PathVariable Long channelId
+    ) {
+        log.info("GET /community-server/channel/{}/v2", channelId);
+        ChannelDetailResponse response =
+                channelService.getChannelDetailV2(Long.parseLong(userId), channelId, token);
+        return responseService.getDataResponse(response);
+    }
+
     /**
      * 채널 생성하기
      */
