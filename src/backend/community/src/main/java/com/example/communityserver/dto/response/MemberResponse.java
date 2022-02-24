@@ -41,4 +41,19 @@ public class MemberResponse {
             memberResponse.setStatus(UserState.OFFLINE);
         return memberResponse;
     }
+
+    public static MemberResponse fromEntityV2(CommunityMember member, UserResponse user, String status) {
+        MemberResponse memberResponse = new MemberResponse();
+        memberResponse.setId(user.getId());
+        memberResponse.setProfileImage(user.getImage());
+        memberResponse.setCommunityName(member.getNickname());
+        memberResponse.setNickname(user.getName());
+        memberResponse.setCode(user.getCode());
+        memberResponse.setRole(member.getRole());
+        if (status.equals("온라인"))
+            memberResponse.setStatus(UserState.ONLINE);
+        else
+            memberResponse.setStatus(UserState.OFFLINE);
+        return memberResponse;
+    }
 }

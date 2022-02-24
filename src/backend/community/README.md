@@ -101,6 +101,12 @@
 
     ![image](https://user-images.githubusercontent.com/59307414/154894548-2e1e5dac-64bc-4599-bef1-ae7cfa1bfe68.png)
 
+- TCP 연결을 하지 않고 매번 요청하는 경우
+![http](https://user-images.githubusercontent.com/59307414/155466810-2d966098-76b3-4464-98a7-565891ce3bde.JPG)
+
+- TCP 연결을 통해 사용자 접속 정보를 보관하는 경우
+![tcp](https://user-images.githubusercontent.com/59307414/155466815-d4ea443c-0434-4f55-a0ae-95f937189e53.JPG)
+
 ---    
 
 ### 시그널링 서버에 연결해야 할 주소 제공
