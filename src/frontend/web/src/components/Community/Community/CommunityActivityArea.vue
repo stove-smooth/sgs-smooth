@@ -5,219 +5,17 @@
       ref="scrollRef"
       @scroll="handleScroll"
     >
-      <VEmojiPicker
-        v-show="this.emojiPopout"
-        class="emoji-picker-popout"
-        labelSearch="Search"
-        lang="pt-BR"
-        @select="onSelectEmoji"
-      />
-      <VEmojiPicker
-        v-show="this.editEmojiPopout"
-        class="reply-emoji-picker-popout"
-        labelSearch="Search"
-        lang="pt-BR"
-        @select="onSelectEditEmoji"
-      />
-      <div class="height-100">
-        <div class="scroller-content">
-          <ol id="server-chat-scroll-bottom" class="scroller-inner">
-            <div v-for="(item, index) in receiveList" :key="item.id">
-              <div
-                class="message-date-divider"
-                v-if="
-                  index == 0 ||
-                  (index > 0 &&
-                    receiveList[index - 1].date != receiveList[index].date)
-                "
-              >
-                <span class="date-content">{{ receiveList[index].date }}</span>
-              </div>
-              <li
-                class="chat-message-wrapper"
-                @mouseover="messageHover(item.id)"
-                @mouseleave="messageHover('')"
-                v-bind:class="{
-                  'selected-message-area':
-                    messageHovered === item.id || messagePlusMenu === item.id,
-                }"
-              >
-                <!--내가 연속적으로 보낸 메시지와 아닌 메시지가 구별됨-->
-                <div
-                  class="primary-chat-message-wrapper"
-                  v-bind:class="{
-                    'others-chat-message-wrapper':
-                      item.isOther || item.parentName != null,
-                    'message-replying':
-                      communityMessageReplyId !== '' &&
-                      communityMessageReplyId.messageInfo.id == item.id,
-                  }"
-                >
-                  <!--메세지답장-->
-                  <div
-                    v-if="item.parentName != null"
-                    class="message-reply-content"
-                  >
-                    <div class="reply-accessories" />
-                    {{ item.parentName }}{{ item.parentContent }}
-                  </div>
-                  <div class="chat-message-content">
-                    <template v-if="item.isOther || item.parentName != null">
-                      <img
-                        :src="item.profileImage"
-                        class="chat-avatar clickable"
-                        alt="image"
-                      />
-                      <h2 class="chat-avatar-header">
-                        <span class="chat-user-name">{{ item.name }}</span>
-                        <span class="chat-time-stamp">{{ item.time }}</span>
-                      </h2>
-                    </template>
-                    <!--메세지 수정의 UI가 구분됨-->
-                    <div v-if="messageEditId === item.id">
-                      <div class="channel-message-edit-area">
-                        <div class="channel-message-input-area">
-                          <textarea
-                            id="input-text-wrapper"
-                            class="channel-message-input-wrapper"
-                            aria-haspopup="listbox"
-                            v-model="item.message"
-                          ></textarea>
-                        </div>
-                        <div class="channel-message-button-wrapper">
-                          <div class="display-flex margin-right-8px">
-                            <button
-                              @click="openEditEmojiPopout(item.id)"
-                              class="emoji-button"
-                              tabindex="0"
-                              aria-label="이모티콘 선택하기"
-                              type="button"
-                            >
-                              <svg
-                                v-if="editEmojiPopout"
-                                class="yellow-emotion"
-                              ></svg>
-                              <svg v-else class="add-emotion"></svg>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="channel-message-edit-tool-area">
-                        댓글 수정
-                        <span
-                          class="highlight-text contents clickable"
-                          @click="cancelModify()"
-                        >
-                          취소
-                        </span>
-                        • 댓글 수정
-                        <span
-                          class="highlight-text contents clickable"
-                          @click="modify(item.id, item.message)"
-                        >
-                          저장
-                        </span>
-                      </div>
-                      <p class="warning" v-show="modifyLogMessage">
-                        {{ modifyLogMessage }}
-                      </p>
-                    </div>
-                    <div v-else class="message-content">
-                      <template
-                        v-if="item.fileType && item.fileType == 'image'"
-                      >
-                        <div v-if="!imageLoading" class="loading-img"></div>
-                        <div v-else v-html="item.thumbnail"></div>
-                      </template>
-                      <template v-else
-                        ><div>{{ item.message }}</div></template
-                      >
-                    </div>
-                    <!--정말 삭제하시겠어요?-->
-                    <div
-                      class="channel-message-edit-tool-area"
-                      v-if="messageReadyToDelete == item.id"
-                    >
-                      정말 삭제하시겠어요?
-                      <span
-                        class="highlight-text contents clickable"
-                        @click="cancelDelete()"
-                      >
-                        취소
-                      </span>
-                      •
-                      <span
-                        class="highlight-text contents clickable red-color"
-                        @click="deleteMessage(item.id)"
-                      >
-                        삭제
-                      </span>
-                    </div>
-                  </div>
-                  <div
-                    class="chat-message-plus-action-container"
-                    v-show="
-                      messageHovered === item.id || messagePlusMenu === item.id
-                    "
-                  >
-                    <div class="actionbar-wrapper2">
-                      <div
-                        v-show="false"
-                        class="chat-action-button"
-                        aria-label="반응 추가하기"
-                        role="button"
-                        tabindex="0"
-                      >
-                        <svg class="add-emotion"></svg>
-                      </div>
-                      <!--내꺼면 수정아니면 답장-->
-                      <div
-                        v-if="item.userId == getUserId"
-                        @click="setMessageEditId(item.id)"
-                        class="chat-action-button"
-                        aria-label="수정하기"
-                        role="button"
-                        tabindex="0"
-                      >
-                        <svg class="edit-pencil"></svg>
-                      </div>
-                      <div
-                        v-else
-                        @click="MessageReply(item)"
-                        class="chat-action-button"
-                        aria-label="답장하기"
-                        role="button"
-                        tabindex="0"
-                      >
-                        <svg class="reply-button"></svg>
-                      </div>
-                      <div
-                        v-show="false"
-                        class="chat-action-button"
-                        aria-label="스레드 만들기"
-                        role="button"
-                        tabindex="0"
-                      >
-                        <svg class="thread-icon"></svg>
-                      </div>
-                      <div
-                        :data-key="item.id"
-                        @click="clickPlusAction($event, item)"
-                        class="chat-action-button"
-                        aria-label="추가 기능"
-                        role="button"
-                        tabindex="0"
-                      >
-                        <svg class="row-plus-action"></svg>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </li>
-            </div>
-          </ol>
-        </div>
-      </div>
+      <message-activity-area 
+        :imageLoading="this.imageLoading"
+        :receiveList="this.receiveList" 
+        :text="this.text" 
+        :emojiPopout="this.emojiPopout" 
+        :editEmojiPopout="this.editEmojiPopout"
+        @update-receive-list="updateReceiveList"
+        @edit-list-with-emoji="editListWithEmoji"
+        @select-text-with-emoji="selectTextWithEmoji"
+        @update-emoji-popout="updateEditEmojiPopout"
+      ></message-activity-area>
     </div>
     <div class="channel-message-input-form">
       <div class="channel-message-area">
@@ -361,30 +159,27 @@
 </template>
 
 <script>
-import { VEmojiPicker } from "v-emoji-picker";
-
+import MessageActivityArea from "../../common/Message/MessageActivityArea.vue"
+import { emojiClose, realMessageInarow, readMessageInarow} from "@/utils/chat";
 import { converToThumbnail, dataUrlToFile } from "../../../utils/common.js";
 import { mapState, mapMutations, mapGetters } from "vuex";
 import { sendImageChatting, readChatMessage } from "../../../api/index";
-import { convertFromStringToDate } from "@/utils/common.js";
 export default {
   components: {
-    VEmojiPicker,
+    MessageActivityArea,
   },
   data() {
     return {
-      messageHovered: "",
       text: "",
       images: [],
       thumbnails: [],
       thumbnailFiles: [],
       receiveList: [],
       emojiPopout: false,
-      editEmojiPopout: "",
+      editEmojiPopout: false,
       page: 0,
       more: false,
       prevScrollHeight: 0,
-      modifyLogMessage: "",
       recentChatted: null,
       messageTyper: "",
       setTimeId: "",
@@ -401,8 +196,6 @@ export default {
     ...mapState("community", [
       "messagePlusMenu",
       "communityMessageReplyId",
-      "messageEditId",
-      "messageReadyToDelete",
       "communityOnlineMemberList",
       "communityOfflineMemberList",
     ]),
@@ -424,46 +217,23 @@ export default {
       "/topic/group/" + this.$route.params.channelid,
       async (res) => {
         /**메세지의 종류: 일반 채팅, 이미지 채팅, 수정, 삭제, 답장, 타이핑 상태  */
-        //한국시간에 맞게 시간 커스텀
+        //한국시간에 맞게 시간 커스텀, 동일인물의 연속된 메세지 처리
         const receivedForm = JSON.parse(res.body);
         if (
           receivedForm.type != "typing" &&
-          receivedForm.type != "delete" &&
-          receivedForm.type != "connect" &&
-          receivedForm.type != "disconnect"
+          receivedForm.type != "delete"
         ) {
-          const translatedTime = convertFromStringToDate(receivedForm.time);
-          receivedForm.date = translatedTime[0];
-          receivedForm.time = translatedTime[1];
-          //연속된 메시지 처리(같은 유저의 메시지인지, 동일시간의 메시지인지 구분)
-          let isOther = true;
-          if (this.receiveList.length > 0) {
-            const timeResult = this.isSameTime(
-              this.receiveList[this.receiveList.length - 1],
-              receivedForm
-            );
-            if (
-              timeResult &&
-              this.receiveList[this.receiveList.length - 1].userId ==
-                receivedForm.userId
-            ) {
-              isOther = false;
-            }
-          }
-          receivedForm.isOther = isOther;
+          realMessageInarow(receivedForm,this.receiveList);
         }
-
         //이미지를 보낼시 이미지 처리
         if (receivedForm.fileType && receivedForm.fileType == "image") {
-          receivedForm.thumbnail = this.urlify(receivedForm.thumbnail);
+          receivedForm.thumbnail = this.transImg(receivedForm.thumbnail);
         }
         //메세지 타입이 충족되는 경우 모두 메시지 리스트에 넣고, 렌더링이 된다면 스크롤을 바닥으로 내림
         if (
           receivedForm.type != "typing" &&
           receivedForm.type != "modify" &&
-          receivedForm.type != "delete" &&
-          receivedForm.type != "connect" &&
-          receivedForm.type != "disconnect"
+          receivedForm.type != "delete"
         ) {
           this.imageLoading = false;
           this.receiveList.push(receivedForm);
@@ -486,14 +256,6 @@ export default {
             (element) => element.id !== receivedForm.id
           );
           this.receiveList = array;
-          for (let i = 0; i < this.receiveList.length; i++) {
-            if (this.receiveList[i].parentId) {
-              if (this.receiveList[i].parentId == receivedForm.id) {
-                this.receiveList[i].parentName = "";
-                this.receiveList[i].parentContent = "삭제된 메시지입니다.";
-              }
-            }
-          }
         }
         //타이핑 구독 수신. 마지막으로 타이핑친 사람의 이름은 3초뒤에 사라진다.
         if (receivedForm.type == "typing") {
@@ -553,12 +315,9 @@ export default {
     },
   },
   methods: {
-    ...mapMutations("utils", ["setClientX", "setClientY"]),
     ...mapMutations("community", [
       "setMessagePlusMenu",
       "setCommunityMessageReplyId",
-      "setMessageEditId",
-      "setMessageReadyToDelete",
     ]),
     sendMessage(e) {
       //enter시 메시지를 보낸다.
@@ -639,57 +398,6 @@ export default {
       );
       this.setCommunityMessageReplyId("");
     },
-    modify(id, content) {
-      this.modifyLogMessage = "";
-      if (this.stompSocketClient && this.stompSocketConnected) {
-        if (content.trim().length == 0) {
-          this.modifyLogMessage = "내용을 입력한 후 수정해주세요.";
-        }
-        const msg = {
-          id: id,
-          content: content,
-          userId: this.getUserId,
-          channelId: this.$route.params.channelid,
-          type: "modify",
-        };
-        this.stompSocketClient.send(
-          "/kafka/send-channel-modify",
-          JSON.stringify(msg),
-          {}
-        );
-        this.setMessageEditId("");
-      }
-    },
-    cancelModify() {
-      this.setMessageEditId("");
-      this.modifyLogMessage = "";
-    },
-    deleteMessage(id) {
-      const msg = {
-        id: id,
-        userId: this.getUserId,
-        type: "delete",
-        channelId: this.$route.params.channelid,
-      };
-      this.stompSocketClient.send(
-        "/kafka/send-channel-delete",
-        JSON.stringify(msg),
-        {}
-      );
-      let array = this.receiveList.filter((element) => element.id !== id);
-      this.receiveList = array;
-      this.setMessageReadyToDelete(false);
-    },
-    cancelDelete() {
-      this.setMessageReadyToDelete(false);
-    },
-    MessageReply(messagePlusMenu) {
-      const message = {
-        channel: this.$route.params.channelid,
-        messageInfo: messagePlusMenu,
-      };
-      this.setCommunityMessageReplyId(message);
-    },
     async sendPicture() {
       const formData = new FormData();
       formData.append("image", this.images[0]);
@@ -709,17 +417,6 @@ export default {
         console.log("errrr", err.response);
       }
     },
-    messageHover(idx) {
-      this.messageHovered = idx;
-    },
-    //메시지 추가 기능을 위한 마우스 좌표
-    clickPlusAction(event, messageInfo) {
-      const x = event.clientX;
-      const y = event.clientY;
-      this.setClientX(x);
-      this.setClientY(y);
-      this.setMessagePlusMenu(messageInfo);
-    },
     onClick(e) {
       //메시지 플러스 메뉴가 등장한 상태에서 다른 영역을 클릭하면 메시지 플러스 메뉴는 꺼진다.
       if (this.messagePlusMenu != null) {
@@ -728,59 +425,17 @@ export default {
         }
       }
       //이미지 팝아웃이 등장한 상태에서 다른 영역을 클릭하면 팝아웃은 꺼진다.
-      if (this.emojiPopout) {
-        var condition1 = e.target.parentNode.childNodes[0]._prevClass;
-        var condition2 = e.target.parentNode.className;
-        if (
-          condition2 !== "container-search" &&
-          condition2 !== "container-emoji" &&
-          condition2 !== "emoji-picker-popout" &&
-          condition2 !== "svg" &&
-          condition2 !== "emoji-button" &&
-          condition2 !== "emoji-picker-popout emoji-picker" &&
-          condition1 !== "category"
-        ) {
+      if(this.emojiPopout||this.editEmojiPopout){
+        if (emojiClose(e)) {
           this.emojiPopout = false;
-        }
-      }
-      if (this.editEmojiPopout) {
-        var condition3 = e.target.parentNode.childNodes[0]._prevClass;
-        var condition4 = e.target.parentNode.className;
-        if (
-          condition4 !== "container-search" &&
-          condition4 !== "container-emoji" &&
-          condition4 !== "reply-emoji-picker-popout" &&
-          condition4 !== "svg" &&
-          condition4 !== "emoji-button" &&
-          condition4 !== "reply-emoji-picker-popout emoji-picker" &&
-          condition3 !== "category"
-        ) {
           this.editEmojiPopout = false;
         }
-      }
-    },
-    onSelectEmoji(emoji) {
-      this.text += emoji.data;
-    },
-    onSelectEditEmoji(emoji) {
-      for (var i = 0; i < this.receiveList.length; i++) {
-        if (this.receiveList[i].id == this.editEmojiPopout) {
-          this.receiveList[i].message += emoji.data;
-          break;
-        }
-      }
+      } 
     },
     openEmojiPopout() {
       this.emojiPopout = !this.emojiPopout;
     },
-    openEditEmojiPopout(messageId) {
-      if (this.editEmojiPopout) {
-        this.editEmojiPopout = "";
-      } else {
-        this.editEmojiPopout = messageId;
-      }
-    },
-    urlify(text) {
+    transImg(text) {
       var urlRegex = /(https?:\/\/[^\s]+)/g;
       return text.replace(urlRegex, function (url) {
         return `<img alt="이미지" src="${url}"/>`;
@@ -817,37 +472,16 @@ export default {
           //시간을 한국 시간+디스코드에 맞게 변환
           if (
             receivedAllMessage[i].type != "typing" &&
-            receivedAllMessage[i].type != "delete" &&
-            receivedAllMessage[i].type != "connect" &&
-            receivedAllMessage[i].type != "disconnect"
+            receivedAllMessage[i].type != "delete"
           ) {
-            const translatedTime = convertFromStringToDate(
-              receivedAllMessage[i].time
-            );
-            receivedAllMessage[i].date = translatedTime[0];
-            receivedAllMessage[i].time = translatedTime[1];
-            //연속된 메시지 처리(같은 유저의 메시지인지, 동일시간의 메시지인지 구분)
-            let isOther = true;
-            if (i != 0) {
-              const timeResult = this.isSameTime(
-                receivedAllMessage[i - 1],
-                receivedAllMessage[i]
-              );
-              if (
-                timeResult &&
-                receivedAllMessage[i - 1].userId == receivedAllMessage[i].userId
-              ) {
-                isOther = false;
-              }
-            }
-            receivedAllMessage[i].isOther = isOther;
+            readMessageInarow(receivedAllMessage,i);
           }
           //이미지를 보낼시 이미지 처리
           if (
             receivedAllMessage[i].fileType &&
             receivedAllMessage[i].fileType == "image"
           ) {
-            receivedAllMessage[i].thumbnail = this.urlify(
+            receivedAllMessage[i].thumbnail = this.transImg(
               receivedAllMessage[i].thumbnail
             );
           }
@@ -886,6 +520,18 @@ export default {
         return false;
       }
     },
+    updateReceiveList(array){
+      this.receiveList = array;
+    },
+    editListWithEmoji(i,data){
+      this.receiveList[i].message+=data;
+    },
+    selectTextWithEmoji(data){
+      this.text+=data;
+    },
+    updateEditEmojiPopout(data){
+      this.editEmojiPopout=data;
+    },
   },
   destroyed() {
     this.stompSocket.unsubscribe();
@@ -894,32 +540,6 @@ export default {
 </script>
 
 <style>
-/**스켈레톤이미지 */
-.loading-img {
-  width: 355px;
-  height: 355px;
-  background-color: #e0e0e0;
-}
-.loading-hidden {
-  display: none;
-}
-/**메세지 수정 */
-.channel-message-edit-area {
-  position: relative;
-  width: 100%;
-  text-indent: 0;
-  border-radius: 8px;
-  margin-top: 8px;
-  background-color: #40444b;
-  display: flex;
-}
-.channel-message-edit-tool-area {
-  padding: 7px 0;
-  font-size: 12px;
-  font-weight: 400;
-  text-indent: 0;
-  color: #dcddde;
-}
 .server-chatting-container {
   position: relative;
   display: flex;
@@ -932,159 +552,12 @@ export default {
   -webkit-box-flex: 1;
   flex: 1 1 auto;
 }
-.message-container {
-  display: flex;
-  position: relative;
-  -webkit-box-flex: 1;
-  flex: 1 1 auto;
-  min-height: 0;
-  min-width: 0;
-  z-index: 0;
-}
 .server-chat-scroller {
   overflow: hidden scroll;
   padding-right: 0px;
   width: 100%;
   flex: 1;
   align-items: flex-end;
-}
-.scroller-content {
-  overflow-anchor: none;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  flex-direction: column;
-  -webkit-box-pack: end;
-  justify-content: flex-end;
-  -webkit-box-align: stretch;
-  align-items: stretch;
-  min-height: 100%;
-  display: flex;
-  position: relative;
-}
-.scroller-inner {
-  min-height: 0;
-  list-style: none;
-  padding: 0px;
-}
-.message-date-divider {
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
-  position: relative;
-  left: auto;
-  right: auto;
-  z-index: 1;
-  height: 0;
-  border-top: thin solid hsla(0, 0%, 100%, 0.06);
-  display: flex;
-  -webkit-box-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  justify-content: center;
-  -webkit-box-flex: 0;
-  flex: 0 0 auto;
-  pointer-events: none;
-  box-sizing: border-box;
-  --divider-color: hsl(359, calc(var(1, 1) * 82.6%), 59.4%);
-  margin-left: 1rem;
-  margin-right: 0.875rem;
-}
-.date-content {
-  display: block;
-  -webkit-box-flex: 0;
-  flex: 0 0 auto;
-  padding: 2px 4px;
-  color: #72767d;
-  background: #36393f;
-  line-height: 13px;
-  font-size: 12px;
-  margin-top: -1px;
-  font-weight: 600;
-  border-radius: 8px;
-}
-.chat-message-wrapper {
-  outline: none;
-}
-.others-chat-message-wrapper {
-  margin-top: 1.0625rem;
-  min-height: 2.75rem;
-}
-.primary-chat-message-wrapper {
-  padding-left: 72px;
-  padding-top: 0.125rem;
-  padding-bottom: 0.125rem;
-  padding-right: 48px !important;
-  position: relative;
-  word-wrap: break-word;
-  user-select: text;
-  -webkit-box-flex: 0;
-  flex: 0 0 auto;
-}
-.chat-message-content {
-  position: static;
-  margin-left: 0;
-  padding-left: 0;
-  text-indent: 0;
-}
-.chat-avatar {
-  pointer-events: auto;
-  position: absolute;
-  left: 16px;
-  margin-top: calc(4px - 0.125rem);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  overflow: hidden;
-  cursor: pointer;
-  user-select: none;
-  -webkit-box-flex: 0;
-  flex: 0 0 auto;
-  z-index: 1;
-}
-.chat-avatar-header {
-  display: block;
-  position: relative;
-  line-height: 1.375rem;
-  min-height: 1.375rem;
-  color: #72767d;
-  white-space: break-spaces;
-  margin: 0px;
-}
-.chat-user-name {
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: 1.375rem;
-  color: var(--white-color);
-  display: inline;
-  vertical-align: baseline;
-  position: relative;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-.chat-time-stamp {
-  font-size: 0.75rem;
-  line-height: 1.375rem;
-  color: #72767d;
-  vertical-align: baseline;
-  margin-left: 0.25rem;
-  display: inline-block;
-  height: 1.25rem;
-  cursor: default;
-  pointer-events: none;
-  font-weight: 500;
-}
-.message-content {
-  user-select: text;
-  margin-left: -72px;
-  padding-left: 66px;
-  overflow: hidden;
-  position: relative;
-  text-indent: 0;
-  font-size: 1rem;
-  line-height: 1.375rem;
-  white-space: break-spaces;
-  word-wrap: break-word;
-  color: #dcddde;
-  font-weight: 400;
 }
 .channel-message-input-form {
   position: relative;
