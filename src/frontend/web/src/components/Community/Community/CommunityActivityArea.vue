@@ -362,11 +362,10 @@
 
 <script>
 import { VEmojiPicker } from "v-emoji-picker";
-import {clickPlusAction, emojiClose} from "@/utils/chat";
+import {clickPlusAction, emojiClose, realMessageInarow, readMessageInarow} from "@/utils/chat";
 import { converToThumbnail, dataUrlToFile } from "../../../utils/common.js";
 import { mapState, mapMutations, mapGetters } from "vuex";
 import { sendImageChatting, readChatMessage } from "../../../api/index";
-import { convertFromStringToDate } from "@/utils/common.js";
 export default {
   components: {
     VEmojiPicker,
@@ -424,46 +423,23 @@ export default {
       "/topic/group/" + this.$route.params.channelid,
       async (res) => {
         /**메세지의 종류: 일반 채팅, 이미지 채팅, 수정, 삭제, 답장, 타이핑 상태  */
-        //한국시간에 맞게 시간 커스텀
+        //한국시간에 맞게 시간 커스텀, 동일인물의 연속된 메세지 처리
         const receivedForm = JSON.parse(res.body);
         if (
           receivedForm.type != "typing" &&
-          receivedForm.type != "delete" &&
-          receivedForm.type != "connect" &&
-          receivedForm.type != "disconnect"
+          receivedForm.type != "delete"
         ) {
-          const translatedTime = convertFromStringToDate(receivedForm.time);
-          receivedForm.date = translatedTime[0];
-          receivedForm.time = translatedTime[1];
-          //연속된 메시지 처리(같은 유저의 메시지인지, 동일시간의 메시지인지 구분)
-          let isOther = true;
-          if (this.receiveList.length > 0) {
-            const timeResult = this.isSameTime(
-              this.receiveList[this.receiveList.length - 1],
-              receivedForm
-            );
-            if (
-              timeResult &&
-              this.receiveList[this.receiveList.length - 1].userId ==
-                receivedForm.userId
-            ) {
-              isOther = false;
-            }
-          }
-          receivedForm.isOther = isOther;
+          realMessageInarow(receivedForm,this.receiveList);
         }
-
         //이미지를 보낼시 이미지 처리
         if (receivedForm.fileType && receivedForm.fileType == "image") {
-          receivedForm.thumbnail = this.urlify(receivedForm.thumbnail);
+          receivedForm.thumbnail = this.transImg(receivedForm.thumbnail);
         }
         //메세지 타입이 충족되는 경우 모두 메시지 리스트에 넣고, 렌더링이 된다면 스크롤을 바닥으로 내림
         if (
           receivedForm.type != "typing" &&
           receivedForm.type != "modify" &&
-          receivedForm.type != "delete" &&
-          receivedForm.type != "connect" &&
-          receivedForm.type != "disconnect"
+          receivedForm.type != "delete"
         ) {
           this.imageLoading = false;
           this.receiveList.push(receivedForm);
@@ -751,7 +727,7 @@ export default {
         this.editEmojiPopout = messageId;
       }
     },
-    urlify(text) {
+    transImg(text) {
       var urlRegex = /(https?:\/\/[^\s]+)/g;
       return text.replace(urlRegex, function (url) {
         return `<img alt="이미지" src="${url}"/>`;
@@ -788,37 +764,16 @@ export default {
           //시간을 한국 시간+디스코드에 맞게 변환
           if (
             receivedAllMessage[i].type != "typing" &&
-            receivedAllMessage[i].type != "delete" &&
-            receivedAllMessage[i].type != "connect" &&
-            receivedAllMessage[i].type != "disconnect"
+            receivedAllMessage[i].type != "delete"
           ) {
-            const translatedTime = convertFromStringToDate(
-              receivedAllMessage[i].time
-            );
-            receivedAllMessage[i].date = translatedTime[0];
-            receivedAllMessage[i].time = translatedTime[1];
-            //연속된 메시지 처리(같은 유저의 메시지인지, 동일시간의 메시지인지 구분)
-            let isOther = true;
-            if (i != 0) {
-              const timeResult = this.isSameTime(
-                receivedAllMessage[i - 1],
-                receivedAllMessage[i]
-              );
-              if (
-                timeResult &&
-                receivedAllMessage[i - 1].userId == receivedAllMessage[i].userId
-              ) {
-                isOther = false;
-              }
-            }
-            receivedAllMessage[i].isOther = isOther;
+            readMessageInarow(receivedAllMessage,i);
           }
           //이미지를 보낼시 이미지 처리
           if (
             receivedAllMessage[i].fileType &&
             receivedAllMessage[i].fileType == "image"
           ) {
-            receivedAllMessage[i].thumbnail = this.urlify(
+            receivedAllMessage[i].thumbnail = this.transImg(
               receivedAllMessage[i].thumbnail
             );
           }

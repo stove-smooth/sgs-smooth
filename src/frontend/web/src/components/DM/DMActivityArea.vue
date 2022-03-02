@@ -359,12 +359,10 @@
 
 <script>
 import { VEmojiPicker } from "v-emoji-picker";
-
 import { converToThumbnail, dataUrlToFile } from "../../utils/common.js";
 import { mapState, mapMutations, mapGetters } from "vuex";
 import { sendImageDirectChatting, readDMChatMessage } from "../../api/index";
-import { convertFromStringToDate } from "@/utils/common.js";
-import { clickPlusAction, emojiClose } from '@/utils/chat.js';
+import { clickPlusAction, emojiClose, readMessageInarow, realMessageInarow } from '@/utils/chat.js';
 export default {
   components: {
     VEmojiPicker,
@@ -427,24 +425,7 @@ export default {
           receivedForm.type != "connect" &&
           receivedForm.type != "disconnect"
         ) {
-          const translatedTime = convertFromStringToDate(receivedForm.time);
-          receivedForm.date = translatedTime[0];
-          receivedForm.time = translatedTime[1];
-          let isOther = true;
-          if (this.receiveList.length > 0) {
-            const timeResult = this.isSameTime(
-              this.receiveList[this.receiveList.length - 1],
-              receivedForm
-            );
-            if (
-              timeResult &&
-              this.receiveList[this.receiveList.length - 1].userId ==
-                receivedForm.userId
-            ) {
-              isOther = false;
-            }
-          }
-          receivedForm.isOther = isOther;
+          realMessageInarow(receivedForm,this.receiveList);
         }
         //초대장 관련
         if (
@@ -457,7 +438,7 @@ export default {
         }
         //이미지를 보낼시 이미지 처리
         if (receivedForm.fileType && receivedForm.fileType == "image") {
-          receivedForm.thumbnail = this.urlify(receivedForm.thumbnail);
+          receivedForm.thumbnail = this.transImg(receivedForm.thumbnail);
         }
 
         //dm calling 메시지 받기
@@ -791,7 +772,7 @@ export default {
         this.editEmojiPopout = messageId;
       }
     },
-    urlify(text) {
+    transImg(text) {
       var urlRegex = /(https?:\/\/[^\s]+)/g;
       return text.replace(urlRegex, function (url) {
         return `<img alt="이미지" src="${url}"/>`;
@@ -839,26 +820,7 @@ export default {
             receivedAllMessage[i].type != "connect" &&
             receivedAllMessage[i].type != "disconnect"
           ) {
-            const translatedTime = convertFromStringToDate(
-              receivedAllMessage[i].time
-            );
-            receivedAllMessage[i].date = translatedTime[0];
-            receivedAllMessage[i].time = translatedTime[1];
-            //연속된 메시지 처리(같은 유저의 메시지인지, 동일시간의 메시지인지 구분)
-            let isOther = true;
-            if (i != 0) {
-              const timeResult = this.isSameTime(
-                receivedAllMessage[i - 1],
-                receivedAllMessage[i]
-              );
-              if (
-                timeResult &&
-                receivedAllMessage[i - 1].userId == receivedAllMessage[i].userId
-              ) {
-                isOther = false;
-              }
-            }
-            receivedAllMessage[i].isOther = isOther;
+            readMessageInarow(receivedAllMessage,i);
             //초대장 관련
             if (
               receivedAllMessage[i].message &&
@@ -877,7 +839,7 @@ export default {
             receivedAllMessage[i].fileType &&
             receivedAllMessage[i].fileType == "image"
           ) {
-            receivedAllMessage[i].thumbnail = this.urlify(
+            receivedAllMessage[i].thumbnail = this.transImg(
               receivedAllMessage[i].thumbnail
             );
           }
