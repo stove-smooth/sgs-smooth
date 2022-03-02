@@ -362,7 +362,7 @@
 
 <script>
 import { VEmojiPicker } from "v-emoji-picker";
-
+import {clickPlusAction, emojiClose} from "@/utils/chat";
 import { converToThumbnail, dataUrlToFile } from "../../../utils/common.js";
 import { mapState, mapMutations, mapGetters } from "vuex";
 import { sendImageChatting, readChatMessage } from "../../../api/index";
@@ -486,14 +486,14 @@ export default {
             (element) => element.id !== receivedForm.id
           );
           this.receiveList = array;
-          for (let i = 0; i < this.receiveList.length; i++) {
-            if (this.receiveList[i].parentId) {
-              if (this.receiveList[i].parentId == receivedForm.id) {
-                this.receiveList[i].parentName = "";
-                this.receiveList[i].parentContent = "삭제된 메시지입니다.";
-              }
-            }
-          }
+          // for (let i = 0; i < this.receiveList.length; i++) {
+          //   if (this.receiveList[i].parentId) {
+          //     if (this.receiveList[i].parentId == receivedForm.id) {
+          //       this.receiveList[i].parentName = "";
+          //       this.receiveList[i].parentContent = "삭제된 메시지입니다.";
+          //     }
+          //   }
+          // }
         }
         //타이핑 구독 수신. 마지막으로 타이핑친 사람의 이름은 3초뒤에 사라진다.
         if (receivedForm.type == "typing") {
@@ -553,7 +553,6 @@ export default {
     },
   },
   methods: {
-    ...mapMutations("utils", ["setClientX", "setClientY"]),
     ...mapMutations("community", [
       "setMessagePlusMenu",
       "setCommunityMessageReplyId",
@@ -714,11 +713,7 @@ export default {
     },
     //메시지 추가 기능을 위한 마우스 좌표
     clickPlusAction(event, messageInfo) {
-      const x = event.clientX;
-      const y = event.clientY;
-      this.setClientX(x);
-      this.setClientY(y);
-      this.setMessagePlusMenu(messageInfo);
+      clickPlusAction(event,messageInfo);
     },
     onClick(e) {
       //메시지 플러스 메뉴가 등장한 상태에서 다른 영역을 클릭하면 메시지 플러스 메뉴는 꺼진다.
@@ -728,36 +723,12 @@ export default {
         }
       }
       //이미지 팝아웃이 등장한 상태에서 다른 영역을 클릭하면 팝아웃은 꺼진다.
-      if (this.emojiPopout) {
-        var condition1 = e.target.parentNode.childNodes[0]._prevClass;
-        var condition2 = e.target.parentNode.className;
-        if (
-          condition2 !== "container-search" &&
-          condition2 !== "container-emoji" &&
-          condition2 !== "emoji-picker-popout" &&
-          condition2 !== "svg" &&
-          condition2 !== "emoji-button" &&
-          condition2 !== "emoji-picker-popout emoji-picker" &&
-          condition1 !== "category"
-        ) {
+      if(this.emojiPopout||this.editEmojiPopout){
+        if (emojiClose(e)) {
           this.emojiPopout = false;
-        }
-      }
-      if (this.editEmojiPopout) {
-        var condition3 = e.target.parentNode.childNodes[0]._prevClass;
-        var condition4 = e.target.parentNode.className;
-        if (
-          condition4 !== "container-search" &&
-          condition4 !== "container-emoji" &&
-          condition4 !== "reply-emoji-picker-popout" &&
-          condition4 !== "svg" &&
-          condition4 !== "emoji-button" &&
-          condition4 !== "reply-emoji-picker-popout emoji-picker" &&
-          condition3 !== "category"
-        ) {
           this.editEmojiPopout = false;
         }
-      }
+      } 
     },
     onSelectEmoji(emoji) {
       this.text += emoji.data;
