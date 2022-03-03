@@ -13,15 +13,11 @@ function emojiClose(e){
   var condition2 = e.target.parentNode.className;
   const isEmojiClass = ["container-search","container-emoji","svg","emoji-button","emoji-picker-popout","emoji-picker-popout emoji-picker"].includes(condition2);
   const isReplyEmojiClass = ["reply-emoji-picker-popout","reply-emoji-picker-popout emoji-picker"].includes(condition2);
-  if (!(
+  return (!(
     isEmojiClass||
     isReplyEmojiClass||
     condition1 === "category")
-  ) {
-    return true;
-  }else{
-    return false;
-  }
+  );
 }
 
 function transImg(text){
@@ -53,16 +49,7 @@ function convertFromStringToDate(responseDate) {
 //같은 시간대의 메세지인지 판별
 function isSameTime(prev, current) {
   //먼저 날이 같을때.
-  if (prev.date == current.date) {
-    if (prev.time == current.time) {
-      return true;
-    } else {
-      return false;
-    }
-  } else {
-    //date가 다르다면 같은 시간이 아님.
-    return false;
-  }
+  return (prev.date == current.date &&prev.time == current.time)
 }
 
 //실시간 연속된 메세지 처리

@@ -159,7 +159,6 @@
 </template>
 
 <script>
-//import { VEmojiPicker } from "v-emoji-picker";
 import MessageActivityArea from "../common/Message/MessageActivityArea.vue"
 import { converToThumbnail, dataUrlToFile } from "../../utils/common.js";
 import { mapState, mapMutations, mapGetters } from "vuex";
@@ -167,7 +166,6 @@ import { sendImageDirectChatting, readDMChatMessage } from "../../api/index";
 import { emojiClose, readMessageInarow, realMessageInarow } from '@/utils/chat.js';
 export default {
   components: {
-    //VEmojiPicker,
     MessageActivityArea,
   },
   data() {

@@ -25,6 +25,7 @@ const voice = {
       });
       return false;
     },
+    //새로고침 후 기존의 연결을 다시 이어주기 위해 sessionStorage에 webRTC 정보를 담는다.
     setWsOpen(state, wsOpen) {
       sessionStorage.setItem("webRtc", wsOpen);
       state.wsOpen = wsOpen;
