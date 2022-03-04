@@ -16,6 +16,7 @@
 ### Backend
 - Java 11
 - Spring Boot
+- Spring MVC
 - Spring Data JPA
 - Spring Security
 - Spring Cloud

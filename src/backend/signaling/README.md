@@ -8,6 +8,7 @@
 ## 기술스택
 - Java 11
 - Springboot 2.6.2
+- Spring MVC
 - WebSocket, SockJS
 - Spring Integration TCP/UDP
 - Kurento Media Server 6.16

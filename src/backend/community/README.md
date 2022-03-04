@@ -7,6 +7,7 @@
 ## 기술스택
 - Java 11
 - Springboot 2.6.2
+- Spring MVC
 - Spring Data JPA
 - Spring Cloud
 - WebSocket, SockJS
