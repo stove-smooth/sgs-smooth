@@ -126,7 +126,7 @@ const user = {
     },
   },
   actions: {
-    async LOGIN({ commit }, userData) {
+    async login({ commit }, userData) {
       const response = await loginUser(userData);
       console.log("response", response);
       commit("setUserId", response.data.result.id);
@@ -136,7 +136,7 @@ const user = {
       commit("setSocketUrl", response.data.result.url);
       return response.data.result.code;
     },
-    LOGOUT({ commit }) {
+    logout({ commit }) {
       localStorage.removeItem("userId");
       localStorage.removeItem("email");
       localStorage.removeItem("accesstoken");
@@ -146,7 +146,7 @@ const user = {
       commit("clearAccessToken");
       commit("clearRefreshToken");
     },
-    async FETCH_USERINFO({ commit }) {
+    async fetchMyInfo({ commit }) {
       const response = await fetchUserInfo();
       commit("setNickname", response.data.result.name);
       commit("setCode", response.data.result.code);

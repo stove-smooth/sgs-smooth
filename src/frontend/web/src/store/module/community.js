@@ -129,15 +129,15 @@ const community = {
     },
   },
   actions: {
-    async FETCH_COMMUNITYLIST({ commit }) {
+    async fetchMyCommunityList({ commit }) {
       const result = await fetchCommunityList();
       await commit("setCommunityList", result.data.result);
     },
-    async FETCH_COMMUNITYINFO({ commit }, serverid) {
+    async fetchCommunitySideInfo({ commit }, serverid) {
       const result = await fetchCommunityInfo(serverid);
       await commit("setCommunityInfo", result.data.result);
     },
-    async FETCH_COMMUNITYMEMBERLIST({ commit }, serverid) {
+    async fetchCommunityMembers({ commit }, serverid) {
       const result = await fetchCommunityMemberList(serverid);
       let onlineMembers = [];
       let offlineMembers = [];

@@ -116,11 +116,11 @@ export default {
   },
   methods: {
     ...mapActions("voice", ["wsInit"]),
-    ...mapActions("community", ["FETCH_COMMUNITYINFO"]),
+    ...mapActions("community", ["fetchCommunitySideInfo"]),
     ...mapMutations("community", ["setCurrentChannelType"]),
 
     async fetchCommunityInfo() {
-      await this.FETCH_COMMUNITYINFO(this.$route.params.serverid);
+      await this.fetchCommunitySideInfo(this.$route.params.serverid);
     },
     isChattingChannel(channelId) {
       if (this.communityInfo) {

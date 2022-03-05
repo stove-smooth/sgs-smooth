@@ -77,7 +77,7 @@ export default {
     };
   },
   async created() {
-    await this.FETCH_FRIENDSLIST();
+    await this.fetchFriendsList();
     let icon;
     for (var i = 0; i < this.communityList.communities.length; i++) {
       if (
@@ -128,7 +128,7 @@ export default {
     ...mapState("user", ["nickname", "userimage"]),
   },
   methods: {
-    ...mapActions("friends", ["FETCH_FRIENDSLIST"]),
+    ...mapActions("friends", ["fetchFriendsList"]),
     ...mapMutations("community", ["setCommunityInviteModal"]),
     closeModal() {
       this.setCommunityInviteModal(false);

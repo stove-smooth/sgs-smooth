@@ -61,7 +61,7 @@ const friends = {
     },
   },
   actions: {
-    async FETCH_FRIENDSLIST({ commit }) {
+    async fetchFriendsList({ commit }) {
       const result = await fetchFriends();
       let friendsRequest = [];
       let friendsWait = [];

@@ -2,7 +2,7 @@ import store from "../../store/index";
 import axios from "axios";
 
 async function logoutUser() {
-  await store.dispatch("user/LOGOUT");
+  await store.dispatch("user/logout");
   const stompSocketClient = await store.getters("utils/stompSocketClient");
   stompSocketClient.disconnect();
   window.location = process.env.VUE_APP_MAIN_URL;

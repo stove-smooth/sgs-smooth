@@ -84,16 +84,16 @@ export default {
     await this.fetchUserInfo();
   },
   methods: {
-    ...mapActions("user", ["LOGOUT", "FETCH_USERINFO"]),
+    ...mapActions("user", ["logout", "fetchMyInfo"]),
     ...mapMutations("user", ["setUserImage"]),
     closeSettings() {
       this.$router.go(-1);
     },
     async fetchUserInfo() {
-      await this.FETCH_USERINFO();
+      await this.fetchMyInfo();
     },
     async logoutUser() {
-      await this.LOGOUT();
+      await this.logout();
       await this.stompSocketClient.disconnect();
       this.$router.push("/login");
     },

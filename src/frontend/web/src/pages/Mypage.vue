@@ -52,7 +52,7 @@ export default {
         {}
       );
     }
-    await this.FETCH_FRIENDSLIST();
+    await this.fetchFriendsList();
     await this.fetchFriendsStates();
   },
   computed: {
@@ -61,7 +61,7 @@ export default {
     ...mapGetters("user", ["getEmail", "getUserId", "getAccessToken"]),
   },
   methods: {
-    ...mapActions("friends", ["FETCH_FRIENDSLIST", "fetchFriendsStates"]),
+    ...mapActions("friends", ["fetchFriendsList", "fetchFriendsStates"]),
   },
 };
 </script>
