@@ -202,7 +202,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions("user", ["LOGIN"]),
+    ...mapActions("user", ["login"]),
     async submitForm() {
       const userData = {
         email: this.id,
@@ -218,7 +218,7 @@ export default {
         type: "web",
         deviceToken: fcmToken,
       };
-      await this.LOGIN(userInfo);
+      await this.login(userInfo);
       this.$router.push("/channels/@me");
     },
     async verifyEmail() {

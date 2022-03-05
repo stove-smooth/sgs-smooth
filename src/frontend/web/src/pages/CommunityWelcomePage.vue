@@ -42,9 +42,9 @@ export default {
     };
   },
   methods: {
-    ...mapActions("community", ["FETCH_COMMUNITYINFO"]),
+    ...mapActions("community", ["fetchCommunitySideInfo"]),
     async fetchCommunityInfo() {
-      await this.FETCH_COMMUNITYINFO(this.$route.params.serverid);
+      await this.fetchCommunitySideInfo(this.$route.params.serverid);
     },
     computeFirstChannel() {
       const categories = this.communityInfo.categories;

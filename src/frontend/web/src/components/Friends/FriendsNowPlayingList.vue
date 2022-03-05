@@ -26,7 +26,7 @@ export default {
     ...mapState("friends", ["friendsOnline"]),
   },
   methods: {
-    ...mapActions("community", ["FETCH_COMMUNITYLIST"]),
+    ...mapActions("community", ["fetchMyCommunityList"]),
   },
 };
 </script>

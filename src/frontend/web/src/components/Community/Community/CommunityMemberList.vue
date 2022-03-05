@@ -101,7 +101,7 @@ export default {
     window.addEventListener("click", this.onClick);
   },
   async created() {
-    await this.FETCH_COMMUNITYMEMBERLIST(this.$route.params.serverid);
+    await this.fetchCommunityMembers(this.$route.params.serverid);
     if (this.memberState != undefined) {
       if (this.memberState.type == "disconnect") {
         for (let i = 0; i < this.communityOnlineMemberList.length; i++) {
@@ -133,7 +133,7 @@ export default {
   methods: {
     ...mapMutations("community", ["setCommunityMemberPlusMenu"]),
     ...mapMutations("utils", ["setClientX", "setClientY"]),
-    ...mapActions("community", ["FETCH_COMMUNITYMEMBERLIST"]),
+    ...mapActions("community", ["fetchCommunityMembers"]),
     clickMemberPlusAction(event, memberInfo) {
       const x = event.clientX;
       const y = event.clientY;

@@ -103,7 +103,7 @@ export default {
       "setVideo",
       "setCurrentVoiceRoom",
     ]),
-    ...mapActions("user", ["FETCH_USERINFO"]),
+    ...mapActions("user", ["fetchMyInfo"]),
     ...mapActions("voice", ["sendMessage", "leaveRoom"]),
     openSettings() {
       this.$router.push("/settings");
@@ -175,7 +175,7 @@ export default {
     },
   },
   async created() {
-    await this.FETCH_USERINFO();
+    await this.fetchMyInfo();
   },
 };
 </script>

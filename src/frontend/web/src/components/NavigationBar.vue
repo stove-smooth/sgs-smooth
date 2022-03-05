@@ -178,7 +178,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions("community", ["FETCH_COMMUNITYLIST"]),
+    ...mapActions("community", ["fetchMyCommunityList"]),
     ...mapMutations("community", ["setCreateCommunity", "setCommunityList"]),
     ...mapMutations("utils", ["setNavigationSelected"]),
     ...mapMutations("voice", ["setCurrentVoiceRoom"]),
@@ -259,12 +259,12 @@ export default {
     const currentUrl = window.location.pathname;
     let array = currentUrl.split("/");
     this.setNavigationSelected(array[2]);
-    await this.FETCH_COMMUNITYLIST();
+    await this.fetchMyCommunityList();
   },
   watch: {
     // 라우터의 변경을 감시
     async $route(to) {
-      await this.FETCH_COMMUNITYLIST();
+      await this.fetchMyCommunityList();
       if (to.path == "/channels/@me") {
         this.setNavigationSelected("@me");
       }
