@@ -222,7 +222,7 @@ export default {
   components: {
     VEmojiPicker,
   },
-  props:["imageLoading","receiveList","text","emojiPopout","editEmojiPopout"],
+  props:["imageLoading","receiveList","emojiPopout","editEmojiPopout"],
   data() {
     return {
       messageHovered: "",
