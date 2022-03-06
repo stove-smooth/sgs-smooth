@@ -217,7 +217,7 @@
 <script>
 import { VEmojiPicker } from "v-emoji-picker";
 import { mapState,mapMutations,mapGetters } from "vuex";
-import { clickPlusAction } from '@/utils/chat';
+import { clickPlusAction } from '@/utils/common';
 export default {
   components: {
     VEmojiPicker,
@@ -248,6 +248,7 @@ export default {
       "setCommunityMessageReplyId",
       "setMessageReadyToDelete",
       "setMessageEditId",
+      "setMessagePlusMenu",
     ]),
     ...mapMutations("dm", [
       "setDirectMessageReplyId",
@@ -353,7 +354,8 @@ export default {
     },
     //메시지 추가 기능을 위한 마우스 좌표
     clickPlusAction(event, messageInfo) {
-      clickPlusAction(event,messageInfo)
+      clickPlusAction(event);
+      this.setMessagePlusMenu(messageInfo);
     },
     onSelectEmoji(emoji) {
       this.$emit("select-text-with-emoji",emoji.data)

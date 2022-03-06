@@ -426,6 +426,9 @@ export default {
       }
     },
   },
+  beforeDestroy(){
+    window.removeEventListener("click", this.onClick);
+  },
 };
 </script>
 
