@@ -8,7 +8,6 @@
       <message-activity-area 
         :imageLoading="this.imageLoading"
         :receiveList="this.receiveList" 
-        :text="this.text" 
         :emojiPopout="this.emojiPopout" 
         :editEmojiPopout="this.editEmojiPopout"
         @update-receive-list="updateReceiveList"
@@ -179,6 +178,7 @@ export default {
       }
     );
   },
+
   watch: {
     /**메세지 타이핑 상태를 서버에 알리기 위한 로직
      * text가 변경될 경우 , 6초에 텀을 두고 상태를 확인하고 서버에 다시 알릴지 결정한다.
@@ -228,6 +228,7 @@ export default {
       }, 3000);
     },
   },
+  
   methods: {
     ...mapMutations("community", ["setMessagePlusMenu"]),
     //메시지 추가 기능을 위한 마우스 좌표
@@ -370,6 +371,9 @@ export default {
     openEmojiPopout() {
       this.emojiPopout = !this.emojiPopout;
     },
+  },
+  beforeDestroy(){
+    window.removeEventListener("click", this.onClick);
   },
   destroyed() {
     this.stompSocket.unsubscribe();
