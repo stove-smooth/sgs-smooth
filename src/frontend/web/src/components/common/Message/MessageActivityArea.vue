@@ -222,7 +222,7 @@ export default {
   components: {
     VEmojiPicker,
   },
-  props:["imageLoading","receiveList","text","emojiPopout","editEmojiPopout"],
+  props:["imageLoading","receiveList","emojiPopout","editEmojiPopout"],
   data() {
     return {
       messageHovered: "",
@@ -559,5 +559,27 @@ export default {
   color: #dcddde;
   font-weight: 400;
 }
-
+.chat-message-plus-action-container {
+  position: absolute;
+  right: 0;
+  z-index: 1;
+  top: -25px;
+  padding: 0 14px 0 32px;
+  opacity: 1;
+  pointer-events: auto;
+}
+.emoji-picker-popout {
+  background-color: #2f3136 !important;
+  position: absolute;
+  bottom: 90px;
+  right: 0;
+  z-index: 10;
+}
+.reply-emoji-picker-popout {
+  background-color: #2f3136 !important;
+  position: absolute;
+  bottom: 90px;
+  right: 0;
+  z-index: 10;
+}
 </style>
