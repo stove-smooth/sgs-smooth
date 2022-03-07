@@ -2,8 +2,6 @@ package com.example.notificationserver.controller;
 
 import com.example.notificationserver.dto.request.ChannelMessageRequest;
 import com.example.notificationserver.dto.request.DirectMessageRequest;
-import com.example.notificationserver.dto.request.Test2Request;
-import com.example.notificationserver.dto.request.TestRequest;
 import com.example.notificationserver.dto.response.CommonResponse;
 import com.example.notificationserver.service.NotificationService;
 import com.example.notificationserver.service.ResponseService;
@@ -43,19 +41,6 @@ public class NotificationController {
             log.error("NOTIFICATION ERROR - CHANNEL");
             e.printStackTrace();
         }
-        return responseService.getSuccessResponse();
-    }
-
-    @PostMapping("/web/test")
-    public CommonResponse sendTestMessage(@Valid @RequestBody TestRequest request) {
-        log.info("POST /notification-server/test");
-        notificationService.sendTestMessage(request);
-        return responseService.getSuccessResponse();
-    }
-
-    @PostMapping("/test")
-    public CommonResponse sendTest(@Valid @RequestBody Test2Request request) {
-        notificationService.testSend(request);
         return responseService.getSuccessResponse();
     }
 }

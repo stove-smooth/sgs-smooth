@@ -12,23 +12,23 @@ import javax.persistence.Enumerated;
 @Getter
 @Setter
 @NoArgsConstructor
-public class DeviceTokenResponse {
+public class DeviceResponse {
+
+    private Long userId;
+
     @Enumerated(EnumType.STRING)
     private Platform platform;
+
     private String token;
 
-    public static DeviceTokenResponse fromEntity(Device device) {
-        DeviceTokenResponse response = new DeviceTokenResponse();
+    private boolean status;
+
+    public static DeviceResponse fromEntity(Device device) {
+        DeviceResponse response = new DeviceResponse();
+        response.setUserId(device.getUserId());
         response.setPlatform(device.getPlatform());
         response.setToken(device.getToken());
+        response.setStatus(device.isStatus());
         return response;
-    }
-
-    @Override
-    public String toString() {
-        return "{" +
-                "platform=" + platform +
-                ", token='" + token + '\'' +
-                '}';
     }
 }

@@ -6,11 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 import static com.example.notificationserver.exception.CustomExceptionStatus.MESSAGE_TYPE_ERROR;
 import static com.example.notificationserver.util.MessageType.*;
-
 @Component
 @RequiredArgsConstructor
 public class FcmUtil {
@@ -119,7 +117,7 @@ public class FcmUtil {
         ApnsConfig.Builder apnsConfigBuilder = ApnsConfig.builder();
         Aps.Builder apsBuilder = Aps.builder();
         Map<String, Object> map = new HashMap<>();
-        for (Entry<String, String> entry: data.entrySet()) {
+        for (Map.Entry<String, String> entry: data.entrySet()) {
             map.put(entry.getKey(), entry.getValue());
         }
         Optional.ofNullable(map).ifPresent(sit -> apsBuilder.putAllCustomData(sit));
