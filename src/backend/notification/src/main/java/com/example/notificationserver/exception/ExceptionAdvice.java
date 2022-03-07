@@ -3,7 +3,6 @@ package com.example.notificationserver.exception;
 import com.example.notificationserver.dto.response.CommonResponse;
 import com.example.notificationserver.service.ResponseService;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
