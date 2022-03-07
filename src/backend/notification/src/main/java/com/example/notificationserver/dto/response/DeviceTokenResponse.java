@@ -23,4 +23,12 @@ public class DeviceTokenResponse {
         response.setToken(device.getToken());
         return response;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "platform=" + platform +
+                ", token='" + token + '\'' +
+                '}';
+    }
 }
