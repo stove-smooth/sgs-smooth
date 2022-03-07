@@ -1,20 +1,20 @@
 package com.example.notificationserver.service;
 
 import com.example.notificationserver.domain.Device;
+import com.example.notificationserver.domain.Notification;
 import com.example.notificationserver.dto.request.ChannelMessageRequest;
 import com.example.notificationserver.dto.request.DirectMessageRequest;
 import com.example.notificationserver.dto.response.DeviceTokenResponse;
 import com.example.notificationserver.exception.CustomException;
-import com.example.notificationserver.exception.CustomExceptionStatus;
 import com.example.notificationserver.repository.DeviceRepository;
 import com.example.notificationserver.util.FcmUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.MulticastMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
@@ -33,6 +33,7 @@ public class NotificationService {
     private final FcmUtil fcm;
     private final DeviceRepository deviceRepository;
     private final RedisTemplate redisTemplate;
+    private final MongoTemplate mongoTemplate;
     private final ObjectMapper objectMapper;
 
     private final String REDIS_DEVICE_KEY_PREFIX = "USERID:";
@@ -45,6 +46,7 @@ public class NotificationService {
         for (Entry<String, List<String>> platform: targetTokensByPlatform.entrySet()) {
             sendMessage(platform.getValue(), request, platform.getKey());
         }
+        saveLog(request, targetTokensByPlatform);
     }
 
     public void send(ChannelMessageRequest request) {
@@ -53,6 +55,7 @@ public class NotificationService {
         for (Entry<String, List<String>> platform: targetTokensByPlatform.entrySet()) {
             sendMessage(platform.getValue(), request, platform.getKey());
         }
+        saveLog(request, targetTokensByPlatform);
     }
 
     // 토큰 조회 시 캐시 먼저 조회하고 없는 정보만 DB에서 조회하기
@@ -147,5 +150,31 @@ public class NotificationService {
         } catch (FirebaseMessagingException e) {
             log.error("FIREBASE ERROR : {}", e);
         }
+    }
+
+    private void saveLog(DirectMessageRequest request, Map<String, List<String>> target) {
+        Notification notification = new Notification(
+                request.getUserId().toString(),
+                request.getUsername(),
+                request.getType(),
+                request.getContent(),
+                request.getRoomId().toString(),
+                request.getRoomName(),
+                request.getTarget()
+        );
+        mongoTemplate.insert(notification);
+    }
+
+    private void saveLog(ChannelMessageRequest request, Map<String, List<String>> target) {
+        Notification notification = new Notification(
+                request.getUserId().toString(),
+                request.getUsername(),
+                request.getType(),
+                request.getContent(),
+                request.getChannelId().toString(),
+                request.getChannelName(),
+                request.getTarget()
+        );
+        mongoTemplate.insert(notification);
     }
 }
