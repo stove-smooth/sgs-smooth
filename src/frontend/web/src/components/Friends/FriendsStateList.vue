@@ -130,11 +130,10 @@
 import { mapState, mapMutations } from "vuex";
 import FriendsForm from "./FriendsForm.vue";
 import { acceptFriend, deleteFriend } from "../../api/index.js";
-import { sendDirectMessage } from "@/utils/common";
+import { clickPlusAction, sendDirectMessage } from "@/utils/common";
 
 export default {
   components: { FriendsForm },
-
   mounted() {
     window.addEventListener("click", this.onClick);
   },
@@ -164,10 +163,7 @@ export default {
     },
     //친구 추가 기능을 보여주기 위해 마우스 좌표를 저장한다.
     clickPlusAction(event, userInfo) {
-      const x = event.clientX;
-      const y = event.clientY;
-      this.setClientX(x);
-      this.setClientY(y);
+      clickPlusAction(event);
       this.setFriendsPlusMenu(userInfo);
     },
     //추가 기능 메뉴가 보여지고 있을때 다른 위치를 클릭하면 메뉴가 꺼진다.
@@ -187,6 +183,9 @@ export default {
       const channelid = await sendDirectMessage(this.directMessageList, userId);
       this.$router.push(`/channels/@me/${channelid}`);
     },
+  },
+  beforeDestroy(){
+    window.removeEventListener("click", this.onClick);
   },
 };
 </script>

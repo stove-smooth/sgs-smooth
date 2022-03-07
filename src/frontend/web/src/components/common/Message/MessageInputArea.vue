@@ -468,11 +468,10 @@ export default {
   position: sticky;
   top: 0;
   cursor: pointer;
-  margin-left: -16px;
+  margin: 0px 0px 0px -16px;
   width: auto;
   background: transparent;
   border: 0;
-  margin: 0;
   display: flex;
   -webkit-box-pack: center;
   justify-content: center;

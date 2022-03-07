@@ -26,11 +26,10 @@ export default {
   computed: {
     ...mapState("community", ["communityInfo"]),
     channelName() {
-      let channel = computeChannelName(
+      return computeChannelName(
         this.$route.params.channelid,
         this.communityInfo
       );
-      return channel;
     },
   },
 };

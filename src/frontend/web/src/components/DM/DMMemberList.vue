@@ -63,8 +63,8 @@
 
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
+import { clickPlusAction, closeMemberPlusMenu } from '@/utils/common';
 export default {
-  //추가할지 말지 고려중인 동작입니다.
   mounted() {
     window.addEventListener("click", this.onClick);
   },
@@ -77,30 +77,20 @@ export default {
   },
   methods: {
     ...mapActions("dm", ["fetchDirectMessageMemberList"]),
-    //추가할지 말지 고려중인 동작입니다.
     ...mapMutations("community", ["setCommunityMemberPlusMenu"]),
     ...mapMutations("utils", ["setClientX", "setClientY"]),
     clickMemberPlusAction(event, memberInfo) {
-      const x = event.clientX;
-      const y = event.clientY;
-      this.setClientX(x);
-      this.setClientY(y);
+      clickPlusAction(event);
       this.setCommunityMemberPlusMenu(memberInfo);
     },
     onClick(e) {
       if (this.communityMemberPlusMenu) {
-        if (
-          e.target.className !== "friends-name" &&
-          e.target.className !== "avatar-wrapper" &&
-          e.target.className !== "primary-member-layout" &&
-          e.target.className !== "friends-name-decorator"
-        ) {
-          this.setCommunityMemberPlusMenu(null);
-        }
+        closeMemberPlusMenu(e);
       }
     },
   },
+  beforeDestroy(){
+    window.removeEventListener("click", this.onClick);
+  },
 };
 </script>
-
-<style></style>

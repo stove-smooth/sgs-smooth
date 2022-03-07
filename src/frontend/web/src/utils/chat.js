@@ -1,13 +1,3 @@
-import store from "@/store/index";
-
-function clickPlusAction(event,messageInfo){
-  const x = event.clientX;
-  const y = event.clientY;
-  store.commit("utils/setClientX",x);
-  store.commit("utils/setClientY",y);
-  store.commit("community/setMessagePlusMenu",messageInfo);
-}
-
 function emojiClose(e){
   var condition1 = e.target.parentNode.childNodes[0]._prevClass;
   var condition2 = e.target.parentNode.className;
@@ -98,7 +88,6 @@ function readMessageInarow(receivedAllMessage,i){
   receivedAllMessage[i].isOther = isOther;
 }
 export {
-  clickPlusAction,
   emojiClose,
   transImg,
   convertFromStringToDate,

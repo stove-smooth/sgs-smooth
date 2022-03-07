@@ -382,7 +382,6 @@ export default {
 </script>
 
 <style>
-
 .sky-blue-color {
   color: #00aff4;
 }

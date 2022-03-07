@@ -95,6 +95,7 @@
 
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
+import { clickPlusAction, closeMemberPlusMenu } from '@/utils/common';
 export default {
   props: ["memberState"],
   mounted() {
@@ -135,24 +136,17 @@ export default {
     ...mapMutations("utils", ["setClientX", "setClientY"]),
     ...mapActions("community", ["fetchCommunityMembers"]),
     clickMemberPlusAction(event, memberInfo) {
-      const x = event.clientX;
-      const y = event.clientY;
-      this.setClientX(x);
-      this.setClientY(y);
+      clickPlusAction(event);
       this.setCommunityMemberPlusMenu(memberInfo);
     },
     onClick(e) {
       if (this.communityMemberPlusMenu) {
-        if (
-          e.target.className !== "friends-name" &&
-          e.target.className !== "avatar-wrapper" &&
-          e.target.className !== "primary-member-layout" &&
-          e.target.className !== "friends-name-decorator"
-        ) {
-          this.setCommunityMemberPlusMenu(null);
-        }
+        closeMemberPlusMenu(e);
       }
     },
+  },
+  beforeDestroy(){
+    window.removeEventListener("click", this.onClick);
   },
 };
 </script>
