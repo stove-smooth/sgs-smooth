@@ -65,7 +65,7 @@ Package.pins
 Package.resolved
 
 ## CocoaPods
-src/frontend/ios/smooth-ios/Pods/
+**/src/**/Pods
 *.lock
 
 
