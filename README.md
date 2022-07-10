@@ -105,3 +105,10 @@ sgs-smooth
 | style | 코드 포맷팅 |
 | refactor | 코드 리팩토링 |
 | chore | 빌드 및 패키지 수정 |
+
+---
+
+## Contributors
+<a href="https://github.com/stove-smooth/sgs-smooth/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=stove-smooth/sgs-smooth">
+</a>
